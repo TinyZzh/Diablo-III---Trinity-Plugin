@@ -64,7 +64,7 @@ namespace Trinity
             {
                 if (_version != null) return _version;
                 var verXml = XDocument.Load(FileManager.VersionPath).Descendants("Revision").FirstOrDefault();
-                if (verXml != null) return new Version(2,14, int.Parse(verXml.Value));
+                if (verXml != null) return new Version(2,41, int.Parse(verXml.Value));
                 return new Version(2, 41, 0);
             }
         }
@@ -198,7 +198,7 @@ namespace Trinity
             }
             catch (Exception ex)
             {
-                Logger.Log(LogCategory.UserInformation, "Exception in Pulse: {0}", ex.ToString());
+                Logger.Log(LogCategory.UserInformation, $"Exception in Pulse: {ex}");
             }
         }
 

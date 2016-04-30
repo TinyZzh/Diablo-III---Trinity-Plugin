@@ -53,6 +53,8 @@ namespace Trinity.Config.Loot
         private bool _alwaysVacuumItems;
         private bool _dontPickupInTown;
         private bool _disableAutoEquipAtMaxLevel;
+        private bool _ignoreProgressionGlobesInAoE;
+        private bool _ignoreHealthGlobesInAoE;
 
         #endregion Fields
 
@@ -704,7 +706,7 @@ namespace Trinity.Config.Loot
             }
         }
         [DataMember(IsRequired = false)]
-        [DefaultValue(false)]
+        [DefaultValue(true)]
         public bool IgnoreLegendaryInAoE
         {
             get
@@ -721,7 +723,7 @@ namespace Trinity.Config.Loot
             }
         }
         [DataMember(IsRequired = false)]
-        [DefaultValue(false)]
+        [DefaultValue(true)]
         public bool IgnoreNonLegendaryInAoE
         {
             get
@@ -772,7 +774,7 @@ namespace Trinity.Config.Loot
             }
         }
         [DataMember(IsRequired = false)]
-        [DefaultValue(false)]
+        [DefaultValue(true)]
         public bool IgnoreGoldInAoE
         {
             get
@@ -838,6 +840,42 @@ namespace Trinity.Config.Loot
                 {
                     _alwaysVacuumItems = value;
                     OnPropertyChanged("AlwaysVacuumItems");
+                }
+            }
+        }
+
+        [DataMember(IsRequired = false)]
+        [DefaultValue(true)]
+        public bool IgnoreProgressionGlobesInAoE
+        {
+            get
+            {
+                return _ignoreProgressionGlobesInAoE;
+            }
+            set
+            {
+                if (_ignoreProgressionGlobesInAoE != value)
+                {
+                    _ignoreProgressionGlobesInAoE = value;
+                    OnPropertyChanged(nameof(IgnoreProgressionGlobesInAoE));
+                }
+            }
+        }
+
+        [DataMember(IsRequired = false)]
+        [DefaultValue(true)]
+        public bool IgnoreHealthGlobesInAoE
+        {
+            get
+            {
+                return _ignoreHealthGlobesInAoE;
+            }
+            set
+            {
+                if (_ignoreHealthGlobesInAoE != value)
+                {
+                    _ignoreHealthGlobesInAoE = value;
+                    OnPropertyChanged(nameof(IgnoreHealthGlobesInAoE));
                 }
             }
         }
@@ -908,6 +946,11 @@ namespace Trinity.Config.Loot
             AutoEquipItems = true;
             AutoEquipSkills = true;
             DisableAutoEquipAtMaxLevel = true;
+            IgnoreProgressionGlobesInAoE = true;
+            IgnoreGoldInAoE = true;
+            IgnoreLegendaryInAoE = true;
+            IgnoreNonLegendaryInAoE = true;
+            IgnoreHealthGlobesInAoE = true;
         }
         #endregion Methods
     }
