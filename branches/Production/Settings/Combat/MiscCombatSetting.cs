@@ -66,6 +66,7 @@ namespace Trinity.Config.Combat
         private float _HealthGlobeLevel;
         private float _PotionLevel;
         private float _HealthGlobeLevelResource;
+        private bool _waitForResInBossEncounters;
 
         #endregion Events
 
@@ -1019,6 +1020,24 @@ namespace Trinity.Config.Combat
             }
         }
 
+        [DataMember(IsRequired = false)]
+        [DefaultValue(false)]
+        public bool WaitForResInBossEncounters
+        {
+            get
+            {
+                return _waitForResInBossEncounters;
+            }
+            set
+            {
+                if (_waitForResInBossEncounters != value)
+                {
+                    _waitForResInBossEncounters = value;
+                    OnPropertyChanged(nameof(WaitForResInBossEncounters));
+                }
+            }
+        }
+
         #endregion Properties
 
         #region Methods
@@ -1088,6 +1107,7 @@ namespace Trinity.Config.Combat
             IgnoreMinions = false;
             AttackWhenBlocked = true;
             IgnoreNormalProgressionGlobes = false;
+            WaitForResInBossEncounters = false;
         }
         #endregion Methods
 

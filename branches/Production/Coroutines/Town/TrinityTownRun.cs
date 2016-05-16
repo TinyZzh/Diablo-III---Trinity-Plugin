@@ -4,9 +4,11 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Buddy.Coroutines;
+using Trinity.Combat.Abilities;
 using Trinity.DbProvider;
 using Trinity.Framework;
 using Trinity.Framework.Actors;
+using Trinity.Framework.Utilities;
 using Trinity.Helpers;
 using Trinity.Items;
 using Trinity.Notifications;
@@ -31,33 +33,77 @@ namespace Trinity.Coroutines.Town
     {
         public static bool StartedOutOfTown { get; set; }
 
+        public static bool IsWantingTownRun { get; set; }
+
         public static bool IsInTownVendoring { get; set; }
 
         public static DateTime DontAttemptTownRunUntil = DateTime.MinValue;
+
+        private static int _catastrophicErrorCount;
+
+        static TrinityTownRun()
+        {
+            GameEvents.OnGameJoined += (sender, args) => _catastrophicErrorCount = 0;
+        }
 
         public static async Task<bool> Execute()
         {
             try
             {
+                //Logger.Log("VendorRun Hook Executing");
+
+                if (await ClearArea.Execute())
+                {
+                    Logger.LogDebug("Clearing");
+                    return false;  
+                }
+
                 CheckForDBVendoringBug();
 
                 if (DateTime.UtcNow < DontAttemptTownRunUntil)
                 {
-                    if (IsVendoring)
-                        IsVendoring = false;
-
+                    Logger.LogDebug("Town run cooldown");
+                    IsVendoring = false;
                     return false;
                 }
 
+                if (Core.CastStatus.StoneOfRecall.LastResult == CastResult.Casting)
+                {
+                    Logger.LogDebug("Casting");
+                    return true;
+                }
+
                 if (!ShouldStartTownRun())
+                {
+                    //Logger.LogDebug("Don't town run");
+                    IsVendoring = false;
                     return false;
+                }
+
+                IsWantingTownRun = true;
+                Logger.LogDebug("Town run started");
+                //IsVendoring = true;
+
+                if (ZetaDia.IsLoadingWorld)
+                {
+                    return true;
+                }
 
                 if (!ZetaDia.IsInTown)
                 {
+                    Logger.LogDebug("Pre Go to town");
+
                     await GoToTown();
 
                     if (!ZetaDia.IsInTown)
                     {
+                        if (Core.CastStatus.StoneOfRecall.LastResult == CastResult.Failed)
+                        {
+                            Logger.LogDebug("Setting Town Run Cooldown because of cast failure");
+                            DontAttemptTownRunUntil = DateTime.UtcNow.AddSeconds(5);
+                        }
+
+                        Logger.LogDebug("Not in town yet..");
                         return true;
                     }
                 }
@@ -80,11 +126,16 @@ namespace Trinity.Coroutines.Town
                     if (!ActorManager.Items.Any())
                     {
                         Logger.LogError("Something went terribly wrong, no items found");
-
-                        if (!ActorManager.IsStarted)
+                        _catastrophicErrorCount++;
+                        ActorManager.Reset();
+                        
+                        if (_catastrophicErrorCount > 2)
                         {
-                            ActorManager.Start();
-                        }
+                            Logger.LogError("Unable to recover from error state, still cant read items properly");
+                            ZetaDia.Service.Party.LeaveGame(true);
+                            return false;
+                        }     
+                        continue;                   
                     }
 
                     await Coroutine.Yield();
@@ -96,6 +147,7 @@ namespace Trinity.Coroutines.Town
                     if (!ZetaDia.IsInGame)
                     {
                         StartedOutOfTown = false;
+                        IsWantingTownRun = false;
                         IsInTownVendoring = false;
                         IsVendoring = false;
                         return false;
@@ -139,14 +191,14 @@ namespace Trinity.Coroutines.Town
                 DontAttemptTownRunUntil = DateTime.UtcNow + TimeSpan.FromSeconds(15);
                 Helpers.Notifications.SendEmailNotification();
                 Helpers.Notifications.SendMobileNotifications();
-                TownRun.LastTownRunFinishTime = DateTime.UtcNow;
+                //TownRun.LastTownRunFinishTime = DateTime.UtcNow;
 
                 if (StartedOutOfTown)
                 {
                     StartedOutOfTown = false;
                     await TakeReturnPortal();
                 }
-
+                IsWantingTownRun = false;
             }
             finally
             {
@@ -155,6 +207,8 @@ namespace Trinity.Coroutines.Town
             }
             return false;
         }
+
+
 
         public static async Task<bool> Any(params Func<Task<bool>>[] taskProducers)
         {
@@ -170,59 +224,20 @@ namespace Trinity.Coroutines.Town
         private static bool ShouldStartTownRun()
         {
             if (ZetaDia.IsInTown && BrainBehavior.IsVendoring)
+            {
                 return !IsInTownVendoring;
+            }
 
-            string cantUseTPreason;
-            if (!ZetaDia.Me.CanUseTownPortal(out cantUseTPreason) && !ZetaDia.IsInTown)
+            if (!CanTownRun())
             {
-                Logger.LogVerbose("Can't townrun because '{0}'", cantUseTPreason);
-                DontAttemptTownRunUntil = DateTime.UtcNow + TimeSpan.FromSeconds(30);
+                Logger.LogDebug("Can't town run.");
                 return false;
             }
 
-            if (TrinityPlugin.Player.IsDead)
-                return false;
-
-            if (!DeathHandler.EquipmentNeedsEmergencyRepair())
+            if (IsWantingTownRun)
             {
-                if (TrinityPlugin.Player.IsInventoryLockedForGreaterRift)
-                {
-                    Logger.LogDebug("Can't townrun while in greater rift!");
-                    DontAttemptTownRunUntil = DateTime.UtcNow + TimeSpan.FromSeconds(5);
-                    return false;
-                }
-
-                // Close Greater rift before doing a town run.
-                if (!TrinityPlugin.Settings.Loot.TownRun.KeepLegendaryUnid && TrinityPlugin.Player.ParticipatingInTieredLootRun)
-                    return false;
-            }
-
-            if (ErrorDialog.IsVisible)
-            {
-                Logger.Log("Can't townrun with an error dialog present!");
-                DontAttemptTownRunUntil = DateTime.UtcNow + TimeSpan.FromSeconds(30);
-                return false;
-            }
-
-            if (TrinityPlugin.Player.LevelAreaId == 19947 && ZetaDia.CurrentQuest.QuestSnoId == 87700 && new Vector3(2959.893f, 2806.495f, 24.04533f).Distance(ZetaDia.Me.Position) > 180f)
-            {
-                Logger.Log("Can't townrun with the current quest (A1 New Game) !");
-                DontAttemptTownRunUntil = DateTime.UtcNow + TimeSpan.FromSeconds(30);
-                return false;
-            }
-
-            if (DataDictionary.BossLevelAreaIDs.Contains(TrinityPlugin.Player.LevelAreaId))
-            {
-                Logger.Log("Unable to Town Portal - Boss Area!");
-                DontAttemptTownRunUntil = DateTime.UtcNow + TimeSpan.FromSeconds(10);
-                return false;
-            }
-
-            if (DataDictionary.NeverTownPortalLevelAreaIds.Contains(TrinityPlugin.Player.LevelAreaId))
-            {
-                Logger.Log("Unable to Town Portal in this area!");
-                DontAttemptTownRunUntil = DateTime.UtcNow + TimeSpan.FromSeconds(10);
-                return false;
+                Logger.LogDebug("Is wanting to town run.");
+                return true;
             }
 
             if (!ZetaDia.IsInTown && RepairItems.EquipmentNeedsRepair())
@@ -250,21 +265,103 @@ namespace Trinity.Coroutines.Town
             return BrainBehavior.IsVendoring;
         }
 
+        public static bool CanTownRun()
+        {
+            string cantUseTPreason;
+            if (!ZetaDia.Me.CanUseTownPortal(out cantUseTPreason) && !ZetaDia.IsInTown)
+            {
+                Logger.LogVerbose("Can't townrun because '{0}'", cantUseTPreason);
+                DontAttemptTownRunUntil = DateTime.UtcNow + TimeSpan.FromSeconds(10);
+                return false;
+            }
+
+            if (TrinityPlugin.Player.IsDead)
+                return false;
+
+            if (!DeathHandler.EquipmentNeedsEmergencyRepair())
+            {
+                if (TrinityPlugin.Player.IsInventoryLockedForGreaterRift)
+                {
+                    Logger.LogDebug("Can't townrun while in greater rift!");
+                    DontAttemptTownRunUntil = DateTime.UtcNow + TimeSpan.FromSeconds(5);
+                    return false;
+                }
+
+                // Close Greater rift before doing a town run.
+                if (!TrinityPlugin.Settings.Loot.TownRun.KeepLegendaryUnid && TrinityPlugin.Player.ParticipatingInTieredLootRun)
+                {
+                    return false;
+                }
+            }
+
+            if (ErrorDialog.IsVisible)
+            {
+                Logger.Log("Can't townrun with an error dialog present!");
+                DontAttemptTownRunUntil = DateTime.UtcNow + TimeSpan.FromSeconds(10);
+                return false;
+            }
+
+            if (TrinityPlugin.Player.LevelAreaId == 19947 && ZetaDia.CurrentQuest.QuestSnoId == 87700 && new Vector3(2959.893f, 2806.495f, 24.04533f).Distance(ZetaDia.Me.Position) > 180f)
+            {
+                Logger.Log("Can't townrun with the current quest (A1 New Game) !");
+                DontAttemptTownRunUntil = DateTime.UtcNow + TimeSpan.FromSeconds(30);
+                return false;
+            }
+
+            if (DataDictionary.BossLevelAreaIDs.Contains(TrinityPlugin.Player.LevelAreaId))
+            {
+                Logger.Log("Unable to Town Portal - Boss Area!");
+                DontAttemptTownRunUntil = DateTime.UtcNow + TimeSpan.FromSeconds(10);
+                return false;
+            }
+
+            if (DataDictionary.NeverTownPortalLevelAreaIds.Contains(TrinityPlugin.Player.LevelAreaId))
+            {
+                Logger.Log("Unable to Town Portal in this area!");
+                DontAttemptTownRunUntil = DateTime.UtcNow + TimeSpan.FromSeconds(10);
+                return false;
+            }
+
+            return true;
+        }
+
+        private static readonly Lazy<PropertyInfo> VendorProperty = new Lazy<PropertyInfo>(() => typeof(BrainBehavior).GetProperty("IsVendoring"));
+
         public static bool IsVendoring
         {
             get { return BrainBehavior.IsVendoring; }
-            set { typeof(BrainBehavior).GetProperty("IsVendoring").SetValue(null, value); }
+            set { VendorProperty.Value.SetValue(null, value); }
         }
 
         public static async Task<bool> GoToTown()
         {
-            if (ZetaDia.IsInTown || !ZetaDia.Me.IsFullyValid() || ZetaDia.Me.IsInCombat || !UIElements.BackgroundScreenPCButtonRecall.IsEnabled)
+            if (ZetaDia.IsInTown || !ZetaDia.Me.IsFullyValid() || !UIElements.BackgroundScreenPCButtonRecall.IsEnabled)
+            {
+                Logger.Log("Not portaling because in combat.");
                 return false;
+            }
+
+            if (CombatBase.IsInCombat)
+            {
+                Logger.Log("Not portaling because in combat.");
+                return false;
+            }
 
             Navigator.PlayerMover.MoveStop();
             await Coroutine.Wait(2000, () => !ZetaDia.Me.Movement.IsMoving);
+            
+            Logger.Warn("Starting Town Run");
             StartedOutOfTown = true;
-            await CommonCoroutines.UseTownPortal("TrinityPlugin can haz town now plz?");
+
+            if (!ZetaDia.IsInTown && !ZetaDia.IsLoadingWorld)
+            {
+                ZetaDia.Me.UseTownPortal();
+            }
+
+            await Coroutine.Sleep(500);
+            await Coroutine.Wait(5000, () => !Core.CastStatus.StoneOfRecall.IsCasting);
+            //await CommonBehaviors.CreateUseTownPortal().ExecuteCoroutine();
+            //await CommonCoroutines.UseTownPortal("TrinityPlugin can haz town now plz?");
             return true;
         }
 
@@ -283,7 +380,14 @@ namespace Trinity.Coroutines.Town
                 return false;
             }
 
-            if (ClearArea.IsCombatModeOverridden)
+            if (IsWantingTownRun)
+            {
+                lastTownPortalCheckTime = DateTime.UtcNow;
+                lastTownPortalCheckResult = true;
+                return true;
+            }
+
+            if (ClearArea.IsClearing)
             {
                 lastTownPortalCheckTime = DateTime.UtcNow;
                 lastTownPortalCheckResult = true;

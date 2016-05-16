@@ -62,16 +62,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Adventurer">
-      <HintPath>..\..\Demonbuddy3\Plugins\Adventurer\bin\Debug\Adventurer.dll</HintPath>
+      <HintPath>..\Adventurer\Trunk\bin\Debug\Adventurer.dll</HintPath>
     </Reference>
-    <Reference Include="Demonbuddy">
-      <HintPath>..\..\Demonbuddy3\Demonbuddy.exe</HintPath>
+    <Reference Include="Demonbuddy, Version=1.1.3036.624, Culture=neutral, PublicKeyToken=eff32ccf253d66d4, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DB-Current\Demonbuddy.exe</HintPath>
     </Reference>
     <Reference Include="GreyMagic">
-      <HintPath>..\..\Demonbuddy3\GreyMagic.dll</HintPath>
+      <HintPath>..\..\DB-Current\GreyMagic.dll</HintPath>
     </Reference>
     <Reference Include="IronPython">
-      <HintPath>..\..\Demonbuddy3\IronPython.dll</HintPath>
+      <HintPath>..\..\DB-Current\IronPython.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="PresentationCore" />
@@ -100,6 +101,27 @@
     <Compile Include="Cache\CacheData.Inventory.cs" />
     <Compile Include="Cache\CacheData.Player.cs" />
     <Compile Include="Cache\CacheUIObject.cs" />
+    <Compile Include="Combat\Abilities\PhelonsPlayground\Barbarian\Barbarian.cs" />
+    <Compile Include="Combat\Abilities\PhelonsPlayground\Barbarian\Barbarian.Earth.cs" />
+    <Compile Include="Combat\Abilities\PhelonsPlayground\Barbarian\Barbarian.ImmortalKings.cs" />
+    <Compile Include="Combat\Abilities\PhelonsPlayground\Barbarian\Barbarian.LegacyOfNightmares.cs" />
+    <Compile Include="Combat\Abilities\PhelonsPlayground\Barbarian\Barbarian.Raekor.cs" />
+    <Compile Include="Combat\Abilities\PhelonsPlayground\Barbarian\Barbarian.Unconditional.cs" />
+    <Compile Include="Combat\Abilities\PhelonsPlayground\Barbarian\Barbarian.Wastes.cs" />
+    <Compile Include="Combat\Abilities\PhelonsPlayground\Barbarian\Barbarian.ZDps.cs" />
+    <Compile Include="Combat\Abilities\PhelonsPlayground\Monk\Monk.Unconditional.cs" />
+    <Compile Include="Combat\Abilities\PhelonsPlayground\Monk\Monk.ZDps.cs" />
+    <Compile Include="Combat\Abilities\PhelonsPlayground\Monk\Monk.cs" />
+    <Compile Include="Combat\Abilities\PhelonsPlayground\PhelonGroupSupport.cs" />
+    <Compile Include="Combat\Abilities\PhelonsPlayground\PhelonTargeting.cs" />
+    <Compile Include="Combat\Abilities\PhelonsPlayground\PhelonUtils.cs" />
+    <Compile Include="Combat\Abilities\PhelonsPlayground\WitchDoctor\WitchDoctor.Unconditional.cs" />
+    <Compile Include="Combat\Abilities\PhelonsPlayground\WitchDoctor\WitchDoctor.ZDps.cs" />
+    <Compile Include="Combat\Abilities\PhelonsPlayground\WitchDoctor\WitchDoctor.cs" />
+    <Compile Include="Combat\Abilities\PhelonsPlayground\Wizard\Wizard.Archon.cs" />
+    <Compile Include="Combat\Abilities\PhelonsPlayground\Wizard\Wizard.Unconditional.cs" />
+    <Compile Include="Combat\Abilities\PhelonsPlayground\Wizard\Wizard.cs" />
+    <Compile Include="Combat\Abilities\PhelonsPlayground\Wizard\Wizard.Firebirds.cs" />
     <Compile Include="Coroutines\Town\DropItems.cs" />
     <Compile Include="Coroutines\VacuumItems.cs" />
     <Compile Include="Coroutines\Town\ServiceType.cs" />
@@ -113,6 +135,8 @@
     <Compile Include="Coroutines\Town\TrinityTownRun.cs" />
     <Compile Include="Framework\Actors\ActorManager.cs" />
     <Compile Include="Framework\Actors\CachedItem.cs" />
+    <Compile Include="Framework\Avoidance\Handlers\AnimationConeAvoidanceHandler.cs" />
+    <Compile Include="Framework\Avoidance\Handlers\AnimationBeamAvoidanceHandler.cs" />
     <Compile Include="Framework\Avoidance\Structures\AvoidanceLayer.cs" />
     <Compile Include="Framework\Avoidance\Structures\WeightingOptions.cs" />
     <Compile Include="Framework\Objects\Memory\Globals.cs" />
@@ -233,10 +257,11 @@
     <Compile Include="Framework\Objects\Memory\Symbols\Types\ValueDataType.cs" />
     <Compile Include="Framework\Objects\Memory\Symbols\Types\VendorSlot.cs" />
     <Compile Include="Framework\Objects\Memory\Symbols\Types\WeaponsComboType.cs" />
+    <Compile Include="Framework\Utilities\CastStatus.cs" />
     <Compile Include="Framework\Utilities\Paragon.cs" />
     <Compile Include="Framework\Avoidance\Structures\AvoidanceAreaStats.cs" />
     <Compile Include="Framework\Avoidance\DefaultAvoider.cs" />
-    <Compile Include="Framework\Avoidance\Handlers\AnimationAvoidanceHandler.cs" />
+    <Compile Include="Framework\Avoidance\Handlers\AnimationCircularAvoidanceHandler.cs" />
     <Compile Include="Framework\Helpers\GridHelper.cs" />
     <Compile Include="Helpers\Bitwise.cs" />
     <Compile Include="Helpers\ExceptionExtensions.cs" />
@@ -244,6 +269,7 @@
     <Compile Include="Framework\Objects\PriorityQueue\FastPriorityQueueNode.cs" />
     <Compile Include="Framework\Objects\PriorityQueue\IPriorityQueue.cs" />
     <Compile Include="Framework\Objects\PriorityQueue\SimplePriorityQueue.cs" />
+    <Compile Include="Helpers\GameBalanceTable.cs" />
     <Compile Include="Helpers\Notifications.cs" />
     <Compile Include="Helpers\OrderedDictionary.cs" />
     <Compile Include="Helpers\VectorExt.cs" />
@@ -260,6 +286,7 @@
     <Compile Include="Settings\Paragon\ParagonSetting.cs" />
     <Compile Include="Settings\Paragon\ParagonItem.cs" />
     <Compile Include="Settings\Paragon\TrinityParagonBonusType.cs" />
+    <Compile Include="Settings\SettingsManager.cs" />
     <Compile Include="UI\Overlays\3D\3DTools\MathUtils.cs" />
     <Compile Include="UI\Overlays\3D\3DTools\Matrix3DStack.cs" />
     <Compile Include="UI\Overlays\3D\3DTools\MeshUtils.cs" />
@@ -414,7 +441,6 @@
     <Compile Include="DbProvider\DeathHandler.cs" />
     <Compile Include="Coroutines\Town\UseCraftingRecipes.cs" />
     <Compile Include="DbProvider\KillAllBountyDetector.cs" />
-    <Compile Include="DbProvider\SearchAreaProvider.cs" />
     <Compile Include="DbProvider\VendorHook.cs" />
     <Compile Include="Helpers\Attributes\NoCopy.cs" />
     <Compile Include="Helpers\EnumValue.cs" />
@@ -533,7 +559,6 @@
     <Compile Include="Settings\Loot\ItemEnumOptions.cs" />
     <Compile Include="Settings\Loot\ItemRuleSetting.cs" />
     <Compile Include="Helpers\FileManager.cs" />
-    <Compile Include="DbProvider\TownRun.cs" />
     <Compile Include="Combat\ScheduledPower.cs" />
     <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Helpers\LogCategory.cs" />

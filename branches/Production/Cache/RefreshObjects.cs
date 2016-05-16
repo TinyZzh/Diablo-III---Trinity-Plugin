@@ -229,7 +229,7 @@ namespace Trinity
                     ObjectCache.Add(cacheObject);
                 }
 
-                if (legendaryItemMarkers.Any() && TrinityItemManager.FindValidBackpackLocation(true) != new Vector2(-1, -1))
+                if (legendaryItemMarkers.Any() && TrinityItemManager.CachedIsValidTwoSlotBackpackLocation)
                 {
                     var legendaryItems = ZetaDia.Actors.GetActorsOfType<DiaItem>().Where(i => i.IsValid && i.IsACDBased && i.Position.Distance(ZetaDia.Me.Position) < 5f &&
                         legendaryItemMarkers.Any(im => i.Position.Distance(i.Position) < 2f));
@@ -431,10 +431,12 @@ namespace Trinity
                 // Blank current/last/next targets
                 LastPrimaryTargetPosition = CurrentTarget != null ? CurrentTarget.Position : Vector3.Zero;
                 KiteAvoidDestination = Vector3.Zero;
+
                 // store last target GUID
-                LastTargetRactorGUID = CurrentTarget != null ? CurrentTarget.RActorGuid : -1;
+                if(CurrentTarget != null)
+                    LastTargetRactorGUID = CurrentTarget.RActorGuid;
+
                 LastTargetACDGuid = CurrentTarget != null ? CurrentTarget.ACDGuid : -1;
-                LastTargetIsSafeSpot = CurrentTarget != null ? CurrentTarget.IsSafeSpot : false;
 
                 //reset current target
                 //CurrentTarget = null;

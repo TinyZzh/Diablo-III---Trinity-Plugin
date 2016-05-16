@@ -67,6 +67,7 @@ namespace Trinity.Coroutines.Town
             }
 
             Logger.LogVerbose("[SalvageItems] Starting salvage for {0} items", salvageItems.Count);
+            salvageItems.ForEach(i => Logger.LogDebug($"[SalvageItems] Salvaging: {i.Name} ({i.ActorSnoId}) InternalName={i.InternalName} Ancient={i.IsAncient} Ann={i.AnnId}"));
 
             GameUI.CloseVendorWindow();
 
@@ -96,7 +97,6 @@ namespace Trinity.Coroutines.Town
                     Logger.LogError($"[SalvageItems] Failed to move to blacksmith ({blacksmith.Name}) to salvage items :(");
                     return false;
                 };
-
                 await Coroutine.Sleep(Rnd.Next(750, 1250));
             }
 
@@ -141,7 +141,8 @@ namespace Trinity.Coroutines.Town
                         break;
 
                     await Coroutine.Sleep(Rnd.Next(500, 750));
-                    await ActorManager.WaitForUpdate();
+                    ActorManager.Update();
+                    //await ActorManager.WaitForUpdate();
 
                     var freshItems = Inventory.Backpack.Items.Where(i => ShouldSalvage(i) && !Inventory.InvalidItemDynamicIds.Contains(i.AnnId)).ToList();
                     if (!freshItems.Any())
@@ -163,6 +164,7 @@ namespace Trinity.Coroutines.Town
                         continue;
                     }
 
+                    Logger.Log("Salvaging");
                     ZetaDia.Me.Inventory.SalvageItem(item.AnnId);
                     Inventory.InvalidItemDynamicIds.Add(item.AnnId);
                     ItemEvents.FireItemSalvaged(item);                    

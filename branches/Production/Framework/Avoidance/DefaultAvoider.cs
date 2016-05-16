@@ -23,9 +23,10 @@ namespace Trinity.Framework.Avoidance
     {
         bool IsAvoiding { get; }
         bool ShouldAvoid { get; }
-        //Task<bool> Avoid();
-        bool TryGetSafeSpot(out Vector3 position, float minDistance = 10f, Func<AvoidanceNode, bool> condition = null);
+        bool TryGetSafeSpot(out Vector3 position, float minDistance = 10f, float maxDistance = 100f, Func<AvoidanceNode, bool> condition = null);
         TimeSpan TimeSinceLastAvoid { get; }
+
+        Vector3 SafeSpot { get; }
     }
 
     /// <summary>
@@ -33,6 +34,7 @@ namespace Trinity.Framework.Avoidance
     /// </summary>
     public class DefaultAvoider : IAvoider
     {
+        public bool IsKiting { get; set; }
         public bool IsAvoiding { get; set; }
 
         public DateTime KiteStutterDelay = DateTime.MinValue;
@@ -48,6 +50,9 @@ namespace Trinity.Framework.Avoidance
         {
             get
             {
+                IsKiting = false;
+                IsAvoiding = false;
+
                 if (TrinityPlugin.Player.IsInTown)
                     return false;
 
@@ -59,20 +64,47 @@ namespace Trinity.Framework.Avoidance
                 // todo element immunity
 
                 if (ShouldAvoidCritical)
+                {
+                    IsAvoiding = true;
                     return true;
+                }
 
                 if (ShouldKite)
+                {
+                    IsKiting = true;
+                    IsAvoiding = true;
                     return true;
+                }
 
+                if (ShouldAvoidNormal)
+                {
+                    IsAvoiding = true;
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        private bool ShouldAvoidNormal
+        {
+            get
+            {
                 if (Core.Avoidance.NearbyNodes.Any(n => n.AvoidanceFlags.HasFlag(AvoidanceFlags.Gizmo)) && PlayerMover.IsBlocked)
+                {
                     return false;
+                }
+
+                if (Settings.DontAvoidWhenBlocked && PlayerMover.IsBlocked && PlayerMover.BlockedTimeMs > 5000)
+                {
+                    Logger.Log(LogCategory.Avoidance, "Not Avoiding because blocked");
+                    return false;                  
+                }
 
                 if (Core.Avoidance.HighestNodeWeight >= 2 &&
                     Core.Avoidance.NearbyStats.HighestWeight >= Settings.MinimumHighestNodeWeightTrigger &&
                     Core.Avoidance.NearbyStats.WeightPctTotal >= Settings.MinimumNearbyWeightPctTotalTrigger &&
                     Core.Avoidance.NearbyStats.WeightPctAvg >= Settings.AvoiderNearbyPctAvgTrigger)
                 {
-
                     Logger.Log(LogCategory.Avoidance, "Avoidance Local PctAvg: {0:0.00} / {1:0.00} PctTotal={2:0.00} / {3:0.00} Highest={4} / {5} ({6} Nodes, AbsHighest={7})",
                         Core.Avoidance.NearbyStats.WeightPctAvg,
                         Settings.AvoiderNearbyPctAvgTrigger,
@@ -84,12 +116,13 @@ namespace Trinity.Framework.Avoidance
                         Core.Avoidance.HighestNodeWeight);
 
                     LastAvoidTime = DateTime.UtcNow;
-                    return true;
+                    {                       
+                        return true;
+                    }
                 }
-
                 return false;
-
             }
+
         }
 
         private bool ShouldAvoidCritical
@@ -127,6 +160,23 @@ namespace Trinity.Framework.Avoidance
                     return false;
                 }
 
+                if (!TrinityPlugin.ObjectCache.Any(o => o.Weight > 0) && TrinityPlugin.Player.CurrentHealthPct > 0.6)
+                {
+                    return false;
+                }
+
+                if (Settings.DontAvoidWhenBlocked && PlayerMover.IsBlocked && PlayerMover.BlockedTimeMs > 5000)
+                {
+                    Logger.Log(LogCategory.Avoidance, "Not kiting because blocked");
+                    return false;
+                }
+
+                if (CombatBase.CurrentTarget?.Type == TrinityObjectType.ProgressionGlobe && CombatBase.CurrentTarget?.Distance < 80f)
+                {
+                    Logger.Log(LogCategory.Avoidance, "Not kiting because current target is a close progression globe");
+                    return false;
+                }
+
                 var isAtKiteHealth = TrinityPlugin.Player.CurrentHealthPct * 100 <= Settings.KiteHealth;
                 if (isAtKiteHealth && TargetZDif < 4 && Settings.KiteMode != KiteMode.Never)
                 {
@@ -152,16 +202,27 @@ namespace Trinity.Framework.Avoidance
             }
         }
 
-
-
         private static float TargetZDif
         {
             get { return CombatBase.CurrentTarget == null ? 0 : Math.Abs(CombatBase.CurrentTarget.Position.Z - ZetaDia.Me.Position.Z); }
         }
 
-        public bool TryGetSafeSpot(out Vector3 safeSpot, float minDistance = 10f, Func<AvoidanceNode, bool> condition = null)
+        private Vector3 _safeSpot;
+        public Vector3 SafeSpot 
         {
-            var nodes = Core.Avoidance.SafeNodesByDistance.Where(p => p.Distance > minDistance);
+            get
+            {
+                if (!Core.Avoidance.Grid.IsLocationInFlags(_safeSpot) && _safeSpot.Distance(ZetaDia.Me.Position) < 5f)
+                    return _safeSpot;
+
+                TryGetSafeSpot(out _safeSpot);                
+                return _safeSpot;
+            }
+        }
+
+        public bool TryGetSafeSpot(out Vector3 safeSpot, float minDistance = 0f, float maxDistance = 100f, Func<AvoidanceNode, bool> condition = null)
+        {
+            var nodes = Core.Avoidance.SafeNodesByDistance.Where(p => p.Distance >= minDistance && p.Distance <= maxDistance);
             var safeSpotNode = condition == null ? nodes.FirstOrDefault() : nodes.FirstOrDefault(condition);
             if (safeSpotNode != null)
             {
@@ -175,5 +236,6 @@ namespace Trinity.Framework.Avoidance
     }
 
 }
+
 
 

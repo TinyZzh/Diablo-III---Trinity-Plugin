@@ -58,7 +58,7 @@ namespace Trinity
         private static string c_ItemMd5Hash = string.Empty;
         private static bool c_HasDotDPS = false;
         private static MonsterAffixes c_MonsterAffixes = MonsterAffixes.None;
-        private static bool c_IsFacingPlayer;
+        //private static bool c_IsFacingPlayer;
 
         private static bool CacheDiaObject(DiaObject freshObject)
         {
@@ -89,28 +89,23 @@ namespace Trinity
              */
             CurrentCacheObject.Object = c_diaObject = freshObject;
 
+            var commonData = freshObject.CommonData;
+
             try
             {
-                // RActor GUID
                 var guid = freshObject.RActorId;
                 CurrentCacheObject.RActorGuid = guid;
 
-                // RActor GUID
-                var annId = freshObject.CommonData.AnnId;
+                var annId = commonData.AnnId;
                 CurrentCacheObject.AnnId = annId;
 
-                // Check to see if we've already looked at this GUID
                 CurrentCacheObject.ACDGuid = freshObject.ACDId;
-
-                // Get Name
                 CurrentCacheObject.InternalName = NameNumberTrimRegex.Replace(freshObject.Name, "");
                 CurrentCacheObject.InternalNameLowerCase = CurrentCacheObject.InternalName.ToLower();
-
                 CurrentCacheObject.ActorSNO = freshObject.ActorSnoId;
                 CurrentCacheObject.ActorType = freshObject.ActorType;
                 CurrentCacheObject.ACDGuid = freshObject.ACDId;
-
-                CurrentCacheObject.CommonData = freshObject.CommonData;
+                CurrentCacheObject.CommonData = commonData;
                 CurrentCacheObject.GizmoType = CurrentCacheObject.CommonData.GizmoType;
 
                 var anim = CurrentCacheObject.CommonData.CurrentAnimation;
@@ -215,7 +210,8 @@ namespace Trinity
 
             if (CurrentCacheObject.ActorType == ActorType.Monster)
             {
-                if (CurrentCacheObject.CommonData.AnimationState == AnimationState.Dead)
+                CurrentCacheObject.AnimationState = commonData.AnimationState;
+                if (CurrentCacheObject.AnimationState == AnimationState.Dead)
                 {
                     c_IgnoreSubStep = "Dead (AnimationState)";
                     return false;
@@ -279,8 +275,16 @@ namespace Trinity
                 if (!AddToCache) { c_IgnoreReason = "CachedObjectType"; return AddToCache; }
             }
 
+            var unit = CurrentCacheObject.Unit;
+            if (unit != null)
+            {
+                CurrentCacheObject.IsHostile = unit.IsHostile;
+            }
+
+            CurrentCacheObject.TeamId = commonData.TeamId;
+
             // Summons by the player 
-            AddToCache = RefreshStepCachedSummons();
+            AddToCache = RefreshStepCachedSummons(unit);
             if (!AddToCache) { c_IgnoreReason = "CachedPlayerSummons"; return false; }
 
             CurrentCacheObject.Type = CurrentCacheObject.Type;
@@ -303,7 +307,12 @@ namespace Trinity
                 }
             }
 
-
+            if (DataDictionary.AvoidanceSNO.Contains(CurrentCacheObject.ActorSNO))
+            {
+                // Avoidance is handled elsewhere, exclude avoidance actors from this cache so 
+                // they dont get targetted with spells. (frozen pulse monster etc)
+                c_IgnoreReason = "Avoidance";
+            }
 
             // Always Refresh ZDiff for every object
             AddToCache = RefreshStepObjectTypeZDiff(AddToCache);
@@ -715,7 +724,7 @@ namespace Trinity
                         _cItemTinityItemType = TrinityItemManager.DetermineItemType(CurrentCacheObject.InternalName, c_DBItemType, c_item_tFollowerType);
                         var isPickupNoClick = DataDictionary.NoPickupClickTypes.Contains(_cItemTinityItemType);
 
-                        if (!isPickupNoClick && TrinityItemManager.FindValidBackpackLocation(true) == new Vector2(-1, -1))
+                        if (!isPickupNoClick && !TrinityItemManager.CachedIsValidTwoSlotBackpackLocation)
                         {
                             AddToCache = false;
                             c_IgnoreSubStep = "NoFreeSlots";
@@ -889,8 +898,14 @@ namespace Trinity
                             // Get whether or not this RActor has ever been in "Line of Sight" (as determined by Demonbuddy). If it hasn't, don't add to cache and keep rechecking
                             if (!CacheData.HasBeenInLoS.TryGetValue(CurrentCacheObject.RActorGuid, out c_HasBeenInLoS) || DataDictionary.AlwaysRaycastWorlds.Contains(Player.WorldID))
                             {
+                                var alwaysLoSCheckTypes = new HashSet<TrinityObjectType>
+                                {
+                                    TrinityObjectType.ProgressionGlobe,
+                                    TrinityObjectType.Shrine,
+                                };
+
                                 // Ignore units not in LoS except bosses
-                                if (!CurrentCacheObject.IsBoss && !c_diaObject.InLineOfSight)
+                                if (!CurrentCacheObject.IsBoss && !c_diaObject.InLineOfSight && !alwaysLoSCheckTypes.Contains(CurrentCacheObject.Type) && !DataDictionary.LineOfSightWhitelist.Contains(CurrentCacheObject.ActorSNO))
                                 {
                                     AddToCache = false;
                                     c_IgnoreSubStep = "NotInLoS";

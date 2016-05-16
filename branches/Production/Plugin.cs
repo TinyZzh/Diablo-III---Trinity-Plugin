@@ -128,7 +128,7 @@ namespace Trinity
                             RefreshDiaObjectCache();
                         }
 
-                        Core.Avoidance.UpdateGrid();
+                        //Core.Avoidance.UpdateGrid();
                         VisualizerViewModel.Instance.UpdateVisualizer();
 
                         if (ZetaDia.Me.IsDead)
@@ -284,7 +284,7 @@ namespace Trinity
 
                     //OverlayLoader.Enable();
 
-                    ClearArea.Enable();
+                    //ClearArea.Enable();
 
                     Core.Enable();
 
@@ -346,7 +346,7 @@ namespace Trinity
             Logger.Log(TrinityLogLevel.Info, LogCategory.UserInformation, "");
             GenericCache.Shutdown();
             GenericBlacklist.Shutdown();
-            ClearArea.Disable();
+            //ClearArea.Disable();
             OverlayLoader.Disable();
             Core.Disable();
 
@@ -377,7 +377,7 @@ namespace Trinity
                 Process.GetCurrentProcess().Id, Thread.CurrentThread.ManagedThreadId,
                 Thread.CurrentThread.Name, Application.Current.CheckAccess());
 
-            ActorManager.Initialize();
+            //ActorManager.Initialize();
 
         }
 

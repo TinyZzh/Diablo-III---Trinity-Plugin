@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Adventurer.Game.Exploration;
+using Adventurer.UI.UIComponents;
 using Buddy.Coroutines;
 using Trinity.Combat.Abilities;
 using Trinity.Config;
@@ -11,6 +12,7 @@ using Trinity.DbProvider;
 using Trinity.Framework.Avoidance.Structures;
 using Trinity.Objects;
 using Trinity.Technicals;
+using Trinity.UI.RadarUI;
 using Zeta.Bot.Navigation;
 using Zeta.Common;
 using Zeta.Game;
@@ -26,17 +28,28 @@ namespace Trinity.Framework.Avoidance
         {
             Avoider = new DefaultAvoider();
         }
-    
-        public IAvoider Avoider { get; set; }
 
+        public bool InAvoidance(Vector3 position)
+        {
+            return Grid.IsLocationInFlags(position, AvoidanceFlags.Avoidance);
+        }
+
+        public bool InCriticalAvoidance(Vector3 position)
+        {
+            return Grid.IsLocationInFlags(position, AvoidanceFlags.CriticalAvoidance);
+        }
+
+        public IAvoider Avoider { get; set; }
         public const float GlobeWeightRadiusFactor = 1f;
         public const float MonsterWeightRadiusFactor = 1f;
         public const float AvoidanceWeightRadiusFactor = 1f;
         public const float GizmoWeightRadiusFactor = 1f;
-        public const int MaxDistance = 80;
-
+        public const int MaxDistance = 70;
         private readonly Dictionary<int, IActor> _cachedActors = new Dictionary<int, IActor>();
         private readonly HashSet<int> _currentRActorIds = new HashSet<int>();
+
+        public IEnumerable<IActor> ActiveAvoidanceActors => CurrentAvoidances.SelectMany(a => a.Actors);
+        public HashSet<int> ActiveAvoidanceIds { get; set; }
 
         private readonly HashSet<GizmoType> _flaggedGizmoTypes = new HashSet<GizmoType>
         {
@@ -85,11 +98,6 @@ namespace Trinity.Framework.Avoidance
 
         protected override void OnPulse()
         {
-            Update();
-        }
-
-        public void Update()
-        {
             if (!TrinityPlugin.IsPluginEnabled || ZetaDia.IsLoadingWorld)
                 return;
 
@@ -106,10 +114,11 @@ namespace Trinity.Framework.Avoidance
 
         private void UpdateAvoidances()
         {
+            _currentRActorIds.Clear();
+
             if (!TrinityPlugin.Settings.Avoidance.Avoidances.Any(a => a.IsEnabled))
                 return;
 
-            _currentRActorIds.Clear();
 
             var source = ZetaDia.Actors.GetActorsOfType<DiaObject>(true).Select(a => new TrinityCacheObject(a) as IActor).ToList();
 
@@ -149,7 +158,7 @@ namespace Trinity.Framework.Avoidance
                 Structures.Avoidance avoidance;
                 if (AvoidanceDataFactory.TryCreateAvoidance(source, actor, out avoidance))
                 {
-                    Logger.Log(LogCategory.Avoidance, "Created new Avoidance from {0} RActorId={1} ({2})", actor.InternalName, actor.RActorGuid, avoidance.Data.Name);
+                    Logger.Log(LogCategory.Avoidance, $"Created new Avoidance from {actor.InternalName} RActorId={actor.RActorGuid} ({avoidance.Data.Name}, Immune: {avoidance.IsImmune})");
                     _cachedActors.Add(rActorId, actor);
                     CurrentAvoidances.Add(avoidance);
                 }
@@ -167,7 +176,7 @@ namespace Trinity.Framework.Avoidance
             {
                 avoidance.Actors.RemoveAll(a => !_currentRActorIds.Contains(a.RActorGuid));
             }
-            CurrentAvoidances.RemoveAll(a => !a.Actors.Any());
+            CurrentAvoidances.RemoveAll(a => !a.Actors.Any(actor => actor.IsValid));
         }
 
         public void UpdateGrid()
@@ -189,8 +198,8 @@ namespace Trinity.Framework.Avoidance
                 var activeAvoidanceIds = new HashSet<int>();
                 var kiteFromNodes = new AvoidanceLayer();
 
-                var nodePool = Grid.GetNodesInRadius(TrinityPlugin.Player.Position, node => node != null && node.NodeFlags.HasFlag(NodeFlags.AllowWalk), MaxDistance).Select(n => n.Reset()).ToList();
-                var allNodes = Grid.GetNodesInRadius(TrinityPlugin.Player.Position, node => node != null, MaxDistance).ToList();
+                var nodePool = Grid.GetNodesInRadius(TrinityPlugin.Player.Position, node => node.IsWalkable, MaxDistance).Select(n => n.Reset()).ToList();
+                //var allNodes = Grid.GetNodesInRadius(TrinityPlugin.Player.Position, node => node != null, MaxDistance).ToList();
                 var nearestNodes = Grid.GetNodesInRadius(TrinityPlugin.Player.Position, node => node != null && node.NodeFlags.HasFlag(NodeFlags.AllowWalk), TrinityPlugin.Settings.Avoidance.AvoiderLocalRadius);
                 var weightSettings = TrinityPlugin.Settings.Avoidance.WeightingOptions;
 
@@ -209,9 +218,8 @@ namespace Trinity.Framework.Avoidance
 
                         UpdateGizmoFlags(obj);
                         UpdateGlobeFlags(obj);
-                        UpdateAvoidanceFlags(obj, avoidanceNodes);
                         UpdateMonsterFlags(obj, monsterNodes);
-                        UpdateKiteFromFlags(obj, kiteFromNodes);
+                        UpdateKiteFromFlags(obj, kiteFromNodes);                       
                     }
 
                     foreach (var obstacle in CacheData.NavigationObstacles)
@@ -219,11 +227,11 @@ namespace Trinity.Framework.Avoidance
                         UpdateObstacleFlags(obstacle, obstacleNodes);
                     }
 
-                    UpdateBacktrackFlags();
+                    //UpdateBacktrackFlags();
                     
                     foreach (var avoidance in Core.Avoidance.CurrentAvoidances)
                     {
-                        if (!avoidance.Data.IsEnabled)
+                        if (!avoidance.Data.IsEnabled || avoidance.IsImmune)
                             continue;
 
                         var handler = avoidance.Data.Handler;
@@ -265,20 +273,25 @@ namespace Trinity.Framework.Avoidance
                             node.Weight--;
                         }
 
-                        if (Grid.IsInKiteDirection(node.NavigableCenter, 70))
-                        {
-                            node.AddNodeFlags(AvoidanceFlags.Kite);
-                            node.Weight--;
-                            kiteNodes.Add(node);
-                        }
-                        else
-                        {
-                            node.Weight++;
-                        }
+                        // Disabled for performance - 12ms @80yd
+                        //if (Grid.IsInKiteDirection(node.NavigableCenter, 70))
+                        //{
+                        //    node.AddNodeFlags(AvoidanceFlags.Kite);
+                        //    node.Weight--;
+                        //    kiteNodes.Add(node);
+                        //}
+                        //else
+                        //{
+                        //    node.Weight++;
+                        //}
 
-                        if (node.AdjacentNodes.All(n => !n.AvoidanceFlags.HasFlag(AvoidanceFlags.Avoidance) && 
-                        !n.AvoidanceFlags.HasFlag(AvoidanceFlags.Monster) && !n.AvoidanceFlags.HasFlag(AvoidanceFlags.KiteFrom)
-                        && n.NodeFlags.HasFlag(NodeFlags.AllowWalk)))
+                        var anyAdjacentUnsafe = node.AdjacentNodes.Any(n =>
+                            !n.NodeFlags.HasFlag(NodeFlags.AllowWalk) ||
+                            n.AvoidanceFlags.HasFlag(AvoidanceFlags.Avoidance) ||
+                            n.AvoidanceFlags.HasFlag(AvoidanceFlags.Monster) ||
+                            n.AvoidanceFlags.HasFlag(AvoidanceFlags.KiteFrom));
+
+                        if (!anyAdjacentUnsafe)
                         {
                             if(weightSettings.HasFlag(WeightingOptions.AdjacentSafe))
                                 node.Weight--;
@@ -302,8 +315,8 @@ namespace Trinity.Framework.Avoidance
                         throw;
                 }
 
-                AllNodes = allNodes;
-                CurrentNodes = nodePool.OrderBy(n => n.Weight).ThenByDescending(n => n.Distance).ToList();
+                //AllNodes = allNodes;
+                CurrentNodes = nodePool; //.OrderBy(n => n.Weight).ThenByDescending(n => n.Distance).ToList();
                 SafeNodesByWeight = safeNodes.Nodes.OrderBy(n => n.Weight).ThenByDescending(n => n.Distance);
                 SafeNodesByDistance = safeNodes.Nodes.OrderBy(n => n.Distance);
                 SafeNodeLayer = safeNodes;
@@ -316,10 +329,6 @@ namespace Trinity.Framework.Avoidance
                 ActiveAvoidanceIds = activeAvoidanceIds;
             }
         }
-
-        public IEnumerable<IActor> ActiveAvoidanceActors => CurrentAvoidances.SelectMany(a => a.Actors);
-
-        public HashSet<int> ActiveAvoidanceIds { get; set; }
 
         private void UpdateGizmoFlags(IActor actor)
         {
@@ -341,19 +350,6 @@ namespace Trinity.Framework.Avoidance
                         node.AddNodeFlags(AvoidanceFlags.NavigationBlocking);
                     }
                 }
-            }
-        }
-
-        private void UpdateAvoidanceFlags(IActor obj, AvoidanceLayer layer)
-        {
-            if (!DataDictionary.AvoidanceSNO.Contains(obj.ActorSNO))
-                return;
-
-            foreach (var node in Grid.GetNodesInRadius(obj.Position, obj.Radius*AvoidanceWeightRadiusFactor))
-            {
-                node.AddNodeFlags(AvoidanceFlags.Avoidance);
-                node.Weight += 4;
-                layer.Add(node);
             }
         }
 
@@ -379,20 +375,22 @@ namespace Trinity.Framework.Avoidance
                 return;
 
             if (actor.ActorType != ActorType.Monster)
-                return;           
+                return;
+
+            var kiteFromBoss = Settings.KiteMode == KiteMode.Elites && actor.IsBoss;
+            var kiteFromElites = Settings.KiteMode == KiteMode.Elites && actor.IsBossOrEliteRareUnique;
+            var kiteAlways = Settings.KiteMode == KiteMode.Always;
+            var isKiting = kiteFromBoss || kiteFromElites || kiteAlways;
+            var weight = (int)Settings.KiteWeight;
+
+            if (!isKiting)
+                return;
 
             foreach (var node in Grid.GetNodesInRadius(actor.Position, actor.CollisionRadius + Settings.KiteDistance))
             {
-                var kiteFromBoss = Settings.KiteMode == KiteMode.Elites && actor.IsBoss;
-                var kiteFromElites = Settings.KiteMode == KiteMode.Elites && actor.IsBossOrEliteRareUnique;
-                var kiteAlways = Settings.KiteMode == KiteMode.Always;
-
-                if (kiteFromBoss || kiteFromElites || kiteAlways)
-                {
-                    node.Weight = (int)Settings.KiteWeight;
-                    node.AddNodeFlags(AvoidanceFlags.KiteFrom);
-                    layer.Add(node);
-                }                
+                node.Weight = weight;
+                node.AddNodeFlags(AvoidanceFlags.KiteFrom);
+                layer.Add(node);
             }
         }
 

@@ -68,10 +68,10 @@ namespace Trinity
                 extras += " IsWaitingForPotion";
             if (TrinityTownRun.IsTryingToTownPortal())
                 extras += " IsTryingToTownPortal";
-            if (TownRun.TownRunTimerRunning())
-                extras += " TownRunTimerRunning";
-            if (TownRun.TownRunTimerFinished())
-                extras += " TownRunTimerFinished";
+            //if (TownRun.TownRunTimerRunning())
+            //    extras += " TownRunTimerRunning";
+            //if (TownRun.TownRunTimerFinished())
+            //    extras += " TownRunTimerFinished";
             if (_forceTargetUpdate)
                 extras += " ForceTargetUpdate";
             if (CurrentTarget == null)
@@ -145,6 +145,11 @@ namespace Trinity
                         return GetRunStatus(RunStatus.Failure, "PlayerDead");
                     }
 
+                    if (UsePotionIfNeededTask())
+                    {
+                        return GetRunStatus(RunStatus.Running, "UsePotionTask");
+                    }
+
                     if (Core.Avoidance.Avoider.ShouldAvoid)
                     {
                         Vector3 safespot;
@@ -184,7 +189,7 @@ namespace Trinity
                         }
                     }
 
-                    if (Player.IsCasting && CurrentTarget.GizmoType == GizmoType.Headstone)
+                    if (Player.IsCasting && CurrentTarget != null && CurrentTarget.GizmoType == GizmoType.Headstone)
                     {
                         Logger.Log(TrinityLogLevel.Info, LogCategory.UserInformation, "Player is casting revive ({0})", Player.CurrentAnimation);
                         return GetRunStatus(RunStatus.Success, "RevivingPlayer");
@@ -231,8 +236,8 @@ namespace Trinity
                         Logger.LogVerbose("CurrentTarget == null");
                     }
 
-                    if (ClearArea.ShouldMoveToPortalPosition)
-                        return RunStatus.Success;
+                    //if (ClearArea.ShouldMoveToPortalPosition)
+                    //    return RunStatus.Success;
 
                     _waitedTicks = 0;
                     _isWaitingAfterPower = false;
@@ -254,39 +259,6 @@ namespace Trinity
                         Logger.LogVerbose(LogCategory.Behavior, "Not Selecting Ability WaitingForPower={0} WaitingBeforePower={1} CurrentPower={2} CurrentTarget={3}",
                             _isWaitingForPower, _isWaitingBeforePower, CombatBase.CurrentPower, CurrentTarget);
                     }                    
-
-                    //// Change to close range target when blocked
-                    //if (PlayerMover.IsBlocked && CurrentTarget != null && CurrentTarget.Distance >= 12f && !CombatBase.IsDoingGoblinKamakazi && !CurrentTarget.IsBoss)
-                    //{
-                    //    var units = ObjectCache.Where(u => u.IsUnit && u.Distance < 14f && u.Weight > 0 && !u.IsSafeSpot).OrderBy(u => u.Distance).ToList();
-                    //    if (units.Count > 1 && units.First().RActorId != CurrentTarget.RActorId)
-                    //    {
-                    //        Blacklist3Seconds.Add(CurrentTarget.ACDId);
-                    //        CurrentTarget = units.First();
-
-                    //        if(CombatBase.CurrentPower == null)
-                    //            CombatBase.CurrentPower = AbilitySelector();
-
-                    //        if (CombatBase.CurrentPower.MinimumRange >= CurrentTarget.Distance)
-                    //        {
-                    //            // Its an ACDId targetted spell, change target.
-                    //            if (CombatBase.CurrentPower.TargetACDGUID > 0)
-                    //                CombatBase.CurrentPower.TargetACDGUID = CurrentTarget.ACDId;
-
-                    //            // Its a position based spell that is targetted too far away, change target position.
-                    //            if (CombatBase.CurrentPower.TargetPosition.Distance(ZetaDia.Me.Position) > CurrentTarget.Distance)
-                    //                CombatBase.CurrentPower.TargetPosition = CurrentTarget.Position;
-                    //        }
-                    //        else
-                    //        {
-                    //             // Try to find a new skill to use.
-                    //        }
-
-                    //        Logger.LogVerbose(LogCategory.Behavior, "Blocked! Forcing close range target {0} ({1}) Distance={2} ({3}) @ {4}", 
-                    //            CurrentTarget.InternalName, CurrentTarget.ActorSnoId, CurrentTarget.Distance, CombatBase.CurrentPower.SNOPower, 
-                    //            CombatBase.CurrentPower.TargetACDGUID > 0 ? "ACDId" : CombatBase.CurrentPower.TargetPosition != Vector3.Zero ? "Position" : "Self");
-                    //    }
-                    //}
 
                     // Some skills we need to wait to finish (like cyclone strike while epiphany is active)
                     if (WaitForAttackToFinish)
@@ -323,10 +295,10 @@ namespace Trinity
                         return RunStatus.Failure;
                     }
 
-                    while (CurrentTarget == null && (ForceVendorRunASAP || WantToTownRun) && !BrainBehavior.IsVendoring && TownRun.TownRunTimerRunning())
+                    if (CurrentTarget == null && TrinityTownRun.IsWantingTownRun)
                     {
-                        Logger.Log(TrinityLogLevel.Info, LogCategory.Behavior, "CurrentTarget is null but we are ready to to Town Run, waiting... ");
-                        return GetRunStatus(RunStatus.Running, "CurrentTargetNull");
+                        Logger.Log(TrinityLogLevel.Info, LogCategory.Behavior, "CurrentTarget is null, need to town run, returning ");
+                        return GetRunStatus(RunStatus.Success, "CurrentTargetNull");
                     }
 
                     //while (CurrentTarget == null && TownRun.IsTryingToTownPortal() && TownRun.TownRunTimerRunning())
@@ -361,10 +333,7 @@ namespace Trinity
 
                     // Pop a potion when necessary
 
-                    if (UsePotionIfNeededTask())
-                    {
-                        return GetRunStatus(RunStatus.Running, "UsePotionTask");
-                    }
+
 
                     using (new PerformanceLogger("HandleTarget.CheckAvoidanceBuffs"))
                     {
@@ -590,7 +559,7 @@ namespace Trinity
             }
 
             using (new PerformanceLogger("HandleTarget.TrySpecialMovement"))
-            {
+            { 
                 if (ClassMover.SpecialMovement(CurrentDestination) && Player.Position.Distance(CurrentDestination) > 10)
                 {
                     // Try to ensure the bot isn't navigating to somewhere behind us.
@@ -652,10 +621,10 @@ namespace Trinity
                         if (validLocation.X < 0 || validLocation.Y < 0)
                         {
                             Logger.Log("No more space to pickup item, town-run requested at next free moment. (HandleTarget)");
-                            ForceVendorRunASAP = true;
+                            //ForceVendorRunASAP = true;
 
-                            // Record the first position when we run out of bag space, so we can return later
-                            TownRun.SetPreTownRunPosition();
+                            //// Record the first position when we run out of bag space, so we can return later
+                            //TownRun.SetPreTownRunPosition();
                         }
                         else
                         {
@@ -1094,6 +1063,11 @@ namespace Trinity
         {
             using (new PerformanceLogger("HandleTarget.AssignMonsterTargetPower"))
             {
+                if (CombatBase.CurrentPower.TimeSinceAssignedMs > 500)
+                {
+                    _shouldPickNewAbilities = true;
+                }
+
                 // Find a valid ability if the target is a monster
                 if (_shouldPickNewAbilities && !_isWaitingForPower && !_isWaitingForPotion && !_isWaitingBeforePower)
                 {
@@ -1586,9 +1560,10 @@ namespace Trinity
                     return;
                 }
 
-                if (targetPosition.Distance(Player.Position) > 120)
+                var d = targetPosition.Distance(Player.Position);
+                if (d > 120)
                 {
-                    Logger.LogVerbose(LogCategory.Targetting, "Target position is too far away!");
+                    Logger.LogVerbose(LogCategory.Targetting, $"Target position is too far away! {d}");
                     return;
                 }
 

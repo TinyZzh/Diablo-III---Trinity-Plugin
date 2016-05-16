@@ -208,6 +208,8 @@ namespace Trinity.UI
                     dataContext.WindowHeight
                     );
 
+                VisualizerViewModel.Window.ContentRendered += (o, args) => VisualizerViewModel.IsWindowOpen = true;
+                VisualizerViewModel.Window.Closed += (o, args) => VisualizerViewModel.IsWindowOpen = false;
                 VisualizerViewModel.Window.Show();
             }
             catch (Exception ex)
@@ -249,7 +251,7 @@ namespace Trinity.UI
             {
                 if (!BotMain.IsRunning)
                 {
-                    ActorManager.Start();
+                    //ActorManager.Start();
                     TaskDispatcher.Start(ret => Coroutines.Town.StashItems.Execute(), o => o == null || (RunStatus)o != RunStatus.Running);
                 }
             }
@@ -594,7 +596,7 @@ namespace Trinity.UI
         {
             try
             {
-                ActorManager.Start();
+                //ActorManager.Start();
             }
             catch (Exception ex)
             {
@@ -606,7 +608,7 @@ namespace Trinity.UI
         {
             try
             {
-                ActorManager.Stop();
+                //ActorManager.Stop();
             }
             catch (Exception ex)
             {
@@ -854,24 +856,6 @@ namespace Trinity.UI
         //}
 
 
-        private static void btnClick_SpecialTestHandler(object sender, RoutedEventArgs routedEventArgs)
-        {
-            try
-            {
-                Logger.Log("Starting");
-
-                // A1 Open World Stash Location
-                var stashlocation = new Vector3(388.16f, 509.63f, 23.94531f);
-
-                CoroutineHelper.RunCoroutine(() => Navigator.MoveTo(TownRun.StashLocation));
-
-                Logger.Log("Finished");
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("Exception: " + ex);
-            }
-        }
 
         private static void btnClick_UpgradeRares(object sender, RoutedEventArgs routedEventArgs)
         {
@@ -893,7 +877,7 @@ namespace Trinity.UI
         {
             try
             {
-                ActorManager.Start();
+                //ActorManager.Start();
                 var alltypes = Enum.GetValues(typeof(ItemSelectionType)).Cast<ItemSelectionType>().ToList();
                 CoroutineHelper.RunCoroutine(() => CubeRaresToLegendary.Execute(alltypes), result => !CubeRaresToLegendary.CanRun());
             }
@@ -1147,7 +1131,8 @@ namespace Trinity.UI
         {
             try
             {
-                ItemSort.SortBackpack();
+                //ItemSort.SortBackpack();
+                Logger.Log("This feature has been disabled");
             }
             catch (Exception ex)
             {
@@ -1177,7 +1162,8 @@ namespace Trinity.UI
         {
             try
             {
-                ItemSort.SortStash();
+                //ItemSort.SortStash();
+                Logger.Log("This feature has been disabled");
             }
             catch (Exception ex)
             {
@@ -1189,12 +1175,16 @@ namespace Trinity.UI
         {
             try
             {
+                Logger.Log("This feature has been disabled");
+                return;
+
                 var result = MessageBox.Show("Are you sure? This may remove and salvage/sell items from your stash! Permanently!", "Clean Stash Confirmation",
                     MessageBoxButton.OKCancel);
 
                 if (result == MessageBoxResult.OK)
                 {
-                    CleanStash.RunCleanStash();
+
+                    //CleanStash.RunCleanStash();
                 }
             }
             catch (Exception ex)

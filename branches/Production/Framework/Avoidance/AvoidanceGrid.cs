@@ -12,10 +12,16 @@ namespace Trinity.Framework.Avoidance
 {
     public sealed class AvoidanceGrid : Grid<AvoidanceNode>
     {
-        private const float NodeBoxSize = 2.5f;
-        private const int Bounds = 2500;
+        static AvoidanceGrid()
+        {
+            Flags = Enum.GetValues(typeof(AvoidanceFlags)).Cast<AvoidanceFlags>().ToList();
+        }
 
-        public override float BoxSize => NodeBoxSize;
+        private static List<AvoidanceFlags> Flags { get; set; }
+
+        private const int Bounds = 2500;        
+
+        public override float BoxSize => 2.5f;
         public override int GridBounds => Bounds;
         public static AvoidanceGrid Instance => GetWorldGrid();
 
@@ -86,7 +92,7 @@ namespace Trinity.Framework.Avoidance
 
         public void FlagNodes(IEnumerable<AvoidanceNode> nodes, AvoidanceFlags flags, int weightModification = 0)
         {
-            foreach (var node in nodes.Where(node => node != null && node.AvoidanceFlags.HasFlag(AvoidanceFlags.NavigationBlocking)))
+            foreach (var node in nodes.Where(node => node != null && node.AvoidanceFlags.HasFlag(AvoidanceFlags.AllowWalk)))
             {
                 node.Weight += weightModification;
                 node.AddNodeFlags(flags);
@@ -112,8 +118,8 @@ namespace Trinity.Framework.Avoidance
             if (startNode == null)
                 return nodes;
 
-            var gridRadiusMax = Math.Round(maxDistance / NodeBoxSize, 0, MidpointRounding.AwayFromZero);
-            var gridRadiusMin = Math.Round(minDistance / NodeBoxSize, 0, MidpointRounding.AwayFromZero);
+            var gridRadiusMax = Math.Round(maxDistance / 2.5, 0, MidpointRounding.AwayFromZero);
+            var gridRadiusMin = Math.Round(minDistance / 2.5, 0, MidpointRounding.AwayFromZero);
 
             if (includeThisNode && condition(startNode))
                 nodes.Add(startNode);
@@ -172,8 +178,8 @@ namespace Trinity.Framework.Avoidance
             if (startNode == null)
                 return null;
 
-            var gridRadiusMax = Math.Round(maxDistance / NodeBoxSize, 0, MidpointRounding.AwayFromZero);
-            var gridRadiusMin = Math.Round(minDistance / NodeBoxSize, 0, MidpointRounding.AwayFromZero);
+            var gridRadiusMax = Math.Round(maxDistance / 2.5, 0, MidpointRounding.AwayFromZero);
+            var gridRadiusMin = Math.Round(minDistance / 2.5, 0, MidpointRounding.AwayFromZero);
 
             if (includeThisNode && condition(startNode))
                 nodes.Add(startNode);
@@ -245,7 +251,6 @@ namespace Trinity.Framework.Avoidance
         public bool IsStandingInFlags(params AvoidanceFlags[] flags)
         {
             return IsLocationInFlags(ZetaDia.Me.Position, flags);
-            //return Core.Avoidance.NearbyNodes.Any(n => flags.Any(f => n.AvoidanceFlags.HasFlag(f)));
         }
 
         public bool IsLocationInFlags(Vector3 location, params AvoidanceFlags[] flags)
@@ -259,13 +264,29 @@ namespace Trinity.Framework.Avoidance
             return nodes.Any(n => n != null && flags.Any(f => n.AvoidanceFlags.HasFlag(f)));
         }
 
+        public HashSet<AvoidanceFlags> GetAvoidanceFlags(Vector3 location)
+        {
+            var flags = new HashSet<AvoidanceFlags>();
+            var nearest = GetNearestNode(location);
+            if (nearest == null)
+                return flags;
+            
+            var nodes = new HashSet<AvoidanceNode>(nearest.AdjacentNodes) { nearest };            
+            foreach (var flag in nodes.SelectMany(node => Flags.Where(flag => node.AvoidanceFlags.HasFlag(flag))))
+            {
+                flags.Add(flag);
+            }            
+            return flags;
+        }
+
         public bool IsPathingOverFlags(params AvoidanceFlags[] flags)
         {
             if (PlayerMover.NavigationProvider == null || PlayerMover.NavigationProvider.CurrentPath == null)
                 return false;
 
-            var currentPath = PlayerMover.NavigationProvider.CurrentPath;
-            if (currentPath.Count <= 0)
+            var playerPosition = ZetaDia.Me.Position;
+            var currentPath = PlayerMover.NavigationProvider.CurrentPath.TakeWhile(p => p.Distance(playerPosition) < AvoidanceManager.MaxDistance);
+            if (!currentPath.Any())
                 return false;
 
             var overFlags = currentPath.Any(p => Core.Avoidance.Grid.IsIntersectedByFlags(ZetaDia.Me.Position, p, flags));

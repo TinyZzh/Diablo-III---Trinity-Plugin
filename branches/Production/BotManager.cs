@@ -127,7 +127,7 @@ namespace Trinity
                 Logger.LogDebug(LogCategory.GlobalHandler, "Recently died, durability zero");
                 return true;
             }
-
+            
             await AutoEquipSkills.Instance.Execute();
             await AutoEquipItems.Instance.Execute();
 
@@ -174,7 +174,6 @@ namespace Trinity
             //}
 
             StoreAndReplaceHook("VendorRun", new ActionRunCoroutine(ret => TrinityTownRun.Execute()));
-
         }
 
         //private static async Task<bool> TownRunSelector(Decorator originalTownRun)
@@ -305,13 +304,12 @@ namespace Trinity
             if (Settings.Advanced.TPSEnabled)
             {
                 BotMain.TicksPerSecond = Settings.Advanced.TPSLimit;
-                ActorManager.TickDelayMs = Settings.Advanced.TPSLimit < 0 ? 0 : 1000 / Settings.Advanced.TPSLimit;
+                //ActorManager.TickDelayMs = Settings.Advanced.TPSLimit < 0 ? 0 : 1000 / Settings.Advanced.TPSLimit;
                 Logger.Log(TrinityLogLevel.Verbose, LogCategory.UserInformation, "Bot TPS set to {0}", Settings.Advanced.TPSLimit);
             }
             else
             {
                 BotMain.TicksPerSecond = 30;
-                ActorManager.TickDelayMs = 30;
                 Logger.Log(TrinityLogLevel.Verbose, LogCategory.UserInformation, "Reset bot TPS to default: {0}", 30);
             }
         }
