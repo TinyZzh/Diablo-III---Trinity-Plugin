@@ -1,0 +1,72 @@
+﻿<UserControl 
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:ut="clr-namespace:Trinity.UIComponents"
+             xmlns:demonbuddy="clr-namespace:Demonbuddy;assembly=Demonbuddy"
+             xmlns:settings="clr-namespace:Trinity.Settings"
+             mc:Ignorable="d" Foreground="{DynamicResource TextBrush}" Background="#434343"
+             MinHeight="470" MinWidth="432">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Template.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <ut:BoolToVisibilityConverter x:Key="VisibleWhenTrueConverter" TrueValue="Visible" FalseValue="Collapsed"/>
+            <settings:SettingsManager x:Key="SettingsManager" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Border Padding="0,0,0,10" Background="#343434">
+            <TabControl Background="#1d1d1d" Foreground="#343434" >
+                <TabItem Header="Combat" Foreground="{DynamicResource TextBrush}" Style="{DynamicResource MainMenuTabItem}">
+                    <Border Tag="ConfigCombat.xaml"/>
+                </TabItem>
+                <TabItem Header="Objects" Foreground="{DynamicResource TextBrush}" Style="{DynamicResource MainMenuTabItem}">
+                    <Border Tag="ConfigObjects.xaml"/>
+                </TabItem>
+                <TabItem Header="Items" Foreground="{DynamicResource TextBrush}" Style="{DynamicResource MainMenuTabItem}">
+                    <Border Tag="ConfigItems.xaml"/>
+                </TabItem>
+                <TabItem Header="Avoidance" Foreground="{DynamicResource TextBrush}" Style="{DynamicResource MainMenuTabItem}">
+                    <Border Tag="Avoidance.xaml"/>
+                </TabItem>
+                <TabItem Header="Paragon" Foreground="{DynamicResource TextBrush}" Style="{DynamicResource MainMenuTabItem}">
+                    <Border Tag="Paragon.xaml"/>
+                </TabItem>
+                <TabItem Header="Advanced" Foreground="{DynamicResource TextBrush}" Style="{DynamicResource MainMenuTabItem}">
+                    <Border Tag="ConfigAdvanced.xaml"/>
+                </TabItem>
+                <TabItem Header="Debug" Foreground="{DynamicResource TextBrush}" Visibility="{Binding Path=DebugVisibility}" Style="{DynamicResource MainMenuTabItem}">
+                    <Border Tag="DebugTab.xaml"/>
+                </TabItem>                
+            </TabControl>
+        </Border>
+        <Border Grid.Row="1" Padding="6,0,6,4" Background="#343434">
+            <Grid Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <WrapPanel Grid.Column="0">
+                    <Button Height="26" ToolTip="Replace all current settings with the settings from an XML file." DataContext="{StaticResource SettingsManager}" Command="{Binding LoadSettingsCommand}" Margin="4" Width="65">Import</Button>
+                    <Button Height="26" ToolTip="Copy all the current settings to a different file; it is an export - the current settings for this hero will NOT point to / be linked to the new file." DataContext="{StaticResource SettingsManager}" Command="{Binding SaveAsSettingsCommand}" Margin="4" Width="65">Export</Button>
+                    <Button Height="26" Command="{Binding ResetAllCommand}" Margin="4" Width="65">Reset</Button>
+                </WrapPanel>
+
+                <!--<demonbuddy:SplitButton Grid.Column="1" Height="26" HorizontalAlignment="Right" Content="Save" Margin="4" Width="120">
+                    <demonbuddy:SplitButton.ButtonMenuItemsSource>
+                        <MenuItem Width="124" Header="Save As" Command="{Binding SaveAsCommand}"/>
+                    </demonbuddy:SplitButton.ButtonMenuItemsSource>
+                </demonbuddy:SplitButton>-->
+
+                <Button Grid.Column="1" HorizontalAlignment="Right" Command="{Binding SaveCommand}" Width="120" Margin="4">Save</Button>
+            </Grid>
+         </Border>
+    </Grid>
+</UserControl>
