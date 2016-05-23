@@ -15,21 +15,20 @@ namespace Trinity.Combat.Abilities.PhelonsPlayground.Wizard
     {
         public class Archon
         {
+            public static bool NeedSlowTime = true;
             public static TrinityPower PowerSelector()
             {
                 if (!Skills.Wizard.ArchonStrike.IsActive)
                     return null;
+
+                if (ShouldSlowTime)
+                    return CastSlowTime;
 
                 if (ShouldArcaneBlast)
                     return CastArcaneBlast;
 
                 if (ShouldArcaneStrike)
                     return CastArcaneStrike;
-
-                var bestAoeUnit = PhelonTargeting.BestAoeUnit();
-
-                if (Skills.Wizard.ArchonStrike.IsActive && !Core.Avoidance.InCriticalAvoidance(bestAoeUnit.Position))
-                    return new TrinityPower(SNOPower.Walk, 3f, bestAoeUnit.Position);
 
                 if (ShouldDisentegrate)
                     return CastDisentegrate;
@@ -49,9 +48,6 @@ namespace Trinity.Combat.Abilities.PhelonsPlayground.Wizard
             {
                 get
                 {
-                    //Logger.Log(
-                    //    $"Casting {Skills.Wizard.ArchonDisintegrationWave.SNOPower} on " +
-                    //    $"{CurrentTarget.InternalName} {CurrentTarget.Position} Distance={CurrentTarget.Distance}");
                     return new TrinityPower(Skills.Wizard.ArchonDisintegrationWave.SNOPower, 45f,
                         PhelonUtils.PointBehind(PhelonUtils.GetBestPierceTarget(45).Position));
                 }
@@ -59,19 +55,13 @@ namespace Trinity.Combat.Abilities.PhelonsPlayground.Wizard
 
             private static bool ShouldArcaneStrike
             {
-                get
-                {
-                    return Skills.Wizard.ArchonStrike.CanCast() && PhelonTargeting.BestAoeUnit().Distance < 10f;
-                }
+                get { return Skills.Wizard.ArchonStrike.CanCast() && PhelonTargeting.BestAoeUnit().Distance < 10f; }
             }
 
             private static TrinityPower CastArcaneStrike
             {
                 get
                 {
-                    //Logger.Log(
-                    //    $"Casting {Skills.Wizard.ArchonStrike.SNOPower} on " +
-                    //    $"{CurrentTarget.InternalName} {CurrentTarget.Position} Distance={CurrentTarget.Distance}");
                     return new TrinityPower(Skills.Wizard.ArchonStrike.SNOPower, 10f,
                         PhelonTargeting.BestAoeUnit().Position);
                 }
@@ -79,21 +69,34 @@ namespace Trinity.Combat.Abilities.PhelonsPlayground.Wizard
 
             private static bool ShouldArcaneBlast
             {
-                get
-                {
-                    return Skills.Wizard.ArchonBlast.CanCast() && PhelonTargeting.BestAoeUnit().Distance < 10f;
-                }
+                get { return Skills.Wizard.ArchonBlast.CanCast() && PhelonTargeting.BestAoeUnit().Distance < 10f; }
             }
 
             private static TrinityPower CastArcaneBlast
             {
                 get
                 {
-                    //Logger.Log(
-                    //    $"Casting {Skills.Wizard.ArchonBlast.SNOPower} on " +
-                    //    $"{CurrentTarget.InternalName} {CurrentTarget.Position} Distance={CurrentTarget.Distance}");
                     return new TrinityPower(Skills.Wizard.ArchonBlast.SNOPower, 10f,
                         PhelonTargeting.BestAoeUnit().Position);
+                }
+            }
+
+            private static bool ShouldSlowTime
+            {
+                get
+                {
+                    if (!Skills.Wizard.ArchonSlowTime.CanCast())
+                        return false;
+                    return NeedSlowTime;
+                }
+            }
+
+            private static TrinityPower CastSlowTime
+            {
+                get
+                {
+                    NeedSlowTime = false;
+                    return new TrinityPower(Skills.Wizard.ArchonSlowTime.SNOPower);
                 }
             }
         }

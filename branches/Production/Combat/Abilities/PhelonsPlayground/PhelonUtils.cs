@@ -43,9 +43,10 @@ namespace Trinity.Combat.Abilities.PhelonsPlayground
         {
             get
             {
-                return BestBuffPosition != Vector3.Zero
+                return BestBuffPosition != Vector3.Zero &&
+                       BestBuffPosition.Distance(PhelonTargeting.BestAoeUnit(45f, true).Position) < 12
                     ? BestBuffPosition
-                    : PhelonTargeting.BestAoeUnit().Position;
+                    : PhelonTargeting.BestAoeUnit(45f, true).Position;
             }
         }
 
@@ -101,8 +102,8 @@ namespace Trinity.Combat.Abilities.PhelonsPlayground
                     where u.IsUnit &&
                     u.RadiusDistance <= maxSearchRange &&
                     u.HasBeenInLoS && !u.HasDebuff(aura)
-                    orderby u.NearbyUnitsWithinDistance(10),
-                     u.Distance descending
+                    orderby u.NearbyUnitsWithinDistance(),
+                     u.Distance
                     select u).FirstOrDefault();
         }
 
@@ -131,7 +132,7 @@ namespace Trinity.Combat.Abilities.PhelonsPlayground
         {
             return (from u in SafeList(ignoreElites)
                     where u.IsUnit &&
-                    u.RadiusDistance <= maxRange && u.HasBeenInLoS &&
+                    u.RadiusDistance <= maxRange && u.IsInLineOfSight() &&
                     !(ignoreUnitsInAoE && u.IsStandingInAvoidance) &&
                     !(ignoreElites && u.IsEliteRareUnique)
                     orderby u.CountUnitsInFront() descending
