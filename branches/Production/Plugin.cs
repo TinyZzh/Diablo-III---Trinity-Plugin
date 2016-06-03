@@ -81,7 +81,7 @@ namespace Trinity
         {
             get
             {
-                return string.Format("TrinityPlugin v{0} RELEASE", Version);
+                return string.Format("TrinityPlugin v{0}", Version);
             }
         }
 

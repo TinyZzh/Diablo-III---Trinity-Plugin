@@ -40,15 +40,8 @@ namespace Trinity.Helpers
             return queue;
         }
 
-        public static Dictionary<int, string> ToDictionary(this Enum @enum, bool lowerCase = false)
-        {
-            var type = @enum.GetType();
-            return Enum.GetValues(type).Cast<int>().ToDictionary(e => e, e =>
-            {
-                var name = Enum.GetName(type, e);
-                return lowerCase && name != null ? name.ToLower() : Enum.GetName(type, e);
-            });
-        }
+
+
 
         public static void Sort<TSource, TKey>(this ObservableCollection<TSource> source, Func<TSource, TKey> keySelector)
         {
@@ -59,7 +52,7 @@ namespace Trinity.Helpers
                 source.Add(sortedItem);
             }
         }
-  
+
 
         /// <summary>
         /// Fetches value from Dictionary or adds and returns a default value.
@@ -456,7 +449,6 @@ namespace Trinity.Helpers
 
             return null;
         }
-
     }
 }
 

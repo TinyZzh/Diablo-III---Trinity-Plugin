@@ -72,6 +72,13 @@ namespace Trinity.Movement
             {
                 LastSpecialMovement = DateTime.UtcNow;
             }
+            else
+            {
+                if (PlayerMover.IsBlocked && IsSpecialMovementReady)
+                {
+                    Logger.LogVerbose("Badness: Blocked, Not 'completely blocked' and unable to cast movement spell");
+                }
+            }
 
             return result;
         }
@@ -93,6 +100,9 @@ namespace Trinity.Movement
         {
             get
             {
+                if (!TrinityPlugin.Settings.Combat.Misc.AllowOOCMovement)
+                    return false;
+
                 var Player = CacheData.Player;
                 switch (CacheData.Player.ActorClass)
                 {
@@ -163,7 +173,7 @@ namespace Trinity.Movement
         {
             if (TrinityPlugin.Settings.Advanced.LogCategories.HasFlag(LogCategory.Movement))
                 Logger.Log(TrinityLogLevel.Debug, LogCategory.Movement,
-                    $"Using {power} for movement. Distance={0:0}", TrinityPlugin.Player.Position.Distance(destination));
+                    $"Using {power} for movement. Distance={TrinityPlugin.Player.Position.Distance(destination):0}");
         }
 
         #region Barb
@@ -266,7 +276,15 @@ namespace Trinity.Movement
             if (!CombatBase.CanCast(SNOPower.DemonHunter_Vault)) return false;
 
             var destinationDistance = destination.Distance(CacheData.Player.Position);
-            if (destinationDistance < MinDistance) return false;
+            if (destinationDistance < MinDistance)
+            {
+                return false;
+            }
+
+            if (destinationDistance < 25f)
+            {                
+                destination = MathEx.CalculatePointFrom(destination, ZetaDia.Me.Position, 25);
+            }
 
             //var movementRange = 35f;
             //if (destinationDistance > movementRange)
@@ -283,8 +301,8 @@ namespace Trinity.Movement
 
             if (destination == Vector3.Zero)
                 return false;
-            
-            if (!Core.Avoidance.InCriticalAvoidance(destination) && Core.Avoidance.Grid.IsIntersectedByFlags(ZetaDia.Me.Position, destination, AvoidanceFlags.CriticalAvoidance))
+
+            if (!Core.Avoidance.InCriticalAvoidance(ZetaDia.Me.Position) && Core.Avoidance.Grid.IsIntersectedByFlags(ZetaDia.Me.Position, destination, AvoidanceFlags.CriticalAvoidance))
                 return false;
 
             int vaultDelay = TrinityPlugin.Settings.Combat.DemonHunter.VaultMovementDelay;
@@ -328,7 +346,7 @@ namespace Trinity.Movement
                 // Prevent trying to vault up walls; spider man he is not.
                 if (Math.Abs(destination.Z - TrinityPlugin.Player.Position.Z) > 5)
                     return false;
-
+                
                 Skills.DemonHunter.Vault.Cast(destination);
                 LogMovement(SNOPower.DemonHunter_Vault, destination);
                 return true;

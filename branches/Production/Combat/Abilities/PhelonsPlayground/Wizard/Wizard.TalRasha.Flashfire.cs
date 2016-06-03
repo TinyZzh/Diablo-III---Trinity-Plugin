@@ -20,14 +20,17 @@ namespace Trinity.Combat.Abilities.PhelonsPlayground.Wizard
                 //public static bool NeedTwister = false;
                 public static TrinityPower PowerSelector()
                 {
+                    if (CurrentTarget != null && CurrentTarget.IsUnit)
+                    {
+                        if (ShouldSpectralBlade)
+                            return CastSpectralBlade;
+                        if (ShouldElectrocute)
+                            return CastElectrocute;
+                    }
                     if (ShouldFrostNova)
                         return CastFrostNova;
                     if (ShouldExplosiveBlast)
                         return CastExplosiveBlast;
-                    if (ShouldSpectralBlade)
-                        return CastSpectralBlade;
-                    if (ShouldElectrocute)
-                        return CastElectrocute;
                     return null;
                 }
 
@@ -43,7 +46,7 @@ namespace Trinity.Combat.Abilities.PhelonsPlayground.Wizard
 
                 private static bool ShouldFrostNova
                 {
-                    get { return Skills.Wizard.FrostNova.CanCast() && TargetUtil.AnyMobsInRange(12); }
+                    get { return Skills.Wizard.FrostNova.CanCast(); }
                 }
 
                 private static TrinityPower CastFrostNova
@@ -55,7 +58,9 @@ namespace Trinity.Combat.Abilities.PhelonsPlayground.Wizard
                 {
                     get
                     {
-                        return Skills.Wizard.SpectralBlade.CanCast() && CurrentTarget != null;
+                        return Skills.Wizard.SpectralBlade.CanCast() && CurrentTarget != null &&
+                               (TalRashasCount < 4 || Player.PrimaryResourcePct < 0.25 ||
+                                Skills.Wizard.ExplosiveBlast.CooldownRemaining > 0);
                     }
                 }
 
@@ -68,13 +73,15 @@ namespace Trinity.Combat.Abilities.PhelonsPlayground.Wizard
                 {
                     get
                     {
-                        return Skills.Wizard.Electrocute.CanCast() && CurrentTarget != null;
+                        return Skills.Wizard.Electrocute.CanCast() && CurrentTarget != null &&
+                               (TalRashasCount < 4 || Player.PrimaryResourcePct < 0.25 ||
+                                Skills.Wizard.ExplosiveBlast.CooldownRemaining > 0);
                     }
                 }
 
                 private static TrinityPower CastElectrocute
                 {
-                    get { return new TrinityPower(Skills.Wizard.Electrocute.SNOPower, 12f, CurrentTarget.ACDGuid); }
+                    get { return new TrinityPower(Skills.Wizard.Electrocute.SNOPower, 35f, CurrentTarget.ACDGuid); }
                 }
             }
         }

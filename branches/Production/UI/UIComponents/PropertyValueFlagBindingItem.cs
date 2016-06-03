@@ -1,10 +1,18 @@
 ﻿using System;
+using System.ArrayExtensions;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using JetBrains.Annotations;
+using Trinity.Framework.Objects.Attributes;
+using Trinity.Framework.Objects.Memory.Sno.Types;
 using Trinity.UIComponents;
+using UnconstrainedMelody;
+using Trinity.Helpers;
+using Trinity.Technicals;
 
 namespace Trinity.UI.UIComponents
 {
@@ -37,7 +45,30 @@ namespace Trinity.UI.UIComponents
 
         public object Flag { get; set; }
 
-        public BindingMember Source { get; set; }
+        public BindingMember Source
+        {
+            get { return _source; }
+            set
+            {
+                if (_source != value)
+                {
+                    _source = value;
+                    if (_source != null)
+                    {
+                        _source.PropertyChanged += SourcePropertyChanged;
+                    }                    
+                    OnPropertyChanged(nameof(Source));
+                }                
+            }
+        }
+
+        private void SourcePropertyChanged(object sender, PropertyChangedEventArgs args)
+        {
+            if (string.IsNullOrEmpty(args.PropertyName) || args.PropertyName == nameof(Source.Value))
+            {
+                OnPropertyChanged(nameof(Value));
+            }
+        }
 
         public Type Type { get; set; }
 
@@ -47,32 +78,71 @@ namespace Trinity.UI.UIComponents
         public PropertyValueFlagBindingItem()
         {
             _instancedCommand = new RelayCommand(UIExecute, param => true);
-                        
+
             OnSourceChanged += name =>
             {
                 if (name == Source.Name)
-                    OnPropertyChanged("Value");
+                    OnPropertyChanged(nameof(Value));
             };
         }
 
         public void UIExecute(object o)
         {
-    
+
         }
 
-        private int? _allValues;
-        public int AllValues
+        private static bool IsSignedTypeCode(TypeCode code)
+        {
+            switch (code)
+            {
+                case TypeCode.Byte:
+                case TypeCode.UInt16:
+                case TypeCode.UInt32:
+                case TypeCode.UInt64:
+                    return false;
+                default:
+                    return true;
+            }
+        }
+
+        private long _allValuesSum;
+        private Enum _allValues;
+        private BindingMember _source;
+
+        public Enum AllValues
         {
             get
             {
-                if (_allValues.HasValue)
-                    return _allValues.Value;
+                if (_allValues != null) return _allValues;
+                _allValuesSum = GetAllEnumValues()
+                    .Where(value => value == 1 || value % 2 == 0)
+                    .Aggregate<long, long>(0, (current, value) => current | value);
 
-                var enumValues = Enum.GetValues(Type).Cast<int>().Where(e => e == 1 || e % 2 == 0);
-                _allValues = enumValues.Aggregate(0, (current, value) => current | value);
+                _allValuesSum &= ~Source.ExcludeMask;
 
-                return _allValues.Value;
+                _allValues = (Enum)Enum.Parse(Type, _allValuesSum.ToString());
+                return _allValues;
             }
+        }
+
+        //private long? _excludeMask;
+        //public long ExcludeMask
+        //{
+        //    get
+        //    {
+        //        if (_excludeMask.HasValue)
+        //            return _excludeMask.Value;
+
+        //        var excludeFlagsAttr = (FlagExclusionAttribute)Source.PropertyInfo.GetCustomAttribute(typeof(FlagExclusionAttribute));
+        //        _excludeMask = excludeFlagsAttr?.Mask ?? 0;
+        //        return _excludeMask.Value;
+        //    }
+        //    set { _excludeMask = value; }
+        //}
+
+        private IEnumerable<long> GetAllEnumValues()
+        {
+            return Enum.GetValues(Type).Cast<Enum>().Select(Convert.ToInt64);
         }
 
         public void ToggleFlag()
@@ -80,24 +150,19 @@ namespace Trinity.UI.UIComponents
             if (Source == null)
                 return;
 
-            int targetValue = (int)Source.Value;
-            targetValue ^= (int)Enum.Parse(Type, (string)Name);
-            var result = (Enum)Enum.Parse(Type, targetValue.ToString());
-            SetSourceValue(result);
+            var targetValue = Convert.ToInt64(Source.Value);
+            targetValue ^= Convert.ToInt64(Enum.Parse(Type, (string)Name));
+            SetSourceValue(targetValue);
         }
 
-        private void SetSourceValue(Enum result)
+        private void SetSourceValue(long value)
         {
-            Source.Value = result;
-
-            if (OnSourceChanged != null)
-                OnSourceChanged(Source.Name);
+            value &= ~Source.ExcludeMask;
+            Source.Value = (Enum)Enum.Parse(Type, value.ToString());
+            OnSourceChanged?.Invoke(Source.Name);
         }
 
-        public ICommand FlagCheckboxSetCommand
-        {
-            get { return _instancedCommand; }
-        }
+        public ICommand FlagCheckboxSetCommand => _instancedCommand;
 
         public bool Value
         {
@@ -108,29 +173,40 @@ namespace Trinity.UI.UIComponents
             }
             set
             {
-                if (_value != value)
+                try
                 {
-                    _value = value;
-                    OnPropertyChanged();
-                    
-                    if ((int)Flag == AllValues)
+                    if (_value != value)
                     {
-                        if ((int) Source.Value == AllValues)
+                        _value = value;
+                        OnPropertyChanged();
+
+                        // Check if this flag is an 'All/None' toggle in enum e.g
+                        // All = ~(1 << 24),  
+
+                        if (_allValuesSum + Convert.ToInt64(Flag) < 0)
                         {
-                            // Set to nothing selected
-                            SetSourceValue((Enum)Enum.Parse(Type, "0"));
+                            if (Equals(Source.Value, AllValues))
+                            {
+                                // Set to nothing selected
+                                SetSourceValue(0);
+                            }
+                            else
+                            {
+                                // Set to everything selected
+                                SetSourceValue(_allValuesSum);
+                            }
                         }
                         else
                         {
-                            // Set to everything selected
-                            SetSourceValue((Enum)Enum.Parse(Type, AllValues.ToString()));
+                            ToggleFlag();
                         }
                     }
-                    else
-                    {
-                       ToggleFlag(); 
-                    }                    
                 }
+                catch (Exception ex)
+                {
+                    Logger.LogError($"Exception in PropertyValueFlagBindingItem: {ex}");
+                }
+
             }
         }
 
@@ -140,7 +216,7 @@ namespace Trinity.UI.UIComponents
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             var handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+            handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
     }

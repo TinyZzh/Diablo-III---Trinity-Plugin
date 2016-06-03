@@ -18,7 +18,7 @@ namespace Trinity.Combat.Abilities.PhelonsPlayground.WitchDoctor
                 TrinityCacheObject target;
 
                 if (GetHasBuff(SNOPower.Witchdoctor_SpiritWalk))
-                    return new TrinityPower(SNOPower.Walk, 7f, PhelonUtils.BestWalkLocation);
+                    return new TrinityPower(SNOPower.Walk, 7f, PhelonUtils.BestWalkLocation(35f, true));
 
                 if (ShouldPiranhas(out target))
                     return CastPiranhas(target);
@@ -51,7 +51,7 @@ namespace Trinity.Combat.Abilities.PhelonsPlayground.WitchDoctor
                 if (Runes.WitchDoctor.WaveOfMutilation.IsActive)
                     target = PhelonUtils.GetBestPierceTarget(25, true);
                 else
-                    target = PhelonGroupSupport.Monk;
+                    target = PhelonTargeting.BestAoeUnit(35, true);
 
                 return target != null;
             }

@@ -6,6 +6,7 @@ using Buddy.Coroutines;
 using Trinity.Framework.Actors;
 using Trinity.Helpers;
 using Trinity.Items;
+using Trinity.Items.ItemList;
 using Trinity.Reference;
 using Trinity.Settings.Loot;
 using TrinityCoroutines;
@@ -146,7 +147,7 @@ namespace Trinity.Coroutines.Town
                     continue;
 
                 if (TrinityPlugin.Settings.KanaisCube.ExtractLegendaryPowers == CubeExtractOption.OnlyTrashed &&
-                    (ItemList.ShouldStashItem(item) || TrinityPlugin.Settings.Loot.ItemFilterMode != ItemFilterMode.ItemList))
+                    (ItemListEvaluator.ShouldStashItem(item) || TrinityPlugin.Settings.Loot.Pickup.ItemFilterMode != ItemFilterMode.ItemList))
                     continue;
 
                 if (TrinityPlugin.Settings.KanaisCube.ExtractLegendaryPowers == CubeExtractOption.OnlyNonAncient &&
@@ -175,7 +176,6 @@ namespace Trinity.Coroutines.Town
 
         public static async Task<bool> Execute()
         {
-
             if (TrinityPlugin.Player.IsInventoryLockedForGreaterRift)
             {
                 Logger.LogVerbose("Can't extract powers: inventory locked by greater rift");
@@ -193,6 +193,35 @@ namespace Trinity.Coroutines.Town
                 _itemsTakenFromStashAnnId.Clear();
             }
             return result;
+        }
+
+        public static async Task<bool> ExtractAllBackpack()
+        {
+            while (true)
+            {
+                if (BackpackHasMaterials && _backpackCandidates.Any())
+                {
+                    if (!await MoveToCube())
+                    {
+                        Logger.LogVerbose("[ExtractLegendaryPowers] MoveToCube() failed");
+                        return true;
+                    }
+
+                    if (!await ExtractPowers())
+                    {
+                        Logger.LogVerbose("[ExtractLegendaryPowers] ExtractPowers() failed");
+                        return true;
+                    }
+                }
+                else
+                {
+                    Logger.Log("[ExtractLegendaryPowers] Oh no! Out of materials!");
+                    return true;
+                }
+
+                await Coroutine.Sleep(500);
+                await Coroutine.Yield();
+            }
         }
 
         public static async Task<bool> Main()

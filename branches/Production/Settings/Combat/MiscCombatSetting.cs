@@ -1,15 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
+using System.Linq;
 using System.Runtime.Serialization;
+using Trinity.Framework.Objects.Attributes;
+using Trinity.Framework.Objects.Enums;
 using Trinity.Helpers;
+using Trinity.Technicals;
+using Trinity.UIComponents;
+using Zeta.Game.Internals.Actors;
 
 namespace Trinity.Config.Combat
 {
     [DataContract(Namespace = "")]
-    public class MiscCombatSetting : NotifyBase, ITrinitySetting<MiscCombatSetting>, INotifyPropertyChanged
+    public class MiscCombatSetting : NotifyBase, ITrinitySetting<MiscCombatSetting>, INotifyPropertyChanged, ITrinitySettingEvents
     {
+
         #region Fields
+        private MonsterAffixes _ignoredAffixes;
         private GoblinPriority _GoblinPriority;
         private int _NonEliteRange;
         private int _EliteRange;
@@ -45,10 +54,11 @@ namespace Trinity.Config.Combat
         /// <summary>
         /// Occurs when property changed.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        //public event PropertyChangedEventHandler PropertyChanged;
         private bool _ignoreMonstersWhileReflectingDamage;
         private FollowerBossFightMode _followerBossFightDialogMode;
-        private bool _ignoreHighHitePointTrash;
+        private bool _ignoreHighHitPointTrash;
+
         private bool _ignoreRares;
         private bool _ignoreChampions;
         private bool _tryToSnapshot;
@@ -69,6 +79,8 @@ namespace Trinity.Config.Combat
         private float _PotionLevel;
         private float _HealthGlobeLevelResource;
         private bool _waitForResInBossEncounters;
+        private bool _ignoreHighHitPointElites;
+        private int _timeToBlockMs;
 
         #endregion Events
 
@@ -924,22 +936,39 @@ namespace Trinity.Config.Combat
 
         [DataMember(IsRequired = false)]
         [DefaultValue(false)]
-        public bool IgnoreHighHitePointTrash
+        public bool IgnoreHighHitPointTrash
         {
             get
             {
-                return _ignoreHighHitePointTrash;
+                return _ignoreHighHitPointTrash;
             }
             set
             {
-                if (_ignoreHighHitePointTrash != value)
+                if (_ignoreHighHitPointTrash != value)
                 {
-                    _ignoreHighHitePointTrash = value;
-                    OnPropertyChanged("IgnoreHighHitePointTrash");
+                    _ignoreHighHitPointTrash = value;
+                    OnPropertyChanged("IgnoreHighHitPointTrash");
                 }
             }
         }
 
+        [DataMember(IsRequired = false)]
+        [DefaultValue(false)]
+        public bool IgnoreHighHitPointElites
+        {
+            get
+            {
+                return _ignoreHighHitPointElites;
+            }
+            set
+            {
+                if (_ignoreHighHitPointElites != value)
+                {
+                    _ignoreHighHitPointElites = value;
+                    OnPropertyChanged("IgnoreHighHitPointElites");
+                }
+            }
+        }
 
         [DataMember(IsRequired = false)]
         [DefaultValue(false)]
@@ -1040,12 +1069,34 @@ namespace Trinity.Config.Combat
             }
         }
 
-        private HashSet<TrinityMonsterAffix> _ignoreAffixes;
-        public HashSet<TrinityMonsterAffix> IgnoreAffixes
+        [DataMember(IsRequired = false)]
+        [Setting, UIControl(UIControlType.FlagsCheckboxes, UIControlOptions.Inline | UIControlOptions.NoLabel)]          
+        [FlagExclusion(IgnoreAffixesExclusions)]
+        public MonsterAffixes IgnoreAffixes
         {
-            get { return _ignoreAffixes; }
-            set { SetField(ref _ignoreAffixes, value); }
+            get { return _ignoredAffixes; }
+            set { SetField(ref _ignoredAffixes, value); }
         }
+
+        [DataMember(IsRequired = false)]
+        [DefaultValue(1000)]
+        public int TimeToBlockMs
+        {
+            get
+            {
+                return _timeToBlockMs;
+            }
+            set
+            {
+                if (_timeToBlockMs != value)
+                {
+                    _timeToBlockMs = value;
+                    OnPropertyChanged(nameof(TimeToBlockMs));
+                }
+            }
+        }
+
+        public const MonsterAffixes IgnoreAffixesExclusions = MonsterAffixes.Elite | MonsterAffixes.Minion | MonsterAffixes.Rare | MonsterAffixes.Unique;
 
         #endregion Properties
 
@@ -1065,17 +1116,17 @@ namespace Trinity.Config.Combat
             return TrinitySetting.Clone(this);
         }
 
-        /// <summary>
-        /// Called when property changed.
-        /// </summary>
-        /// <param name="propertyName">Name of the property.</param>
-        private void OnPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
+        ///// <summary>
+        ///// Called when property changed.
+        ///// </summary>
+        ///// <param name="propertyName">Name of the property.</param>
+        //private void OnPropertyChanged(string propertyName)
+        //{
+        //    if (PropertyChanged != null)
+        //    {
+        //        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        //    }
+        //}
 
         /// <summary>
         /// This will set default values for new settings if they were not present in the serialized XML (otherwise they will be the type defaults)
@@ -1086,7 +1137,7 @@ namespace Trinity.Config.Combat
         {
             FollowerBossFightDialogMode = FollowerBossFightMode.DeclineInBounty;
             IgnoreMonstersWhileReflectingDamage = false;
-            IgnoreHighHitePointTrash = false;
+            IgnoreHighHitPointTrash = false;
             IgnoreRares = false;
             UseNavMeshTargeting = true;
             TrashPackClusterRadius = 40f;
@@ -1109,7 +1160,7 @@ namespace Trinity.Config.Combat
             TryToSnapshot = true;
 
             ForceKillClusterElites = false;
-            RiftValueAlwaysKillClusterValue = 10;            
+            RiftValueAlwaysKillClusterValue = 10;
             RiftValueAlwaysKillUnitsAbove = 1;
             RiftValueIgnoreUnitsBelow = 0;
             RiftProgressionAlwaysKillPct = 98;
@@ -1117,8 +1168,18 @@ namespace Trinity.Config.Combat
             AttackWhenBlocked = true;
             IgnoreNormalProgressionGlobes = false;
             WaitForResInBossEncounters = false;
+            TimeToBlockMs = 750;
         }
         #endregion Methods
 
+        public void OnSave()
+        {
+            
+        }
+
+        public void OnLoaded()
+        {
+            IgnoreAffixes.Remove(IgnoreAffixesExclusions);
+        }
     }
 }

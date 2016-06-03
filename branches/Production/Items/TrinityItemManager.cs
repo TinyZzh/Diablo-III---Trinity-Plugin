@@ -15,6 +15,7 @@ using Trinity.Framework.Actors;
 using Trinity.Framework.Objects.Enums;
 using Trinity.Helpers;
 using Trinity.ItemRules;
+using Trinity.Items.ItemList;
 using Trinity.Reference;
 using Trinity.Settings.Loot;
 using Trinity.Technicals;
@@ -125,9 +126,15 @@ namespace Trinity.Items
                 return true;
             }
 
-            if (TrinityPlugin.Settings.Loot.Pickup.StashWings && DataDictionary.WingsTable.Contains(item.GameBalanceId) || DataDictionary.WingsSnoIds.Contains(item.ActorSnoId))
+            if (TrinityPlugin.Settings.Loot.Pickup.StashWings && DataDictionary.WingsTable.Contains(item.GameBalanceId) || DataDictionary.CosmeticSnoIds.Contains(item.ActorSnoId))
             {
                 Logger.Log($"Wings found! - Stash Setting. Item={item.Name} InternalName={item.InternalName} Sno={item.ActorSnoId} GbId={item.GameBalanceId} RawItemType={item.RawItemType}");
+                return true;
+            }
+            //todo: Add an option to GUI for Staff of Hering Mats
+            if (DataDictionary.HerdingMatsSnoIds.Contains(item.ActorSnoId))
+            {
+                Logger.Log($"Staff of Herding Mat found! - Stash Setting. Item={item.Name} InternalName={item.InternalName} Sno={item.ActorSnoId} GbId={item.GameBalanceId} RawItemType={item.RawItemType}");
                 return true;
             }
 
@@ -136,7 +143,7 @@ namespace Trinity.Items
             TrinityItemBaseType tBaseType = item.TrinityItemBaseType; // DetermineBaseType(trinityItemType);
 
             // ItemRules - Always stash ancients setting
-            if (TrinityPlugin.Settings.Loot.ItemFilterMode == ItemFilterMode.TrinityWithItemRules && TrinityPlugin.Settings.Loot.ItemRules.AlwaysStashAncients && item.IsAncient)
+            if (TrinityPlugin.Settings.Loot.Pickup.ItemFilterMode == ItemFilterMode.TrinityWithItemRules && TrinityPlugin.Settings.Loot.ItemRules.AlwaysStashAncients && item.IsAncient)
             {
                 Logger.Log(TrinityLogLevel.Info, LogCategory.UserInformation, "{0} [{1}] = (STASHING: ItemRules Option - Always Stash Ancients)", item.Name, item.InternalName);
                 return true;
@@ -149,7 +156,7 @@ namespace Trinity.Items
             }
 
             // ItemList - Always stash ancients setting
-            if (TrinityPlugin.Settings.Loot.ItemFilterMode == ItemFilterMode.ItemList && TrinityPlugin.Settings.Loot.ItemList.AlwaysStashAncients && item.IsAncient)
+            if (TrinityPlugin.Settings.Loot.Pickup.ItemFilterMode == ItemFilterMode.ItemList && TrinityPlugin.Settings.Loot.ItemList.AlwaysStashAncients && item.IsAncient)
             {
                 Logger.Log(TrinityLogLevel.Info, LogCategory.UserInformation, "{0} [{1}] = (STASHING: ItemList Option - Always Stash Ancients)", item.Name, item.InternalName);
                 return true;
@@ -158,7 +165,7 @@ namespace Trinity.Items
             // ItemList - Always sell/salvage non-ancients setting
             var isArmorWeaponOrJewellery = item.ItemBaseType == ItemBaseType.Armor || item.ItemBaseType == ItemBaseType.Jewelry || item.ItemBaseType == ItemBaseType.Weapon;
 
-            if (TrinityPlugin.Settings.Loot.ItemFilterMode == ItemFilterMode.ItemList && TrinityPlugin.Settings.Loot.ItemList.AlwaysTrashNonAncients &&
+            if (TrinityPlugin.Settings.Loot.Pickup.ItemFilterMode == ItemFilterMode.ItemList && TrinityPlugin.Settings.Loot.ItemList.AlwaysTrashNonAncients &&
                 !item.IsAncient && item.ItemQualityLevel >= ItemQuality.Legendary && isArmorWeaponOrJewellery)
             {
                 Logger.Log(TrinityLogLevel.Info, LogCategory.UserInformation, "{0} [{1}] = (TRASHING: ItemList Option - Always Sell/Salvage Non-Ancients) IsAncient={2} IsUnidentified={3}", item.Name, item.InternalName, item.IsAncient, item.IsUnidentified);
@@ -264,7 +271,7 @@ namespace Trinity.Items
                 return true;
             }
 
-            if (tItemType == TrinityItemType.HealthPotion && TrinityPlugin.Player.EquippedHealthPotion.AnnId == item.AnnId)
+            if (tItemType == TrinityItemType.HealthPotion && TrinityPlugin.Player.EquippedHealthPotion?.AnnId == item.AnnId)
             {
                 Logger.LogDebug($"{item.Name} [{item.InternalName}] [{tItemType}] = (dont stash equipped potion)");
                 return false;
@@ -300,7 +307,7 @@ namespace Trinity.Items
                 return false;
             }
 
-            if (TrinityPlugin.Settings.Loot.ItemFilterMode == ItemFilterMode.TrinityWithItemRules)
+            if (TrinityPlugin.Settings.Loot.Pickup.ItemFilterMode == ItemFilterMode.TrinityWithItemRules)
             {
                 Interpreter.InterpreterAction action = TrinityPlugin.StashRule.checkItem(item.GetAcdItem(), ItemEvaluationType.Keep);
 
@@ -363,9 +370,9 @@ namespace Trinity.Items
             }
 
             // Item List
-            if (item.ItemQualityLevel >= ItemQuality.Legendary && TrinityPlugin.Settings.Loot.ItemFilterMode == ItemFilterMode.ItemList && (item.IsEquipment || item.TrinityItemBaseType == TrinityItemBaseType.FollowerItem || item.IsPotion))
+            if (item.ItemQualityLevel >= ItemQuality.Legendary && TrinityPlugin.Settings.Loot.Pickup.ItemFilterMode == ItemFilterMode.ItemList && (item.IsEquipment || item.TrinityItemBaseType == TrinityItemBaseType.FollowerItem || item.IsPotion))
             {
-                var result = ItemList.ShouldStashItem(item);
+                var result = ItemListEvaluator.ShouldStashItem(item);
                 Logger.Log(TrinityLogLevel.Info, LogCategory.UserInformation, "{0} [{1}] [{2}] = {3}", item.Name, item.InternalName, tItemType, "ItemListCheck=" + (result ? "KEEP" : "TRASH"));
 
                 return result;
@@ -467,7 +474,7 @@ namespace Trinity.Items
                     return false;
                 }
 
-                if (item.TrinityItemType == TrinityItemType.HealthPotion && TrinityPlugin.Player.EquippedHealthPotion.AnnId == item.AnnId)
+                if (item.TrinityItemType == TrinityItemType.HealthPotion && TrinityPlugin.Player.EquippedHealthPotion?.AnnId == item.AnnId)
                 {
                     reason = "Equipped Potion";
                     return false;
@@ -480,7 +487,7 @@ namespace Trinity.Items
                     return false;
                 }
 
-                if (TrinityPlugin.Settings.Loot.ItemFilterMode == ItemFilterMode.TrinityWithItemRules)
+                if (TrinityPlugin.Settings.Loot.Pickup.ItemFilterMode == ItemFilterMode.TrinityWithItemRules)
                 {
                     var result = ItemRulesSalvageSell(item.GetAcdItem(), ItemEvaluationType.Salvage);
                     reason = $"ItemRules {result}";
@@ -567,7 +574,7 @@ namespace Trinity.Items
                     return false;
                 }
 
-                if (item.TrinityItemType == TrinityItemType.HealthPotion && TrinityPlugin.Player.EquippedHealthPotion.AnnId == item.AnnId)
+                if (item.TrinityItemType == TrinityItemType.HealthPotion && TrinityPlugin.Player.EquippedHealthPotion?.AnnId == item.AnnId)
                 {
                     reason = "Equipped Potion";
                     return false;
@@ -616,7 +623,7 @@ namespace Trinity.Items
                     return false;
                 }
 
-                if (TrinityPlugin.Settings.Loot.ItemFilterMode == ItemFilterMode.TrinityWithItemRules)
+                if (TrinityPlugin.Settings.Loot.Pickup.ItemFilterMode == ItemFilterMode.TrinityWithItemRules)
                 {
                     var result = ItemRulesSalvageSell(item.GetAcdItem(), ItemEvaluationType.Sell);
                     reason = $"ItemRules Decision {result}";
@@ -1117,6 +1124,12 @@ namespace Trinity.Items
                 return TrinityPlugin.Settings.Loot.Pickup.PickupDeathsBreath;
             }
 
+            if (TrinityPlugin.Settings.Loot.Pickup.PickupStaffOfHerdingParts && DataDictionary.HerdingMatsSnoIds.Contains(item.ActorSNO))
+            {
+                Logger.Log($"Staff of Herding Mat found! - Picking it up {item.InternalName} Sno={item.ActorSNO} GbId={item.BalanceID}");
+                return true;
+            }
+
             if (TrinityPlugin.Settings.Loot.Pickup.StashPets && DataDictionary.PetTable.Contains(item.BalanceID) || DataDictionary.PetSnoIds.Contains(item.ActorSNO))
             {
                 Logger.Log($"Pet found! - Picking it up {item.InternalName} Sno={item.ActorSNO} GbId={item.BalanceID}");
@@ -1129,7 +1142,7 @@ namespace Trinity.Items
                 return true;
             }
 
-            if (TrinityPlugin.Settings.Loot.Pickup.StashWings && DataDictionary.WingsTable.Contains(item.BalanceID) || DataDictionary.WingsSnoIds.Contains(item.ActorSNO))
+            if (TrinityPlugin.Settings.Loot.Pickup.StashWings && DataDictionary.WingsTable.Contains(item.BalanceID) || DataDictionary.CosmeticSnoIds.Contains(item.ActorSNO))
             {
                 Logger.Log($"Wings found! - Picking it up {item.InternalName} Sno={item.ActorSNO} GbId={item.BalanceID}");
                 return true;
@@ -1303,7 +1316,7 @@ namespace Trinity.Items
                 pickupItem.Quality, pickupItem.Level, pickupItem.DBBaseType,
                 pickupItem.DBItemType, pickupItem.IsOneHand ? "1H" : pickupItem.IsTwoHand ? "2H" : "NH");
 
-            if (TrinityPlugin.Settings.Loot.ItemFilterMode == ItemFilterMode.TrinityWithItemRules && TrinityPlugin.StashRule != null)
+            if (TrinityPlugin.Settings.Loot.Pickup.ItemFilterMode == ItemFilterMode.TrinityWithItemRules && TrinityPlugin.StashRule != null)
             {
                 // using ItemEvaluationType.Identify isn't available so we are abusing Sell for that manner
                 Interpreter.InterpreterAction action = TrinityPlugin.StashRule.checkPickUpItem(pickupItem, ItemEvaluationType.Sell);
@@ -1858,7 +1871,7 @@ namespace Trinity.Items
         //{
         //    Logger.Log(LogCategory.ItemValuation, "DB is requesting Identification Item={0} IsInTown={1} UseBook={2} ItemMode={3}", 
         //        e.Item.InternalName, ZetaDia.IsInTown, CharacterSettings.Instance.UseBookOfCain, 
-        //        TrinityPlugin.Settings.Loot.ItemFilterMode);
+        //        TrinityPlugin.Settings.Loot.Pickup.ItemFilterMode);
 
         //    if (TrinityPlugin.Settings.Loot.TownRun.DropInTownOption == Settings.Loot.DropInTownOption.All)
         //    {

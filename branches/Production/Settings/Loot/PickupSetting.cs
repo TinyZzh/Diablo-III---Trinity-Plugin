@@ -58,6 +58,8 @@ namespace Trinity.Config.Loot
         private bool _stashWings;
         private bool _stashPets;
         private bool _stashTransmog;
+        private ItemFilterMode _itemFilterMode;
+        private bool _pickupStaffOfHerdingParts;
 
         #endregion Fields
 
@@ -79,6 +81,24 @@ namespace Trinity.Config.Loot
         #endregion Constructors
 
         #region Properties
+
+        [DataMember(IsRequired = false)]
+        [DefaultValue(ItemFilterMode.None)]
+        public ItemFilterMode ItemFilterMode
+        {
+            get
+            {
+                return _itemFilterMode;
+            }
+            set
+            {
+                if (_itemFilterMode != value)
+                {
+                    _itemFilterMode = value;
+                    OnPropertyChanged("ItemFilterMode");
+                }
+            }
+        }
 
         [DataMember(IsRequired = false)]
         [DefaultValue(true)]
@@ -509,7 +529,7 @@ namespace Trinity.Config.Loot
                 if (_pickupblueFollowerItems != value)
                 {
                     _pickupblueFollowerItems = value;
-                    OnPropertyChanged("FollowerBluePickup");
+                    OnPropertyChanged(nameof(PickupBlueFollowerItems));
                 }
             }
         }
@@ -527,7 +547,7 @@ namespace Trinity.Config.Loot
                 if (_pickupYellowFollowerItems != value)
                 {
                     _pickupYellowFollowerItems = value;
-                    OnPropertyChanged("FollowerYellowPickup");
+                    OnPropertyChanged(nameof(PickupYellowFollowerItems));
                 }
             }
         }
@@ -921,6 +941,24 @@ namespace Trinity.Config.Loot
 
         [DataMember(IsRequired = false)]
         [DefaultValue(true)]
+        public bool PickupStaffOfHerdingParts
+        {
+            get
+            {
+                return _pickupStaffOfHerdingParts;
+            }
+            set
+            {
+                if (_pickupStaffOfHerdingParts != value)
+                {
+                    _pickupStaffOfHerdingParts = value;
+                    OnPropertyChanged(nameof(PickupStaffOfHerdingParts));
+                }
+            }
+        }
+
+        [DataMember(IsRequired = false)]
+        [DefaultValue(true)]
         public bool StashWings
         {
             get
@@ -1010,6 +1048,7 @@ namespace Trinity.Config.Loot
             IgnoreHealthGlobesInAoE = true;
             StashWings = true;
             StashPets = true;
+            PickupStaffOfHerdingParts = true;
         }
         #endregion Methods
     }

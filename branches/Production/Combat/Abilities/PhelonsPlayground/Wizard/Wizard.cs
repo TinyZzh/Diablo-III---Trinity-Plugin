@@ -21,16 +21,16 @@ namespace Trinity.Combat.Abilities.PhelonsPlayground.Wizard
             {
                 if (FirebirdsCount == 3 || VyrsCount == 3)
                 {
-                    power = Firebirds.PowerSelector() ?? new TrinityPower(SNOPower.Walk, 3f, Player.Position);
+                    power = Firebirds.PowerSelector();
                     //if (power == null) power = new TrinityPower(SNOPower.Walk, 7f, PhelonUtils.BestWalkLocation);
                 }
                 if (TalRashasCount == 3)
                 {
-                    //if (VyrsCount > 1)
-                        //power = TalRasha.VyrArchon.PowerSelector();
+                    if (VyrsCount >= 1)
+                        power = TalRasha.VyrArchon.PowerSelector();
 
                     if (Legendary.TheTwistedSword.IsEquipped)
-                        power = TalRasha.EnergyTwister.PowerSelector() ?? new TrinityPower(SNOPower.Walk, 3f, Player.Position);
+                        power = TalRasha.EnergyTwister.PowerSelector();
 
                     if (Legendary.WandOfWoh.IsEquipped)
                         power = new TrinityPower(SNOPower.Walk, 3f, CurrentTarget.Position);
