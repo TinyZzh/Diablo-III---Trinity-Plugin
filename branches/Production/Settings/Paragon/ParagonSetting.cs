@@ -177,8 +177,6 @@ namespace Trinity.Config
                     p.SetValue(this, dv.Value);
                 }
             }
-
-            
         }
 
     }
