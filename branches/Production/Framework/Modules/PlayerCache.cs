@@ -232,6 +232,8 @@ namespace Trinity.Framework.Modules
             CurrentAnimation = _me.CommonData.CurrentAnimation;
             IsInventoryLockedForGreaterRift = ZetaDia.CurrentRift.IsStarted && ZetaDia.CurrentRift.Type == RiftType.Greater && !ZetaDia.CurrentRift.IsCompleted;
 
+            Summons = GetPlayerSummonCounts();
+
             //var direction = ZetaDia.Me.Movement.DirectionVector;
             //         var directionRadians = Math.Atan2(direction.X, direction.Y);
             //var directionDegrees = directionRadians * 180/Math.PI;
@@ -263,7 +265,55 @@ namespace Trinity.Framework.Modules
             IsHidden = _me.IsHidden;
         }
 
+        private SummonInfo GetPlayerSummonCounts()
+        {
+            var info = new SummonInfo();
 
+            // todo, create a units only collection in ActorsCache so we dont have to iterate all RActors.
+
+            foreach (var actor in Core.Actors.AllRActors)
+            {
+                if (!actor.IsSummonedByPlayer)
+                    continue;
+
+                var actorSnoId = actor.ActorSnoId;
+                var distance = actor.Distance;
+
+                switch (ActorClass)
+                {
+                    case ActorClass.Monk:
+                        if (DataDictionary.MysticAllyIds.Contains(actorSnoId))
+                            info.MysticAllyCount++;
+                        break;
+                    case ActorClass.DemonHunter:
+                        if (DataDictionary.DemonHunterPetIds.Contains(actorSnoId))
+                            info.DHPetsCount++;
+                        if (DataDictionary.DemonHunterSentryIds.Contains(actorSnoId) && distance < 60f)
+                            info.DHSentryCount++;
+                        break;
+                    case ActorClass.Wizard:
+                        if (DataDictionary.WizardHydraIds.Contains(actorSnoId) && distance < 60f)
+                            info.HydraCount++;
+                        break;
+                    case ActorClass.Witchdoctor:
+                        if (DataDictionary.SpiderPetIds.Contains(actorSnoId) && distance < 100f)
+                            info.SpiderPetCount++;
+                        if (DataDictionary.GargantuanIds.Contains(actorSnoId))
+                            info.GargantuanCount++;
+                        if (DataDictionary.ZombieDogIds.Contains(actorSnoId))
+                            info.ZombieDogCount++;
+                        if (DataDictionary.FetishArmyIds.Contains(actorSnoId))
+                            info.FetishArmyCount++;
+                        break;
+                    case ActorClass.Barbarian:
+                        if (DataDictionary.AncientIds.Contains(actorSnoId))
+                            info.AncientCount++;
+                        break;
+                }
+            }
+
+            return info;
+        }
 
         internal void UpdateSlowChangingData()
         {
@@ -541,8 +591,5 @@ namespace Trinity.Framework.Modules
             public int AncientCount = 0;
             public int SpiderPetCount = 0;
         }
-
-
-
     }
 }

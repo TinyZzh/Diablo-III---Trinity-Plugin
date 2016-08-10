@@ -8,6 +8,7 @@ using Trinity.Components.Adventurer.Game.Rift;
 using Trinity.Components.Adventurer.Util;
 using Trinity.Framework.Helpers;
 using Trinity.Helpers;
+using Zeta.Bot;
 using Zeta.Game;
 using JsonSerializer = Trinity.Components.Adventurer.Util.JsonSerializer;
 
@@ -52,8 +53,19 @@ namespace Trinity.Components.Adventurer.Settings
         [DataMember]
         public int HighestUnlockedRiftLevel
         {
-            get { return _highestUnlockedRiftLevel; }
-            set { SetField(ref _highestUnlockedRiftLevel, value); }
+            get
+            {
+                var level = 0;
+                if (ZetaDia.Me != null)
+                {
+                    using (ZetaDia.Memory.AcquireFrame())
+                    {
+                        level = PropertyReader<int>.SafeReadValue(() => ZetaDia.Me.HighestUnlockedRiftLevel);
+                    }
+                }
+                return level == 0 ? 120 : level;
+            }
+            set { }
         }
 
         [DataMember]
@@ -260,10 +272,14 @@ namespace Trinity.Components.Adventurer.Settings
             }
         }
 
+        /// <summary>
+        /// Bound to UI rift level dropdown 
+        /// </summary>
         public string GreaterRiftLevelRaw
         {
             get
             {
+                // Convert special values into special strings for the dropdown.
                 switch (GreaterRiftLevel)
                 {
                     case 0:
@@ -285,18 +301,27 @@ namespace Trinity.Components.Adventurer.Settings
             }
             set
             {
+                // setter is called only by UI user selection
                 if (value == "Max")
                 {
+                    // user selected max sets level to 0, if riftcoroutine encounters 0 it uses the current highest unlocked when rift is open.
                     GreaterRiftLevel = 0;
                 }
                 else
                 {
                     int greaterRiftLevel;
-                    if (int.TryParse(value.Replace("Max - ", string.Empty), out greaterRiftLevel))
+                    if (value.Contains("Max - "))
+                    {                      
+                        if (int.TryParse(value.Replace("Max - ", string.Empty), out greaterRiftLevel))
+                        {
+                            GreaterRiftLevel = -greaterRiftLevel;
+                            return;
+                        }
+                    }   
+                    if (int.TryParse(value, out greaterRiftLevel))
                     {
                         GreaterRiftLevel = greaterRiftLevel;
                     }
-                    if (value.Contains("Max")) GreaterRiftLevel = GreaterRiftLevel * -1;
                 }
             }
         }
@@ -340,28 +365,7 @@ namespace Trinity.Components.Adventurer.Settings
         {
             get
             {
-                var unlockedRiftLevel = 0;
-
-                var result = SafeFrameLock.ExecuteWithinFrameLock(() =>
-                {
-                    unlockedRiftLevel = ZetaDia.Me.HighestUnlockedRiftLevel;
-
-                }, true);
-
-                if (!result.Success)
-                {
-                    //Logger.Error("[Settings][GreaterRiftLevels] " + result.Exception.Message);
-                    unlockedRiftLevel = HighestUnlockedRiftLevel;
-                }
-                else
-                {
-                    HighestUnlockedRiftLevel = unlockedRiftLevel;
-                }
-
-                if (unlockedRiftLevel == 0)
-                {
-                    unlockedRiftLevel = 1;
-                }
+                var unlockedRiftLevel = HighestUnlockedRiftLevel;
 
                 var levels = new List<string>();
                 for (var i = 1; i <= unlockedRiftLevel; i++)
@@ -450,7 +454,7 @@ namespace Trinity.Components.Adventurer.Settings
         }
 
         public static PluginSettings LoadSettingsFromJsonString(string json)
-        {        
+        {
             if (!string.IsNullOrEmpty(json))
             {
                 var current = JsonSerializer.Deserialize<PluginSettings>(json);

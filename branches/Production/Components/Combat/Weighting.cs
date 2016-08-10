@@ -1040,8 +1040,14 @@ namespace Trinity.Components.Combat
                                 {
                                     if (!Core.Settings.Combat.Misc.CollectHealthGlobe)
                                     {
-                                        cacheObject.WeightInfo +=
-                                            $"Ignoring {cacheObject.InternalName} - Collect Health Globe Setting.";
+                                        cacheObject.WeightInfo += $"Ignoring {cacheObject.InternalName} - Collect Health Globe Setting.";
+                                        break;
+                                    }
+
+                                    if (cacheObject.Distance > Core.Settings.Combat.Misc.HealthGlobeSearchDistance)
+                                    {
+                                        cacheObject.WeightInfo += $"Ignoring {cacheObject.InternalName} - Health Globe Search Distance.";
+                                        break;
                                     }
 
                                     //Ignore because we are blocked by objects or mobs.
@@ -1128,7 +1134,7 @@ namespace Trinity.Components.Combat
                                                 SNOPower.Witchdoctor_Passive_GruesomeFeast))
                                         {
                                             cacheObject.WeightInfo +=
-                                                $"Adding {cacheObject.InternalName} - Reapes Wraps.";
+                                                $"Adding {cacheObject.InternalName} - Gruesome Feast PickUp.";
                                             cacheObject.Weight += hiPriorityHealthGlobes
                                                 ? MaxWeight
                                                 : (1d - Core.Player.PrimaryResource) * 5000d +
@@ -1141,7 +1147,7 @@ namespace Trinity.Components.Combat
                                         if (Legendary.ReapersWraps.IsEquipped && Core.Player.PrimaryResource <= 50)
                                         {
                                             cacheObject.WeightInfo +=
-                                                $"Adding {cacheObject.InternalName} - Reapes Wraps.";
+                                                $"Adding {cacheObject.InternalName} - Reapers Wraps.";
                                             cacheObject.Weight += hiPriorityHealthGlobes
                                                 ? MaxWeight
                                                 : (1d - Core.Player.PrimaryResource) * 5000d +
@@ -1149,11 +1155,10 @@ namespace Trinity.Components.Combat
                                                   PackDensityFormula(cacheObject, objects);
                                             break;
                                         }
-                                        //XZ - Set this to be a value to ignore globes above certain health.
-                                        if (ZetaDia.Me.HitpointsCurrentPct > 0.80)
+                                        if (ZetaDia.Me.HitpointsCurrentPct > TrinityPluginSettings.Settings.Combat.Misc.HealthGlobeLevel)
                                         {
                                             cacheObject.WeightInfo +=
-                                                $"Ignoring {cacheObject.InternalName} - Over 80% health.";
+                                                $"Ignoring {cacheObject.InternalName} - Over health globe Threshold.";
                                             break;
                                         }
                                     }

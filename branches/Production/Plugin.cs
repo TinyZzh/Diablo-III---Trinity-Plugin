@@ -10,6 +10,7 @@ using System.Windows;
 using System.Xml.Linq;
 using Buddy.Overlay;
 using Trinity.Cache;
+using Trinity.Components.Combat.Abilities;
 using Trinity.Configuration;
 using Trinity.Coroutines;
 using Trinity.Coroutines.Town;
@@ -56,7 +57,7 @@ namespace Trinity
             {
                 if (_version != null) return _version;
                 var verXml = XDocument.Load(FileManager.VersionPath).Descendants("Revision").FirstOrDefault();
-                if (verXml != null) return new Version(2,50, int.Parse(verXml.Value));
+                if (verXml != null) return new Version(2, 50, int.Parse(verXml.Value));
                 return new Version(2, 50, 0);
             }
         }
@@ -71,7 +72,7 @@ namespace Trinity
                 Logger.Log("Mouse Left Down LazyRaider Pause");
             return result;
         }
-        
+
         private DateTime _lastTestPulseTime = DateTime.MinValue;
 
         private bool isRiftBossSpawned;
@@ -106,7 +107,9 @@ namespace Trinity
                         Logger.LogSpecial(() => $"RiftProgression%={Core.MemoryModel.Globals.RiftProgressionPct} RiftSouls={Core.MemoryModel.Globals.RiftSouls}");
                     }
 
-     
+                    if(!CombatBase.IsSettingsLoaded)
+                        CombatBase.LoadCombatSettings();
+
                     GameUI.SafeClickUIButtons();
 
                     //Core.Avoidance.UpdateGrid();
@@ -144,7 +147,7 @@ namespace Trinity
                     {
                         GlobalSettings.Instance.LogoutInactivityTime = (float)TimeSpan.FromSeconds(Settings.Advanced.InactivityTimer).TotalMinutes;
                     }
-                        
+
                     if (GoldInactivity.Instance.GoldInactive())
                     {
                         LeaveGame("Gold Inactivity Tripped");
@@ -169,7 +172,7 @@ namespace Trinity
                         DebugUtil.LogBuildAndItems();
                         HasLoggedCurrentBuild = true;
                     }
-                 
+
 
                 }
             }
@@ -196,9 +199,23 @@ namespace Trinity
         /// </summary>
         public void OnEnabled()
         {
-            Logger.Log($"Trinity OnEnabled was called from thread: {Thread.CurrentThread.Name} ({Thread.CurrentThread.ManagedThreadId})");
+            try
+            {
+                if (!Application.Current.CheckAccess())
+                {
+                    Logger.LogVerbose("TrinityPlugin Skipped OnEnabled() attempt by PID: {0} CurrentThread={1} '{2}' CanAccessApplication={3}",
+                        Process.GetCurrentProcess().Id, Thread.CurrentThread.ManagedThreadId,
+                        Thread.CurrentThread.Name, Application.Current.CheckAccess());
+                    return;
+                }
 
-            if (!Application.Current.CheckAccess()) return;
+                Logger.Log($"Trinity OnEnabled() was called from thread: {Thread.CurrentThread.Name} ({Thread.CurrentThread.ManagedThreadId})");
+            }
+            catch (System.Exception)
+            {
+                return;
+            }
+
 
             try
             {
@@ -363,8 +380,23 @@ namespace Trinity
         /// </summary>
         public void OnInitialize()
         {
-            // YAR Login Support (YARKickstart Ibot will call this from the proper thread)
-            if (!Application.Current.CheckAccess()) return;
+            try
+            {
+                if (!Application.Current.CheckAccess())
+                {
+                    Logger.LogVerbose("TrinityPlugin Skipped OnInitialize() attempt by PID: {0} CurrentThread={1} '{2}' CanAccessApplication={3}",
+                        Process.GetCurrentProcess().Id, Thread.CurrentThread.ManagedThreadId,
+                        Thread.CurrentThread.Name, Application.Current.CheckAccess());
+                    return;
+                }
+            }
+            catch (System.Exception)
+            {
+                return;
+            }
+
+
+            //Logger.Log($"Trinity OnInitialize() was called from thread: {Thread.CurrentThread.Name} ({Thread.CurrentThread.ManagedThreadId})");
 
             PluginCheck.CheckAndInstallTrinityRoutine();
             Logger.Log("Initialized v{0}", Version);

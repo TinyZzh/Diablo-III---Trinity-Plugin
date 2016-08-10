@@ -67,13 +67,12 @@ namespace Trinity.Components.Combat.Abilities.PhelonsPlayground
                     select u).ToList();
         }
 
-        internal static Vector3 BestDpsPosition(float maxRange, float searchRange = 12f, bool objectsInAoe = false)
+        internal static Vector3 BestDpsPosition(Vector3 location, float searchRange = 12f, bool objectsInAoe = false)
         {
-            var bestTarget = PhelonTargeting.BestAoeUnit(maxRange, objectsInAoe).Position;
-            Vector3 bestBuffPosition = Vector3.Zero;
-            return BestBuffPosition(maxRange, bestTarget, objectsInAoe, out bestBuffPosition)
+            Vector3 bestBuffPosition;
+            return BestBuffPosition(searchRange, location, objectsInAoe, out bestBuffPosition)
                 ? bestBuffPosition
-                : bestTarget;
+                : location;
         }
 
         internal static Vector3 BestTankPosition(float maxRange, bool objectsInAoe = false)
@@ -176,6 +175,15 @@ namespace Trinity.Components.Combat.Abilities.PhelonsPlayground
                 select u).ToList();
         }
 
+        public static List<TrinityActor> UnitsBetweenLocations(Vector3 fromLocation, Vector3 toLocation)
+        {
+            return
+                (from u in Trinity.TrinityPlugin.Targets
+                 where u.IsUnit &&
+                       MathUtil.IntersectsPath(u.Position, u.Radius, fromLocation, toLocation)
+                 select u).ToList();
+        }
+
         internal static TrinityActor GetBestPierceTarget(float maxRange, bool ignoreUnitsInAoE = false,
             bool ignoreElites = false)
         {
@@ -242,7 +250,7 @@ namespace Trinity.Components.Combat.Abilities.PhelonsPlayground
 
         internal static Vector3 ClosestOcculous(float maxRange, bool objectsInAoe = false)
         {
-            var TrinityActor = GetOculusBuffDiaObjects(maxRange, objectsInAoe).FirstOrDefault();
+            var TrinityActor = GetOculusBuffDiaObjects(maxRange, objectsInAoe).OrderBy(x => x.Distance).FirstOrDefault();
             return TrinityActor?.Position ?? Vector3.Zero;
         }
 
@@ -273,7 +281,7 @@ namespace Trinity.Components.Combat.Abilities.PhelonsPlayground
 
         internal static Vector3 ClosestSanctuary(float maxRange, bool objectsInAoe = false)
         {
-            var TrinityActor = GetInnerSanctuaryDiaObjects(maxRange, objectsInAoe).FirstOrDefault();
+            var TrinityActor = GetInnerSanctuaryDiaObjects(maxRange, objectsInAoe).OrderBy(x => x.Distance).FirstOrDefault();
             return TrinityActor?.Position ?? Vector3.Zero;
         }
 
