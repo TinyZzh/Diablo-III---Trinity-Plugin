@@ -259,7 +259,7 @@ namespace Trinity.Components.Combat.Abilities
                 if (!_isCombatAllowed)
                     return false;
 
-                if (CombatMode == CombatMode.On)
+                if (CombatMode == CombatMode.Normal || CombatMode == CombatMode.Questing)
                     return true;
 
                 if (CombatMode == CombatMode.Off || CombatMode == CombatMode.SafeZerg && TargetUtil.NumMobsInRangeOfPosition(Core.Player.Position, 10f) > 4)
@@ -1458,7 +1458,7 @@ namespace Trinity.Components.Combat.Abilities
         /// <param name="maxDistance">maximum distance spot can be from player's current position</param>
         /// <param name="arriveDistance">how close to get to the middle of the spot before stopping walking</param>
         /// <returns>if a location was found and should be moved to</returns>
-        public static bool TryMoveToBuffedSpot(out TrinityPower power, float maxDistance, float arriveDistance = 20f)
+        public static bool TryMoveToBuffedSpot(out TrinityPower power, float maxDistance, float arriveDistance = 20f, bool checkPowerRange = true)
         {
             if (IsInCombat && !IsCurrentlyKiting && !IsCurrentlyAvoiding)
             {
@@ -1486,7 +1486,7 @@ namespace Trinity.Components.Combat.Abilities
                     {
                         Logger.Log(LogCategory.Routine, $"Not moving to buffed location while on kite cooldown");
                     }
-                    else if (lastPower != null && buffedLocation.Distance(CurrentTarget.Position) > lastPower.MinimumRange + CurrentTarget.CollisionRadius + Player.Radius)
+                    else if (checkPowerRange && lastPower != null && buffedLocation.Distance(CurrentTarget.Position) > lastPower.MinimumRange + CurrentTarget.CollisionRadius + Player.Radius)
                     {
                         Logger.LogVerbose(LogCategory.Routine, $"Buffed spot outside attack range for power {lastPower.SNOPower} Range={lastPower.MinimumRange} TimeSinceUse={lastPower.TimeSinceUse} Dist={distance}");
                     }
@@ -1502,6 +1502,30 @@ namespace Trinity.Components.Combat.Abilities
             return false;
         }
 
+        public static bool IsValidBuffedSpot(float maxDistance)
+        {
+            if (!IsInCombat || IsCurrentlyKiting || IsCurrentlyAvoiding)
+                return false;
+
+            Vector3 buffedLocation;
+            if (PhelonUtils.BestBuffPosition(maxDistance, Player.Position, true, out buffedLocation))
+            {
+                if (buffedLocation == Vector3.Zero)
+                     return false;
+                
+                if (buffedLocation.Distance(Player.Position) > 20f)
+                    return false;
+           
+                if (!Core.Avoidance.Grid.CanRayWalk(Player.Position, buffedLocation))
+                    return false;
+
+                if (!Core.Avoidance.Grid.CanRayWalk(CurrentTarget.Position, buffedLocation))
+                    return false;
+
+                return true;
+            }
+            return false;
+        }
 
     }
 

@@ -1037,6 +1037,11 @@ namespace Trinity.Components.Combat
             return PercentOfMobsDebuffed(power, maxRange) >= minPercent;
         }
 
+        internal static bool IsPercentOfMobsDebuffed(IEnumerable<SNOPower> powers, float maxRange = 30f, float minPercent = 0.5f)
+        {
+            return powers.All(power => PercentOfMobsDebuffed(power, maxRange) >= minPercent);
+        }
+
         internal static float PercentOfMobsDebuffed(SNOPower power, float maxRange = 30f)
         {
             var debuffed = (from u in ObjectCache
@@ -1245,7 +1250,7 @@ namespace Trinity.Components.Combat
             var result =
                 (from u in ObjectCache
                  where u.IsUnit && u.IsValid && u.Weight > 0 && u.RadiusDistance <= maxDistance
-                 orderby u.RadiusDistance
+                 orderby u.Distance
                  select u).FirstOrDefault();
 
             return result;

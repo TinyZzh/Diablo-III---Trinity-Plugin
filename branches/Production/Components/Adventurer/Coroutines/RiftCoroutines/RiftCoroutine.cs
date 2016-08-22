@@ -27,6 +27,8 @@ using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
 {
+    using Framework;
+
     public class RiftCoroutine : IDisposable, ICoroutine
     {
         public class RiftOptions
@@ -237,6 +239,16 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             }
             return false;
         }
+		
+        private long CurrentRiftKeyCount
+        {
+            get
+            {
+				long keyCount = AdvDia.StashAndBackpackItems.Where(i => i.IsValid && i.ActorSnoId == RiftData.GreaterRiftKeySNO).Sum(c => c.ItemStackQuantity);
+				Logger.Info("I have {0} rift keys.", keyCount);
+                return keyCount;
+            }
+        }
 
         private bool NotStarted()
         {
@@ -247,14 +259,14 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             {
                 _level = RiftData.GetGreaterRiftLevel();
             }
-            if (_runningNephalemInsteadOfGreaterRift && AdvDia.StashAndBackpackItems.Any(i => i.IsValid && i.ActorSnoId == RiftData.GreaterRiftKeySNO))
+            if (_runningNephalemInsteadOfGreaterRift && CurrentRiftKeyCount > PluginSettings.Current.MinimumKeys)
             {
                 _level = RiftData.GetGreaterRiftLevel();
                 _RiftType = RiftType.Greater;
                 _runningNephalemInsteadOfGreaterRift = false;
                 return false;
             }
-            if (AdvDia.RiftQuest.State == QuestState.NotStarted && _RiftType == RiftType.Greater && !AdvDia.StashAndBackpackItems.Any(i => i.IsValid && i.ActorSnoId == RiftData.GreaterRiftKeySNO))
+            if (AdvDia.RiftQuest.State == QuestState.NotStarted && _RiftType == RiftType.Greater && CurrentRiftKeyCount <= PluginSettings.Current.MinimumKeys)
             {
                 if (PluginSettings.Current.GreaterRiftRunNephalem)
                 {
@@ -506,8 +518,9 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
 
             long empoweredCost = 0;
             bool shouldEmpower = _options.IsEmpowered;
-            bool canEmpower = (_RiftType == RiftType.Greater && RiftData.EmpoweredRiftCost.TryGetValue(_level, out empoweredCost) && ZetaDia.PlayerData.Coinage >= empoweredCost);
-            var settings = global::Trinity.Components.Adventurer.Settings.PluginSettings.Current;
+			bool haveMoneyForEmpower = RiftData.EmpoweredRiftCost.TryGetValue(_level, out empoweredCost) && ZetaDia.PlayerData.Coinage >= (empoweredCost + PluginSettings.Current.MinimumGold);
+            bool canEmpower = (_RiftType == RiftType.Greater && haveMoneyForEmpower);
+            var settings = PluginSettings.Current;
 
             _riftStartTime = DateTime.UtcNow;
             const int waittime = 45;
@@ -515,7 +528,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
 
             if (TrinityPluginSettings.Settings.Advanced.BetaPlayground)
             {
-                if (ZetaDia.Service.Party.NumPartyMembers > 1 &&
+                if (Core.Player.IsInParty &&
                     ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true).Count() < ZetaDia.Service.Party.NumPartyMembers)
                 {
                     Logger.Info("Waiting until all party is present.");
@@ -525,7 +538,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                                 ZetaDia.Service.Party.NumPartyMembers);
                 }
 
-                if (ZetaDia.Service.Party.NumPartyMembers > 1 && ZetaDia.Service.Party.NumPartyMembers < partysize)
+                if (Core.Player.IsInParty && ZetaDia.Service.Party.NumPartyMembers < partysize)
                 {
                     Logger.Info("Waiting until we have a party of " + partysize + ".");
                     await Coroutine.Wait(TimeSpan.FromMinutes(60),
@@ -584,7 +597,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                             Util.Logger.Info("Update chance at max level is 60%, checking if we can take a few levels off still!");
                             for (; _level > minLevel; _level--)
                             {
-                                var couldEmpower = (RiftData.EmpoweredRiftCost.TryGetValue(_level - 1, out empoweredCost) && ZetaDia.PlayerData.Coinage >= empoweredCost);
+                                var couldEmpower = (RiftData.EmpoweredRiftCost.TryGetValue(_level - 1, out empoweredCost) && ZetaDia.PlayerData.Coinage >= (empoweredCost + PluginSettings.Current.MinimumGold));
                                 var upgradeAttempts = (couldEmpower && (shouldEmpower || _level - 1 <= settings.EmpoweredRiftLevelLimit) ? 4 : 3);
                                 var possibleUpgrades = gems.Gems.Sum(g => g.GetUpgrades(_level - 1, upgradeAttempts, 60));
 
@@ -602,7 +615,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                 }
 
 
-                if (_RiftType == RiftType.Greater && shouldEmpower && canEmpower && global::Trinity.Components.Adventurer.Settings.PluginSettings.Current.UseEmpoweredRifts)
+                if (_RiftType == RiftType.Greater && shouldEmpower && canEmpower && PluginSettings.Current.UseEmpoweredRifts)
                 {
                     Util.Logger.Info("Opening Empowered Greater Rift (Cost={0})", empoweredCost);
                     ZetaDia.Me.OpenRift(Math.Min(_level, ZetaDia.Me.CommonData.HighestUnlockedRiftLevel), true);
@@ -744,7 +757,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                 return false;
             }
 
-            if (ZetaDia.Service.Party.NumPartyMembers > 1 && RiftData.GetGreaterRiftLevel() > 55 && TrinityPluginSettings.Settings.Advanced.BetaPlayground)
+            if (Core.Player.IsInParty && RiftData.GetGreaterRiftLevel() > 55 && TrinityPluginSettings.Settings.Advanced.BetaPlayground)
             {
                 var deadPlayer =
                     ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true)
@@ -797,7 +810,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                 return false;
             }
 
-            if (ZetaDia.Service.Party.NumPartyMembers > 1 && RiftData.GetGreaterRiftLevel() > 55 && TrinityPluginSettings.Settings.Advanced.BetaPlayground)
+            if (Core.Player.IsInParty && RiftData.GetGreaterRiftLevel() > 55 && TrinityPluginSettings.Settings.Advanced.BetaPlayground)
             {
                 var deadPlayer =
                     ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true)
@@ -1246,11 +1259,6 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             {
                 if (!EnteringRiftStates.Contains(State))
                 {
-                    if (ZetaDia.Service.Party.NumPartyMembers > 1 && TrinityPluginSettings.Settings.Advanced.BetaPlayground)
-                    {
-                        State = States.MoveToOrek;
-                        return;
-                    }
                     Logger.Info(
                         "[Rift] Oh darn, I managed to return to town, I better go back in the rift before anyone notices.");
                     State = States.MoveToRiftStone;

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Trinity.Cache;
+using Trinity.Components.Adventurer.Coroutines.RiftCoroutines;
 using Trinity.DbProvider;
 using Trinity.Framework;
 using Trinity.Framework.Modules;
@@ -11,6 +13,7 @@ using Trinity.Technicals;
 using Zeta.Common;
 using Zeta.Common.Helpers;
 using Zeta.Game;
+using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
 using Logger = Trinity.Technicals.Logger;
 
@@ -57,6 +60,15 @@ namespace Trinity.Components.Combat.Abilities
             }
         }
 
+        public static bool IsHellToothFirebats
+        {
+            get
+            {
+                return Sets.HelltoothHarness.IsFullyEquipped && Legendary.StaffOfChiroptera.IsEquipped &&
+                       Legendary.CoilsOfTheFirstSpider.IsEquipped && Skills.WitchDoctor.Firebats.IsActive;
+            }
+        }
+
         public static TrinityPower GetPetDocPower()
         {
             TrinityPower power = null;
@@ -91,6 +103,15 @@ namespace Trinity.Components.Combat.Abilities
                     TargetUtil.AnyElitesInRange(30f)))
                     return new TrinityPower(SNOPower.Witchdoctor_SummonZombieDog);
 
+                // Sacrafice Spam
+                var hasDogs = Player.Summons.ZombieDogCount > 0;
+                var canCastSacrifice = Skills.WitchDoctor.Sacrifice.IsActive && Skills.WitchDoctor.Sacrifice.CanCast();
+                var shouldCastSacrifice = Settings.Combat.WitchDoctor.ZeroDogs || RiftProgression.IsNephalemRift || RiftProgression.IsGreaterRift && (TargetUtil.AnyElitesInRange(30f) || TargetUtil.ClusterExists(20f, 4));
+                if (hasDogs && canCastSacrifice && shouldCastSacrifice)
+                {
+                    return new TrinityPower(SNOPower.Witchdoctor_Sacrifice);                  
+                }
+
                 // Spirit Walk when rooted
                 if (CanCast(SNOPower.Witchdoctor_SpiritWalk) && (Player.IsIncapacitated || Player.IsRooted))
                     return new TrinityPower(SNOPower.Witchdoctor_SpiritWalk);
@@ -122,13 +143,9 @@ namespace Trinity.Components.Combat.Abilities
                     }
                 }
 
-                // Wall of Zombies
-                if (CanCast(SNOPower.Witchdoctor_WallOfZombies) &&
-                    (TargetUtil.AnyElitesInRange(15, 1) || TargetUtil.AnyMobsInRange(15, 1) ||
-                    ((CurrentTarget.IsElite || CurrentTarget.IsTreasureGoblin || CurrentTarget.IsBoss) && CurrentTarget.RadiusDistance <= 25f)))
-                {
-                    return new TrinityPower(SNOPower.Witchdoctor_WallOfZombies, 25f, CurrentTarget.Position);
-                }
+                // Only use wall of death for the helltooth set buff.
+                if (!GetHasBuff(JeramsRevenge) && TryWallOfDeath(out power))
+                    return power;
 
                 // Haunt
                 if (CanCast(SNOPower.Witchdoctor_Haunt) && Player.PrimaryResource >= 50)
@@ -148,6 +165,19 @@ namespace Trinity.Components.Combat.Abilities
                 {
                     Logger.Log(LogCategory.Routine, "Tryna spiritwalk to to safe point!");
                     return new TrinityPower(SNOPower.Witchdoctor_SpiritWalk, 45f, safeWalkPoint);
+                }
+
+                // Big Bad Voodoo
+                if (CanCast(SNOPower.Witchdoctor_BigBadVoodoo) &&
+                    (Settings.Combat.WitchDoctor.UseBigBadVoodooOffCooldown || TargetUtil.AnyMobsInRange(30f)) &&
+                    !GetHasBuff(SNOPower.Witchdoctor_BigBadVoodoo))
+                {
+                    return new TrinityPower(SNOPower.Witchdoctor_BigBadVoodoo, 30f, Core.Clusters.BestCluster.Position);
+                }
+
+                if (CanCast(SNOPower.Witchdoctor_Horrify) && Settings.Combat.WitchDoctor.SpamHorrify)
+                {
+                    return new TrinityPower(SNOPower.Witchdoctor_Horrify);
                 }
 
                 if (CurrentTarget.IsUnit)
@@ -173,6 +203,122 @@ namespace Trinity.Components.Combat.Abilities
             }
 
             return power;
+        }
+
+        public const SNOPower JeramsRevenge = SNOPower.P3_ItemPassive_Unique_Ring_010;
+
+        public static bool TryGetHellToothFirebatsPower(out TrinityPower power)
+        { 
+            power = null;
+            if (CurrentTarget == null)
+                return false;           
+
+            // Soul harvest for the damage reduction of Okumbas Ornament
+            if (TrySoulHarvest(out power))
+                return true;                 
+
+            // Stand in occulus circles
+            if (TryMoveToBuffedSpot(out power, 20f, 20f, false) && !Player.IsChannelling)
+                return true;
+
+            // Move in close to clusters.
+            if (CanCast(SNOPower.Witchdoctor_Firebats) && TargetUtil.AnyMobsInRange(40f) && !Player.IsChannelling)
+            {
+                Logger.Log("Moving into firebat position");
+                MoveToFirebatsPoint(Core.Clusters.BestCluster);
+            }
+
+            if (TryBigBadVoodoo(out power))
+                return true;
+
+            // Only use wall of death for the helltooth set buff.
+            if (!GetHasBuff(JeramsRevenge) && TryWallOfDeath(out power))
+                return true;           
+
+            // Piranhas
+            if (CanCast(SNOPower.Witchdoctor_Piranhas) && Player.PrimaryResource >= 250 &&
+                (TargetUtil.ClusterExists(15f, 40f) || TargetUtil.AnyElitesInRange(40f)) &&
+                LastPowerUsed != SNOPower.Witchdoctor_Piranhas &&
+                Player.PrimaryResource >= 250)
+            {
+                power = new TrinityPower(SNOPower.Witchdoctor_Piranhas, 25f, Core.Clusters.BestCluster.Position);
+                return true;
+            }
+
+            // Locust Swarm for the ring of emptyness debuff only 
+            if (!CurrentTarget.HasDebuff(SNOPower.Witchdoctor_Locust_Swarm) && CanCast(SNOPower.Witchdoctor_Locust_Swarm) && !Player.IsChannelling)
+            {
+                // Avoid trying to put debuffs on all monsters, or monsters that are too far away = more time spent firebatting close units.
+                if (TargetUtil.NumMobsInRange(10f) < 3 || TargetUtil.IsPercentOfMobsDebuffed(SNOPower.Witchdoctor_Locust_Swarm, 20f, 0.75f))
+                {
+                    power = new TrinityPower(SNOPower.Witchdoctor_Locust_Swarm, 20f, CurrentTarget.AcdId);
+                    return true;
+                }
+            }
+
+            // Haunt for the ring of emptyness debuff only 
+            if (!CurrentTarget.HasDebuff(SNOPower.Witchdoctor_Haunt) && CanCast(SNOPower.Witchdoctor_Haunt) && !Player.IsChannelling)
+            {
+                // Avoid trying to put debuffs on all monsters, or monsters that are too far away = more time spent firebatting close units.
+                if (TargetUtil.NumMobsInRange(10f) < 3 || TargetUtil.IsPercentOfMobsDebuffed(SNOPower.Witchdoctor_Haunt, 20f, 0.75f))
+                {
+                    power = new TrinityPower(SNOPower.Witchdoctor_Haunt, 20f, CurrentTarget.AcdId);
+                    return true;
+                }
+            }
+
+            // If resource is really low, try to save up some before starting channelling stacks
+            var batMana = TimeSincePowerUse(SNOPower.Witchdoctor_Firebats) < 125 ? 75 : 225;
+
+            // Firebats: Cloud of bats 
+            if (Runes.WitchDoctor.CloudOfBats.IsActive && TargetUtil.AnyMobsInRange(Settings.Combat.WitchDoctor.FirebatsRange) &&
+                CanCast(SNOPower.Witchdoctor_Firebats) && Player.PrimaryResource >= batMana)
+            {
+                power = new TrinityPower(SNOPower.Witchdoctor_Firebats);
+                return true;
+            }
+
+            // Firebats: Plague Bats
+            if (Runes.WitchDoctor.PlagueBats.IsActive && TargetUtil.AnyMobsInRange(15f) &&
+                CanCast(SNOPower.Witchdoctor_Firebats) && Player.PrimaryResource >= batMana)
+            {
+                var bestClusterPoint = TargetUtil.GetBestClusterPoint(15f, 30f);
+                var range = Settings.Combat.WitchDoctor.FirebatsRange > 20f ? 20f : Settings.Combat.WitchDoctor.FirebatsRange;
+
+                power = new TrinityPower(SNOPower.Witchdoctor_Firebats, range, bestClusterPoint, 0, 0);
+                return true;
+            }
+
+            power = null;
+            return false;
+        }
+
+        private static bool TrySoulHarvest(out TrinityPower power)
+        {
+            power = null;
+            if (CanCast(SNOPower.Witchdoctor_SoulHarvest) && !IsCurrentlyAvoiding)
+            {
+                if (Player.CurrentHealthPct < 0.6 && TargetUtil.AnyMobsInRange(12f))
+                {
+                    {
+                        power = new TrinityPower(SNOPower.Witchdoctor_SoulHarvest);
+                        return true;
+                    }
+                }
+                if (TargetUtil.ClusterExists(3, 12f) && Skills.WitchDoctor.SoulHarvest.BuffStacks < 10)
+                {
+                    Logger.Log(LogCategory.Routine, "Im going in to harvest! 4/12");
+                    MoveToSoulHarvestPoint(Core.Clusters.BestCluster);
+                }
+                else if (TargetUtil.AnyElitesInRange(12f) || TargetUtil.AnyMobsInRange(10f, 2))
+                {
+                    {
+                        power = new TrinityPower(SNOPower.Witchdoctor_SoulHarvest);
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         public static TrinityPower GetPower()
@@ -204,7 +350,7 @@ namespace Trinity.Components.Combat.Abilities
                 {
                     return new TrinityPower(SNOPower.Witchdoctor_Gargantuan);
                 }
-            }
+            }            
 
             if (IsHellToothPetDoc)
             {
@@ -258,6 +404,9 @@ namespace Trinity.Components.Combat.Abilities
                     }
                 }
             }
+
+            if (IsHellToothFirebats && TryGetHellToothFirebatsPower(out power))
+                return power;
 
             // Combat Avoidance Spells
             if (!UseOOCBuff && IsCurrentlyAvoiding)
@@ -535,13 +684,8 @@ namespace Trinity.Components.Combat.Abilities
                         MoveToFirebatsPoint(Core.Clusters.BestCluster);
                     }
 
-                    // Big Bad Voodoo
-                    if (CanCast(SNOPower.Witchdoctor_BigBadVoodoo) &&
-                        (Settings.Combat.WitchDoctor.UseBigBadVoodooOffCooldown || TargetUtil.AnyMobsInRange(30f)) &&
-                        !GetHasBuff(SNOPower.Witchdoctor_BigBadVoodoo))
-                    {
-                        return new TrinityPower(SNOPower.Witchdoctor_BigBadVoodoo, 30f, Core.Clusters.BestCluster.Position);
-                    }
+                    if (TryBigBadVoodoo(out power))
+                        return power;
 
                     // Soul Harvest
                     if (CanCast(SNOPower.Witchdoctor_SoulHarvest) &&
@@ -622,13 +766,8 @@ namespace Trinity.Components.Combat.Abilities
                     return new TrinityPower(SNOPower.Witchdoctor_Sacrifice);
                 }
 
-                // Wall of Zombies
-                if (CanCast(SNOPower.Witchdoctor_WallOfZombies) &&
-                    (TargetUtil.AnyElitesInRange(15, 1) || TargetUtil.AnyMobsInRange(15, 1) ||
-                    ((CurrentTarget.IsElite || CurrentTarget.IsTreasureGoblin || CurrentTarget.IsBoss) && CurrentTarget.RadiusDistance <= 25f)))
-                {
-                    return new TrinityPower(SNOPower.Witchdoctor_WallOfZombies, 25f, CurrentTarget.Position);
-                }
+                if (TryWallOfDeath(out power))
+                    return power;
 
                 bool hasSacrifice = Hotbar.Contains(SNOPower.Witchdoctor_Sacrifice);
 
@@ -667,24 +806,9 @@ namespace Trinity.Components.Combat.Abilities
                     return new TrinityPower(SNOPower.Witchdoctor_MassConfusion, 0f, CurrentTarget.AcdId);
                 }
 
-                if (!Settings.Combat.WitchDoctor.UseBigBadVoodooOffCooldown)
-                {
-                    // Big Bad Voodoo
-                    if (CanCast(SNOPower.Witchdoctor_BigBadVoodoo) &&
-                        (TargetUtil.EliteOrTrashInRange(25f) || (CurrentTarget.IsBoss && CurrentTarget.Distance <= 30f) ||
-                        Sets.LegacyOfNightmares.IsFullyEquipped && TargetUtil.AnyMobsInRange(40f)))
-                    {
-                        return new TrinityPower(SNOPower.Witchdoctor_BigBadVoodoo);
-                    }
-                }
-                else
-                {
-                    // Big Bad Voodo, cast whenever available
-                    if (!UseOOCBuff && !Player.IsIncapacitated && CanCast(SNOPower.Witchdoctor_BigBadVoodoo))
-                    {
-                        return new TrinityPower(SNOPower.Witchdoctor_BigBadVoodoo);
-                    }
-                }
+                if (TryBigBadVoodoo(out power))
+                    return power;
+
                 // Grasp of the Dead
                 if (CanCast(SNOPower.Witchdoctor_GraspOfTheDead) &&
                     (TargetUtil.AnyMobsInRange(30, 2) || TargetUtil.EliteOrTrashInRange(30f)) &&
@@ -939,6 +1063,35 @@ namespace Trinity.Components.Combat.Abilities
             return power;
         }
 
+        private static bool TryWallOfDeath(out TrinityPower power)
+        {
+            power = null;
+            if (CurrentTarget == null)
+                return false;
+
+            if (CanCast(SNOPower.Witchdoctor_WallOfZombies) && TargetUtil.AnyMobsInRange(50f))
+            {
+                power = new TrinityPower(SNOPower.Witchdoctor_WallOfZombies, 25f, TargetUtil.GetBestClusterPoint());
+                return true;           
+            }            
+            return false;
+        }
+
+        private static bool TryBigBadVoodoo(out TrinityPower power)
+        {
+            power = null;
+            if (Player.IsIncapacitated || !CanCast(SNOPower.Witchdoctor_BigBadVoodoo))
+            {
+                return false;
+            }            
+            if (Settings.Combat.WitchDoctor.UseBigBadVoodooOffCooldown || TargetUtil.AnyElitesInRange(30f))
+            {
+                power = new TrinityPower(SNOPower.Witchdoctor_BigBadVoodoo);
+                return true;     
+            }                      
+            return false;
+        }
+
         private static bool IsLonFirebatsBuild
         {
             get { return Sets.LegacyOfNightmares.IsFullyEquipped && Skills.WitchDoctor.Firebats.IsActive; }
@@ -997,7 +1150,7 @@ namespace Trinity.Components.Combat.Abilities
                 Destination = area.Position,                
                 StopCondition = m =>
                 {
-                    return !CanCast(SNOPower.Witchdoctor_SoulHarvest) || PlayerMover.IsBlocked;
+                    return !CanCast(SNOPower.Witchdoctor_SoulHarvest) || PlayerMover.IsBlocked || Core.PlayerHistory.MoveSpeed < 2;
                 },
                 OnUpdate = m =>
                 {
@@ -1005,6 +1158,8 @@ namespace Trinity.Components.Combat.Abilities
                     if (IdealSoulHarvestCriteria(Core.Clusters.BestLargeCluster) &&
                         Core.Clusters.BestLargeCluster.Position.Distance(m.Destination) > 10f)
                         m.Destination = Core.Clusters.BestLargeCluster.Position;
+
+                    Logger.Log(LogCategory.Routine, $"Moving to Harvest Point {m}");
 
                     if (TargetUtil.NumMobsInRange(12f) >= 3 && Skills.WitchDoctor.SoulHarvest.CanCast())
                         Skills.WitchDoctor.SoulHarvest.Cast();
@@ -1112,12 +1267,12 @@ namespace Trinity.Components.Combat.Abilities
                 if (Hotbar.Contains(SNOPower.Witchdoctor_PlagueOfToads))
                     return new TrinityPower(SNOPower.Witchdoctor_PlagueOfToads, 12f, CurrentTarget.Position);
                 if (Hotbar.Contains(SNOPower.Witchdoctor_AcidCloud) && Player.PrimaryResource >= 175)
+                    return new TrinityPower(SNOPower.Witchdoctor_PlagueOfToads, 12f, CurrentTarget.Position);
+                if (Hotbar.Contains(SNOPower.Witchdoctor_Firebats) && Player.PrimaryResource >= 75 && CurrentTarget != null && CurrentTarget.Distance < 15f)
                     return new TrinityPower(SNOPower.Witchdoctor_AcidCloud, 12f, CurrentTarget.Position);
-
                 if (Hotbar.Contains(SNOPower.Witchdoctor_Sacrifice) && Hotbar.Contains(SNOPower.Witchdoctor_SummonZombieDog) &&
                     Player.Summons.ZombieDogCount > 0 && Settings.Combat.WitchDoctor.ZeroDogs)
                     return new TrinityPower(SNOPower.Witchdoctor_Sacrifice, 12f, CurrentTarget.Position);
-
                 if (Hotbar.Contains(SNOPower.Witchdoctor_SpiritBarrage) && Player.PrimaryResource > 100)
                     return new TrinityPower(SNOPower.Witchdoctor_SpiritBarrage, 12f, CurrentTarget.AcdId);
 
@@ -1129,6 +1284,7 @@ namespace Trinity.Components.Combat.Abilities
         // For some reason this version works better fo WD, so here it is.
         private static Vector3 _lastSafeSpotPosition = Vector3.Zero;
         private static DateTime _lastSafeSpotPositionTime = DateTime.MinValue;
+
         private static Vector3 GetSafeSpotPosition(float distance)
         {
             // Maximum speed of changing safe spots is every 2s

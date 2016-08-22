@@ -386,7 +386,8 @@ namespace Trinity.Movement
 
                 var charges = Skills.Monk.DashingStrike.Charges;
                 if (charges <= 0) return false;
-
+                if (Sets.ThousandStorms.IsFullyEquipped && charges < 2 && !PlayerMover.IsBlocked)
+                    return false;
                 Skills.Monk.DashingStrike.Cast(destination);
                 LogMovement(SNOPower.X1_Monk_DashingStrike, destination);
                 return true;
@@ -472,7 +473,7 @@ namespace Trinity.Movement
 
         public static bool WitchdoctorMover(Vector3 destination)
         {
-            if (CombatBase.CanCast(SNOPower.Witchdoctor_SpiritWalk) &&
+            if (CombatBase.CanCast(SNOPower.Witchdoctor_SpiritWalk) && !Core.Player.IsChannelling &&
                 !CombatBase.GetHasBuff(SNOPower.Witchdoctor_SpiritWalk))
             {
                 Skills.WitchDoctor.SpiritWalk.Cast(destination);

@@ -21,20 +21,20 @@ namespace Trinity.Components.Combat.Abilities.PhelonsPlayground
         internal static bool BestBuffPosition(float maxRange, Vector3 fromLocation, bool objectsInAoe, out Vector3 location)
         {
             location = Vector3.Zero;
-            var closestSancAndOcc = ClosestSancAndOcc(maxRange, objectsInAoe);
-            if (closestSancAndOcc != Vector3.Zero)
+            var closestSancAndOcc = ClosestSancAndOcc(maxRange, fromLocation, objectsInAoe);
+            if (closestSancAndOcc != Vector3.Zero && Core.Avoidance.Grid.CanRayCast(fromLocation, closestSancAndOcc))
             {
                 location = closestSancAndOcc;
                 return true;
             }
-            var closestOcc = ClosestOcculous(maxRange, objectsInAoe);
-            if (closestOcc != Vector3.Zero)
+            var closestOcc = ClosestOcculous(maxRange, fromLocation, objectsInAoe);
+            if (closestOcc != Vector3.Zero && Core.Avoidance.Grid.CanRayCast(fromLocation, closestOcc))
             {
                 location = closestOcc;
                 return true;
             }
-            var closestSanc = ClosestSanctuary(maxRange, objectsInAoe);
-            if (closestSanc != Vector3.Zero)
+            var closestSanc = ClosestSanctuary(maxRange, fromLocation, objectsInAoe);
+            if (closestSanc != Vector3.Zero && Core.Avoidance.Grid.CanRayCast(fromLocation, closestSanc))
             {
                 location = closestSanc;
                 return true;
@@ -46,7 +46,7 @@ namespace Trinity.Components.Combat.Abilities.PhelonsPlayground
         {
             location = Vector3.Zero;
 
-            var closestOcc = ClosestOcculous(maxRange, objectsInAoe);
+            var closestOcc = ClosestOcculous(maxRange, CombatBase.Player.Position,  objectsInAoe);
 
             if (closestOcc != Vector3.Zero)
             {
@@ -61,7 +61,7 @@ namespace Trinity.Components.Combat.Abilities.PhelonsPlayground
         {
             return
                 (from u in SafeList(objectsInAoe)
-                    where u.RadiusDistance <= range &&
+                    where u.Distance <= range &&
                           u.Type == TrinityObjectType.Shrine
                     orderby u.Distance
                     select u).ToList();
@@ -122,7 +122,7 @@ namespace Trinity.Components.Combat.Abilities.PhelonsPlayground
                     (from u in SafeList(includeUnitsInAoe)
                         where ((useWeights && u.Weight > 0) || !useWeights) &&
                               u.IsUnit && u.HasBeenInLoS &&
-                              u.RadiusDistance <= maxRange &&
+                              u.Distance <= maxRange &&
                               u.NearbyUnitsWithinDistance(aoe_radius) >= count
                         orderby u.NearbyUnitsWithinDistance(aoe_radius),
                             u.Distance descending
@@ -130,12 +130,24 @@ namespace Trinity.Components.Combat.Abilities.PhelonsPlayground
             }
         }
 
+        internal static List<TrinityActor> AuraUnits(SNOPower aura, float maxSearchRange = 65f,
+            bool addUnitsInAoE = false)
+        {
+            return (from u in SafeList(addUnitsInAoE)
+                    where u.IsUnit &&
+                          u.Distance <= maxSearchRange &&
+                          u.HasBeenInLoS && !u.HasDebuff(aura)
+                    orderby u.NearbyUnitsWithinDistance(),
+                        u.Distance
+                    select u).ToList();
+        }
+
         internal static TrinityActor BestAuraUnit(SNOPower aura, float maxSearchRange = 65f,
             bool addUnitsInAoE = false)
         {
             return (from u in SafeList(addUnitsInAoE)
                 where u.IsUnit &&
-                      u.RadiusDistance <= maxSearchRange &&
+                      u.Distance <= maxSearchRange &&
                       u.HasBeenInLoS && !u.HasDebuff(aura)
                 orderby u.NearbyUnitsWithinDistance(),
                     u.Distance
@@ -168,7 +180,7 @@ namespace Trinity.Components.Combat.Abilities.PhelonsPlayground
         {
             return (from u in SafeList(ignoreElites)
                 where u.IsUnit &&
-                      u.RadiusDistance <= maxRange && u.IsInLineOfSight &&
+                      u.Distance <= maxRange && u.IsInLineOfSight &&
                       !(ignoreUnitsInAoE && u.IsStandingInAvoidance) &&
                       !(ignoreElites && u.IsElite)
                 orderby u.CountUnitsInFront() descending
@@ -238,39 +250,29 @@ namespace Trinity.Components.Combat.Abilities.PhelonsPlayground
 
         }
 
-        public static TrinityActor ClosestTargetToOcculous(float range, bool objectsInAoe = false)
+        internal static Vector3 ClosestOcculous(float maxRange, Vector3 fromLocation, bool objectsInAoe = false)
         {
-            return (from u in SafeList(objectsInAoe)
-                    where u.IsUnit &&
-                          u.Distance <= range
-                    orderby
-                        ClosestOcculous(30f).Distance(u.Position) descending
-                    select u).FirstOrDefault();
-        }
-
-        internal static Vector3 ClosestOcculous(float maxRange, bool objectsInAoe = false)
-        {
-            var TrinityActor = GetOculusBuffDiaObjects(maxRange, objectsInAoe).OrderBy(x => x.Distance).FirstOrDefault();
+            var TrinityActor = GetOculusBuffDiaObjects(maxRange, fromLocation, objectsInAoe).OrderBy(x => x.Distance).FirstOrDefault();
             return TrinityActor?.Position ?? Vector3.Zero;
         }
 
-        internal static List<TrinityActor> GetOculusBuffDiaObjects(float range = 25f, bool objectsInAoe = false)
+        internal static List<TrinityActor> GetOculusBuffDiaObjects(float range, Vector3 fromLocation, bool objectsInAoe = false)
         {
             //[1FABA194] Type: ClientEffect Name: p2_itemPassive_unique_ring_017_dome-58267 ActorSnoId: 433966, Distance: 24.701
 
             return
                 (from u in SafeList(objectsInAoe)
-                    where u.Distance <= range &&
-                          u.ActorSnoId == 433966
+                 where fromLocation.Distance2D(u.Position) <= range &&
+                       u.ActorSnoId == 433966
                     orderby u.Distance
                     select u).ToList();
         }
 
-        internal static Vector3 ClosestSancAndOcc(float maxRange, bool objectsInAoe = false)
+        internal static Vector3 ClosestSancAndOcc(float maxRange, Vector3 fromLocation, bool objectsInAoe = false)
         {
-            foreach (var item in GetInnerSanctuaryDiaObjects(maxRange).Select(x => x.Position).ToList())
+            foreach (var item in GetInnerSanctuaryDiaObjects(maxRange, fromLocation, objectsInAoe).Select(x => x.Position).ToList())
             {
-                var occPoint = GetOculusBuffDiaObjects(maxRange).OrderBy(x => x.Distance)
+                var occPoint = GetOculusBuffDiaObjects(maxRange, fromLocation, objectsInAoe).OrderBy(x => x.Distance)
                     .Select(y => y.Position)
                     .FirstOrDefault(z => z.Distance2D(item) < 3);
                 if (occPoint != Vector3.Zero)
@@ -279,18 +281,18 @@ namespace Trinity.Components.Combat.Abilities.PhelonsPlayground
             return Vector3.Zero;
         }
 
-        internal static Vector3 ClosestSanctuary(float maxRange, bool objectsInAoe = false)
+        internal static Vector3 ClosestSanctuary(float maxRange, Vector3 fromLocation, bool objectsInAoe = false)
         {
-            var TrinityActor = GetInnerSanctuaryDiaObjects(maxRange, objectsInAoe).OrderBy(x => x.Distance).FirstOrDefault();
+            var TrinityActor = GetInnerSanctuaryDiaObjects(maxRange, fromLocation, objectsInAoe).OrderBy(x => x.Distance).FirstOrDefault();
             return TrinityActor?.Position ?? Vector3.Zero;
         }
 
-        internal static List<TrinityActor> GetInnerSanctuaryDiaObjects(float range = 25f,
+        internal static List<TrinityActor> GetInnerSanctuaryDiaObjects(float range , Vector3 fromLocation,
             bool objectsInAoe = false)
         {
             return
                 (from u in SafeList(objectsInAoe)
-                    where u.RadiusDistance <= range &&
+                    where fromLocation.Distance2D(u.Position) <= range &&
                           u.ActorSnoId == 320136
                     orderby u.Distance
                     select u).ToList();
@@ -301,7 +303,7 @@ namespace Trinity.Components.Combat.Abilities.PhelonsPlayground
             return (from u in SafeList(objectsInAoe)
                 where
                     (u.Type == TrinityObjectType.HealthGlobe || u.Type == TrinityObjectType.PowerGlobe) &&
-                    u.RadiusDistance <= distance
+                    u.Distance <= distance
                 select u).FirstOrDefault();
         }
 
@@ -326,7 +328,7 @@ namespace Trinity.Components.Combat.Abilities.PhelonsPlayground
         {
             return
                 (from u in SafeList(objectsInAoe)
-                    where u.RadiusDistance <= range &&
+                    where u.Distance <= range &&
                           u.ActorSnoId == actorSNO
                     orderby u.Distance
                     select u).ToList();
@@ -338,7 +340,7 @@ namespace Trinity.Components.Combat.Abilities.PhelonsPlayground
             var clusterUnits =
                 (from u in SafeList(objectsInAoe)
                     where u.ActorSnoId == actorSNO &&
-                          u.RadiusDistance <= maxRange
+                          u.Distance <= maxRange
                     orderby u.NearbyUnitsWithinDistance(radius),
                         u.Distance descending
                     select u.Position).ToList();
@@ -350,7 +352,7 @@ namespace Trinity.Components.Combat.Abilities.PhelonsPlayground
         {
             return
                 (from u in SafeList(objectsInAoe)
-                    where u.RadiusDistance <= range &&
+                    where u.Distance <= range &&
                           u.ActorSnoId == 322236
                     orderby u.Distance
                     select u).ToList();
@@ -367,7 +369,7 @@ namespace Trinity.Components.Combat.Abilities.PhelonsPlayground
             var clusterUnits =
                 (from u in SafeList(objectsInAoe)
                     where u.ActorSnoId == 322236 &&
-                          u.RadiusDistance <= maxRange
+                          u.Distance <= maxRange
                     orderby u.NearbyUnitsWithinDistance(radius),
                         u.Distance descending
                     select u.Position).ToList();

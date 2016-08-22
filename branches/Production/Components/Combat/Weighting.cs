@@ -181,7 +181,7 @@ namespace Trinity.Components.Combat
                         else
                         {
                             Logger.LogVerbose($"Reverting rift progression kill all mode back to normal combat");
-                            CombatBase.CombatMode = CombatMode.On;
+                            CombatBase.CombatMode = CombatMode.Normal;
                         }
                     }
 
@@ -322,11 +322,9 @@ namespace Trinity.Components.Combat
                                         //Formula:   MaxWeight-(Distance * Distance * RangeFactor)
                                         //           RangeFactor effects how quickly weights go into negatives on far distances.                                                                    
 
-                                        var ignoreTrashTooFarAway = cacheObject.IsTrashMob &&
-                                                                    cacheObject.Distance >
-                                                                    Core.Settings.Combat.Misc.NonEliteRange;
-                                        var ignoreElitesTooFarAway = cacheObject.IsElite &&
-                                                                     cacheObject.Distance > Core.Settings.Combat.Misc.EliteRange;
+                                        var ignoreTrashTooFarAway = cacheObject.IsTrashMob && cacheObject.Distance > Core.Settings.Combat.Misc.NonEliteRange;
+                                        var ignoreElitesTooFarAway = cacheObject.IsElite && cacheObject.Distance > Core.Settings.Combat.Misc.EliteRange;
+
                                         if (ignoreTrashTooFarAway || ignoreElitesTooFarAway)
                                         {
                                             cacheObject.WeightInfo +=
@@ -586,9 +584,14 @@ namespace Trinity.Components.Combat
                                                     cacheObject.InternalName);
                                             break;
                                         }
+                                        else if (CombatBase.CombatMode == CombatMode.Questing)
+                                        {
+                                            cacheObject.WeightInfo += $"Questing Mode - Ignoring Trash Pack Size Setting.";
+                                        }
                                         else if (nearbyTrashCount < CombatBase.CombatOverrides.EffectiveTrashSize && !Core.Minimap.MinimapIconAcdIds.Contains(cacheObject.AcdId) && 
                                                  !DataDictionary.CorruptGrowthIds.Contains(cacheObject.ActorSnoId) && !isQuestGiverOutsideCombat)
                                         {
+
                                             cacheObject.WeightInfo +=
                                                 $"Ignoring Below TrashPackSize ({nearbyTrashCount} < {CombatBase.CombatOverrides.EffectiveTrashSize})";
                                             break;
@@ -938,12 +941,6 @@ namespace Trinity.Components.Combat
 
                             case TrinityObjectType.PowerGlobe:
                                 {
-                                    if (!cacheObject.IsWalkable && !cacheObject.HasBeenWalkable)
-                                    {
-                                        cacheObject.WeightInfo += $"Ignoring unreachable.";
-                                        break;
-                                    }
-
                                     if (Core.Settings.Combat.Misc.IgnorePowerGlobes)
                                     {
                                         cacheObject.WeightInfo += $"Ignoring {cacheObject.InternalName} - Power Globe Setting.";
@@ -1534,6 +1531,14 @@ namespace Trinity.Components.Combat
                                 #endregion
                         }
 
+
+                        // Anti-Flip flop. A new target needs to be 15% better than current.
+                        if (CombatBase.CurrentTarget != null && CombatBase.CurrentTarget.AnnId == cacheObject.AnnId)
+                        {
+                            cacheObject.Weight *= 1.15; 
+                            cacheObject.WeightInfo += " Last Target Boost "; 
+                        }
+
                         bestTarget = GetNewBestTarget(cacheObject, bestTarget);
                     }
 
@@ -1582,10 +1587,7 @@ namespace Trinity.Components.Combat
                 if (bestTarget == null)
                     bestTarget = cacheObject;
 
-                // Use the highest weight, and if at max weight, the closest
-                var pickNewTarget = cacheObject.Weight > 0 &&
-                                    (cacheObject.Weight > Trinity.TrinityPlugin.HighestWeightFound ||
-                                     (cacheObject.Weight == Trinity.TrinityPlugin.HighestWeightFound && (Trinity.TrinityPlugin.CurrentTarget == null || cacheObject.Distance < Trinity.TrinityPlugin.CurrentTarget.Distance)));
+                var pickNewTarget = cacheObject.Weight > 0 && cacheObject.Weight > Trinity.TrinityPlugin.HighestWeightFound;
 
                 if (!pickNewTarget) return bestTarget;
                 bestTarget = cacheObject;
@@ -1898,11 +1900,19 @@ namespace Trinity.Components.Combat
                 // not units (items etc) shouldnt be impacted by the trash/non-trash slider setting.
                 var range = 80f;
 
+                // Overriding these settings required for questing profiles acts1-5.
+                var isQuesting = CombatBase.CombatMode == CombatMode.Questing;
+                var questingEliteRange = 120f;
+                var questingTrashRange = 100f;
+
                 if (cacheObject.Type == TrinityObjectType.Unit)
                 {
+                    var eliteRange = isQuesting ? questingEliteRange : Core.Settings.Combat.Misc.EliteRange;
+                    var nonEliteRange= isQuesting ? questingTrashRange : Core.Settings.Combat.Misc.NonEliteRange;
+
                     range = cacheObject.IsElite
-                        ? Core.Settings.Combat.Misc.EliteRange
-                        : Core.Settings.Combat.Misc.NonEliteRange;
+                        ? eliteRange
+                        : nonEliteRange;
 
                     if (cacheObject.IsMinimapActive)
                         range *= 1.5f;
