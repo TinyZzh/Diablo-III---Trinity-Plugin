@@ -115,7 +115,10 @@ namespace Trinity.Components.Combat
             }
 
             SetCurrentTarget(target);
-            SetCurrentPower(GetPowerForTarget(target));            
+            SetCurrentPower(GetPowerForTarget(target));
+
+            if (HandleInteractionChannelling())
+                return true;
 
             if (await HandleKiting())
                 return true;
@@ -135,6 +138,16 @@ namespace Trinity.Components.Combat
             }
             
             return true;
+        }
+
+        private bool HandleInteractionChannelling()
+        {
+            if (Core.Player.IsCasting && !Core.Player.IsTakingDamage && CurrentTarget != null && CurrentTarget.IsGizmo)
+            {
+                Logger.LogVerbose(LogCategory.Targetting, "Waiting while channelling spell");
+                return true;
+            }
+            return false;
         }
 
         private bool TryBlacklist(TrinityActor target)
@@ -339,8 +352,17 @@ namespace Trinity.Components.Combat
             var rangeRequired = Math.Max(1f, power.MinimumRange);
             var distance = position.Distance(Core.Player.Position);
 
+            if (Core.Player.IsInBossEncounter && Combat.Targeting.CurrentTarget != null)
+            {
+                var positionIsBoss = Combat.Targeting.CurrentTarget.IsBoss && Combat.Targeting.CurrentTarget.Position.Distance(position) < 10f;
+                if (positionIsBoss)
+                {
+                    rangeRequired += Combat.Targeting.CurrentTarget.CollisionRadius;
+                }
+            }
+
             Logger.LogVerbose(LogCategory.Targetting, $">> CurrentPower={power} CurrentTarget={position} RangeReq:{rangeRequired} Dist:{distance}");
-            return distance <= Math.Max(1f, power.MinimumRange) && IsInLineOfSight(position);
+            return distance <= rangeRequired && IsInLineOfSight(position);
         }
 
         private bool IsInLineOfSight(TrinityActor currentTarget)

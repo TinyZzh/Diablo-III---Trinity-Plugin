@@ -133,6 +133,8 @@ namespace Trinity.Framework.Actors.ActorTypes
         public ShrineTypes ShrineType { get; set; }
         public ContainerTypes ContainerType { get; set; }
 
+        public SpecialTypes SpecialType { get; set; }
+
         /// <summary>
         /// Rotation in radians
         /// </summary>
@@ -207,10 +209,11 @@ namespace Trinity.Framework.Actors.ActorTypes
         public bool IsAvoidanceOnPath => Core.Avoidance.Grid.IsIntersectedByFlags(Position, Core.Player.Position, AvoidanceFlags.Avoidance);
         public bool IsCriticalAvoidanceOnPath => Core.Avoidance.Grid.IsIntersectedByFlags(Position, Core.Player.Position, AvoidanceFlags.CriticalAvoidance);
 
+
         /// <summary>
         /// [Severely costly method] If a path can be made by DB's Navigator to the actor 
         /// </summary>
-        public bool IsNavigable() => Core.DBNavProvider.CanPathWithinDistance(Position, 15f).Result;
+        public bool IsNavigable() => Core.DBGridProvider.Height > 0 && Core.DBNavProvider.CanPathWithinDistance(Position, 15f).Result;
 
         public override void OnDestroyed()
         {

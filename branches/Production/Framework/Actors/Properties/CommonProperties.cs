@@ -4,6 +4,7 @@ using Trinity.Components.Combat;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Objects;
 using Trinity.Reference;
+using Trinity.Settings;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals.SNO;
@@ -37,7 +38,10 @@ namespace Trinity.Framework.Actors.Properties
                 actor.Radius = rActor.CollisionSphere.Radius;
                 var axialRadius = actorInfo.AxialCylinder.Ax1;
                 actor.AxialRadius = axialRadius;
-                actor.CollisionRadius = Math.Max(1f, axialRadius * 0.60f);
+
+                actor.CollisionRadius = GameData.CustomObjectRadius.ContainsKey(actor.ActorSnoId) 
+                    ? GameData.CustomObjectRadius[actor.ActorSnoId] 
+                    : Math.Max(1f, axialRadius * 0.60f);
             }
 
             var type = GetObjectType(
@@ -80,7 +84,7 @@ namespace Trinity.Framework.Actors.Properties
             actor.IsGizmo = actor.ActorType == ActorType.Gizmo;
             actor.IsMonster = actor.ActorType == ActorType.Monster;
             actor.IsGroundItem = actor.IsItem && actor.InventorySlot == InventorySlot.None;
-            
+            actor.SpecialType = GetSpecialType(actor);
 
             actor.RequiredRadiusDistance = GetRequiredRange(actor);
 
@@ -120,6 +124,7 @@ namespace Trinity.Framework.Actors.Properties
                 }
             }
         }
+
         public static TrinityObjectType GetObjectType(ActorType actorType, int actorSno, GizmoType gizmoType, string internalName)
         {
             if (GameData.ObjectTypeOverrides.ContainsKey(actorSno))
@@ -220,6 +225,14 @@ namespace Trinity.Framework.Actors.Properties
                 return TrinityObjectType.Waypoint;
 
             return TrinityObjectType.Unknown;
+        }
+
+        public static SpecialTypes GetSpecialType(TrinityActor cacheObject)
+        {
+            if(cacheObject.ActorSnoId == 4860) //SNOActor.PlayerHeadstone
+                return SpecialTypes.PlayerTombstone;
+            
+            return SpecialTypes.None;             
         }
 
         public static TrinityObjectType GetObjectType(TrinityActor obj)

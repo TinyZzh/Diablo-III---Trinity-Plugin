@@ -3,12 +3,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
+using Buddy.Overlay;
 using Trinity.Coroutines.Town;
 using Trinity.DbProvider;
 using Trinity.Framework;
@@ -32,7 +35,7 @@ namespace Trinity
     public class TrinityPlugin : IPlugin
     {
         public string Name => "Trinity";
-        public Version Version => new Version(2, 55, 673);
+        public Version Version => new Version(2, 55, 683);
         public string Author => "xzjv, TarasBulba, rrrix, jubisman, Phelon and many more";
         public string Description => $"v{Version} provides combat, exploration and much more";
         public Window DisplayWindow => UILoader.GetDisplayWindow(Path.Combine(FileManager.PluginPath, "UI"));
@@ -54,6 +57,14 @@ namespace Trinity
 
             if (!CharacterSettings.Instance.EnabledPlugins.Contains("Trinity"))
                 CharacterSettings.Instance.EnabledPlugins.Add("Trinity");
+
+            OverlayBugFixHack();
+        }
+
+        private void OverlayBugFixHack()
+        {
+            // OverlayManager is throwing a null ref exception on application exit            
+            //ZetaDia.Overlay.Deactivate();
         }
 
         public DateTime LastPulse { get; set; }
@@ -96,7 +107,7 @@ namespace Trinity
 
                     // Turn off DB's inactivity detection.
                     GlobalSettings.Instance.LogoutInactivityTime = 0;
-            
+
                     if (GoldInactivity.Instance.GoldInactive())
                     {
                         LeaveGame("Gold Inactivity Tripped");
@@ -129,20 +140,8 @@ namespace Trinity
             if (IsEnabled)
                 return;
 
-            try
-            {
-                if (!Application.Current.CheckAccess())
-                {
-                    Logger.LogVerbose($"TrinityPlugin Skipped OnEnabled() attempt by PID: {Process.GetCurrentProcess().Id} CurrentThread={Thread.CurrentThread.ManagedThreadId} '{Thread.CurrentThread.Name}' CanAccessApplication={Application.Current.CheckAccess()}");
-                    return;
-                }
-
-                Logger.Log($"Trinity OnEnabled() was called from thread: {Thread.CurrentThread.Name} ({Thread.CurrentThread.ManagedThreadId})");
-            }
-            catch (Exception)
-            {
+            if (!Application.Current.CheckAccess())
                 return;
-            }
 
             try
             {
@@ -235,8 +234,6 @@ namespace Trinity
         {
             if (IsInitialized)
                 return;
-
-            ZetaDia.Actors.Update();
 
             if (!Application.Current.CheckAccess())
                 return;
