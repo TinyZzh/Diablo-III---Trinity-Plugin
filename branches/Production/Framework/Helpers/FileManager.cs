@@ -478,7 +478,7 @@ namespace Trinity.Framework.Helpers
             return fo;
         }
 
-        private static string GetUniqueFileName(string fileName)
+        public static string GetUniqueFileName(string fileName)
         {
             string extension = Path.GetExtension(fileName);
             if (extension == null)

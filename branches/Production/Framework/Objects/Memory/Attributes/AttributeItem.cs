@@ -58,21 +58,21 @@ namespace Trinity.Framework.Objects.Memory.Attributes
                 var type = TypeUtil<T>.TypeOf;
                 if (Integer is T)
                 {
-                    //if (Descripter.IsInteger)
-                    //{
+                    if (Descripter != null && Descripter.IsInteger)
+                    {
                         return (T)Convert.ChangeType(Integer, TypeUtil<T>.TypeOf);
-                    //}
-                    //if (Single > Int32.MinValue && Single < Int32.MaxValue)
-                    //{
-                    //    return (T)Convert.ChangeType(Single, type);
-                    //}
+                    }
+                    if (Single > Int32.MinValue && Single < Int32.MaxValue)
+                    {
+                        return (T)Convert.ChangeType(Single, type);
+                    }
                 }
                 if (Single is T)
                 {
-                    //if (Descripter?.IsInteger)
-                    //{
-                    //    return (T)Convert.ChangeType(Integer, TypeUtil<T>.TypeOf);
-                    //}
+                    if (Descripter != null && Descripter.IsInteger)
+                    {
+                        return (T)Convert.ChangeType(Integer, TypeUtil<T>.TypeOf);
+                    }
                     return (T)Convert.ChangeType(Single, type);
                 }
                 if (type.IsEnum)
