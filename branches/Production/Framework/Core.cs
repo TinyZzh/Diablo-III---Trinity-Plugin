@@ -1,14 +1,15 @@
 ﻿using System;
 //using Trinity.Components.AutoFollow;
 using Trinity.Components.Adventurer;
+using Trinity.Components.Adventurer.Game.Events;
 using Trinity.DbProvider;
 using Trinity.Framework.Actors;
 using Trinity.Framework.Avoidance;
 using Trinity.Framework.Helpers;
-using Trinity.Framework.Modules;
 using Trinity.Framework.Objects.Enums;
 using Trinity.Framework.Objects.Memory;
 using Trinity.Framework.Objects.Memory.Misc;
+using Trinity.Modules;
 using Trinity.ProfileTags;
 using Trinity.Routines;
 using Trinity.Settings;
@@ -66,15 +67,29 @@ namespace Trinity.Framework
         internal static MainGridProvider DBGridProvider => (MainGridProvider)Navigator.SearchGridProvider;
         internal static DefaultNavigationProvider DBNavProvider => (DefaultNavigationProvider)Navigator.NavigationProvider;
 
-        private static void OnGameJoined(object sender, EventArgs e) => ModuleManager.FireEvent(ModuleEvent.GameJoined);        
+        private static void OnGameJoined(object sender, EventArgs e)
+        {
+            InGameAndStarted = true;
+            ModuleManager.FireEvent(ModuleEvent.GameJoined);
+        }
+
+        private static void OnGameLeft(object sender, EventArgs e)
+        {
+            InGameAndStarted = false;
+        }
+
+        public static bool InGameAndStarted { get; set; }
+
         private static void OnWorldChanged(object sender, EventArgs eventArgs) => ModuleManager.FireEvent(ModuleEvent.WorldChanged);
 
         public static bool GameIsReady => ZetaDia.IsInGame && ZetaDia.Me.IsValid && !ZetaDia.IsLoadingWorld && !ZetaDia.IsPlayingCutscene;
 
-
         private static void Pulse(object sender, EventArgs eventArgs)
         {
-            Update();
+            if (InGameAndStarted && GameIsReady)
+            {
+                Update();
+            }
         }
 
         public static void Disable()
@@ -93,25 +108,21 @@ namespace Trinity.Framework
 
         public static void Init()
         {
-            
+            GameEvents.OnGameJoined += (sender, args) => GameJoined = true;
+            GameEvents.OnGameLeft += (sender, args) => GameJoined = false;
         }
+
+        public static bool GameJoined { get; set; }
 
         public static void Enable()
         {                  
             if (!IsEnabled)
             {
-                //ZetaDia.Actors.Update();
                 Pulsator.OnPulse += Pulse;
                 GameEvents.OnWorldChanged += OnWorldChanged;
                 GameEvents.OnGameJoined += OnGameJoined;
+                GameEvents.OnGameLeft += OnGameLeft;
                 ModuleManager.EnableAll();
-
-                //ZetaDia.Actors.Update();
-                Actors.Update();
-                Inventory.Update();
-                Hotbar.Update();
-                Routines.SelectRoutine();
-
                 Logger.Log("Trinity Framework Enabled");
                 IsEnabled = true;
             }

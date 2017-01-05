@@ -1,27 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms.VisualStyles;
-using System.Xml;
-using System.Xml.Serialization;
-using Microsoft.Win32;
-using Trinity.Components.Combat;
+using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
-using Trinity.Framework.Events;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
-using Trinity.Framework.Objects.Enums;
 using Trinity.Reference;
 using Trinity.Settings;
 using Zeta.Bot;
-using Zeta.Game.Internals.Actors;
 using ItemEvents = Trinity.Framework.Events.ItemEvents;
 
-namespace Trinity.Framework.Modules
+namespace Trinity.Modules
 {
     [Serializable]
     public class StatsSession
@@ -99,14 +88,14 @@ namespace Trinity.Framework.Modules
             Left,
             Death
         }
-            
+
 
         protected override void OnPluginEnabled()
         {
             BotMain.OnStart += bot => Start();
-            BotMain.OnStop += bot => Stop();      
-            BotMain.OnShutdownRequested += (sender, args) => Stop();     
-             
+            BotMain.OnStop += bot => Stop();
+            BotMain.OnShutdownRequested += (sender, args) => Stop();
+
             GameEvents.OnGameJoined += (sender, args) => RecordStat(() => Current.Games.Joined++);
             GameEvents.OnGameLeft += (sender, args) => RecordStat(() => Current.Games.Joined++);
             GameEvents.OnPlayerDied += (sender, args) => RecordStat(() => Current.Player.Deaths++);
@@ -124,11 +113,6 @@ namespace Trinity.Framework.Modules
                 return;
 
             action();
-        }
-
-        private void Gate(Action v)
-        {
-            if(IsRecording && IsSettingEnabled) v();            
         }
 
         protected override int UpdateIntervalMs => 500;
@@ -231,7 +215,7 @@ namespace Trinity.Framework.Modules
         }
 
         private void Start()
-        {            
+        {
             SeenActorAnnIds = new HashSet<int>();
             Current = new StatsSession();
             Current.StartTime = DateTime.UtcNow;
@@ -252,7 +236,7 @@ namespace Trinity.Framework.Modules
 
         public void Save()
         {
-            var file = $"Session - {Core.Player.ActorClass} - {Duration:g} - {Current.StartTime.ToLocalTime():ddd dd-MMM-yy hh-mm-ss}.xml";            
+            var file = $"Session - {Core.Player.ActorClass} - {($"{Duration}:g").Replace(":","-")} - {Current.StartTime.ToLocalTime():ddd dd-MMM-yy hh-mm-ss}.xml";
             var path = Path.Combine(FileManager.LoggingPath, file);
             var xml = EasyXmlSerializer.Serialize(Current);
             File.WriteAllText(path, xml);

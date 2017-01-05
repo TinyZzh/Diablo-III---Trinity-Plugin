@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.ServiceModel.Configuration;
 using System.Threading.Tasks;
 using Trinity.Components.Combat;
 using Trinity.Components.Combat.Resources;
@@ -10,8 +9,8 @@ using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Avoidance;
 using Trinity.Framework.Helpers;
-using Trinity.Framework.Modules;
 using Trinity.Framework.Objects;
+using Trinity.Modules;
 using Trinity.Reference;
 using Trinity.Settings;
 using Zeta.Common;
@@ -206,7 +205,7 @@ namespace Trinity.Routines
             if (Player.SecondaryResourcePct < settings.SecondaryResourcePct / 100)
                 return true;
 
-            if (Player.CurrentHealthPct <= settings.HealthPct)
+            if (Player.CurrentHealthPct > settings.HealthPct)
                 return true;
 
             if (SpellHistory.TimeSinceUse(skill.SNOPower).TotalMilliseconds < settings.RecastDelayMs)

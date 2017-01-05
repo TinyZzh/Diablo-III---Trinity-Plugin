@@ -1,6 +1,5 @@
 ﻿using System;
 using Trinity.Framework.Helpers;
-using Trinity.Framework.Modules;
 using Trinity.Framework.Objects.Memory;
 using Trinity.Framework.Objects.Memory.Containers;
 using Trinity.Framework.Objects.Memory.Misc;
@@ -41,12 +40,13 @@ namespace Trinity.Framework
         }
 
         public SnoManager.SnoGroups SnoGroups => SnoManager.Groups;
-        public PowerHelper PowerHelper => PowerHelper.Instance;
-        public GameBalanceHelper GameBalanceHelper => SnoManager.GameBalanceHelper;
-        public StringListHelper StringListHelper => SnoManager.StringListHelper;
-        public ActivePlayer ActivePlayer { get; } = new ActivePlayer(Internals.Addresses.ActivePlayerData);
+        //public PowerHelper PowerHelper => PowerHelper.Instance;
+        //public GameBalanceHelper GameBalanceHelper => SnoManager.GameBalanceHelper;
+        //public StringListHelper StringListHelper => SnoManager.StringListHelper;
+        //public ActivePlayer ActivePlayer { get; } = new ActivePlayer(Internals.Addresses.ActivePlayerData);
         public UXMinimap Minimap => UXHelper.GetControl<UXMinimap>(10917491887468455961);
-        public MapManager MapManager { get; } = new MapManager(Internals.Addresses.MapManager);
+        //public MapManager MapManager { get; } = new MapManager(Internals.Addresses.MapManager);
+
         public Hero Hero { get; } = new Hero(Internals.Addresses.Hero);
 
     }

@@ -59,12 +59,13 @@ namespace Trinity.Routines.Monk
 
             if (Player.CurrentHealthPct < 0.35)
                 return SevenSidedStrike(CurrentTarget);
-                    
+
+            var closeEPUnits = WeightedUnits.Where(u => u.Distance < 15f && u.HasDebuff(SNOPower.Monk_ExplodingPalm)).ToList();
             var isEPReady = Legendary.Madstone.IsEquipped || WeightedUnits.Any(u => u.Distance < 15f && u.HasDebuff(SNOPower.Monk_ExplodingPalm));
             var isEnoughTime = TimeToElementStart(Element.Cold) > SevenSidedStrikeCooldownMs;
             var isColdElement = Core.Buffs.ConventionElement == Element.Cold;            
 
-            Logger.Log(LogCategory.Routine, $"TimeToCold={TimeToElementStart(Element.Cold)} SSSCD={SevenSidedStrikeCooldownMs} IsCold={isColdElement}");
+            Logger.Log(LogCategory.Routine, $"TimeToCold={TimeToElementStart(Element.Cold)} SSSCD={SevenSidedStrikeCooldownMs} IsCold={isColdElement} EPReady={isEPReady} closeEPUnits={closeEPUnits.Count}");
 
             if (isEPReady && ShouldSevenSidedStrike(out target) && (!Legendary.ConventionOfElements.IsEquipped || isColdElement || isEnoughTime))
                 return SevenSidedStrike(target);      
@@ -107,7 +108,15 @@ namespace Trinity.Routines.Monk
             return target != null;       
         }
 
-        public double SevenSidedStrikeCooldownMs => (Runes.Monk.SustainedAttack.IsActive ? 14 : 30 * (1 - Player.CooldownReductionPct)) *1000;
+        public double SevenSidedStrikeCooldownMs
+        {
+            get
+            {
+                var baseCooldown = Runes.Monk.SustainedAttack.IsActive ? 14 : 30;
+                var multiplier = Legendary.TheFlowOfEternity.IsEquipped ? 0.6 : 1;
+                return baseCooldown * multiplier * (1 - Player.CooldownReductionPct) * 1000;
+            }
+        }
 
         public TrinityPower GetDefensivePower() => GetBuffPower();
 
