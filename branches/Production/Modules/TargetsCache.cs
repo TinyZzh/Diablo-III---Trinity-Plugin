@@ -193,6 +193,12 @@ namespace Trinity.Modules
                 return false;
             }
 
+            if (cacheObject.IsProfileBlacklisted)
+            {
+                cacheObject.AddCacheInfo("BlacklistedByProfile");
+                return false;
+            }
+
             if (cacheObject.IsUnit && cacheObject.Attributes == null)
             {
                 cacheObject.AddCacheInfo("UnitNoAttributes");
@@ -306,6 +312,10 @@ namespace Trinity.Modules
 
         private bool ShouldCacheUnit(TrinityActor cacheObject)
         {
+            //// Uncomment to ignore juggernauts
+            //if (cacheObject.CommonData.AffixIds.Contains(-464468964))
+            //    return false;
+
             if (cacheObject.IsSameTeam && !cacheObject.IsQuestGiver)
             {
                 cacheObject.AddCacheInfo("SameTeam");
@@ -409,7 +419,7 @@ namespace Trinity.Modules
                 return false;
             }
 
-            if (GameData.InteractWhiteListIds.Contains(cacheObject.ActorSnoId))
+            if (cacheObject.IsInteractWhitelisted)
             {
                 cacheObject.AddCacheInfo("Interact Whitelist");
                 return true;
@@ -424,6 +434,19 @@ namespace Trinity.Modules
             if (TrinityTownRun.IsWantingTownRun && cacheObject.Distance > 10f)
             {
                 cacheObject.AddCacheInfo("WantToTownRun");
+                return false;
+            }
+
+            if (GameData.DoorsToAlwaysIgnore.Contains(cacheObject.ActorSnoId))
+            {
+                cacheObject.AddCacheInfo("AlwaysIgnoreDoor");
+                return false;
+            }
+
+            if (GameData.SceneSpecificDoorsIgnore.ContainsKey(Core.Player.CurrentSceneSnoId) &&
+                GameData.SceneSpecificDoorsIgnore[Core.Player.CurrentSceneSnoId] == cacheObject.ActorSnoId)
+            {
+                cacheObject.AddCacheInfo("SceneSpecificIgnoreDoor");
                 return false;
             }
 

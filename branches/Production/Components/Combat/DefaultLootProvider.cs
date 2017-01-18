@@ -47,8 +47,14 @@ namespace Trinity.Components.Combat
             if (item.TrinityItemType == TrinityItemType.ConsumableAddSockets)
                 return true;
 
+            if (item.RawItemType == RawItemType.Lore && Core.Settings.Items.SpecialItems.HasFlag(SpecialItemTypes.Lore))
+                return true;
+
             if (item.GameBalanceId == GameData.ItemGameBalanceIds.DeathsBreath)
                 return Core.Settings.Items.SpecialItems.HasFlag(SpecialItemTypes.DeathsBreath);
+
+            if (item.ActorSnoId == (int)SNOActor.A1_BlackMushroom)
+                return Core.Settings.Items.SpecialItems.HasFlag(SpecialItemTypes.RottenMushroom);
 
             if (item.GameBalanceId == GameData.ItemGameBalanceIds.ArcaneDust)
                 return true; //Core.Settings.Items.SpecialItems.HasFlag(SpecialItemTypes.ArcaneDust);
@@ -263,6 +269,12 @@ namespace Trinity.Components.Combat
             if (Core.Settings.Items.SpecialItems.HasFlag(SpecialItemTypes.Wings) && GameData.WingsTable.Contains(item.GameBalanceId) || GameData.CosmeticSnoIds.Contains(item.ActorSnoId))
             {
                 Logger.Log($"Wings found! - Stash Setting. Item={item.Name} InternalName={item.InternalName} Sno={item.ActorSnoId} GbId={item.GameBalanceId} RawItemType={item.RawItemType}");
+                return true;
+            }
+
+            if (Core.Settings.Items.SpecialItems.HasFlag(SpecialItemTypes.RottenMushroom) && item.ActorSnoId == (int)SNOActor.A1_BlackMushroom)
+            {
+                Logger.Log($"Rotten Mushroom found! - Stash Setting. Item={item.Name} InternalName={item.InternalName} Sno={item.ActorSnoId} GbId={item.GameBalanceId} RawItemType={item.RawItemType}");
                 return true;
             }
 

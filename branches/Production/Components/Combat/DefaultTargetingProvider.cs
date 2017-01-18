@@ -24,6 +24,7 @@ using Trinity.Reference;
 using Trinity.Routines;
 using Trinity.Settings;
 using Zeta.Bot;
+using Zeta.Bot.Coroutines;
 using Zeta.Bot.Navigation;
 using Zeta.Common;
 using Zeta.Game;
@@ -117,6 +118,9 @@ namespace Trinity.Components.Combat
             SetCurrentTarget(target);
             SetCurrentPower(GetPowerForTarget(target));
 
+            if (await WaitForRiftBossSpawn())
+                return true;
+
             if (WaitForInteractionChannelling())
                 return true;
 
@@ -154,6 +158,25 @@ namespace Trinity.Components.Combat
             SetCurrentPower(null);
         }
 
+        private async Task<bool> WaitForRiftBossSpawn()
+        {
+            if (RiftProgression.IsInRift && CurrentTarget.IsBoss)
+            {
+                if (CurrentTarget.IsSpawningBoss)
+                {
+                    Logger.LogVerbose(LogCategory.Targetting, "Waiting while rift boss spawn");
+
+                    Vector3 safeSpot;
+                    if (Core.Avoidance.Avoider.TryGetSafeSpot(out safeSpot, 30f, 100f, CurrentTarget.Position))
+                    {
+                        PlayerMover.MoveTo(safeSpot);
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private bool WaitForInteractionChannelling()
         {
             if (Core.Player.IsCasting && !Core.Player.IsTakingDamage && CurrentTarget != null && CurrentTarget.IsGizmo)
@@ -169,8 +192,21 @@ namespace Trinity.Components.Combat
             if (target == null)
                 return false;
 
-            if (target.Type == TrinityObjectType.Door && !target.IsUsed)
+            if (target.IsBlacklisted)
                 return false;
+
+            if (target.Type == TrinityObjectType.Door)
+            {
+                if (target.ActorSnoId == 454346 && target.Targeting.TargetedTimes > 3)
+                {
+                    // Special case 'p43_AD_Catacombs_Door_A' no way to tell it's locked, blacklist quickly to explore
+                    GenericBlacklist.Blacklist(target, TimeSpan.FromSeconds(15), $"Probably locked door p43_AD_Catacombs_Door_A at {target.Position}");
+                    return true;
+                }
+
+                if (!target.IsUsed)
+                    return false;
+            }
 
             if (target.Type == TrinityObjectType.ProgressionGlobe)
                 return false;
@@ -322,7 +358,18 @@ namespace Trinity.Components.Combat
                 {
                     return true;
                 }
-          
+
+                var isCloseToSafeSpot = Core.Player.Position.Distance(Core.Avoidance.Avoider.SafeSpot) < 5f;
+                if (CurrentTarget != null && isCloseToSafeSpot)
+                {
+                    var canReachTarget = CurrentTarget.Distance < CurrentPower?.MinimumRange;
+                    if (canReachTarget && CurrentTarget.IsAvoidanceOnPath && !Core.Player.Actor.IsInAvoidance)
+                    {
+                        Logger.Log(LogCategory.Avoidance, $"Not avoiding due to being safe and target is within range");
+                        return false;
+                    }
+                }
+
                 Logger.Log(LogCategory.Avoidance, $"Avoiding");
                 await CastDefensiveSpells();
                 PlayerMover.MoveTo(Core.Avoidance.Avoider.SafeSpot);
@@ -393,7 +440,8 @@ namespace Trinity.Components.Combat
             if (currentTarget.RadiusDistance <= 2f)
                 return true;
 
-            if (currentTarget.Targeting.TotalTargetedTime < TimeSpan.FromSeconds(15) && currentTarget.IsInLineOfSight)
+            var requiresRayWalk = Core.ProfileSettings.Options.CurrentSceneOptions.AlwaysRayWalk;
+            if (!requiresRayWalk && currentTarget.Targeting.TotalTargetedTime < TimeSpan.FromSeconds(15) && currentTarget.IsInLineOfSight)
                 return true;
 
             return currentTarget.IsWalkable;
@@ -401,6 +449,9 @@ namespace Trinity.Components.Combat
 
         private bool IsInLineOfSight(Vector3 position)
         {
+            if (Core.ProfileSettings.Options.CurrentSceneOptions.AlwaysRayWalk)
+                return Core.Grids.Avoidance.CanRayWalk(Core.Player.Position, position);
+
             return Core.Grids.Avoidance.CanRayCast(Core.Player.Position, position);
         }
 

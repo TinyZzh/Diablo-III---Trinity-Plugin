@@ -231,7 +231,8 @@ namespace Trinity.Framework.Actors.ActorTypes
         public bool IsIgnored => TargetCategory == TargetCategory.Ignore;
         public bool IsAvoidanceOnPath => Core.Avoidance.Grid.IsIntersectedByFlags(Position, Core.Player.Position, AvoidanceFlags.Avoidance);
         public bool IsCriticalAvoidanceOnPath => Core.Avoidance.Grid.IsIntersectedByFlags(Position, Core.Player.Position, AvoidanceFlags.CriticalAvoidance);
-
+        public bool IsInteractWhitelisted { get; set; }
+        public bool IsProfileBlacklisted { get; set; }
 
 
         /// <summary>

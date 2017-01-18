@@ -473,10 +473,10 @@ namespace Trinity.Routines.Witchdoctor
             => new TrinityPower(Skills.WitchDoctor.GraspOfTheDead, 65f, target.AcdId);
 
         protected virtual TrinityPower Firebats()
-            => new TrinityPower(Skills.WitchDoctor.Firebats, 25, 25);
+            => new TrinityPower(Skills.WitchDoctor.Firebats, 100, 250);
 
         protected virtual TrinityPower Firebats(TrinityActor target)
-            => new TrinityPower(Skills.WitchDoctor.Firebats, FireBatsRange, target.Position, 25, 25);
+            => new TrinityPower(Skills.WitchDoctor.Firebats, FireBatsRange, target.Position, 100, 250);
 
         protected virtual TrinityPower Haunt(TrinityActor target)
             => new TrinityPower(Skills.WitchDoctor.Haunt, 70f, target.AcdId);
@@ -577,7 +577,7 @@ namespace Trinity.Routines.Witchdoctor
             => Legendary.SacredHarvester.IsEquipped ? 10 : 5;
 
         public static float FireBatsRange
-            => Runes.WitchDoctor.CloudOfBats.IsActive ? 15f : 35f;
+            => Runes.WitchDoctor.CloudOfBats.IsActive ? 12f : 35f;
 
         public static bool IsChannellingFirebats 
             => Player.IsChannelling && Skills.WitchDoctor.Firebats.IsLastUsed;
