@@ -41,7 +41,20 @@
                                 Value="{Binding Path=DataContext.EmergencyHealthPct, Converter={StaticResource PercentConverter}}" 
                                 HorizontalAlignment="Stretch" Margin="0"/>
                     </StackPanel>
-                </GroupBox>                
+                </GroupBox>
+                <GroupBox>
+                    <GroupBox.Header>Falling Sword Delay</GroupBox.Header>
+                    <StackPanel>
+                        <Slider Template="{DynamicResource LabelledSliderEditable}" 
+                            Tag="Millisecond Delay"
+                            ToolTip="Number of milliseconds to wait between the casting of Falling Sword"
+                            Interval="100" IsSnapToTickEnabled="True"
+                            Maximum="10000" Minimum="200" SmallChange="100" TickFrequency="100" TickPlacement="BottomRight" 
+                            Value="{Binding Path=DataContext.FallingSwordDelay}" 
+                            HorizontalAlignment="Stretch" Margin="0,0,0,0"
+                            MinWidth="175"/>
+                    </StackPanel>
+                </GroupBox>
                 <GroupBox>
                     <GroupBox.Header>Akarats Champion</GroupBox.Header>
                     <StackPanel>

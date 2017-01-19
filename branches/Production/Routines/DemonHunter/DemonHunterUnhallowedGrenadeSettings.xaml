@@ -14,14 +14,13 @@
             </ResourceDictionary.MergedDictionaries>
             <converters:PercentConverter x:Key="PercentConverter" />
             <converters:EnumBooleanConverter x:Key="EnumBooleanConverter" />
-            <converters:EnumVisibilityConverter x:Key="HiddenWhenEnumTrueConverter" Reverse="True"/>
+            <converters:EnumVisibilityConverter x:Key="HiddenWhenEnumTrueConverter" Reverse="True" />
             <converters:EnumVisibilityConverter x:Key="VisibleWhenEnumTrueConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
     <Border Padding="10">
         <Grid>
             <StackPanel>
-
                 <GroupBox>
                     <GroupBox.Header>General</GroupBox.Header>
                     <StackPanel>
@@ -43,56 +42,49 @@
                                 HorizontalAlignment="Stretch" Margin="0"/>
                     </StackPanel>
                 </GroupBox>
-
                 <GroupBox>
-                    <GroupBox.Header>Epiphany</GroupBox.Header>
+                    <GroupBox.Header>Kiting</GroupBox.Header>
                     <StackPanel>
-
-                        <WrapPanel>
-                            <RadioButton Content="Always" IsChecked="{Binding DataContext.Epiphany.UseMode, ConverterParameter=Always, Mode=TwoWay, Converter={StaticResource EnumBooleanConverter}}"  />
-                            <RadioButton Content="Selectively" IsChecked="{Binding DataContext.Epiphany.UseMode, ConverterParameter=Selective, Mode=TwoWay, Converter={StaticResource EnumBooleanConverter}}" />
-                        </WrapPanel>
-                        <StackPanel Margin="0,5,0,0" Visibility="{Binding DataContext.Epiphany.UseMode, ConverterParameter=Selective, Converter={StaticResource VisibleWhenEnumTrueConverter}}">
-                            <CheckBox ToolTip="Use when there are elites close nearby" 
-                                      IsChecked="{Binding DataContext.Epiphany.Reasons, ConverterParameter=Elites, Converter={converters:FlagsToBoolConverter}}">Elites nearby</CheckBox>
-                            <CheckBox ToolTip="Use when you are surrounded by enemies" 
-                                      IsChecked="{Binding DataContext.Epiphany.Reasons, ConverterParameter=Surrounded, Converter={converters:FlagsToBoolConverter}}">Surrounded</CheckBox>
-                            <CheckBox ToolTip="Use when you're low on health" 
-                                      IsChecked="{Binding DataContext.Epiphany.Reasons, ConverterParameter=HealthEmergency, Converter={converters:FlagsToBoolConverter}}">Health emergency</CheckBox>
-                        </StackPanel>
+                        <Slider Template="{DynamicResource LabelledSliderEditable}" 
+                            Tag="Kite distance"
+                                Interval="1" Maximum="30" Minimum="0"
+                                SmallChange="1" LargeChange="10"
+                                TickPlacement="BottomRight"  IsSnapToTickEnabled="True"
+                                Value="{Binding DataContext.KiteDistance}" 
+                                HorizontalAlignment="Stretch" Margin="0,0"/>
                     </StackPanel>
                 </GroupBox>
                 <GroupBox>
-                    <GroupBox.Header>Dashing Strike</GroupBox.Header>
+                    <GroupBox.Header>Vault</GroupBox.Header>
                     <StackPanel>
-                        <WrapPanel Margin="0,5,0,10">
-                            <RadioButton ToolTip="Use vault whenever it makes sense"
-                                Content="Anytime" IsChecked="{Binding DataContext.DashingStrike.UseMode, Mode=TwoWay, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Default}"  />
-                            <RadioButton ToolTip="Use only while fighting monsters"
-                                Content="In combat" IsChecked="{Binding DataContext.DashingStrike.UseMode, Mode=TwoWay, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=InCombat}" />
-                            <RadioButton  ToolTip="Use only while NOT fighting monsters"
-                                Content="Out of combat" IsChecked="{Binding DataContext.DashingStrike.UseMode, Mode=TwoWay, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=OutOfCombat}" />
-                        </WrapPanel>
-                        <StackPanel>
+                        <UniformGrid Columns="2" Margin="0,5,0,10">
+                            <RadioButton Content="Anytime" IsChecked="{Binding DataContext.Vault.UseMode, Mode=TwoWay, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Default}"  />
+                            <RadioButton Content="In combat" IsChecked="{Binding DataContext.Vault.UseMode, Mode=TwoWay, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=InCombat}" />
+                            <RadioButton Content="Out of combat" IsChecked="{Binding DataContext.Vault.UseMode, Mode=TwoWay, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=OutOfCombat}" />
+                        </UniformGrid>
+                        <StackPanel Visibility="{Binding DataContext.Vault.UseMode, Converter={StaticResource HiddenWhenEnumTrueConverter}, ConverterParameter=Never}">
                             <Slider Template="{DynamicResource LabelledSliderEditable}" 
                             Tag="Recast delay"
-                            ToolTip="The time between casts"
+                            ToolTip="Time between casts"
                             Interval="100" Maximum="4000" Minimum="200" 
                             SmallChange="100" LargeChange="100" 
                             TickPlacement="BottomRight" TickFrequency="100"
-                            Value="{Binding DataContext.DashingStrike.RecastDelayMs}" 
+                            Value="{Binding DataContext.Vault.RecastDelayMs}" 
+                            HorizontalAlignment="Stretch" Margin="2"
+                            />
+                        <Slider Template="{DynamicResource LabelledSliderEditable}" 
+                            Tag="Resource limit %"
+                            ToolTip="Resource has to be higher than this percentage to be cast" 
+                            Interval="5" Maximum="100" Minimum="0" 
+                            SmallChange="5" LargeChange="5" 
+                            TickPlacement="BottomRight" TickFrequency="5"
+                            Value="{Binding DataContext.Vault.SecondaryResourcePct}" 
                             HorizontalAlignment="Stretch" Margin="2"
                             />
                         </StackPanel>
                     </StackPanel>
                 </GroupBox>
-                <GroupBox>
-                    <GroupBox.Header>Lashing Tail Kick</GroupBox.Header>
-                    <StackPanel>
-                        <CheckBox IsChecked="{Binding DataContext.LTKFromRange}">Allow shooting fireballs from range</CheckBox>
-                    </StackPanel>
-                </GroupBox>                
-            </StackPanel>
+              </StackPanel>
         </Grid>
     </Border>
 </UserControl>
