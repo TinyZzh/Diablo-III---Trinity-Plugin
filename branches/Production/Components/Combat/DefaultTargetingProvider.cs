@@ -46,6 +46,7 @@ namespace Trinity.Components.Combat
         TrinityPower CurrentPower { get; }
         TrinityActor LastTarget { get; }
         TrinityPower LastPower { get; }
+        float MaxTargetDistance { get; }
     }
 
     public class DefaultTargetingProvider : ITargetingProvider
@@ -57,6 +58,8 @@ namespace Trinity.Components.Combat
         public TrinityActor LastTarget { get; private set; }
 
         public TrinityPower LastPower { get; private set; }
+
+        public float MaxTargetDistance { get; private set; } = 200f;
 
         private void SetCurrentTarget(TrinityActor target)
         {
@@ -146,6 +149,9 @@ namespace Trinity.Components.Combat
                         Clear();
                         return false;
                     }
+
+                    if (CurrentPower.SNOPower != SNOPower.Walk && CurrentPower.TargetPosition.Distance(Core.Player.Position) > MaxTargetDistance)
+                        return false;
                 }
             }
             
@@ -206,6 +212,13 @@ namespace Trinity.Components.Combat
 
                 if (!target.IsUsed)
                     return false;
+            }
+
+            if (LastPower != null && LastPower.SNOPower == SNOPower.Axe_Operate_Gizmo && target.IsGizmo && target.IsLastTarget && target.Targeting.TargetedTimes > 25 && target.IsItem && (target as TrinityItem).IsLowQuality)
+            {
+                // There's a weird stuck where bot is unable to interact with an item, possibly move/interact range related.
+                GenericBlacklist.Blacklist(target, TimeSpan.FromSeconds(120), $"Failed too many times to pickup low quality item. {target.Name} Distance={target.Distance}");
+                return true;
             }
 
             if (target.Type == TrinityObjectType.ProgressionGlobe)
@@ -359,7 +372,7 @@ namespace Trinity.Components.Combat
                     return true;
                 }
 
-                var isCloseToSafeSpot = Core.Player.Position.Distance(Core.Avoidance.Avoider.SafeSpot) < 5f;
+                var isCloseToSafeSpot = Core.Player.Position.Distance(Core.Avoidance.Avoider.SafeSpot) < 10f;
                 if (CurrentTarget != null && isCloseToSafeSpot)
                 {
                     var canReachTarget = CurrentTarget.Distance < CurrentPower?.MinimumRange;
@@ -368,6 +381,22 @@ namespace Trinity.Components.Combat
                         Logger.Log(LogCategory.Avoidance, $"Not avoiding due to being safe and target is within range");
                         return false;
                     }
+                }
+
+                var safe = (!Core.Player.IsTakingDamage || Core.Player.CurrentHealthPct > 0.5f) && !Core.Player.Actor.IsInCriticalAvoidance;
+
+                if (newTarget?.Position == LastTarget?.Position && newTarget.IsAvoidanceOnPath && safe)
+                {
+                    Logger.Log(LogCategory.Avoidance, $"Not avoiding due to being safe and waiting for avoidance before handling target {newTarget.Name}");
+                    Core.PlayerMover.MoveTowards(Core.Player.Position);
+                    return true;
+                }
+
+                if (!Combat.IsInCombat && Core.Player.Actor.IsAvoidanceOnPath && safe)
+                {
+                    Logger.Log(LogCategory.Avoidance, $"Waiting for avoidance to clear (out of combat)");
+                    Core.PlayerMover.MoveTowards(Core.Player.Position);
+                    return true;
                 }
 
                 Logger.Log(LogCategory.Avoidance, $"Avoiding");

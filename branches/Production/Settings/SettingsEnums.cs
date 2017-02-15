@@ -27,6 +27,28 @@ namespace Trinity.Settings
     }
 
     [Flags]
+    public enum GameStopReasons
+    {
+        None = 0,
+        GoblinFound = 1 << 0,
+        UrshiFound = 1 << 1,
+        DeathGateFound = 1 << 2,
+        //Quiver = 1 << 3,
+        //Orb = 1 << 4,
+        //Amulet = 1 << 5,
+        //Ring = 1 << 6,
+        //Belt = 1 << 7,
+        //Boots = 1 << 8,
+        //Bracers = 1 << 9,
+        //Chest = 1 << 10,
+        //Gloves = 1 << 11,
+        //Helm = 1 << 12,
+        //Pants = 1 << 13,
+        //Shield = 1 << 14,
+        //Shoulder = 1 << 15,
+    }
+
+    [Flags]
     public enum ShrineTypes
     {
         None = 0,
@@ -83,8 +105,9 @@ namespace Trinity.Settings
         Grey = 1 << 0,
         White = 1 << 1,
         Blue = 1 << 2,
-        Yellow = 1 << 3,    
-        All = Grey | White | Blue | Yellow
+        Yellow = 1 << 3,
+        Green = 1 << 4,
+        Orange = 1 << 5,
     } 
 
     [Flags]
@@ -105,9 +128,11 @@ namespace Trinity.Settings
         TieredLootrunKey = 1 << 10,
         RottenMushroom = 1 << 11,
         Lore = 1 << 12,
+        CultistPage = 1 << 13,
 
         Defaults = CraftingPlans | DeathsBreath | VeiledCrystals | ReusableParts | ArcaneDust | BloodShards | 
-            KeywardenIngredients | StaffOfHeardingParts | Pets | Wings | TieredLootrunKey | RottenMushroom | Lore
+            KeywardenIngredients | StaffOfHeardingParts | Pets | Wings | TieredLootrunKey | RottenMushroom,
+        
     }
 
     [Flags]

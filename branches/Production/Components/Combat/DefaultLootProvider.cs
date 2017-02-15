@@ -41,6 +41,30 @@ namespace Trinity.Components.Combat
                 return false;
             }
 
+            if (Core.Settings.Items.DisableLootingInCombat && Combat.IsInCombat && item.Distance > 8f)
+            {
+                return false;
+            }
+
+            if (Core.Settings.Items.DontPickupInTown && Core.Player.IsInTown && !item.IsItemAssigned)
+                return false;
+
+            //if (Core.Settings.Items.InCombatLooting != SettingMode.Enabled && Combat.IsInCombat)
+            //{
+            //    if (Core.Settings.Items.InCombatLooting == SettingMode.Disabled)
+            //        return false;
+
+            //    if (Core.Settings.Items.InCombatLooting == SettingMode.Selective)
+            //    {
+            //        var pickupQuality = TypeConversions.GetPickupItemQuality(item.TrinityItemQuality);
+            //        if (!Core.Settings.Items.InCombatLootQualities.HasFlag(pickupQuality))
+            //            return false;
+            //    }
+            //}
+
+            if (Core.Settings.Items.DontWalkToLowQuality && item.Distance > 8f && item.IsLowQuality && !item.IsCraftingReagent)
+                return false;
+
             if (item.IsAncient && Core.Settings.ItemList.AlwaysStashAncients)
                 return true;
 
@@ -48,6 +72,9 @@ namespace Trinity.Components.Combat
                 return true;
 
             if (item.RawItemType == RawItemType.Lore && Core.Settings.Items.SpecialItems.HasFlag(SpecialItemTypes.Lore))
+                return true;
+
+            if (item.RawItemType == RawItemType.CultistPage && Core.Settings.Items.SpecialItems.HasFlag(SpecialItemTypes.CultistPage))
                 return true;
 
             if (item.GameBalanceId == GameData.ItemGameBalanceIds.DeathsBreath)
@@ -184,6 +211,9 @@ namespace Trinity.Components.Combat
             return true;
         }
 
+
+
+
         public bool ShouldDrop(TrinityItem item, ItemEvaluationType scheduledAction)
         {
             if (item.IsProtected() || item.IsAccountBound)
@@ -250,6 +280,9 @@ namespace Trinity.Components.Combat
                 Logger.LogDebug($"Not stashing due to inventory locked, keep unidentified setting or participating in loot run. Item={item.Name} InternalName={item.InternalName} Sno={item.ActorSnoId} GbId={item.GameBalanceId} RawItemType={item.RawItemType}");
                 return false;
             }
+
+            if (item.RawItemType == RawItemType.TreasureBag)
+                return Core.Settings.Items.StashTreasureBags;
 
             if (GameData.VanityItems.Any(i => item.InternalName.StartsWith(i)))
                 return true;

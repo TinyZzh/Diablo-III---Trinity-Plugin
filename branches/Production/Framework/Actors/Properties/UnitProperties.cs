@@ -49,6 +49,12 @@ namespace Trinity.Framework.Actors.Properties
             actor.IsMinion = monsterQuality == MonsterQuality.Minion;
             actor.IsElite = actor.IsMinion || actor.IsRare || actor.IsChampion || actor.IsUnique || actor.IsBoss;
             actor.IsTrashMob = actor.IsUnit && !(actor.IsElite || actor.IsBoss || actor.IsTreasureGoblin || actor.IsMinion);
+            actor.IsCorruptGrowth = GameData.CorruptGrowthIds.Contains(actor.ActorSnoId);
+
+            if(actor.IsBoss)
+            {
+                actor.IsUsingBossbar = attributes.IsUsingBossbar;
+            }
 
             UpdateDeath(actor);
             UpdateStatus(actor, attributes);
@@ -63,6 +69,11 @@ namespace Trinity.Framework.Actors.Properties
             actor.SummonedByAnnId = summonedByAnnId;
             actor.EffectOwnerAnnId = effectOwnerAnnId;
             actor.IsSummoned = summonedByAnnId > 0 || effectOwnerAnnId > 0;
+
+            if (Core.Player.IsInBossEncounter)
+            {
+                actor.IsShadowClone = attributes.IsShadowClone;
+            }
 
             if (actor.IsSummoned)
             {

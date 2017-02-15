@@ -27,7 +27,7 @@ namespace Trinity.Framework.Actors.Properties
             var actorInfo = actor.ActorInfo;
 
             actor.LastSeenTime = DateTime.UtcNow;
-            actor.IsProfileBlacklisted = ProfileManager.CurrentProfile.TargetBlacklists.Any(b => b.ActorId == actor.ActorSnoId);
+            actor.IsProfileBlacklisted = ProfileManager.CurrentProfile?.TargetBlacklists?.Any(b => b.ActorId == actor.ActorSnoId) ?? false;
             actor.IsExcludedId = GameData.ExcludedActorIds.Contains(actor.ActorSnoId) || GameData.BlackListIds.Contains(actor.ActorSnoId);
             actor.IsExcludedType = GameData.ExcludedActorTypes.Contains(actor.ActorType);
             actor.InternalNameLowerCase = actor.InternalName.ToLower();
@@ -100,7 +100,7 @@ namespace Trinity.Framework.Actors.Properties
                 actor.IsMinimapActive = actor.Attributes.IsMinimapActive || Core.Minimap.MinimapIconAcdIds.Contains(actor.AcdId);
                 actor.MinimapIconOverride = actor.Attributes.MinimapIconOverride;
                 actor.IsNoDamage = actor.Attributes.IsNoDamage;
-                actor.IsQuestMonster = actor.Attributes.IsQuestMonster;
+                actor.IsQuestMonster = actor.Attributes.IsQuestMonster || actor.Attributes.IsShadowClone;
             }
      
             UpdateLineOfSight(actor);

@@ -47,7 +47,7 @@ namespace Trinity.Routines.Monk
         public virtual int KiteStutterDuration => 500;
         public virtual int KiteStutterDelay => 1000;
         public virtual int KiteHealthPct => 100;
-        public virtual float TrashRange => 80f;
+        public virtual float TrashRange => 75f;
         public virtual float EliteRange => 120f;
         public virtual float HealthGlobeRange => 60f;
         public virtual float ShrineRange => 80f;
@@ -465,7 +465,7 @@ namespace Trinity.Routines.Monk
             => Runes.Monk.Quicksilver.IsActive ? 3 : 2;
 
         protected static float MeleeAttackRange 
-            => Core.Buffs.HasBuff(SNOPower.X1_Monk_Epiphany) ? 50f : 8f;
+            => IsEpiphanyActive ? 50f : 8f;
 
         protected static float CycloneStrikeRange 
             => Runes.Monk.Implosion.IsActive ? 34f : 24f;
@@ -484,6 +484,9 @@ namespace Trinity.Routines.Monk
 
         protected static bool HasSpiritGuardsBuff
             => Core.Buffs.HasBuff(SNOPower.P2_ItemPassive_Unique_Ring_034, 1);
+
+        protected static bool IsEpiphanyActive
+            => Core.Buffs.HasBuff(SNOPower.X1_Monk_Epiphany);
 
         protected virtual TrinityPower FistsOfThunder(TrinityActor target)
             => new TrinityPower(SNOPower.Monk_FistsofThunder, MeleeAttackRange, target.AcdId);

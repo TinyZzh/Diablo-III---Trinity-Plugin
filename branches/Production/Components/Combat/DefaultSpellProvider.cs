@@ -10,6 +10,8 @@ using Trinity.DbProvider;
 using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Actors.Attributes;
+using Trinity.Framework.Avoidance;
+using Trinity.Framework.Avoidance.Structures;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
 using Trinity.ProfileTags;
@@ -77,7 +79,7 @@ namespace Trinity.Components.Combat
             }
             else if (power.TargetPosition != Vector3.Zero)
             {
-                if (distance > 200f)
+                if (distance > Combat.Targeting.MaxTargetDistance)
                 {
                     Logger.Log(LogCategory.Spells, $"Target is way too far away ({distance})");
                     return false;
@@ -111,6 +113,13 @@ namespace Trinity.Components.Combat
             }
             
             Logger.Warn(LogCategory.Spells, $"Cast {castInfo}");
+
+            if (power.SNOPower == SNOPower.Axe_Operate_Gizmo && Core.StuckHandler.IsStuck)
+            {
+                Logger.LogVerbose(LogCategory.Movement, $"Interaction Stuck Detected. {castInfo}");
+                await Core.StuckHandler.DoUnstick();
+                return false;
+            }
 
             if (power.ShouldWaitAfterUse)
             {
@@ -221,10 +230,7 @@ namespace Trinity.Components.Combat
                     clickPosition = Core.Player.Position;
                 }
 
-                if (GameData.ResetNavigationPowers.Contains(power))
-                {
-                    Navigator.Clear();
-                }
+                UpdateNavigationAfterPower(power);
 
                 if (ZetaDia.Me.UsePower(power, clickPosition, Core.Player.WorldDynamicId, targetAcdId))
                 {
@@ -235,6 +241,14 @@ namespace Trinity.Components.Combat
 
             }
             return false;
+        }
+
+        public static void UpdateNavigationAfterPower(SNOPower power)
+        {
+            if (GameData.ResetNavigationPowers.Contains(power))
+            {
+                Core.Grids.Avoidance.AdvanceNavigatorPath(40f, RayType.Walk);
+            }
         }
 
     }

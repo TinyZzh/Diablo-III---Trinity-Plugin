@@ -29,6 +29,7 @@ namespace Trinity.Settings
         private TrinityGemType _gemTypes;
         private int _gemLevel;
         private PickupItemQualities _pickupTypes;
+        private bool _dontWalkToLowQuality;
         private bool _keepLegendaryUnid;
         private bool _pickupGold;
         private int _minGoldStack;
@@ -37,6 +38,18 @@ namespace Trinity.Settings
         private bool _autoEquipItems;
         private bool _autoEquipIgnoreWeapons;
         private int _gamblingMinSpendingShards;
+        private bool _stashTreasureBags;
+        //private PickupItemQualities _inCombatLootQualities;
+        //private SettingMode _inCombatLooting;
+        private bool _disableLootingInCombat;
+        private bool _useTypeStashingEquipment;
+        private bool _useTypeStashingOther;
+
+
+        public const int SchemaVersion = 1;
+
+        [DataMember]
+        public int Version { get; set; }
 
         public ItemSettings()
         {
@@ -59,16 +72,28 @@ namespace Trinity.Settings
         }
 
         [DataMember]
-        public int Version { get; set; }
-        public const int SchemaVersion = 1;
-
-        [DataMember]
         [Setting, UIControl(UIControlType.FlagsCheckboxes)]
-        [DefaultValue(PickupItemQualities.All)]
+        [DefaultValue(PickupItemQualities.None)]
         public PickupItemQualities PickupQualities
         {
             get { return _pickupTypes; }
             set { SetField(ref _pickupTypes, value); }
+        }
+
+        //[DataMember]
+        //[Setting, UIControl(UIControlType.FlagsCheckboxes)]
+        //public PickupItemQualities InCombatLootQualities
+        //{
+        //    get { return _inCombatLootQualities; }
+        //    set { SetField(ref _inCombatLootQualities, value); }
+        //}
+
+        [DataMember]
+        [DefaultValue(false)]
+        public bool DontWalkToLowQuality
+        {
+            get { return _dontWalkToLowQuality; }
+            set { SetField(ref _dontWalkToLowQuality, value); }
         }
 
         [DataMember]
@@ -104,6 +129,14 @@ namespace Trinity.Settings
             get { return _gamblingMode; }
             set { SetField(ref _gamblingMode, value); }
         }
+
+        //[DataMember]
+        //[DefaultValue(SettingMode.Enabled)]
+        //public SettingMode InCombatLooting
+        //{
+        //    get { return _inCombatLooting; }
+        //    set { SetField(ref _inCombatLooting, value); }
+        //}
 
         [DataMember]
         [DefaultValue(DropInTownOption.None)]
@@ -163,6 +196,14 @@ namespace Trinity.Settings
 
         [DataMember]
         [DefaultValue(false)]
+        public bool StashTreasureBags
+        {
+            get { return _stashTreasureBags; }
+            set { SetField(ref _stashTreasureBags, value); }
+        }
+
+        [DataMember]
+        [DefaultValue(false)]
         public bool PickupGold
         {
             get { return _pickupGold; }
@@ -208,6 +249,32 @@ namespace Trinity.Settings
             get { return _autoEquipIgnoreWeapons; }
             set { SetField(ref _autoEquipIgnoreWeapons, value); }
         }
+
+        [DataMember]
+        [DefaultValue(false)]
+        public bool DisableLootingInCombat
+        {
+            get { return _disableLootingInCombat; }
+            set { SetField(ref _disableLootingInCombat, value); }
+        }
+
+        [DataMember]
+        [DefaultValue(false)]
+        public bool UseTypeStashingEquipment
+        {
+            get { return _useTypeStashingEquipment; }
+            set { SetField(ref _useTypeStashingEquipment, value); }
+        }
+
+        [DataMember]
+        [DefaultValue(false)]
+        public bool UseTypeStashingOther
+        {
+            get { return _useTypeStashingOther; }
+            set { SetField(ref _useTypeStashingOther, value); }
+        }
+
+
 
     }
 

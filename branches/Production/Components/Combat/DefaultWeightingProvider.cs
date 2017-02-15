@@ -48,7 +48,7 @@ namespace Trinity.Components.Combat
 
                     if (actor.IsElite && !actor.IsBoss)
                         return ShouldIgnoreElite(actor);
-                    else if (actor.IsTrashMob)
+                    else if (actor.IsTrashMob && !actor.IsQuestMonster)
                         return WeightingUtils.ShouldIgnoreTrash(actor);
 
                     break;
@@ -102,7 +102,7 @@ namespace Trinity.Components.Combat
                 //var hiPriorityHealthGlobes = Core.Settings.Combat.Misc.HiPriorityHG;
 
                 var isHealthEmergency = (Core.Player?.CurrentHealthPct <= Combat.Routines.Current?.EmergencyHealthPct);
-
+                var isInSpecialKillAllScene = GameData.ForceKillAllSceneSnoIds.Contains(Core.Player.CurrentSceneSnoId);
                 var isGateNearby = false;
                 var isPriorityInteractableNearby = false;
 
@@ -191,6 +191,7 @@ namespace Trinity.Components.Combat
                 //    DataDictionary.QuestLevelAreaIds.Contains(Core.Player.LevelAreaId), Core.Player.Level,
                 //    CombatBase.IsQuestingMode, isHealthEmergency, hiPriorityHealthGlobes, hiPriorityShrine);
 
+   
                 if (Core.Settings.Weighting.GoblinPriority == GoblinPriority.Kamikaze)
                 {
                     var goblin = objects.FirstOrDefault(u => u.IsTreasureGoblin && u.Distance <= 200f);
@@ -253,6 +254,12 @@ namespace Trinity.Components.Combat
                         if (cacheObject == null || !cacheObject.IsValid || cacheObject.Type == TrinityObjectType.Unknown)
                             continue;
 
+                        if (isGateNearby && !cacheObject.HasBeenWalkable)
+                        {
+                            cacheObject.WeightInfo += "ForedWalkableForDeathGatesNeabry";
+                            continue;
+                        }
+
                         cacheObject.Weight = 0;
                         cacheObject.WeightInfo = string.Empty;
                         var reason = string.Empty;
@@ -261,6 +268,14 @@ namespace Trinity.Components.Combat
                         {
                             bestTarget = GetNewBestTarget(cacheObject, bestTarget);
                             continue;
+                        }
+
+                        if (GameData.ExtremePriorityInteractable.Contains(cacheObject.ActorSnoId) && cacheObject.Distance < 25f)
+                        {
+                            cacheObject.Weight = MaxWeight;
+                            cacheObject.WeightInfo += $"Maxxing {cacheObject.InternalName} - Extreme Priority Interactable";
+                            bestTarget = GetNewBestTarget(cacheObject, bestTarget);
+                            break;
                         }
 
                         if (Combat.Routines.Current.ShouldIgnoreNonUnits() && !cacheObject.IsUnit)
@@ -328,6 +343,15 @@ namespace Trinity.Components.Combat
                                 continue;
                             }
                         }
+                        if (cacheObject.GizmoType == GizmoType.BreakableChest)
+                        {
+                            if (!cacheObject.HasBeenInLoS)
+                            {
+                                cacheObject.Weight = 0;
+                                cacheObject.WeightInfo += "Ignoring - Hasn't been in line of sight";
+                                continue;
+                            }
+                        }
                         else if (cacheObject.IsDestroyable)
                         {
                             if (!cacheObject.HasBeenWalkable && cacheObject.GizmoType != GizmoType.BreakableDoor && cacheObject.GizmoType != GizmoType.Door && cacheObject.Type != TrinityObjectType.Barricade)
@@ -374,6 +398,12 @@ namespace Trinity.Components.Combat
                         //    cacheObject.WeightInfo += $"Ignoring {cacheObject.InternalName} - Intersected by Critical Avoidance.";
                         //    continue;
                         //}
+
+                        if (cacheObject.IsWalkable && GameData.RayWalkTargetingOnlyActors.Contains(cacheObject.ActorSnoId))
+                        {
+                            cacheObject.WeightInfo += "AlwaysRequiresRaywalk";
+                            continue;
+                        }
 
                         cacheObject.Weight = MinWeight;
                         switch (cacheObject.Type)
@@ -438,7 +468,7 @@ namespace Trinity.Components.Combat
 
                                     #region Basic Checks
 
-                                    if (Combat.CombatMode == CombatMode.KillAll)
+                                    if (Combat.CombatMode == CombatMode.KillAll || Core.Quests.IsKillAllRequired || isInSpecialKillAllScene)
                                     {
                                         //Dist:                160     140     120     100      80     60     40      20      0
                                         //Weight (25k Max):    -77400  -53400  -32600  -15000  -600   10600  18600   23400   25000
@@ -456,7 +486,7 @@ namespace Trinity.Components.Combat
                                             break;
                                         }
 
-                                        cacheObject.Weight = MaxWeight;
+                                        cacheObject.Weight = MaxWeight / 2;
                                         cacheObject.WeightInfo += "Kill All Mode";
                                         break;
                                     }
@@ -580,7 +610,7 @@ namespace Trinity.Components.Combat
                                     }
 
                                     var isQuestGiverOutsideCombat = cacheObject.IsQuestGiver && !ZetaDia.Me.IsInCombat;
-                                    if (!cacheObject.IsHostile && !isQuestGiverOutsideCombat)
+                                    if (!cacheObject.IsHostile && !isQuestGiverOutsideCombat && !cacheObject.IsQuestMonster)
                                     {
                                         cacheObject.WeightInfo += "Unit Not Hostile";
                                         cacheObject.Weight = MinWeight;
@@ -722,7 +752,7 @@ namespace Trinity.Components.Combat
                                             cacheObject.WeightInfo += $"Routine Ignoring Trash Pack Size.";
                                         }
                                         else if (nearbyTrashCount < Combat.Routines.Current.ClusterSize && !Core.Minimap.MinimapIconAcdIds.Contains(cacheObject.AcdId) &&
-                                                 !GameData.CorruptGrowthIds.Contains(cacheObject.ActorSnoId) && !isQuestGiverOutsideCombat && !bossNearby)
+                                                 !GameData.CorruptGrowthIds.Contains(cacheObject.ActorSnoId) && !isQuestGiverOutsideCombat && !bossNearby && !cacheObject.IsShadowClone)
                                         {
                                             cacheObject.WeightInfo += $"Ignoring Below TrashPackSize ({nearbyTrashCount} < {Combat.Routines.Current.ClusterSize})";
                                             break;
@@ -750,6 +780,14 @@ namespace Trinity.Components.Combat
                                         if (cacheObject.IsSpawningBoss)
                                         {
                                             cacheObject.WeightInfo += string.Format("Boss is spawning", cacheObject.InternalName);
+                                            cacheObject.Weight += 0;
+                                            break;
+                                        }
+
+                                        if (cacheObject.IsBoss && Core.Player.IsInBossEncounterArea && cacheObject.Distance > 60f && !cacheObject.IsUsingBossbar)
+                                        {
+                                            // Need to trigger boss encounter to start (diablo, belial etc), ignore until profile to moves in range.
+                                            cacheObject.WeightInfo += string.Format("Boss event needs triggering", cacheObject.InternalName);
                                             cacheObject.Weight += 0;
                                             break;
                                         }
@@ -896,6 +934,12 @@ namespace Trinity.Components.Combat
                                     if (DropItems.DroppedItemAnnIds.Contains(cacheObject.AnnId))
                                     {
                                         cacheObject.WeightInfo += $"Ignoring previously dropped item";
+                                    }
+
+                                    if (Core.Settings.Items.DisableLootingInCombat && Combat.IsInCombat && item.Distance > 8f)
+                                    {
+                                        cacheObject.WeightInfo += $"Ignoring(DisableLootingInCombat)";
+                                        break;
                                     }
 
                                     // Don't pickup items if we're doing a TownRun
@@ -1453,6 +1497,13 @@ namespace Trinity.Components.Combat
                                     if (cacheObject.IsUsed)
                                     {
                                         cacheObject.WeightInfo += $"Ignoring {cacheObject.InternalName} - Used.";
+                                        break;
+                                    }
+
+                                    if (cacheObject.GizmoType == GizmoType.LoreChest &&
+                                        !Core.Settings.Items.SpecialItems.HasFlag(SpecialItemTypes.Lore))
+                                    {
+                                        cacheObject.WeightInfo += $"Ignoring(LoreSetting)";
                                         break;
                                     }
 
@@ -2150,7 +2201,7 @@ namespace Trinity.Components.Combat
 
             var isInRift = RiftProgression.IsInRift || RiftProgression.IsGreaterRift;
 
-            if (cacheObject.IsUnit && !(isInRift && cacheObject.IsElite))
+            if (cacheObject.IsUnit && !(isInRift && cacheObject.IsElite) && !cacheObject.IsQuestMonster)
             {
                 if (!cacheObject.IsWalkable && cacheObject.IsInLineOfSight && cacheObject.Distance > 40f && !cacheObject.IsMinimapActive && !cacheObject.IsBoss && !cacheObject.IsTreasureGoblin)
                     return -MaxWeight;

@@ -91,8 +91,27 @@
                         <CheckBox Content="Pickup Blue Items" ToolTip="Blue Items" IsChecked="{Binding Items.PickupQualities, Converter={converters:FlagsToBoolConverter}, ConverterParameter=Blue}" />
                         <CheckBox Content="Pickup Yellow Items" ToolTip="Yellow Items" IsChecked="{Binding Items.PickupQualities, Converter={converters:FlagsToBoolConverter}, ConverterParameter=Yellow}" />
                     </UniformGrid>
+                    <Border Margin="0,7,0,0" BorderBrush="#444" BorderThickness="0,1,0,0">
+                        <UniformGrid Margin="0,4,0,0">
+                            <CheckBox Content="Only pickup when standing near / passing by" ToolTip="Bot will avoid walking to pick them up, but will pick them up if already standing ontop of them." IsChecked="{Binding Items.DontWalkToLowQuality}" />
+                        </UniformGrid>
+                    </Border>
                 </StackPanel>
             </GroupBox>
+
+            <!--<GroupBox Header="Combat Looting" Visibility="{Binding GameInfo.IsExternalLootProvider, Converter={StaticResource HiddenWhenTrueConverter}}">
+                <StackPanel Margin="0,0,5,0">
+                    <TextBlock Margin="-3,0,0,8">Control which items are picked up while fighting monsters</TextBlock>
+                    <WrapPanel Margin="0,0,0,0">
+                        <RadioButton Foreground="White" Content="Pickup" IsChecked="{Binding Items.InCombatLooting, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Enabled}" />
+                        <RadioButton Foreground="White" Content="Ignore" IsChecked="{Binding Items.InCombatLooting, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Disabled}" />
+                        <RadioButton Foreground="White" Content="Customize" IsChecked="{Binding Items.InCombatLooting, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Selective}" />
+                    </WrapPanel>
+                    <StackPanel Margin="0,5,0,0" Visibility="{Binding Items.InCombatLooting, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Selective}">
+                        <ContentPresenter Margin="0,5,0,0" Content="{Binding Items, Converter={StaticResourceExtension propertyValueConverter}, ConverterParameter=InCombatLootQualities}" Style="{DynamicResource SimpleItemsControlSelector}" />
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>-->
 
             <GroupBox Header="Special Items" Visibility="{Binding GameInfo.IsExternalLootProvider, Converter={StaticResource HiddenWhenTrueConverter}}">
                 <UniformGrid Columns="2">
@@ -102,8 +121,8 @@
                     <CheckBox Content="Pickup Staff of Herding Parts" IsChecked="{Binding Items.SpecialItems, Converter={converters:FlagsToBoolConverter}, ConverterParameter=StaffOfHeardingParts}" ToolTip="If enabled staff of herding crafting materials will be picked up and stashed"/>
                     <CheckBox Content="Pickup Greater Rift Keys" IsChecked="{Binding Items.SpecialItems, Converter={converters:FlagsToBoolConverter}, ConverterParameter=TieredLootrunKey}" ToolTip="If enabled, will pick up greater rift keys"/>
                     <CheckBox Content="Pickup Rotten Mushroom" IsChecked="{Binding Items.SpecialItems, Converter={converters:FlagsToBoolConverter}, ConverterParameter=RottenMushroom}" ToolTip="If enabled, will pick up rotten mushrooms"/>
-                    <CheckBox Content="Pickup Lore Items" IsChecked="{Binding Items.SpecialItems, Converter={converters:FlagsToBoolConverter}, ConverterParameter=Lore}" ToolTip="If enabled, will pick up lore books/pages"/>
-
+                    <CheckBox Content="Pickup Lore Items" IsChecked="{Binding Items.SpecialItems, Converter={converters:FlagsToBoolConverter}, ConverterParameter=Lore}" ToolTip="If enabled, will pick up lore books"/>
+                    <CheckBox Content="Pickup Cultist Pages" IsChecked="{Binding Items.SpecialItems, Converter={converters:FlagsToBoolConverter}, ConverterParameter=CultistPage}" ToolTip="If enabled, will pick up cultist pages pages"/>
                 </UniformGrid>
             </GroupBox>
 
@@ -195,10 +214,23 @@
                 </Grid>
             </GroupBox>-->
 
+            <GroupBox Header="Stashing Strategy" Visibility="{Binding GameInfo.IsExternalLootProvider, Converter={StaticResource HiddenWhenTrueConverter}}">
+                <StackPanel><TextBlock TextWrapping="Wrap" Margin="0,0,0,7">Option to stash things on the first page where items are found:</TextBlock>
+                
+                <UniformGrid Columns="1">
+                    <CheckBox Content="Equipment (Weapons/Armor/Jewellery)" IsChecked="{Binding Items.UseTypeStashingEquipment}" />
+                    <CheckBox Content="Other Stuff (Gems, Crafting Matrials)" IsChecked="{Binding Items.UseTypeStashingOther}" />
+                    </UniformGrid>
+                </StackPanel>
+            </GroupBox>
+
             <GroupBox Header="Misc" Visibility="{Binding GameInfo.IsExternalLootProvider, Converter={StaticResource HiddenWhenTrueConverter}}">
                 <UniformGrid Columns="2">
                     <CheckBox Content="Don't Pickup Items in Town" IsChecked="{Binding Items.DontPickupInTown}" />
                     <CheckBox ToolTip="Item list needs items to be identified to check their properties." IsChecked="{Binding Items.KeepLegendaryUnid}" HorizontalAlignment="Left" Content="Keep Legendaries Unidentified" />
+                    <CheckBox ToolTip="Keep bounty caches in your stash rather than openining them automatically" IsChecked="{Binding Items.StashTreasureBags}" HorizontalAlignment="Left" Content="Stash Bounty Caches" />
+                    <CheckBox ToolTip="Completely ignore all items while in combat (useful for speed farming)" IsChecked="{Binding Items.DisableLootingInCombat}" HorizontalAlignment="Left" Content="Disable Looting In Combat" />
+
                 </UniformGrid>
             </GroupBox>
 

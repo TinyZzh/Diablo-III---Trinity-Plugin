@@ -88,6 +88,8 @@ namespace Trinity.Modules
         public bool IsCasting { get; set; }
         public bool IsCastingPortal { get; set; }
         public bool IsInParty { get; set; }
+        public float ShieldHitpoints { get; private set; }
+
 
         public bool IsInventoryLockedForGreaterRift { get; set; }
 
@@ -204,6 +206,7 @@ namespace Trinity.Modules
 
         internal void UpdateFastChangingData()
         {
+            var commonData = _me.CommonData;
             IsInParty = ZetaDia.Service.Party.NumPartyMembers > 1;
             AcdId = _me.ACDId;
             RActorGuid = _me.RActorId;
@@ -226,7 +229,7 @@ namespace Trinity.Modules
             MovementSpeed = (float)Core.PlayerHistory.MoveSpeed;
             IsMoving = _me.Movement.IsMoving;
             IsInCombat = _me.IsInCombat;
-            MaxBloodShards = 500 + ZetaDia.Me.CommonData.GetAttribute<int>(ActorAttributeType.HighestSoloRiftLevel) * 10;
+            MaxBloodShards = 500 + commonData.GetAttribute<int>(ActorAttributeType.HighestSoloRiftLevel) * 10;
             IsMaxCriticalChance = _me.CritPercentBonusUncapped > 0 || Math.Abs(_me.CritDamagePercent - 100) < float.Epsilon;
             CriticalChancePct = _me.CritDamagePercent;
             IsJailed = _me.HasDebuff(SNOPower.MonsterAffix_JailerCast);
@@ -234,9 +237,10 @@ namespace Trinity.Modules
             ParticipatingInTieredLootRun = _me.IsParticipatingInTieredLootRun;
             TieredLootRunlevel = _me.InTieredLootRunLevel;
             IsCasting = _me.LoopingAnimationEndTime > 0;
-            IsInteractingWithGizmo = _me.CommonData.GetAttribute<bool>(ActorAttributeType.PowerBuff0VisualEffectNone, (int)SNOPower.Axe_Operate_Gizmo);
-            CurrentAnimation = _me.CommonData.CurrentAnimation;
+            IsInteractingWithGizmo = commonData.GetAttribute<bool>(ActorAttributeType.PowerBuff0VisualEffectNone, (int)SNOPower.Axe_Operate_Gizmo);
+            CurrentAnimation = commonData.CurrentAnimation;
             IsInventoryLockedForGreaterRift = ZetaDia.CurrentRift.IsStarted && ZetaDia.CurrentRift.Type == RiftType.Greater && !ZetaDia.CurrentRift.IsCompleted;
+            ShieldHitpoints = commonData.GetAttribute<float>(ActorAttributeType.DamageShieldAmount);
 
             Summons = GetPlayerSummonCounts();
 
@@ -345,6 +349,10 @@ namespace Trinity.Modules
                 IsGhosted = _me.CommonData.GetAttribute<int>(ActorAttributeType.Ghosted) > 0;
 
             SceneId = _me.SceneId;
+
+            IsInBossEncounterArea = GameData.BossLevelAreaIDs.Contains(LevelAreaId);
+
+            //IsBossBarVisible = _me.CommonData.UsingBossbar == 1;
 
             // Step 13 is used when the player needs to go "Inspect the cursed shrine"
             // Step 1 is event in progress, kill stuff
@@ -502,7 +510,9 @@ namespace Trinity.Modules
         {
             try
             {
-                var commonData = ZetaDia.Me.CommonData;
+                var commonData = ZetaDia.Me?.CommonData;
+                if (commonData == null)
+                    return false;
 
                 if (CheckVisualEffectNoneForPower(commonData, SNOPower.UseStoneOfRecall))
                 {
@@ -571,6 +581,8 @@ namespace Trinity.Modules
         public PlayerAction CurrentAction { get; set; }
         public bool IsInBossEncounter { get; set; }
 
+        public bool IsInBossEncounterArea { get; set; }
+        public bool IsBossBarVisible { get; internal set; }
 
         private float GetMaxSecondaryResource(DiaActivePlayer player)
         {

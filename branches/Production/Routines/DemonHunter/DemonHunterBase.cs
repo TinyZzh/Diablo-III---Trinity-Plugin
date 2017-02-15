@@ -55,7 +55,7 @@ namespace Trinity.Routines.DemonHunter
         public virtual int KiteStutterDelay => 1400;
 
         public virtual int KiteHealthPct => 100;
-        public virtual float TrashRange => 80f;
+        public virtual float TrashRange => 75f;
         public virtual float EliteRange => 120f;
         public virtual float HealthGlobeRange => 60f;
         public virtual float ShrineRange => 80f;
@@ -637,7 +637,11 @@ namespace Trinity.Routines.DemonHunter
         }
 
         public TrinityPower DefaultDestructiblePower()
-        {       
+        {
+            TrinityPower power;
+            if (CurrentTarget.IsCorruptGrowth && TrySecondaryPower(out power))
+                return power;
+
             if (Skills.DemonHunter.HungeringArrow.CanCast())
                 return HungeringArrow(CurrentTarget);
 

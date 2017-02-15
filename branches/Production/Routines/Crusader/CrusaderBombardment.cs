@@ -45,7 +45,7 @@ namespace Trinity.Routines.Crusader
 
         public override bool SetWeight(TrinityActor cacheObject)
         {
-            if (Settings.IgnoreTrash && cacheObject.IsTrashMob && RiftProgression.IsInRift && !cacheObject.IsTreasureGoblin && !cacheObject.IsMinimapActive && (RiftProgression.IsGreaterRift || !TrinityTownRun.IsTryingToTownPortal()))
+            if (Settings.IgnoreTrash && cacheObject.IsTrashMob && RiftProgression.IsInRift && !cacheObject.IsTreasureGoblin && !cacheObject.IsMinimapActive && !cacheObject.IsBountyObjective && !cacheObject.IsQuestMonster && (RiftProgression.IsGreaterRift || !TrinityTownRun.IsTryingToTownPortal()))
             {
                 cacheObject.WeightInfo += $"Routine(IgnoreTrash)";
                 cacheObject.Weight = 0;
@@ -189,14 +189,39 @@ namespace Trinity.Routines.Crusader
             }
         }
 
+        //protected override bool ShouldBombardment(out TrinityActor target)
+        //{
+        //    target = null;
+
+        //    if (!Skills.Crusader.Bombardment.CanCast())
+        //        return false;
+
+        //    target = TargetUtil.GetBestClusterUnit() ?? CurrentTarget;
+        //    return target != null;
+        //}
+
         protected override bool ShouldBombardment(out TrinityActor target)
         {
             target = null;
-
             if (!Skills.Crusader.Bombardment.CanCast())
+            {
                 return false;
+            }
 
             target = TargetUtil.GetBestClusterUnit() ?? CurrentTarget;
+
+            //credit: noxiaz, fix for out of combat bombard
+            if (target == null && Settings.BombardmentOOC)
+            {
+                // The check is needed becasue its normally only "ironskin" that decide when ever possible to cast bombardment or not.
+                var isCastWindow = !ShouldWaitForConventionofElements(Skills.Crusader.Bombardment, Element.Physical, 1500, 1000); 
+                if (isCastWindow && !ShouldBombardWheneverPossible || ShouldBombardWheneverPossible)
+                {
+                    // Get the closest target possible
+                    target = HostileMonsters.Where(x => x.Distance < 150f).OrderBy(x => x.Distance).FirstOrDefault(); 
+                }
+            }
+
             return target != null;
         }
 
