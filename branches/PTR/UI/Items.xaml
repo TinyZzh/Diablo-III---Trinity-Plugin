@@ -1,0 +1,256 @@
+﻿<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converters="clr-namespace:Trinity.UI.UIComponents.Converters"
+             mc:Ignorable="d"  Foreground="{DynamicResource TextBrush}" Background="#474747" Padding="10,0,0,0"
+             d:DesignHeight="1500" d:DesignWidth="450">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Template.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <converters:FlagsEnumValueConverter x:Key="flagsEnumValueBooleanConverter"/>
+            <converters:EnumBooleanConverter x:Key="EnumBooleanConverter" />
+            <converters:PercentConverter x:Key="PercentConverter" />
+            <converters:SliderValueToVisibilityConverter x:Key="SliderValueToVisibilityConverter" />
+            <converters:BoolToVisibilityConverter x:Key="VisibleWhenTrueConverter" TrueValue="Visible" FalseValue="Collapsed"/>
+            <converters:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter" TrueValue="Visible" FalseValue="Collapsed"/>
+            <converters:PropertyValueConverter x:Key="propertyValueConverter" />
+            <converters:BoolInverterConverter x:Key="BoolInverterConverter" />
+            <converters:EnumVisibilityConverter x:Key="EnumVisibilityConverter" />
+            <converters:FlagsEnumValueConverter x:Key="flagsEnumValueConverter"/>
+            <converters:EnumVisibilityConverter x:Key="enumVisibilityConverter" />
+            <converters:BoolToVisibilityConverter x:Key="boolToVisibilityConverter" TrueValue="Visible" FalseValue="Collapsed" />
+            <converters:IntToStringConverter x:Key="intToStringConverter"/>
+            <converters:EnumBooleanConverter x:Key="enumBooleanConverter" />
+            <converters:SliderValueToVisibilityConverter x:Key="sliderValueToVisibilityConverter" />
+            <converters:BoolToVisibilityConverter x:Key="HiddenWhenTrueConverter" TrueValue="Collapsed" FalseValue="Visible"/>
+
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <ScrollViewer>
+        <StackPanel Margin="0,10,5,0">
+
+            <GroupBox Header="External Loot System Detected" DockPanel.Dock="Top" Visibility="{Binding GameInfo.IsExternalLootProvider, Converter={StaticResource VisibleWhenTrueConverter}}">
+                <StackPanel>
+                    <StackPanel Margin="0,6,10,0">
+                        <TextBlock TextWrapping="Wrap">Loot system is being controlled by another plugin: <Run Text="{Binding GameInfo.LootProviderName}"/></TextBlock>
+                        <TextBlock>Item settings impacted by this have been hidden.</TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Legendaries" DockPanel.Dock="Top" Visibility="{Binding GameInfo.IsExternalLootProvider, Converter={StaticResource HiddenWhenTrueConverter}}">
+                <StackPanel>
+                    <StackPanel Margin="0,6,10,0">
+                        <WrapPanel Margin="0,0,0,0">
+                            <RadioButton Foreground="White" Content="Always Stash" IsChecked="{Binding Items.LegendaryMode, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=AlwaysStash}" />
+                            <RadioButton Foreground="White" Content="Ignore" IsChecked="{Binding Items.LegendaryMode, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Ignore}" />
+                            <RadioButton Foreground="White" Content="Only Ancients" IsChecked="{Binding Items.LegendaryMode, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=StashAncients}" />
+                            <RadioButton Foreground="White" Content="Use ItemList" IsChecked="{Binding Items.LegendaryMode, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=ItemList}" />
+                        </WrapPanel>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Gambling">
+                <StackPanel Margin="0,6,10,0">
+                    <WrapPanel Margin="0,0,0,0">
+                        <RadioButton Foreground="White" Content="Enabled" IsChecked="{Binding Items.GamblingMode, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Enabled}" />
+                        <RadioButton Foreground="White" Content="Disabled" IsChecked="{Binding Items.GamblingMode, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Disabled}" />
+                        <RadioButton Foreground="White" Content="Customize" IsChecked="{Binding Items.GamblingMode, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Selective}" />
+                    </WrapPanel>
+                    <StackPanel Margin="0,5,0,0" Visibility="{Binding Items.GamblingMode, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Selective}">
+                        <ContentPresenter Margin="0,5,0,10" Content="{Binding Items, Converter={StaticResourceExtension propertyValueConverter}, ConverterParameter=GamblingTypes}" Style="{DynamicResource SimpleItemsControlSelector}" />
+                        <Slider Template="{DynamicResource LabelledSliderEditable}" 
+                            Tag="Never Spend Below"
+                            ToolTip="Number of blood shards to always have as a reserve."
+                            Interval="100" 
+                            Maximum="1000" Minimum="1" SmallChange="100" TickFrequency="1" TickPlacement="None" 
+                            Value="{Binding Items.GamblingMinShards}" 
+                            HorizontalAlignment="Stretch" Margin="0,0,0,0"
+                            MinWidth="175"/>
+                        <Slider Template="{DynamicResource LabelledSliderEditable}" 
+                            Tag="Save Until Above"
+                            ToolTip="Number of blood shards to have before spending."
+                            Interval="100" 
+                            Maximum="1500" Minimum="1" SmallChange="100" TickFrequency="1" TickPlacement="None" 
+                            Value="{Binding Items.GamblingMinSpendingShards}" 
+                            HorizontalAlignment="Stretch" Margin="0,0,0,0"
+                            MinWidth="175"/>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Low Quality Items" Visibility="{Binding GameInfo.IsExternalLootProvider, Converter={StaticResource HiddenWhenTrueConverter}}">
+                <StackPanel>
+                    <UniformGrid>
+                        <CheckBox Content="Pickup Gray Items" ToolTip="Gray Items" IsChecked="{Binding Items.PickupQualities, Converter={converters:FlagsToBoolConverter}, ConverterParameter=Grey}" />
+                        <CheckBox Content="Pickup White Items" ToolTip="White Items" IsChecked="{Binding Items.PickupQualities, Converter={converters:FlagsToBoolConverter}, ConverterParameter=White}" />
+                        <CheckBox Content="Pickup Blue Items" ToolTip="Blue Items" IsChecked="{Binding Items.PickupQualities, Converter={converters:FlagsToBoolConverter}, ConverterParameter=Blue}" />
+                        <CheckBox Content="Pickup Yellow Items" ToolTip="Yellow Items" IsChecked="{Binding Items.PickupQualities, Converter={converters:FlagsToBoolConverter}, ConverterParameter=Yellow}" />
+                    </UniformGrid>
+                    <Border Margin="0,7,0,0" BorderBrush="#444" BorderThickness="0,1,0,0">
+                        <UniformGrid Margin="0,4,0,0">
+                            <CheckBox Content="Only pickup when standing near / passing by" ToolTip="Bot will avoid walking to pick them up, but will pick them up if already standing ontop of them." IsChecked="{Binding Items.DontWalkToLowQuality}" />
+                        </UniformGrid>
+                    </Border>
+                </StackPanel>
+            </GroupBox>
+
+            <!--<GroupBox Header="Combat Looting" Visibility="{Binding GameInfo.IsExternalLootProvider, Converter={StaticResource HiddenWhenTrueConverter}}">
+                <StackPanel Margin="0,0,5,0">
+                    <TextBlock Margin="-3,0,0,8">Control which items are picked up while fighting monsters</TextBlock>
+                    <WrapPanel Margin="0,0,0,0">
+                        <RadioButton Foreground="White" Content="Pickup" IsChecked="{Binding Items.InCombatLooting, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Enabled}" />
+                        <RadioButton Foreground="White" Content="Ignore" IsChecked="{Binding Items.InCombatLooting, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Disabled}" />
+                        <RadioButton Foreground="White" Content="Customize" IsChecked="{Binding Items.InCombatLooting, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Selective}" />
+                    </WrapPanel>
+                    <StackPanel Margin="0,5,0,0" Visibility="{Binding Items.InCombatLooting, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Selective}">
+                        <ContentPresenter Margin="0,5,0,0" Content="{Binding Items, Converter={StaticResourceExtension propertyValueConverter}, ConverterParameter=InCombatLootQualities}" Style="{DynamicResource SimpleItemsControlSelector}" />
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>-->
+
+            <GroupBox Header="Special Items" Visibility="{Binding GameInfo.IsExternalLootProvider, Converter={StaticResource HiddenWhenTrueConverter}}">
+                <UniformGrid Columns="2">
+                    <CheckBox Content="Pickup Deaths Breath" IsChecked="{Binding Items.SpecialItems, Converter={converters:FlagsToBoolConverter}, ConverterParameter=DeathsBreath}" />
+                    <CheckBox Content="Pickup Designs and Plans" IsChecked="{Binding Items.SpecialItems, Converter={converters:FlagsToBoolConverter}, ConverterParameter=CraftingPlans}" />
+                    <CheckBox Content="Stash Transmog Whites" IsChecked="{Binding Items.SpecialItems, Converter={converters:FlagsToBoolConverter}, ConverterParameter=TransmogWhites}"  ToolTip="If enabled transmog items are picked up and stashed"/>
+                    <CheckBox Content="Pickup Staff of Herding Parts" IsChecked="{Binding Items.SpecialItems, Converter={converters:FlagsToBoolConverter}, ConverterParameter=StaffOfHeardingParts}" ToolTip="If enabled staff of herding crafting materials will be picked up and stashed"/>
+                    <CheckBox Content="Pickup Greater Rift Keys" IsChecked="{Binding Items.SpecialItems, Converter={converters:FlagsToBoolConverter}, ConverterParameter=TieredLootrunKey}" ToolTip="If enabled, will pick up greater rift keys"/>
+                    <CheckBox Content="Pickup Rotten Mushroom" IsChecked="{Binding Items.SpecialItems, Converter={converters:FlagsToBoolConverter}, ConverterParameter=RottenMushroom}" ToolTip="If enabled, will pick up rotten mushrooms"/>
+                    <CheckBox Content="Pickup Lore Items" IsChecked="{Binding Items.SpecialItems, Converter={converters:FlagsToBoolConverter}, ConverterParameter=Lore}" ToolTip="If enabled, will pick up lore books"/>
+                    <CheckBox Content="Pickup Cultist Pages" IsChecked="{Binding Items.SpecialItems, Converter={converters:FlagsToBoolConverter}, ConverterParameter=CultistPage}" ToolTip="If enabled, will pick up cultist pages pages"/>
+                </UniformGrid>
+            </GroupBox>
+
+            <GroupBox Header="Gems" Visibility="{Binding GameInfo.IsExternalLootProvider, Converter={StaticResource HiddenWhenTrueConverter}}">
+                <Border Padding="0,0,0,0">
+                    <WrapPanel>
+                        <Border BorderThickness="1" Margin="0,0,15,0">
+                            <ComboBox SelectedValuePath="Tag" SelectedValue="{Binding Items.GemLevel}" Padding="5" >
+                                <ComboBoxItem Content="Chipped+" IsSelected="True" Tag="0" />
+                                <ComboBoxItem Content="Flawless Square+" IsSelected="True" Tag="14" />
+                                <ComboBoxItem Content="Marquise+" IsSelected="True" Tag="15" />
+                                <ComboBoxItem Content="Imperial+" IsSelected="True" Tag="16" />
+                            </ComboBox>
+                        </Border>
+                        <CheckBox Grid.Row="0" Grid.Column="2" Content="Emerald" 
+                                  IsChecked="{Binding Items.GemTypes, Converter={StaticResource flagsEnumValueBooleanConverter}, ConverterParameter=Emerald}" 
+                                  Margin="0" VerticalAlignment="Center"/>
+                        <CheckBox Grid.Row="0" Grid.Column="3" Content="Topaz" 
+                                  IsChecked="{Binding Items.GemTypes, Converter={StaticResource flagsEnumValueBooleanConverter}, ConverterParameter=Topaz}" 
+                                  Margin="0" VerticalAlignment="Center"/>
+                        <CheckBox Grid.Row="0" Grid.Column="4" Content="Amethyst" 
+                                  IsChecked="{Binding Items.GemTypes, Converter={StaticResource flagsEnumValueBooleanConverter}, ConverterParameter=Amethyst}" 
+                                  Margin="0" VerticalAlignment="Center"/>
+                        <CheckBox Grid.Row="0" Grid.Column="5" Content="Ruby" 
+                                  IsChecked="{Binding Items.GemTypes, Converter={StaticResource flagsEnumValueBooleanConverter}, ConverterParameter=Ruby}" 
+                                  Margin="0" VerticalAlignment="Center"/>
+                        <CheckBox Grid.Row="0" Grid.Column="6" Content="Diamond" 
+                                  IsChecked="{Binding Items.GemTypes, Converter={StaticResource flagsEnumValueBooleanConverter}, ConverterParameter=Diamond}" 
+                                  Margin="0,0,10,0" VerticalAlignment="Center"/>
+                    </WrapPanel>
+                        </Border>
+            </GroupBox>
+
+            <GroupBox Header="Gold" Visibility="{Binding GameInfo.IsExternalLootProvider, Converter={StaticResource HiddenWhenTrueConverter}}">
+                <DockPanel LastChildFill="True">
+                    <CheckBox DockPanel.Dock="Left" IsChecked="{Binding Items.PickupGold}" Content="Pickup Gold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,15,5"  />
+                    <Slider Template="{DynamicResource SliderEditable}" IsEnabled="{Binding Items.PickupGold}"
+                        Interval="500" Maximum="300000" Minimum="0" SmallChange="500" LargeChange="1000"
+                        TickFrequency="500" TickPlacement="BottomRight" IsSnapToTickEnabled="True"
+                        Value="{Binding Items.MinGoldStack}" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                </DockPanel>
+            </GroupBox>
+
+            <!--<StackPanel Grid.Row="6" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,0">
+                <GroupBox HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                    <GroupBox.Header>
+                        Cosmetic Priority
+                    </GroupBox.Header>
+                    <StackPanel Margin="0,6,0,0">
+                        <WrapPanel>
+                            <RadioButton Foreground="White" Content="Pickup Cosmetics" IsChecked="{Binding Path=Weighting.CosmeticPriority, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Normal}" />
+                            <RadioButton Foreground="White" Content="Ignore" IsChecked="{Binding Path=Weighting.CosmeticPriority, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Ignore}" />
+                            <RadioButton Foreground="White" Content="Prioritize" IsChecked="{Binding Path=Weighting.CosmeticPriority, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Prioritize}" />
+                            <RadioButton Foreground="White" Content="Kamikaze" IsChecked="{Binding Path=Weighting.CosmeticPriority, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Kamikaze}" />
+                        </WrapPanel>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>-->
+
+            <GroupBox Header="Item Sharing">
+                <WrapPanel HorizontalAlignment="Left" Margin="0,5,0,0">
+                    <TextBlock Margin="2,2,20,2" Text="Drop In Town: " VerticalAlignment="Center"/>
+                    <RadioButton GroupName="DropInTown" Content="None" ToolTip="Drop nothing in town"
+                             IsChecked="{Binding Items.DropInTownMode, Converter={StaticResource enumBooleanConverter}, ConverterParameter=None}" VerticalAlignment="Center" Margin="1,1,5,1"/>
+
+                    <RadioButton GroupName="DropInTown" Content="Stash" ToolTip="Drop items that would normally be kept/stashed"
+                             IsChecked="{Binding Items.DropInTownMode, Converter={StaticResource enumBooleanConverter}, ConverterParameter=Keep}" VerticalAlignment="Center" Margin="1,1,5,1"/>
+
+                    <RadioButton GroupName="DropInTown" Content="Trash" ToolTip="Drop items that woudl normally be salvaged/sold"
+                             IsChecked="{Binding Items.DropInTownMode, Converter={StaticResource enumBooleanConverter}, ConverterParameter=Vendor}" VerticalAlignment="Center" Margin="1,1,5,1"/>
+
+                    <RadioButton GroupName="DropInTown" Content="All" ToolTip="Drop it like its hot!"
+                             IsChecked="{Binding Items.DropInTownMode, Converter={StaticResource enumBooleanConverter}, ConverterParameter=All}" VerticalAlignment="Center" Margin="1,1,5,1"/>
+                </WrapPanel>
+            </GroupBox>
+
+			<!--<GroupBox Grid.Row="1" Header="Free Bag Slots for Town Run">
+                --><!-- TownRun Settings --><!--
+                <Grid Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="3*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="When not in Town:" />
+                    <Slider Grid.Row="0" Grid.Column="1" Template="{DynamicResource SliderEditable}"
+                        Interval="500" Maximum="59" Minimum="0" SmallChange="1" LargeChange="10"
+                        TickFrequency="1" TickPlacement="BottomRight" IsSnapToTickEnabled="True"
+                        Value="{Binding Items.FreeBagSlots}" />
+     
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="When in Town:" />
+                    
+                    <Slider x:Name="InTownBackpackSpaceSlider" Grid.Row="1" Grid.Column="1" Template="{DynamicResource SliderEditable}"
+                        Interval="500" Maximum="59" Minimum="0" SmallChange="1" LargeChange="10"
+                        TickFrequency="1" TickPlacement="BottomRight" IsSnapToTickEnabled="True"
+                        Value="{Binding Items.FreeBagSlotsInTown}" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" TextWrapping="Wrap" Text="Warning! a low backpack space setting may cause additional trips back and forth in town and some cube features that rely on having sufficient space may not function properly." FontWeight="Bold" Foreground="OrangeRed" 
+                               Visibility="{Binding Value, ElementName=InTownBackpackSpaceSlider, Converter={StaticResource sliderValueToVisibilityConverter},ConverterParameter=10}" TextAlignment="Center"/>
+
+                </Grid>
+            </GroupBox>-->
+
+            <GroupBox Header="Smart Stashing" Visibility="{Binding GameInfo.IsExternalLootProvider, Converter={StaticResource HiddenWhenTrueConverter}}">
+                <StackPanel><TextBlock TextWrapping="Wrap" Margin="0,0,0,7">Option to stash things on the first page where items are found:</TextBlock>
+                
+                <UniformGrid Columns="1">
+                    <CheckBox Content="For Equipment (Weapons/Armor/Jewellery)" IsChecked="{Binding Items.UseTypeStashingEquipment}" />
+                    <CheckBox Content="For Other Stuff (Gems, Crafting Matrials, etc)" IsChecked="{Binding Items.UseTypeStashingOther}" />
+                    </UniformGrid>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Header="Misc" Visibility="{Binding GameInfo.IsExternalLootProvider, Converter={StaticResource HiddenWhenTrueConverter}}">
+                <UniformGrid Columns="2">
+                    <CheckBox Content="Don't Pickup Items in Town" IsChecked="{Binding Items.DontPickupInTown}" />
+                    <CheckBox ToolTip="Item list needs items to be identified to check their properties." IsChecked="{Binding Items.KeepLegendaryUnid}" HorizontalAlignment="Left" Content="Keep Legendaries Unidentified" />
+                    <CheckBox ToolTip="Keep bounty caches in your stash rather than openining them automatically" IsChecked="{Binding Items.StashTreasureBags}" HorizontalAlignment="Left" Content="Stash Bounty Caches" />
+                    <CheckBox ToolTip="Completely ignore all items while in combat (useful for speed farming)" IsChecked="{Binding Items.DisableLootingInCombat}" HorizontalAlignment="Left" Content="Disable Looting In Combat" />
+                    <CheckBox IsChecked="{Binding Items.BuyStashTabs}" HorizontalAlignment="Left" Content="Buy Stash Tabs" />
+
+                </UniformGrid>
+            </GroupBox>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
