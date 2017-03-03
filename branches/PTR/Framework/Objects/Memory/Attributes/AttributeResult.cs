@@ -9,13 +9,13 @@ namespace Trinity.Framework.Objects.Memory.Attributes
         public AttributeResult(AttributeItem item)
         {
             AttributeType = item.Key.BaseAttribute;
-            ModifierType = item.Descripter.ParameterType;
+            ModifierType = item.Descripter.Value.ParameterType;
             Modifier = item.Key.ModifierId.To<TModifier>();
             Value = item.GetValue<TValue>();
         }
 
         public ActorAttributeType AttributeType;
-        public AttributeParameterType ModifierType;
+        public Zeta.Game.Internals.AttributeParameterType ModifierType;
         public TValue Value;
         public TModifier Modifier;
     }

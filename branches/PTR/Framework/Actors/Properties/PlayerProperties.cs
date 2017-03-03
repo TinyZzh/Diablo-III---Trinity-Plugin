@@ -20,8 +20,8 @@ namespace Trinity.Framework.Actors.Properties
             actor.ActorClass = GetActorClass(actor.ActorSnoId);
             actor.IsMe = actor.RActorId == Core.Actors.ActivePlayerRActorId;
 
-            var cPlayer = ZetaDia.Players.FirstOrDefault(p => p.ACDId == actor.AcdId);
-            if (cPlayer != null)
+            var cPlayer = ZetaDia.PlayerData;
+            if (cPlayer != null && cPlayer.IsValid)
             {
                 actor.HeroId = cPlayer.HeroId;
                 actor.HeroName = cPlayer.HeroName;

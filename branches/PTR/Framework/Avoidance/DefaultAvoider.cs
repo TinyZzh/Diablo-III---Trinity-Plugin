@@ -216,7 +216,7 @@ namespace Trinity.Framework.Avoidance
             if (ShouldAvoidCritical)
                 return true;
 
-            if (Combat.Routines.Current.ShouldIgnoreAvoidance())
+            if (Combat.Routines.Current?.ShouldIgnoreAvoidance() ?? false)
             {
                 Logger.Log(LogCategory.Avoidance, "Not Avoiding because routine has said no");
                 return false;

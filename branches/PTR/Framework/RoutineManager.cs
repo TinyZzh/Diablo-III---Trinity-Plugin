@@ -98,8 +98,9 @@ namespace Trinity.Framework
 
         public IEnumerable<IRoutine> AllRoutines => _routineLoader.Items.Values;
 
-        public IEnumerable<IRoutine> CurrentClassRoutines => AllRoutines.Where(r => r.Class == ZetaDia.Service.Hero?.Class);
-
+        //public IEnumerable<IRoutine> CurrentClassRoutines => AllRoutines.Where(r => r.Class == ZetaDia.Service.Hero?.Class);
+        public IEnumerable<IRoutine> CurrentClassRoutines => AllRoutines.Where(r => r.Class == Core.Actors.Me.ActorClass);
+        
         public IEnumerable<IDynamicSetting> DynamicSettings => _routineLoader.Items.Values.Select(r => r.RoutineSettings);
 
 

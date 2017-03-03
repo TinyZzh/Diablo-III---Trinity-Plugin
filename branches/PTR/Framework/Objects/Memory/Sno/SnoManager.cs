@@ -8,9 +8,11 @@ using System.Windows.Media;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects.Enums;
 using Trinity.Framework.Objects.Memory.Containers;
+using Trinity.Framework.Objects.Memory.Debug;
 using Trinity.Framework.Objects.Memory.Misc;
 using Trinity.Framework.Objects.Memory.Sno.Helpers;
 using Trinity.Framework.Objects.Memory.Sno.Types;
+using Trinity.Framework.Objects.Memory.Symbols;
 using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
@@ -40,11 +42,19 @@ namespace Trinity.Framework.Objects.Memory.Sno
             public SnoGroups()
             {
                 var sw = Stopwatch.StartNew();
+
                 StringList = Core.CreateGroup<SnoStringList>(SnoType.StringList);
+
                 //Power = Core.CreateGroup<NativePower>(SnoType.Power);
+
+                //var tables = SymbolManager.Tables;
+
+                //ClassMapper.MapToFiles();
+
                 //GameBalance = Core.CreateGroup<GameBalanceCollection>(SnoType.GameBalance);
-                sw.Stop();
-                Logger.LogVerbose($"Created SnoGroups in {sw.Elapsed.TotalMilliseconds}ms");
+
+                //sw.Stop();
+                //Logger.LogVerbose($"Created SnoGroups in {sw.Elapsed.TotalMilliseconds}ms");
 
                 //Monster = Core.CreateGroup<NativeMonster>(SnoType.Monster);
                 //GameBalance = Core.CreateGroup<GameBalanceCollection>(SnoType.GameBalance);

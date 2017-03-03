@@ -34,7 +34,7 @@ namespace Trinity.Framework.Helpers
             public static IntPtr RActorManager => DemonBuddyObjects.RActorManager.BaseAddress;
             public static IntPtr AcdManager => DemonBuddyObjects.AcdManager.BaseAddress;
             public static IntPtr ActivePlayerData => DemonBuddyObjects.ActivePlayerData.BaseAddress;
-            public static IntPtr SymbolManager => ZetaDia.Memory.Read<IntPtr>((IntPtr)0x01F01958); //2.4.2.38682
+            public static IntPtr SymbolManager => ZetaDia.Memory.Read<IntPtr>((IntPtr)0x6F690164) - 0x74;
             public static IntPtr Hero => ZetaDia.Service.Hero.BaseAddress;
             public static IntPtr Globals => ObjectManager + (int)ObjectManagerOffsets.Globals;
             public static IntPtr SnoGroups => DemonBuddyOffsets.SNOGroups;
@@ -100,8 +100,13 @@ namespace Trinity.Framework.Helpers
             }
 
             public static IntPtr MapManagerPtr => _offsetsC.ElementAtOrDefault(12) - 0x68;
-            public static IntPtr SNOGroups => (IntPtr)0x01C12C90;
-            public static IntPtr AttributeDescripter => (IntPtr)0x01C65660;
+            //public static IntPtr SNOGroups => (IntPtr)0x01C12C90;
+            //public static IntPtr AttributeDescripter => (IntPtr)0x01C65660;
+
+            public static IntPtr SNOGroups => (IntPtr)0x02059EA0;
+
+            [Obsolete("now using ZetaDia AttributeDescripter")]
+            public static IntPtr AttributeDescripter => (IntPtr)0x020B2A80;
             public static IntPtr SNOTableGameBalance => _offsetsC.ElementAtOrDefault(16);
             public static IntPtr SNOTableActor => _offsetsC.ElementAtOrDefault(18);
             public static IntPtr SNOTablePower => _offsetsC.ElementAtOrDefault(19);

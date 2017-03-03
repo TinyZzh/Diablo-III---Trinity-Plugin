@@ -12,6 +12,15 @@ namespace Trinity.Framework.Objects.Memory.Symbols
         public static Dictionary<int, SymbolTable> Tables => _tables ?? (_tables = ReadTables());
         private static Dictionary<int, SymbolTable> _tables;
 
+        public const int TableCount = 93;
+
+        public SymbolTable GetTableAndUpdateName(int ptr, string name)
+        {
+            var table = Tables[ptr];
+            table.Name = name;
+            return table;
+        }
+
         protected static Dictionary<int, SymbolTable> ReadTables()
         {
             var tables = new Dictionary<int, SymbolTable>();
@@ -19,7 +28,7 @@ namespace Trinity.Framework.Objects.Memory.Symbols
             var table = MemoryWrapper.Create<SymbolTable>(address);
             var i = 0;
 
-            while (table != null)
+            while (table != null && table.NextTableAddress != IntPtr.Zero)
             {
                 if (!table.Symbols.Any())
                     break;
@@ -31,6 +40,10 @@ namespace Trinity.Framework.Objects.Memory.Symbols
 
                 table.Index = i;
                 tables.Add((int)table.BaseAddress, table);
+
+                if (i == TableCount)
+                    break;
+
                 table = MemoryWrapper.Create<SymbolTable>(table.NextTableAddress);
                 i++;
             }

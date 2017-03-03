@@ -158,7 +158,7 @@ namespace Trinity.Framework.Objects.Memory.Attributes
                     //a.Value.Update();
                 //}
 
-                if (a.Value.Descripter.ParameterType == AttributeParameterType.PowerSnoId || a.Value.Descripter.ParameterType == AttributeParameterType.PowerSnoId2)
+                if (a.Value.Descripter.Value.ParameterType == Zeta.Game.Internals.AttributeParameterType.PowerSnoId || a.Value.Descripter.Value.ParameterType == Zeta.Game.Internals.AttributeParameterType.PowerSnoId2)
                 {
                     a.Value.Update();
 
@@ -408,11 +408,11 @@ namespace Trinity.Framework.Objects.Memory.Attributes
         {
             return Items.Where(i => i.Value.Integer != 0 || i.Value.Single > float.Epsilon)
                 .Aggregate($"Attribute Properties ({Items.Count}/{Map.Count}) Id={(short)FastAttributeGroupId}/{FastAttributeGroupId} {Environment.NewLine}",
-                (current, attr) => current + $" public {attr.Value.Descripter.DataType} " +
-                $"{attr.Value.Attribute} => GetCachedAttribute<{attr.Value.Descripter.DataType}>" +
+                (current, attr) => current + $" public {attr.Value.Descripter.Value.DataType} " +
+                $"{attr.Value.Attribute} => GetCachedAttribute<{attr.Value.Descripter.Value.DataType}>" +
                 $"(ActorAttributeType.{attr.Value.Attribute}); // {attr.Value.Attribute} " +
                 $"({attr.Value.ModKey}) = i:{attr.Value.Integer} f:{attr.Value.Single} " +
-                $"v:{attr.Value.GetValue()} ModifierType={attr.Value.Descripter.ParameterType} " +
+                $"v:{attr.Value.GetValue()} ModifierType={attr.Value.Descripter.Value.ParameterType} " +
                 $"Modifier={attr.Value.Key.ModifierId} {Environment.NewLine}");
         }
 

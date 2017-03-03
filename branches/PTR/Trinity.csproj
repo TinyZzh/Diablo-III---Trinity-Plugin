@@ -61,12 +61,12 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Demonbuddy, Version=1.1.3036.624, Culture=neutral, PublicKeyToken=eff32ccf253d66d4, processorArchitecture=x86">
+    <Reference Include="Demonbuddy, Version=1.1.3103.643, Culture=neutral, PublicKeyToken=eff32ccf253d66d4, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\DB-Current\Demonbuddy.exe</HintPath>
+      <HintPath>..\..\DB-PTR\Demonbuddy.exe</HintPath>
     </Reference>
     <Reference Include="GreyMagic">
-      <HintPath>..\..\DB-Current\GreyMagic.dll</HintPath>
+      <HintPath>..\..\DB-PTR\GreyMagic.dll</HintPath>
     </Reference>
     <Reference Include="IronPython">
       <HintPath>..\..\DB-Current\IronPython.dll</HintPath>
@@ -1198,7 +1198,7 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>SET TARGETDIR=C:\DB\DB-Current\Plugins\Trinity\
+    <PostBuildEvent>SET TARGETDIR=C:\DB\DB-PTR\Plugins\Trinity\
 
 rd "%25TARGETDIR%25" /S 
 /Q

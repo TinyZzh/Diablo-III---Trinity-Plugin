@@ -9,7 +9,8 @@ namespace Trinity.Framework.Objects.Memory.Attributes
 {
     public class AttributeItem : MemoryWrapper, ITableItem
     {
-        public AttributeDescripter Descripter = new AttributeDescripter();
+        public Zeta.Game.Internals.AttributeDescriptor? Descripter = new Zeta.Game.Internals.AttributeDescriptor();
+
         public ActorAttributeType Attribute => Key.BaseAttribute;
         public int ModKey { get; private set; }
         public int Integer { get; private set; }
@@ -21,7 +22,7 @@ namespace Trinity.Framework.Objects.Memory.Attributes
 
         public object GetValue()
         {
-            return Descripter.IsInteger ? Integer : Single > float.Epsilon ? Single : 0;
+            return Descripter?.DataType == typeof(Int32) ? Integer : Single > float.Epsilon ? Single : 0;
         }
 
         public object Modifer
@@ -30,21 +31,21 @@ namespace Trinity.Framework.Objects.Memory.Attributes
             {
                 switch (Descripter?.ParameterType)
                 {
-                    case AttributeParameterType.PowerSnoId:
+                    case Zeta.Game.Internals.AttributeParameterType.PowerSnoId:
                         return (SNOPower)Key.ModifierId;
-                    case AttributeParameterType.ActorType:
+                    case Zeta.Game.Internals.AttributeParameterType.ActorType:
                         return (SNOActor)Key.ModifierId;
-                    case AttributeParameterType.ConversationSnoId:
+                    case Zeta.Game.Internals.AttributeParameterType.ConversationSnoId:
                         return (SNOConversation)Key.ModifierId;
-                    case AttributeParameterType.InventoryLocation:
+                    case Zeta.Game.Internals.AttributeParameterType.InventoryLocation:
                         return (InventorySlot)Key.ModifierId;
-                    case AttributeParameterType.DamageType:
+                    case Zeta.Game.Internals.AttributeParameterType.DamageType:
                         return (DamageType)Key.ModifierId;
-                    case AttributeParameterType.PowerSnoId2:
+                    case Zeta.Game.Internals.AttributeParameterType.PowerSnoId2:
                         return (SNOPower)Key.ModifierId;
-                    case AttributeParameterType.ResourceType:
+                    case Zeta.Game.Internals.AttributeParameterType.ResourceType:
                         return (ResourceType)Key.ModifierId;
-                    case AttributeParameterType.RequirementType:
+                    case Zeta.Game.Internals.AttributeParameterType.RequirementType:
                         return (RequirementType)Key.ModifierId;
                 }
                 return Key.ModifierId;
@@ -58,7 +59,7 @@ namespace Trinity.Framework.Objects.Memory.Attributes
                 var type = TypeUtil<T>.TypeOf;
                 if (Integer is T)
                 {
-                    if (Descripter != null && Descripter.IsInteger)
+                    if (Descripter != null && Descripter?.DataType == typeof(Int32))
                     {
                         return (T)Convert.ChangeType(Integer, TypeUtil<T>.TypeOf);
                     }
@@ -69,7 +70,7 @@ namespace Trinity.Framework.Objects.Memory.Attributes
                 }
                 if (Single is T)
                 {
-                    if (Descripter != null && Descripter.IsInteger)
+                    if (Descripter != null && Descripter?.DataType == typeof(Int32))
                     {
                         return (T)Convert.ChangeType(Integer, TypeUtil<T>.TypeOf);
                     }
@@ -95,14 +96,13 @@ namespace Trinity.Framework.Objects.Memory.Attributes
             ModKey = ZetaDia.Memory.Read<int>(BaseAddress + 4);
             Key = new AttributeKey(ModKey);
 
-            AttributeDescripter descripter = null;
-            AttributeManager.AttributeDescriptors?.TryGetValue(Key.DescripterId, out descripter);
+            Zeta.Game.Internals.AttributeDescriptor descripter;
 
-            if (descripter != null)
+            if (AttributeManager.AttributeDescriptors != null && AttributeManager.AttributeDescriptors.TryGetValue(Key.DescripterId, out descripter))
             {
                 Descripter = descripter;
 
-                if (Descripter.IsInteger)
+                if (Descripter?.DataType == typeof(Int32))
                 {
                     Integer = ZetaDia.Memory.Read<int>(BaseAddress + 8);
                 }

@@ -65,7 +65,7 @@ namespace Trinity.Framework.Actors
                 _rActorContainer = MemoryWrapper.Create<ExpandoContainer<RActor>>(Internals.Addresses.RActorManager);
                 _commonDataContainer = MemoryWrapper.Create<ExpandoContainer<ActorCommonData>>(Internals.Addresses.AcdManager);
             }
-        }        
+        }
 
         private void UpdateObjectsFromMemory()
         {
@@ -154,8 +154,8 @@ namespace Trinity.Framework.Actors
                     id => TryAddRActor(id, newRActor, out result),
                     (id, existingActor) => TryUpdateRActor(id, existingActor, newRActor, out result));
 
-                if(result)
-                    untouchedIds.Remove(rActorId);                           
+                if (result)
+                    untouchedIds.Remove(rActorId);
             }
 
             foreach (var key in untouchedIds)
@@ -212,9 +212,14 @@ namespace Trinity.Framework.Actors
         {
             var untouchedIds = new List<int>(_inventory.Keys);
             foreach (var newItem in _commonData)
-            {                
+            {
                 var commonData = newItem.Value;
                 var type = commonData.ActorType;
+
+                // temp work around to broken ACD object.
+                if (commonData.GameBalanceType == GameBalanceType.Items)
+                    type = ActorType.Item;
+
                 if (type != ActorType.Item)
                     continue;
 

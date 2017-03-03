@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects.Enums;
 using Trinity.Framework.Objects.Memory.Misc;
 using Trinity.Framework.Objects.Memory.Sno;
 using Trinity.Framework.Objects.Memory.Symbols;
 using Zeta.Common;
+using Zeta.Game;
 using Logger = Trinity.Framework.Helpers.Logger;
 
 namespace Trinity.Framework.Objects.Memory.Debug
@@ -31,7 +34,7 @@ namespace Trinity.Framework.Objects.Memory.Debug
 
     public static class ClassMapperExtensions
     {
-        
+
     }
 
     public class ClassMapper
@@ -39,18 +42,34 @@ namespace Trinity.Framework.Objects.Memory.Debug
         private static readonly HashSet<ValueTypeDescriptor> AlreadyMapped = new HashSet<ValueTypeDescriptor>();
         private static readonly Queue<ValueTypeDescriptor> ToBeMapped = new Queue<ValueTypeDescriptor>();
 
-        public static void MapRecursively(ValueTypeDescriptor valueType)
+        public static void MapToFiles()
+        {
+            foreach (var ptr in SnoCore.SnoManagerPtrs)
+            {
+                if (ptr == IntPtr.Zero) continue;
+                var descripterPtr = ZetaDia.Memory.Read<IntPtr>(ptr + 0x6C);
+                var name = ZetaDia.Memory.ReadStringUTF8(ptr + 0x1C);
+                var descripter = MemoryWrapper.Create<ValueTypeDescriptor>(descripterPtr);
+                var output = MapRecursively(descripter);
+                var path = Path.Combine(FileManager.ReferencePath, $"Sno{name}.cs");
+                File.WriteAllText(path, output);
+            }
+        }
+
+        public static string MapRecursively(ValueTypeDescriptor valueType)
         {
             ToBeMapped.Clear();
             ToBeMapped.Enqueue(valueType);
+            var output = "";
             while (ToBeMapped.Any())
             {
                 valueType = ToBeMapped.Dequeue();
                 if (valueType == null)
                     break;
 
-                Map(valueType);
+                output += Map(valueType);
             }
+            return output;
         }
 
         private static readonly HashSet<string> OffsetEnumObjects = new HashSet<string>()
@@ -59,6 +78,7 @@ namespace Trinity.Framework.Objects.Memory.Debug
         };
 
         public const string Indent = "    ";
+        private static object file;
 
         public static string Map(ValueTypeDescriptor valueType)
         {
@@ -99,7 +119,7 @@ namespace Trinity.Framework.Objects.Memory.Debug
                 var baseTypeGroup = GetTypeGroup(field.BaseType.Name);
                 var baseTypeName = GetTypeName(baseTypeGroup, field.BaseType.Name, field);
 
-                if(group == DataTypeGroup.VariableArray && baseTypeGroup == DataTypeGroup.Simple)
+                if (group == DataTypeGroup.VariableArray && baseTypeGroup == DataTypeGroup.Simple)
                 {
                     group = DataTypeGroup.SerializedString;
                 }
@@ -179,7 +199,7 @@ namespace Trinity.Framework.Objects.Memory.Debug
                 public override string ToString() => $"   {Name} = {Value},";
             }
 
-            public EnumValue this[FieldDescriptor field] 
+            public EnumValue this[FieldDescriptor field]
                 => Values.FirstOrDefault(v => Equals(v.Field, field));
 
             public OffsetEnum(ValueTypeDescriptor valueType, DataTypeGroup groupRestriction)
@@ -192,7 +212,7 @@ namespace Trinity.Framework.Objects.Memory.Debug
                     var group = GetTypeGroup(field.Type.Name);
                     if (groupRestriction != DataTypeGroup.None && group != groupRestriction)
                         continue;
-                                        
+
                     Values.Add(new EnumValue
                     {
                         Field = field,
@@ -204,7 +224,7 @@ namespace Trinity.Framework.Objects.Memory.Debug
 
             private string NewLine => Environment.NewLine;
 
-            public override string ToString() 
+            public override string ToString()
                 => $"public enum {Name} {{ {NewLine} {string.Join(NewLine, Values)} {NewLine} }}";
         }
 
@@ -223,7 +243,7 @@ namespace Trinity.Framework.Objects.Memory.Debug
             comments.Add(field.FixedArraySerializeOffsetDiff != 0 ? $" FixArrSerializeOffsetDiff={field.FixedArraySerializeOffsetDiff}" : string.Empty);
             comments.Add(field.Flags != FieldDescriptorFlags.None ? $" Flags={field.Flags}" : string.Empty);
             //comments.Add(size > 0 ? $" Size={size}" : string.Empty);
-            comments.Add(field.SymbolTable > 0 ? $" SymbolTable=@{field.SymbolTable}" : string.Empty);
+            //comments.Add(field.SymbolTable > 0 ? $" SymbolTable=@{field.SymbolTable}" : string.Empty);
             comments.Add((field.Min != 0 ? $"Min={field.Min}" : string.Empty) + (field.Max != 0 ? $"Max={field.Max}" : string.Empty));
             return comments.Any(comment => !string.IsNullOrEmpty(comment)) ? comments.Aggregate("// ", (c, str) => c + " " + str) : string.Empty;
         }
@@ -252,7 +272,7 @@ namespace Trinity.Framework.Objects.Memory.Debug
                     return DataTypeGroup.Simple;
                 case "DT_VARIABLEARRAY":
                     return DataTypeGroup.VariableArray;
-                case "DT_FIXEDARRAY":                    
+                case "DT_FIXEDARRAY":
                     return DataTypeGroup.FixedArray;
                 case "DT_SNO":
                     return DataTypeGroup.Sno;

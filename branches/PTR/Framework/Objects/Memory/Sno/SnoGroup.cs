@@ -21,6 +21,6 @@ namespace Trinity.Framework.Objects.Memory.Sno
         public int Limit => ReadOffset<int>(0x64);
         public int Flags => ReadOffset<int>(0x18);
         public string Name => ReadString(0x1C, 32);
-        public ValueTypeDescriptor DataType => ReadPointer<ValueTypeDescriptor>(0x74);
+        public ValueTypeDescriptor DataType => ReadPointer<ValueTypeDescriptor>(0x6C);
     }
 }

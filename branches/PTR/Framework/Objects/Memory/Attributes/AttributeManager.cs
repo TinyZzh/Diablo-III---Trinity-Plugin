@@ -9,7 +9,7 @@ namespace Trinity.Framework.Objects.Memory.Attributes
 {
     public class AttributeManager : MemoryWrapper
     {
-        public static Dictionary<int, AttributeDescripter> AttributeDescriptors;
+        public static Dictionary<int, Zeta.Game.Internals.AttributeDescriptor> AttributeDescriptors;
         private static ExpandoContainer<AttributeGroup> _attributeGroups;
 
         static AttributeManager()
@@ -19,8 +19,10 @@ namespace Trinity.Framework.Objects.Memory.Attributes
 
         private static void Create()
         {
-            var descriptors = ReadObjects<AttributeDescripter>(Internals.Addresses.AttributeDescripters, 1441, 0x28).ToList();
-            AttributeDescriptors = descriptors.ToDictionary(descripter => descripter.Id);
+            //var descriptors = ReadObjects<AttributeDescripter>(Internals.Addresses.AttributeDescripters, 1441, 0x28).ToList();
+            //AttributeDescriptors = descriptors.ToDictionary(descripter => descripter.Id);
+
+            AttributeDescriptors = ZetaDia.AttributeDescriptors.ToDictionary(descripter => descripter.Id);
         }
 
         public static void Reset()

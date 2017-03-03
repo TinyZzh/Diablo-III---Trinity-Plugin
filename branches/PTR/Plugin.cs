@@ -34,8 +34,8 @@ namespace Trinity
 {
     public class TrinityPlugin : IPlugin
     {
-        public string Name => "Trinity";
-        public Version Version => new Version(2, 55, 735);
+        public string Name => "Trinity PTR";
+        public Version Version => new Version(2, 250, 736);
         public string Author => "xzjv, TarasBulba, rrrix, jubisman, Phelon and many more";
         public string Description => $"v{Version} provides combat, exploration and much more";
         public Window DisplayWindow => UILoader.GetDisplayWindow(Path.Combine(FileManager.PluginPath, "UI"));
