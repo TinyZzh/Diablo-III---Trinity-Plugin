@@ -111,7 +111,7 @@ namespace Trinity.Framework.Helpers
                 return;
 
             var state = cacheObject.CommonData.AnimationState.ToString();
-            var name = cacheObject.CommonData.Animation.ToString();
+            var name = cacheObject.CommonData.AnimationInfo.Current.ToString();
 
             // Log Animation
             if (!_seenAnimationCache.ContainsKey(name))

@@ -774,49 +774,113 @@ namespace Trinity.Framework.Objects.Memory.Sno.Types
         public int _2_0x4_int => ReadOffset<int>(0x4); //      Flags=1  
     }
 
-    [CompilerGenerated]
+    //[CompilerGenerated]
+    //public class NativeGameBalance : SnoTableEntry
+    //{
+    //    public const int SizeOf = 552; // 0x228
+    //    public override string ToString() => $"{GetType().Name}: {(GameBalanceTableId)Header.SnoId}";             
+    //    public int _1_0xC_int => ReadOffset<int>(0xC); //      Flags=1  
+    //    public int _2_0x10_int => ReadOffset<int>(0x10); //      Flags=1  
+    //    public int _3_0x14_int => ReadOffset<int>(0x14); //      Flags=1  
+    //    public NativeItemsTable _4_0x18_NativeItemsTable => ReadObject<NativeItemsTable>(0x18);
+    //    public NativeItemsTable _5_0x28_NativeItemsTable => ReadObject<NativeItemsTable>(0x28);
+    //    public NativeExperienceTable _6_0x38_NativeExperienceTable => ReadObject<NativeExperienceTable>(0x38);
+    //    public NativeExperienceTableAlt _7_0x48_NativeExperienceTableAlt => ReadObject<NativeExperienceTableAlt>(0x48);
+    //    public NativeHelpCodes _8_0x58_NativeHelpCodes => ReadObject<NativeHelpCodes>(0x58);
+    //    public NativeMonsterLevelTable _9_0x68_NativeMonsterLevelTable => ReadObject<NativeMonsterLevelTable>(0x68);
+    //    public NativeAffixTable _10_0x78_NativeAffixTable => ReadObject<NativeAffixTable>(0x78);
+    //    public NativeHeros _11_0x88_NativeHeros => ReadObject<NativeHeros>(0x88);
+    //    public NativeMovementStyles _12_0x98_NativeMovementStyles => ReadObject<NativeMovementStyles>(0x98);
+    //    public NativeLabels _13_0xA8_NativeLabels => ReadObject<NativeLabels>(0xA8);
+    //    public NativeLootDistributionTable _14_0xB8_NativeLootDistributionTable => ReadObject<NativeLootDistributionTable>(0xB8);
+    //    public NativeRareItemNamesTable _15_0xC8_NativeRareItemNamesTable => ReadObject<NativeRareItemNamesTable>(0xC8);
+    //    public NativeMonsterAffixesTable _16_0xD8_NativeMonsterAffixesTable => ReadObject<NativeMonsterAffixesTable>(0xD8);
+    //    public NativeRareMonsterNamesTable _17_0xE8_NativeRareMonsterNamesTable => ReadObject<NativeRareMonsterNamesTable>(0xE8);
+    //    public NativeSocketedEffectsTable _18_0xF8_NativeSocketedEffectsTable => ReadObject<NativeSocketedEffectsTable>(0xF8);
+    //    public NativeItemDropTable _19_0x108_NativeItemDropTable => ReadObject<NativeItemDropTable>(0x108);
+    //    public NativeItemLevelModTable _20_0x118_NativeItemLevelModTable => ReadObject<NativeItemLevelModTable>(0x118);
+    //    public NativeQualityClassTable _21_0x128_NativeQualityClassTable => ReadObject<NativeQualityClassTable>(0x128);
+    //    public NativeHandicapLevelTable _22_0x138_NativeHandicapLevelTable => ReadObject<NativeHandicapLevelTable>(0x138);
+    //    public NativeItemSalvageLevelTable _23_0x148_NativeItemSalvageLevelTable => ReadObject<NativeItemSalvageLevelTable>(0x148);
+    //    public NativeHirelings _24_0x158_NativeHirelings => ReadObject<NativeHirelings>(0x158);
+    //    public NativeSetItemBonusTable _25_0x168_NativeSetItemBonusTable => ReadObject<NativeSetItemBonusTable>(0x168);
+    //    public NativeEliteModifiers _26_0x178_NativeEliteModifiers => ReadObject<NativeEliteModifiers>(0x178);
+    //    public NativeItemTiers _27_0x188_NativeItemTiers => ReadObject<NativeItemTiers>(0x188);
+    //    public NativePowerFormulaTable _28_0x198_NativePowerFormulaTable => ReadObject<NativePowerFormulaTable>(0x198);
+    //    public NativeRecipesTable _29_0x1A8_NativeRecipesTable => ReadObject<NativeRecipesTable>(0x1A8);
+    //    public NativeScriptedAchievementEventsTable _30_0x1B8_NativeScriptedAchievementEventsTable => ReadObject<NativeScriptedAchievementEventsTable>(0x1B8);
+    //    public NativeLootRunQuestTierTable _31_0x1C8_NativeLootRunQuestTierTable => ReadObject<NativeLootRunQuestTierTable>(0x1C8);
+    //    public NativeParagonBonusesTable _32_0x1D8_NativeParagonBonusesTable => ReadObject<NativeParagonBonusesTable>(0x1D8);
+    //    public NativeLegacyItemConversionTable _33_0x1E8_NativeLegacyItemConversionTable => ReadObject<NativeLegacyItemConversionTable>(0x1E8);
+    //    public NativeEnchantItemAffixUseCountCostScalarsTable _34_0x1F8_NativeEnchantItemAffixUseCountCostScalarsTable => ReadObject<NativeEnchantItemAffixUseCountCostScalarsTable>(0x1F8);
+    //    public NativeTieredLootRunLevelTable _35_0x208_NativeTieredLootRunLevelTable => ReadObject<NativeTieredLootRunLevelTable>(0x208);
+    //    public NativeTransmuteRecipesTable _36_0x218_NativeTransmuteRecipesTable => ReadObject<NativeTransmuteRecipesTable>(0x218);
+    //}
+
     public class NativeGameBalance : SnoTableEntry
     {
-        public const int SizeOf = 552; // 0x228
-        public override string ToString() => $"{GetType().Name}: {(GameBalanceTableId)Header.SnoId}";             
-        public int _1_0xC_int => ReadOffset<int>(0xC); //      Flags=1  
-        public int _2_0x10_int => ReadOffset<int>(0x10); //      Flags=1  
-        public int _3_0x14_int => ReadOffset<int>(0x14); //      Flags=1  
-        public NativeItemsTable _4_0x18_NativeItemsTable => ReadObject<NativeItemsTable>(0x18);
-        public NativeItemsTable _5_0x28_NativeItemsTable => ReadObject<NativeItemsTable>(0x28);
-        public NativeExperienceTable _6_0x38_NativeExperienceTable => ReadObject<NativeExperienceTable>(0x38);
-        public NativeExperienceTableAlt _7_0x48_NativeExperienceTableAlt => ReadObject<NativeExperienceTableAlt>(0x48);
-        public NativeHelpCodes _8_0x58_NativeHelpCodes => ReadObject<NativeHelpCodes>(0x58);
-        public NativeMonsterLevelTable _9_0x68_NativeMonsterLevelTable => ReadObject<NativeMonsterLevelTable>(0x68);
-        public NativeAffixTable _10_0x78_NativeAffixTable => ReadObject<NativeAffixTable>(0x78);
-        public NativeHeros _11_0x88_NativeHeros => ReadObject<NativeHeros>(0x88);
-        public NativeMovementStyles _12_0x98_NativeMovementStyles => ReadObject<NativeMovementStyles>(0x98);
-        public NativeLabels _13_0xA8_NativeLabels => ReadObject<NativeLabels>(0xA8);
-        public NativeLootDistributionTable _14_0xB8_NativeLootDistributionTable => ReadObject<NativeLootDistributionTable>(0xB8);
-        public NativeRareItemNamesTable _15_0xC8_NativeRareItemNamesTable => ReadObject<NativeRareItemNamesTable>(0xC8);
-        public NativeMonsterAffixesTable _16_0xD8_NativeMonsterAffixesTable => ReadObject<NativeMonsterAffixesTable>(0xD8);
-        public NativeRareMonsterNamesTable _17_0xE8_NativeRareMonsterNamesTable => ReadObject<NativeRareMonsterNamesTable>(0xE8);
-        public NativeSocketedEffectsTable _18_0xF8_NativeSocketedEffectsTable => ReadObject<NativeSocketedEffectsTable>(0xF8);
-        public NativeItemDropTable _19_0x108_NativeItemDropTable => ReadObject<NativeItemDropTable>(0x108);
-        public NativeItemLevelModTable _20_0x118_NativeItemLevelModTable => ReadObject<NativeItemLevelModTable>(0x118);
-        public NativeQualityClassTable _21_0x128_NativeQualityClassTable => ReadObject<NativeQualityClassTable>(0x128);
-        public NativeHandicapLevelTable _22_0x138_NativeHandicapLevelTable => ReadObject<NativeHandicapLevelTable>(0x138);
-        public NativeItemSalvageLevelTable _23_0x148_NativeItemSalvageLevelTable => ReadObject<NativeItemSalvageLevelTable>(0x148);
-        public NativeHirelings _24_0x158_NativeHirelings => ReadObject<NativeHirelings>(0x158);
-        public NativeSetItemBonusTable _25_0x168_NativeSetItemBonusTable => ReadObject<NativeSetItemBonusTable>(0x168);
-        public NativeEliteModifiers _26_0x178_NativeEliteModifiers => ReadObject<NativeEliteModifiers>(0x178);
-        public NativeItemTiers _27_0x188_NativeItemTiers => ReadObject<NativeItemTiers>(0x188);
-        public NativePowerFormulaTable _28_0x198_NativePowerFormulaTable => ReadObject<NativePowerFormulaTable>(0x198);
-        public NativeRecipesTable _29_0x1A8_NativeRecipesTable => ReadObject<NativeRecipesTable>(0x1A8);
-        public NativeScriptedAchievementEventsTable _30_0x1B8_NativeScriptedAchievementEventsTable => ReadObject<NativeScriptedAchievementEventsTable>(0x1B8);
-        public NativeLootRunQuestTierTable _31_0x1C8_NativeLootRunQuestTierTable => ReadObject<NativeLootRunQuestTierTable>(0x1C8);
-        public NativeParagonBonusesTable _32_0x1D8_NativeParagonBonusesTable => ReadObject<NativeParagonBonusesTable>(0x1D8);
-        public NativeLegacyItemConversionTable _33_0x1E8_NativeLegacyItemConversionTable => ReadObject<NativeLegacyItemConversionTable>(0x1E8);
-        public NativeEnchantItemAffixUseCountCostScalarsTable _34_0x1F8_NativeEnchantItemAffixUseCountCostScalarsTable => ReadObject<NativeEnchantItemAffixUseCountCostScalarsTable>(0x1F8);
-        public NativeTieredLootRunLevelTable _35_0x208_NativeTieredLootRunLevelTable => ReadObject<NativeTieredLootRunLevelTable>(0x208);
-        public NativeTransmuteRecipesTable _36_0x218_NativeTransmuteRecipesTable => ReadObject<NativeTransmuteRecipesTable>(0x218);
+        public const int SizeOf = 568; // 0x238
+        public int _1_0xC_int => ReadOffset<int>(0xC); //      Flags=1 
+        public int _2_0x10_int => ReadOffset<int>(0x10); //      Flags=1 
+        public int _3_0x14_int => ReadOffset<int>(0x14); //      Flags=1 
+        public NativeItemsTable _4_0x18_Object => ReadObject<NativeItemsTable>(0x18);
+        public NativeItemsTable _5_0x28_Object => ReadObject<NativeItemsTable>(0x28);
+        public NativeExperienceTable _6_0x38_Object => ReadObject<NativeExperienceTable>(0x38);
+        public NativeExperienceTableAlt _7_0x48_Object => ReadObject<NativeExperienceTableAlt>(0x48);
+        public NativeHelpCodes _8_0x58_Object => ReadObject<NativeHelpCodes>(0x58);
+        public NativeMonsterLevelTable _9_0x68_Object => ReadObject<NativeMonsterLevelTable>(0x68);
+        public NativeAffixTable _10_0x78_Object => ReadObject<NativeAffixTable>(0x78);
+        public NativeHeros _11_0x88_Object => ReadObject<NativeHeros>(0x88);
+        public NativeMovementStyles _12_0x98_Object => ReadObject<NativeMovementStyles>(0x98);
+        public NativeLabels _13_0xA8_Object => ReadObject<NativeLabels>(0xA8);
+        public NativeLootDistributionTable _14_0xB8_Object => ReadObject<NativeLootDistributionTable>(0xB8);
+        public NativeRareItemNamesTable _15_0xC8_Object => ReadObject<NativeRareItemNamesTable>(0xC8);
+        public NativeMonsterAffixesTable _16_0xD8_Object => ReadObject<NativeMonsterAffixesTable>(0xD8);
+        public NativeRareMonsterNamesTable _17_0xE8_Object => ReadObject<NativeRareMonsterNamesTable>(0xE8);
+        public NativeSocketedEffectsTable _18_0xF8_Object => ReadObject<NativeSocketedEffectsTable>(0xF8);
+        public NativeItemDropTable _19_0x108_Object => ReadObject<NativeItemDropTable>(0x108);
+        public NativeItemLevelModTable _20_0x118_Object => ReadObject<NativeItemLevelModTable>(0x118);
+        public NativeQualityClassTable _21_0x128_Object => ReadObject<NativeQualityClassTable>(0x128);
+        public NativeHandicapLevelTable _22_0x138_Object => ReadObject<NativeHandicapLevelTable>(0x138);
+        public NativeItemSalvageLevelTable _23_0x148_Object => ReadObject<NativeItemSalvageLevelTable>(0x148);
+        public NativeHirelings _24_0x158_Object => ReadObject<NativeHirelings>(0x158);
+        public NativeSetItemBonusTable _25_0x168_Object => ReadObject<NativeSetItemBonusTable>(0x168);
+        public NativeEliteModifiers _26_0x178_Object => ReadObject<NativeEliteModifiers>(0x178);
+        public NativeItemTiers _27_0x188_Object => ReadObject<NativeItemTiers>(0x188);
+        public NativePowerFormulaTable _28_0x198_Object => ReadObject<NativePowerFormulaTable>(0x198);
+        public NativeRecipesTable _29_0x1A8_Object => ReadObject<NativeRecipesTable>(0x1A8);
+        public NativeScriptedAchievementEventsTable _30_0x1B8_Object => ReadObject<NativeScriptedAchievementEventsTable>(0x1B8);
+        public NativeLootRunQuestTierTable _31_0x1C8_Object => ReadObject<NativeLootRunQuestTierTable>(0x1C8);
+        public NativeParagonBonusesTable _32_0x1D8_Object => ReadObject<NativeParagonBonusesTable>(0x1D8);
+        public NativeLegacyItemConversionTable _33_0x1E8_Object => ReadObject<NativeLegacyItemConversionTable>(0x1E8);
+        public NativeEnchantItemAffixUseCountCostScalarsTable _34_0x1F8_Object => ReadObject<NativeEnchantItemAffixUseCountCostScalarsTable>(0x1F8);
+        public NativeTieredLootRunLevelTable _35_0x208_Object => ReadObject<NativeTieredLootRunLevelTable>(0x208);
+        public NativeTransmuteRecipesTable _36_0x218_Object => ReadObject<NativeTransmuteRecipesTable>(0x218);
+        public NativeCurrencyConversionTable _37_0x228_Object => ReadObject<NativeCurrencyConversionTable>(0x228);
     }
 
+    [CompilerGenerated]
+    public class NativeCurrencyConversionTableEntry : MemoryWrapper
+    {
+        public const int SizeOf = 304; // 0x130
+        public string _1_0x0_String => ReadString(0x0); //      Flags=18437 
+        public int _2_0x100_int => ReadOffset<int>(0x100);
+        public int _3_0x104_int => ReadOffset<int>(0x104);
+        public int _4_0x108_int => ReadOffset<int>(0x108); //      Flags=1 
+        public DifficultyType _5_0x108_Enum => ReadOffset<DifficultyType>(0x108); //      Flags=17 Min=-1Max=19
+        public List<int> _6_0x10C_FixedArray => ReadArray<int>(0x10C, 5); //      Flags=1 
+        public int _7_0x120_int => ReadOffset<int>(0x120); //      Flags=1 
+        public int _8_0x124_int => ReadOffset<int>(0x124); //      Flags=1 
+        public int _9_0x128_int => ReadOffset<int>(0x128); //      Flags=1 
+    }
+
+    [CompilerGenerated]
+    public class NativeCurrencyConversionTable : MemoryWrapper
+    {
+        public const int SizeOf = 16; // 0x10
+        public NativeSerializeData _1_0x0_SerializeData => ReadObject<NativeSerializeData>(0x0);
+        public List<NativeCurrencyConversionTableEntry> _2_0x8_VariableArray => ReadSerializedObjects<NativeCurrencyConversionTableEntry>(0x8, 0x0); //    VarArrSerializeOffsetDiff=-8   Flags=33 
+    }
 
     [CompilerGenerated]
     public class NativeItemsTable : MemoryWrapper

@@ -22,7 +22,8 @@ namespace Trinity.Framework.Objects.Memory.Misc
         public ActorMovement Movement => ReadOffset<IntPtr>(0x1AC).UnsafeCreate<ActorMovement>();
         public SNORecordActor ActorInfo => ZetaDia.SNO[Zeta.Game.Internals.ClientSNOTable.Actor].GetRecord<SNORecordActor>(ActorSnoId);
         public SNORecordMonster MonsterInfo => ZetaDia.SNO[Zeta.Game.Internals.ClientSNOTable.Monster].GetRecord<SNORecordMonster>(MonsterSnoId);
-        public ActorCommonData CommonData => Core.Actors.GetCommonDataById(AcdId);
+
+        //public ActorCommonData CommonData => Core.Actors.GetCommonDataById(AcdId);
 
         //public const int SizeOf = 0x368; // 872
         //public int RActorId => ReadOffset<int>(0x0);

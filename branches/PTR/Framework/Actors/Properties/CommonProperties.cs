@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Trinity.Components.Combat;
 using Trinity.Framework.Actors.ActorTypes;
+using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
 using Trinity.Reference;
 using Trinity.Settings;
@@ -11,6 +12,7 @@ using Zeta.Bot.Profile;
 using Zeta.Bot.Settings;
 using Zeta.Common;
 using Zeta.Game;
+using Zeta.Game.Internals.Actors;
 using Zeta.Game.Internals.SNO;
 using Logger = Trinity.Framework.Helpers.Logger;
 
@@ -44,10 +46,10 @@ namespace Trinity.Framework.Actors.Properties
                     actor.AxialRadius = actorInfo.AxialCylinder.Ax1;
                 }
 
-                actor.WorldDynamicId = rActor.WorldDynamicId;
+                actor.WorldDynamicId = rActor.WorldId; //rActor.WorldDynamicId;
                 actor.Radius = rActor.CollisionSphere.Radius;
-                actor.CollisionRadius = GameData.CustomObjectRadius.ContainsKey(actor.ActorSnoId) 
-                    ? GameData.CustomObjectRadius[actor.ActorSnoId] 
+                actor.CollisionRadius = GameData.CustomObjectRadius.ContainsKey(actor.ActorSnoId)
+                    ? GameData.CustomObjectRadius[actor.ActorSnoId]
                     : Math.Max(1f, actor.AxialRadius * 0.60f);
             }
 
@@ -73,16 +75,24 @@ namespace Trinity.Framework.Actors.Properties
             {
                 actor.Position = commonData.Position;
                 actor.AnnId = commonData.AnnId;
-                actor.AcdId = commonData.AcdId;
+                actor.AcdId = commonData.ACDId;
                 actor.GameBalanceId = commonData.GameBalanceId;
                 actor.GameBalanceType = commonData.GameBalanceType;
-                actor.FastAttributeGroupId = commonData.FastAttributeGroupId;
+                actor.FastAttributeGroupId = commonData.FastAttribGroupId;
 
-                var animation = commonData.Animation;
-                actor.Animation = animation;
-                actor.AnimationNameLowerCase = GameData.GetAnimationNameLowerCase(animation);
-                actor.AnimationState = commonData.AnimationState;
-                actor.IsGroundItem = actor.IsItem && commonData.InventorySlot == InventorySlot.None && actor.Position != Vector3.Zero;
+                var animInfo = commonData.AnimationInfo;
+                if (animInfo != null)
+                {
+                    var animation = commonData.AnimationInfo.Current;
+                    actor.Animation = animation; // note, trin objects were doing faster read into animationInfo ?
+                    actor.AnimationNameLowerCase = GameData.GetAnimationNameLowerCase(animation); // ?
+                    actor.AnimationState = commonData.AnimationState;
+                }
+
+
+
+                var inventorySlot = ZetaDia.Memory.Read<InventorySlot>(commonData.BaseAddress + 0x114); //actor.AcdItemTemp.InventorySlot;
+                actor.IsGroundItem = actor.IsItem && inventorySlot == InventorySlot.None && actor.Position != Vector3.Zero;
             }
 
             if (actor.IsRActorBased)
@@ -105,7 +115,7 @@ namespace Trinity.Framework.Actors.Properties
                 actor.IsNoDamage = actor.Attributes.IsNoDamage;
                 actor.IsQuestMonster = actor.Attributes.IsQuestMonster || actor.Attributes.IsShadowClone;
             }
-     
+
             UpdateLineOfSight(actor);
         }
 
@@ -121,16 +131,24 @@ namespace Trinity.Framework.Actors.Properties
             {
                 var commonData = actor.CommonData;
                 actor.Position = commonData.Position;
-                actor.AcdId = commonData.AcdId;
+                actor.AcdId = commonData.ACDId;
 
                 UpdateDistance(actor);
 
                 if (!actor.IsItem && actor.Distance < 50f)
                 {
-                    var animation = commonData.Animation;
-                    actor.Animation = animation;
-                    actor.AnimationNameLowerCase = GameData.GetAnimationNameLowerCase(animation);
-                    actor.AnimationState = commonData.AnimationState;
+                    var animInfo = commonData.AnimationInfo;
+                    if (animInfo != null)
+                    {
+                        var animation = commonData.AnimationInfo.Current;
+                        actor.Animation = animation; // note, trin objects were doing faster read into animationInfo ?
+                        actor.AnimationNameLowerCase = GameData.GetAnimationNameLowerCase(animation); // ?
+                        actor.AnimationState = commonData.AnimationState;
+                    }
+                    //var animation = commonData.AnimationInfo.Current;
+                    //actor.Animation = animation;
+                    //actor.AnimationNameLowerCase = GameData.GetAnimationNameLowerCase(animation);
+                    //actor.AnimationState = commonData.AnimationState;
                 }
             }
             else if (actor.IsRActorBased)
@@ -157,7 +175,7 @@ namespace Trinity.Framework.Actors.Properties
                     actor.HasBeenInLoS = true;
 
                 if (actor.IsInLineOfSight)
-                {            
+                {
                     actor.IsWalkable = grid.CanRayWalk(actor);
                     if (actor.IsWalkable)
                         actor.HasBeenWalkable = true;
@@ -274,10 +292,10 @@ namespace Trinity.Framework.Actors.Properties
 
         public static SpecialTypes GetSpecialType(TrinityActor cacheObject)
         {
-            if(cacheObject.ActorSnoId == 4860) //SNOActor.PlayerHeadstone
+            if (cacheObject.ActorSnoId == 4860) //SNOActor.PlayerHeadstone
                 return SpecialTypes.PlayerTombstone;
-            
-            return SpecialTypes.None;             
+
+            return SpecialTypes.None;
         }
 
         public static TrinityObjectType GetObjectType(TrinityActor obj)
@@ -357,7 +375,7 @@ namespace Trinity.Framework.Actors.Properties
                         break;
                     }
                 case TrinityObjectType.Interactable:
-                {
+                    {
                         result = 5f;
                         float range;
                         if (GameData.CustomObjectRadius.TryGetValue(actor.ActorSnoId, out range))
@@ -370,15 +388,15 @@ namespace Trinity.Framework.Actors.Properties
                     }
                 // * Destructible - need to pick an ability and attack it
                 case TrinityObjectType.Destructible:
-                {
-                    result = actor.CollisionRadius;
-                    break;
-                }
+                    {
+                        result = actor.CollisionRadius;
+                        break;
+                    }
                 case TrinityObjectType.Barricade:
-                {
-                    result = actor.AxialRadius * 0.8f;
-                    break;
-                }
+                    {
+                        result = actor.AxialRadius * 0.8f;
+                        break;
+                    }
                 // * Avoidance - need to pick an avoid location and move there
                 case TrinityObjectType.Avoidance:
                     {

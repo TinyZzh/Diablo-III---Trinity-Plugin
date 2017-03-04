@@ -33,7 +33,7 @@ namespace Trinity.Framework.Objects.Memory.Reference
         {
             var gb = SnoManager.Core.CreateGroup<GameBalanceCollection>(SnoType.GameBalance);
             var table = gb.Container.FirstOrDefault(o => o.Value.GameBalanceType == SnoGameBalanceType.ItemTypes);
-            var typeEnum = ReferenceHelper.GenerateEnum(table.Value._4_0x18_NativeItemsTable._2_0x8_VariableArray,
+            var typeEnum = ReferenceHelper.GenerateEnum(table.Value._4_0x18_Object._2_0x8_VariableArray,
                 k => k._1_0x0_String,
                 v => v._2_0x100_int,
                 c => $"_4_0x108_ItemTypes_GameBalanceId={c._4_0x108_ItemTypes_GameBalanceId}", 

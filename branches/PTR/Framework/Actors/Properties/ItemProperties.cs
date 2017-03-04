@@ -26,7 +26,7 @@ namespace Trinity.Framework.Actors.Properties
 
         private static void WorldId_Changed(ChangeDetectorEventArgs<int> args)
         {
-            if(!GameData.TownLevelAreaIds.Contains(args.OldValue) && !ZetaDia.IsInTown)
+            if (!GameData.TownLevelAreaIds.Contains(args.OldValue) && !ZetaDia.IsInTown)
             {
                 Logger.LogDebug($"Clearing ItemProperties Seen AnnIds");
                 _seenActorAnnIds.Clear();
@@ -46,9 +46,11 @@ namespace Trinity.Framework.Actors.Properties
             var commonData = actor.CommonData;
             var attributes = actor.Attributes;
 
-            actor.InventorySlot = commonData.InventorySlot;
-            actor.InventoryColumn = commonData.InventoryColumn;
-            actor.InventoryRow = commonData.InventoryRow;
+            actor.AcdItemTemp = actor.ToAcdItem();
+
+            actor.InventorySlot = ZetaDia.Memory.Read<InventorySlot>(commonData.BaseAddress + 0x114); //actor.AcdItemTemp.InventorySlot;
+            actor.InventoryColumn = ZetaDia.Memory.Read<int>(commonData.BaseAddress + 0x118);  //actor.AcdItemTemp.InventoryColumn;
+            actor.InventoryRow = ZetaDia.Memory.Read<int>(commonData.BaseAddress + 0x11c);  //actor.AcdItemTemp.InventoryRow;
 
             actor.IsUnidentified = attributes.IsUnidentified;
             actor.IsAncient = attributes.IsAncient;
@@ -88,14 +90,14 @@ namespace Trinity.Framework.Actors.Properties
             actor.FollowerType = GetFollowerType(actor.ActorSnoId);
             actor.ItemStackQuantity = attributes.ItemStackQuantity;
             actor.TrinityItemQuality = TypeConversions.GetTrinityItemQuality(actor.ItemQualityLevel);
-            actor.IsCosmeticItem= actor.RawItemType == RawItemType.CosmeticPet || actor.RawItemType == RawItemType.CosmeticPennant || actor.RawItemType == RawItemType.CosmeticPortraitFrame || actor.RawItemType == RawItemType.CosmeticWings;
+            actor.IsCosmeticItem = actor.RawItemType == RawItemType.CosmeticPet || actor.RawItemType == RawItemType.CosmeticPennant || actor.RawItemType == RawItemType.CosmeticPortraitFrame || actor.RawItemType == RawItemType.CosmeticWings;
 
             actor.IsLowQuality = actor.TrinityItemQuality == TrinityItemQuality.Common ||
                                  actor.TrinityItemQuality == TrinityItemQuality.Inferior ||
                                  actor.TrinityItemQuality == TrinityItemQuality.Magic ||
                                  actor.TrinityItemQuality == TrinityItemQuality.Rare;
 
-            actor.GlobeType = GetGlobeType(actor);            
+            actor.GlobeType = GetGlobeType(actor);
             actor.IsWeapon = TypeConversions.IsWeapon(actor);
             actor.IsArmor = TypeConversions.IsArmor(actor);
 
@@ -139,11 +141,13 @@ namespace Trinity.Framework.Actors.Properties
                 return;
 
             var commonData = actor.CommonData;
-            actor.AcdId = commonData.AcdId;
+            actor.AcdId = commonData.ACDId;
 
-            var col = commonData.InventoryColumn;
-            var row = commonData.InventoryRow;
-            var slot = commonData.InventorySlot;
+            //actor.AcdItemTemp = actor.ToAcdItem();
+
+            var slot = ZetaDia.Memory.Read<InventorySlot>(commonData.BaseAddress + 0x114); //actor.AcdItemTemp.InventorySlot;
+            var col = ZetaDia.Memory.Read<int>(commonData.BaseAddress + 0x118);  //actor.AcdItemTemp.InventoryColumn;
+            var row = ZetaDia.Memory.Read<int>(commonData.BaseAddress + 0x11c);  //actor.AcdItemTemp.InventoryRow;
 
             var columnChanged = col != actor.InventoryColumn;
             var rowChanged = row != actor.InventoryRow;
@@ -180,7 +184,7 @@ namespace Trinity.Framework.Actors.Properties
                 UpdateBasicProperties(actor);
                 actor.Attributes = new ItemAttributes(actor.FastAttributeGroupId);
                 Create(actor);
-                actor.OnIdentified();               
+                actor.OnIdentified();
             }
         }
 
@@ -188,9 +192,9 @@ namespace Trinity.Framework.Actors.Properties
         {
             cacheObject.ActorSnoId = cacheObject.CommonData.ActorSnoId;
             cacheObject.GameBalanceId = cacheObject.CommonData.GameBalanceId;
-            cacheObject.FastAttributeGroupId = cacheObject.CommonData.FastAttributeGroupId;
+            cacheObject.FastAttributeGroupId = cacheObject.CommonData.FastAttribGroupId;
             cacheObject.AnnId = cacheObject.CommonData.AnnId;
-            cacheObject.AcdId = cacheObject.CommonData.AcdId;
+            cacheObject.AcdId = cacheObject.CommonData.ACDId;
         }
 
 

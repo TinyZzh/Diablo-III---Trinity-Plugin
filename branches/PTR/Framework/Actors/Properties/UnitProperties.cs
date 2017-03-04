@@ -34,10 +34,10 @@ namespace Trinity.Framework.Actors.Properties
                 actor.MonsterType = monsterInfo.MonsterType;
             }
 
-            var monsterAffixes = GetMonsterAffixes(commonData.AffixIds).Flags;
+            var monsterAffixes = GetMonsterAffixes(commonData.Affixes.ToList()).Flags;
             actor.MonsterAffixes = monsterAffixes;
 
-            var monsterQuality = commonData.MonsterQuality;
+            var monsterQuality = commonData.MonsterQualityLevel;
             actor.MonsterQuality = monsterQuality;
             actor.IsBoss = monsterQuality == MonsterQuality.Boss;
             actor.RiftValuePct = RiftProgression.GetRiftValue(actor);
@@ -140,7 +140,7 @@ namespace Trinity.Framework.Actors.Properties
             actor.IsNpc = attributes.IsNPC;
         }
 
-        private static void UpdateMovement(TrinityActor actor, RActor rActor)
+        private static void UpdateMovement(TrinityActor actor, DiaObject rActor)
         {
             var movement = rActor.Movement;
             if (movement != null && movement.IsValid)

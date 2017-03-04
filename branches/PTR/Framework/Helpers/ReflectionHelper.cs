@@ -102,9 +102,9 @@ namespace Trinity.Framework.Helpers
 
         public static string DumpOffsets<T>() where T : struct
         {
-            var type = typeof (T);
+            var type = typeof(T);
             var db = new StringBuilder();
-            foreach(var field in type.GetFields())
+            foreach (var field in type.GetFields())
             {
                 db.AppendLine($" {field.Name} = ReadOffset<{field.FieldType.Name}>(0x{Marshal.OffsetOf(type, field.Name).ToString("x")});");
             }
@@ -125,7 +125,11 @@ namespace Trinity.Framework.Helpers
                 catch (Exception)
                 {
                     continue;
-                }                
+                }
+                if (val == null)
+                {
+                    continue;
+                }
                 dynamic value = Convert.ChangeType(val, property.PropertyType);
                 if (property.PropertyType.IsValueType)
                 {

@@ -25,11 +25,15 @@ namespace Trinity.Framework.Actors
     public class ActorCache : Module
     {
         private Stopwatch _timer = new Stopwatch();
-        private ExpandoContainer<RActor> _rActorContainer;
-        internal ExpandoContainer<ActorCommonData> _commonDataContainer;
-        private readonly ConcurrentDictionary<int, ActorBase> _rActors = new ConcurrentDictionary<int, ActorBase>();
-        private readonly ConcurrentDictionary<int, ActorCommonData> _commonData = new ConcurrentDictionary<int, ActorCommonData>();
+        //private ExpandoContainer<RActor> _rActorContainer;
+        //internal ExpandoContainer<ActorCommonData> _commonDataContainer;
+
+
+        private readonly ConcurrentDictionary<int, ACD> _commonData = new ConcurrentDictionary<int, ACD>();
+
+        private readonly ConcurrentDictionary<int, TrinityActor> _rActors = new ConcurrentDictionary<int, TrinityActor>();
         private readonly ConcurrentDictionary<int, TrinityItem> _inventory = new ConcurrentDictionary<int, TrinityItem>();
+
         private readonly Dictionary<int, short> _annToAcdIndex = new Dictionary<int, short>();
         private readonly Dictionary<int, int> _acdToRActorIndex = new Dictionary<int, int>();
 
@@ -52,20 +56,21 @@ namespace Trinity.Framework.Actors
             if (!ZetaDia.IsInGame)
                 return;
 
-            UpdateContainers();
+            //UpdateContainers();
             UpdateObjectsFromMemory();
         }
 
-        private void UpdateContainers()
-        {
-            if (_rActorContainer == null || !_rActorContainer.IsValid || _rActorContainer.IsDisposed ||
-                _commonDataContainer == null || !_commonDataContainer.IsValid || _commonDataContainer.IsDisposed)
-            {
-                Clear();
-                _rActorContainer = MemoryWrapper.Create<ExpandoContainer<RActor>>(Internals.Addresses.RActorManager);
-                _commonDataContainer = MemoryWrapper.Create<ExpandoContainer<ActorCommonData>>(Internals.Addresses.AcdManager);
-            }
-        }
+        //private void UpdateContainers()
+        //{
+        //    if (_rActorContainer == null || !_rActorContainer.IsValid || _rActorContainer.IsDisposed ||
+        //        _commonDataContainer == null || !_commonDataContainer.IsValid || _commonDataContainer.IsDisposed)
+        //    {
+        //        Clear();
+
+        //        _rActorContainer = MemoryWrapper.Create<ExpandoContainer<RActor>>(Internals.Addresses.RActorManager);
+        //        _commonDataContainer = MemoryWrapper.Create<ExpandoContainer<ActorCommonData>>(Internals.Addresses.AcdManager);
+        //    }
+        //}
 
         private void UpdateObjectsFromMemory()
         {
@@ -98,40 +103,44 @@ namespace Trinity.Framework.Actors
             _annToAcdIndex.Clear();
 
             var oldAcds = new List<int>(_commonData.Keys);
-            foreach (var newAcd in _commonDataContainer)
+
+            //foreach (var ptr in ZetaDia.ActorCommonData.Items)
+            //foreach (var acd in ZetaDia.Actors.ACDList.OfType<ACD>())
+            foreach (var acd in ZetaDia.ActorCommonData)
             {
-                var acdId = newAcd.AcdId;
-                var ann = newAcd.AnnId;
+                // acd = ptr.UnsafeCreate<ACD>();
+
+                var acdId = acd.ACDId; //ZetaDia.Memory.Read<int>(ptr); //acd.ACDId;
+
+                //var ann = acd.AnnId;
 
                 _commonData.AddOrUpdate(acdId,
-                    id => AddAcd(id, newAcd),
-                    UpdateAcd);
+                    (id) => AddAcd(id, acd),
+                    (id, o) => UpdateAcd(id, acd));
 
                 oldAcds.Remove(acdId);
-                _annToAcdIndex[ann] = (short)acdId;
+                //_annToAcdIndex[ann] = (short)acdId;
             }
 
             foreach (var key in oldAcds)
             {
-                ActorCommonData item;
+                ACD item;
                 if (_commonData.TryRemove(key, out item) && item != null && item.IsValid)
                 {
-                    item.Update(IntPtr.Zero);
+                    item.UpdatePointer(IntPtr.Zero);
                 }
             }
         }
 
-        private ActorCommonData AddAcd(int id, ActorCommonData acd)
+        private ACD AddAcd(int id, ACD newObj)
         {
-            return acd;
+            return newObj;
         }
 
-        private ActorCommonData UpdateAcd(int id, ActorCommonData actorCommonData)
+        private ACD UpdateAcd(int id, ACD newObj)
         {
-            actorCommonData.Update(actorCommonData.BaseAddress);
-            return actorCommonData;
+            return newObj;
         }
-
 
         /// <summary>
         /// Get new RActors from Memory; update ones we already know about.
@@ -142,17 +151,18 @@ namespace Trinity.Framework.Actors
             _acdToRActorIndex.Clear();
 
             var untouchedIds = new List<int>(_rActors.Keys.ToList());
-            foreach (var newRActor in _rActorContainer)
+
+            foreach (var rActor in ZetaDia.RActors)
             {
-                var rActorId = newRActor.RActorId;
+                var rActorId = rActor.RActorId;
                 if (rActorId == -1)
                     continue;
 
                 var result = true;
 
                 _rActors.AddOrUpdate(rActorId,
-                    id => TryAddRActor(id, newRActor, out result),
-                    (id, existingActor) => TryUpdateRActor(id, existingActor, newRActor, out result));
+                    (id) => TryAddRActor(id, rActor, out result),
+                    (id, actor) => TryUpdateRActor(id, actor, rActor, out result));
 
                 if (result)
                     untouchedIds.Remove(rActorId);
@@ -160,17 +170,17 @@ namespace Trinity.Framework.Actors
 
             foreach (var key in untouchedIds)
             {
-                ActorBase item;
+                TrinityActor item;
                 if (_rActors.TryRemove(key, out item) && item != null && item.IsValid)
                 {
                     item.OnDestroyed();
-                    item.RActor?.Update(IntPtr.Zero);
-                    item.CommonData?.Update(IntPtr.Zero);
+                    item.RActor.UpdatePointer(IntPtr.Zero);
+                    item.CommonData?.UpdatePointer(IntPtr.Zero);
                 }
             }
         }
 
-        private ActorBase TryAddRActor(int id, RActor rActor, out bool result)
+        private TrinityActor TryAddRActor(int id, DiaObject rActor, out bool result)
         {
             _timer.Restart();
             var actor = ActorFactory.CreateActor(rActor);
@@ -181,12 +191,11 @@ namespace Trinity.Framework.Actors
             _timer.Stop();
             actor.CreateTime = _timer.Elapsed.TotalMilliseconds;
             actor.Created = DateTime.UtcNow;
-
             result = true;
             return actor;
         }
 
-        private ActorBase TryUpdateRActor(int id, ActorBase actor, RActor rActor, out bool result)
+        private TrinityActor TryUpdateRActor(int id, TrinityActor actor, DiaObject rActor, out bool result)
         {
             if (!actor.IsRActorValid)
             {
@@ -195,12 +204,11 @@ namespace Trinity.Framework.Actors
             }
 
             _timer.Restart();
-            actor.RActor.Update(rActor.BaseAddress);
+            actor.RActor = rActor;
             actor.OnUpdated();
             _acdToRActorIndex[actor.AcdId] = actor.RActorId;
             _timer.Stop();
             actor.UpdateTime = _timer.Elapsed.TotalMilliseconds;
-
             result = true;
             return actor;
         }
@@ -223,9 +231,9 @@ namespace Trinity.Framework.Actors
                 if (type != ActorType.Item)
                     continue;
 
-                var inventorySlot = commonData.InventorySlot;
-                if (inventorySlot == InventorySlot.Merchant)
-                    continue;
+                //var inventorySlot = commonData.InventorySlot;
+                //if (inventorySlot == InventorySlot.Merchant)
+                //    continue;
 
                 var annId = commonData.AnnId;
                 if (annId == -1)
@@ -244,18 +252,18 @@ namespace Trinity.Framework.Actors
                 if (_inventory.TryRemove(key, out item) && item != null && item.IsValid)
                 {
                     item.OnDestroyed();
-                    item.RActor?.Update(IntPtr.Zero);
-                    item.CommonData?.Update(IntPtr.Zero);
+                    item.RActor?.UpdatePointer(IntPtr.Zero);
+                    item.CommonData?.UpdatePointer(IntPtr.Zero);
                 }
             }
         }
 
-        private TrinityItem AddInventoryItem(int id, ActorCommonData newItem)
+        private TrinityItem AddInventoryItem(int id, ACD newItem)
         {
-            return ActorFactory.CreateFromAcd<TrinityItem>(newItem);
+            return ActorFactory.CreateActor<TrinityItem>(newItem);
         }
 
-        private TrinityItem UpdateInventoryItem(int id, TrinityItem item, ActorCommonData commonData)
+        private TrinityItem UpdateInventoryItem(int id, TrinityItem item, ACD commonData)
         {
             _timer.Start();
             item.CommonData = commonData;
@@ -283,26 +291,27 @@ namespace Trinity.Framework.Actors
             return _inventory.Values.Where(i => i.InventorySlot == slot);
         }
 
-        public ActorCommonData GetCommonDataByAnnId(int annId)
+        public ACD GetCommonDataByAnnId(int annId)
         {
-            short index;
-            if (_annToAcdIndex.TryGetValue(annId, out index))
+            //short index;
+            //if (_annToAcdIndex.TryGetValue(annId, out index))
+            //{
+            //var acd = ZetaDia.ActorCommonData[index];
+            var acd = ZetaDia.ActorCommonData[(short)annId];
+            if (acd != null && acd.IsValid)
             {
-                var acd = _commonDataContainer[index];
-                if (acd != null && acd.IsValid)
-                {
-                    return acd;
-                }
+                return acd;
             }
+            //}
             return null;
         }
 
-        public ActorCommonData GetCommonDataById(int acdId)
+        public ACD GetCommonDataById(int acdId)
         {
             if (acdId == -1)
                 return null;
 
-            var acd = _commonDataContainer[(short)acdId];
+            var acd = ZetaDia.ActorCommonData[(short)acdId];
             if (acd != null && acd.IsValid)
             {
                 return acd;
@@ -332,7 +341,7 @@ namespace Trinity.Framework.Actors
             if (!_annToAcdIndex.TryGetValue(annId, out index))
                 return null;
 
-            var acd = _commonDataContainer[index];
+            var acd = ZetaDia.ActorCommonData[index]; //_commonDataContainer[index];
             if (acd != null && acd.IsValid)
             {
                 var bones = ActorFactory.GetActorSeed(acd);
@@ -343,7 +352,7 @@ namespace Trinity.Framework.Actors
 
         public ACDItem GetAcdItemByAcdId(int acdId)
         {
-            var acd = _commonDataContainer[(short)acdId];
+            var acd = ZetaDia.ActorCommonData[(short)acdId]; //_commonDataContainer[(short)acdId];
             if (acd != null && acd.IsValid)
             {
                 return acd.BaseAddress.UnsafeCreate<ACDItem>();
@@ -367,7 +376,7 @@ namespace Trinity.Framework.Actors
             if (!_annToAcdIndex.TryGetValue(annId, out index))
                 return false;
 
-            var acd = _commonDataContainer[index];
+            var acd = ZetaDia.ActorCommonData[index];
             return acd != null && acd.IsValid;
         }
 
@@ -376,19 +385,19 @@ namespace Trinity.Framework.Actors
         public void Clear()
         {
             Logger.LogDebug("Resetting ActorCache");
-            _commonDataContainer = null;
-            _rActorContainer = null;
+            //_commonDataContainer = null;
+            //_rActorContainer = null;
             _annToAcdIndex.Clear();
-            _commonData.ForEach(o => o.Value.Update(IntPtr.Zero));
-            _rActors.ForEach(o => o.Value.RActor.Update(IntPtr.Zero));
+            _commonData.ForEach(o => o.Value.UpdatePointer(IntPtr.Zero));
+            _rActors.ForEach(o => o.Value.RActor.UpdatePointer(IntPtr.Zero));
             _inventory.Clear();
             _commonData.Clear();
             _rActors.Clear();
             CurrentAcdIds.Clear();
             CurrentRActorIds.Clear();
             Me = null;
-            _rActorContainer = null;
-            _commonDataContainer = null;
+            //_rActorContainer = null;
+            //_commonDataContainer = null;
         }
 
         public T GetActorByAcdId<T>(int acdId) where T : TrinityActor
