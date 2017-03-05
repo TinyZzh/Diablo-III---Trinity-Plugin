@@ -115,6 +115,7 @@
     <Compile Include="Coroutines\EmergencyRepair.cs" />
     <Compile Include="Coroutines\OpenBountyCache.cs" />
     <Compile Include="DbProvider\BlankItemManager.cs" />
+    <Compile Include="Framework\ActorExtensions.cs" />
     <Compile Include="Framework\Avoidance\AvoidanceDefinitions.cs" />
     <Compile Include="Framework\Avoidance\AvoidanceType.cs" />
     <Compile Include="Framework\Avoidance\Handlers\IAvoidanceHandler.cs" />

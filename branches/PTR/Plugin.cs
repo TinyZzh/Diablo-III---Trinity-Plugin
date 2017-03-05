@@ -35,7 +35,7 @@ namespace Trinity
     public class TrinityPlugin : IPlugin
     {
         public string Name => "Trinity PTR";
-        public Version Version => new Version(2, 250, 736);
+        public Version Version => new Version(2, 250, 737);
         public string Author => "xzjv, TarasBulba, rrrix, jubisman, Phelon and many more";
         public string Description => $"v{Version} provides combat, exploration and much more";
         public Window DisplayWindow => UILoader.GetDisplayWindow(Path.Combine(FileManager.PluginPath, "UI"));
@@ -49,6 +49,8 @@ namespace Trinity
         public TrinityPlugin()
         {
             _instance = this;
+
+            UILoader.Preload();
 
             PluginCheck.CheckAndInstallTrinityRoutine();
 

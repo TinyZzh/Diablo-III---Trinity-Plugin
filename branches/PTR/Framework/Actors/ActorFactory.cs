@@ -11,11 +11,6 @@ namespace Trinity.Framework.Actors
 {
     public static class ActorFactory
     {
-        /// <summary>
-        /// Object to hold the minimum requirements for creating an actor object, 
-        /// to be able to switch based on ActorType without reading memory multiple times.
-        /// Centralizes varying source data - ACD only, RActor only and ACD + RActor
-        /// </summary>
         public class ActorSeed
         {
             public SNORecordActor ActorInfo;
@@ -81,9 +76,11 @@ namespace Trinity.Framework.Actors
                 return null;
 
             var acdId = rActor.ACDId;
-            var isAcdBased = acdId != -1;
-            var commonData = isAcdBased ? rActor.CommonData : null;
+            var commonData = rActor.CommonData;
+            var isAcdBased = commonData != null;
             var actorInfo = rActor.ActorInfo;
+            if (actorInfo == null)
+                return null;
 
             return new ActorSeed
             {
@@ -145,50 +142,6 @@ namespace Trinity.Framework.Actors
             actor.OnCreated();
             return actor;
         }
-
-
-
-        //public static RActor CreateRActor(IntPtr ptr)
-        //{
-        //    return MemoryWrapper.Create<RActor>(ptr);
-        //}
-
-        //public static ActorCommonData CreateCommonData(IntPtr ptr)
-        //{
-        //    return MemoryWrapper.Create<ActorCommonData>(ptr);
-        //}
-
-        //public static T CreateFromRActorPtr<T>(IntPtr ptr) where T : ActorBase, new()
-        //{
-        //    return CreateFromRActor<T>(CreateRActor(ptr));
-        //}
-
-        //public static T CreateFromRActor<T>(RActor rActor) where T : ActorBase, new()
-        //{
-        //    return CreateActor<T>(GetActorSeed(rActor));
-        //}
-
-        //public static T CreateFromAcdPtr<T>(IntPtr ptr) where T : ActorBase, new()
-        //{
-        //    return CreateFromAcd<T>(CreateCommonData(ptr));
-        //}
-
-        //public static T CreateFromAcd<T>(ActorCommonData commonData) where T : ActorBase, new()
-        //{
-        //    return CreateActor<T>(GetActorSeed(commonData));
-        //}
-
-        //public static TrinityItem CreateActor(ACDItem item)
-        //{
-        //    return CreateFromRActorPtr<TrinityItem>(item.BaseAddress);
-        //}
-
-        //public static TrinityActor CreateActor(DiaObject diaObject)
-        //{
-        //    return CreateActor(GetActorSeed(diaObject));
-        //    //return CreateFromRActorPtr<TrinityActor>(diaObject.BaseAddress);
-        //}
-
 
     }
 }

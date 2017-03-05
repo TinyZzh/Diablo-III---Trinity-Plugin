@@ -25,6 +25,20 @@ namespace Trinity.Framework.Objects.Memory.Attributes
             AttributeDescriptors = ZetaDia.AttributeDescriptors.ToDictionary(descripter => descripter.Id);
         }
 
+        public static class DescriptorHelper
+        {
+            private static Dictionary<int, Zeta.Game.Internals.AttributeDescriptor> _descripters;
+
+            public static Zeta.Game.Internals.AttributeDescriptor GetDescriptor(int id, bool checkExists = false)
+            {
+                if (_descripters == null)
+                    _descripters = ZetaDia.AttributeDescriptors.ToDictionary(descripter => descripter.Id);
+
+                return !checkExists || _descripters.ContainsKey(id) ? _descripters[id] : default(Zeta.Game.Internals.AttributeDescriptor);   
+            }
+        }
+
+
         public static void Reset()
         {
             Create();

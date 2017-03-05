@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -28,14 +31,69 @@ namespace Trinity.UI
     public class UILoader
     {
 
+        public static void Preload()
+        {
+            //PreLoadResources();
+
+            //Parallel.ForEach(_paths, path =>
+            //{
+            //    Application.Current.Dispatcher.Invoke(() => CreateXamlUserControl(path.Value));
+            //});
+        }
+
         private static Dictionary<string, string> _paths;
         private static Dictionary<string, byte[]> _xaml;
 
         static UILoader()
         {
+            var sw = Stopwatch.StartNew();
             _xaml = new Dictionary<string, byte[]>();
             var paths = Directory.GetFiles(FileManager.PluginPath, "*.xaml", SearchOption.AllDirectories);
             _paths = paths.DistinctBy(Path.GetFileName).ToDictionary(k => Path.GetFileName(k)?.ToLower(), v => v);
+            var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+            //Parallel.ForEach(_paths, item => MyTask(item.Value, assemblyName));
+
+            Task task = Task.Run(() => Parallel.ForEach(_paths, item => MyTask(item.Value, assemblyName)));
+
+            sw.Stop();
+            Logger.Log($"Mapped and pre-loaded xaml files in {sw.Elapsed.TotalMilliseconds}ms");
+        }
+
+        private static void MyTask(string path, string assm)
+        {
+            if (_xaml.ContainsKey(path))
+                return;
+
+            string filecontent = File.ReadAllText(path);
+            filecontent = resx.Replace(filecontent, string.Empty);
+            filecontent = xmlns.Replace(filecontent, "$1;assembly=" + assm + "\"");
+            _xaml[path] = Encoding.UTF8.GetBytes(filecontent);
+        }
+
+        //private static ConcurrentDictionary<string, UserControl> _controls = new ConcurrentDictionary<string, UserControl>();
+
+        //private static void CreateXamlUserControl(string path)
+        //{
+        //    var sw = Stopwatch.StartNew();
+        //    var startTime = DateTime.UtcNow;
+        //    while (!_controls.TryAdd(path, LoadAndTransformUserControlXaml(path))
+        //        && DateTime.UtcNow.Subtract(startTime).TotalSeconds < 5)
+        //        continue;
+        //    sw.Stop();
+        //    Logger.Log($"{path} preloaded in {sw.Elapsed.TotalMilliseconds}ms");
+        //}
+
+
+        internal static void PreLoadResources()
+        {
+            //try
+            //{
+            TrinityPlugin.BeginInvoke(() => LoadWindowContent(Path.Combine(FileManager.PluginPath, "UI")));
+            //}
+            //catch (Exception ex)
+            //{
+            //    Logger.LogError("Exception pre-loadingn window content! " + ex);
+            //}
         }
 
         public static Window ConfigWindow;
@@ -238,18 +296,58 @@ namespace Trinity.UI
             }
         }
 
-        internal static T LoadXamlByFileName<T>(string fileName)
+        internal static T LoadXamlByFileName<T>(string fileName) where T : UserControl
         {
             if (fileName != null)
             {
                 var fileNameLower = fileName.ToLower();
                 if (_paths.ContainsKey(fileNameLower))
-                {                    
-                    return LoadAndTransformXamlFile<T>(_paths[fileNameLower]);
+                {
+                    var path = _paths[fileNameLower];
+
+                    //UserControl control;
+                    //if (_controls.TryGetValue(path, out control) && control != null)
+                    //{
+                    //    return (T)_controls[path];
+                    //}
+
+                    return LoadAndTransformXamlFile<T>(path);
                 }
             }
             return default(T);
         }
+
+        //internal static UserControl LoadAndTransformUserControlXaml(string filePath)
+        //{
+        //    try
+        //    {
+        //        Logger.Log(TrinityLogLevel.Verbose, LogCategory.UI, "Load XAML file : {0}", filePath);
+        //        string filecontent = File.ReadAllText(filePath);
+
+        //        if (string.Concat(filecontent.Skip(1).Take(11)) != "UserControl")
+        //            return null;
+
+        //        var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+        //        filecontent = resx.Replace(filecontent, string.Empty);
+        //        filecontent = xmlns.Replace(filecontent, "$1;assembly=" + assemblyName + "\"");
+
+        //        var bytes = Encoding.UTF8.GetBytes(filecontent);
+
+        //        _xaml[filePath] = bytes;
+
+        //        using (var stream = new MemoryStream(bytes))
+        //        {
+        //            return (UserControl)XamlReader.Load(stream);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logger.LogError("Error loading/transforming XAML {0}", ex);
+        //    }
+        //    return null;
+        //}
+
+
 
         /// <summary>Loads the and transform xaml file.</summary>
         /// <param name="filePath">The absolute path to xaml file.</param>
@@ -266,31 +364,14 @@ namespace Trinity.UI
                 Logger.Log(TrinityLogLevel.Verbose, LogCategory.UI, "Load XAML file : {0}", filePath);
                 string filecontent = File.ReadAllText(filePath);
                 var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
-
-                filecontent = filecontent.Replace("xmlns:radarCanvas=\"clr-namespace:Trinity.UI.Visualizer.RadarCanvas\"", "xmlns:radarCanvas=\"clr-namespace:Trinity.UI.Visualizer.RadarCanvas;assembly=" + assemblyName + "\"");
-                filecontent = filecontent.Replace("xmlns:itemlist=\"clr-namespace:Trinity.Settings.ItemList\"", "xmlns:itemlist=\"clr-namespace:Trinity.Settings.ItemList;assembly=" + assemblyName + "\"");
-                filecontent = filecontent.Replace("xmlns:markupExtensions=\"clr-namespace:Trinity.UI.UIComponents.MarkupExtensions\"", "xmlns:markupExtensions=\"clr-namespace:Trinity.UI.UIComponents.MarkupExtensions;assembly=" + assemblyName + "\"");
-                filecontent = filecontent.Replace("xmlns:markup=\"clr-namespace:Trinity.UI.UIComponents.MarkupExtensions\"", "xmlns:markup=\"clr-namespace:Trinity.UI.UIComponents.MarkupExtensions;assembly=" + assemblyName + "\"");
-                filecontent = filecontent.Replace("xmlns:input=\"clr-namespace:Trinity.UI.UIComponents.Input\"", "xmlns:input=\"clr-namespace:Trinity.UI.UIComponents.Input;assembly=" + assemblyName + "\"");            
-                filecontent = filecontent.Replace("xmlns:behaviors=\"clr-namespace:Trinity.UI.UIComponents.Behaviors\"", "xmlns:behaviors=\"clr-namespace:Trinity.UI.UIComponents.Behaviors;assembly=" + assemblyName + "\"");
-                filecontent = filecontent.Replace("xmlns:controls=\"clr-namespace:Trinity.UI.UIComponents.Controls\"", "xmlns:controls=\"clr-namespace:Trinity.UI.UIComponents.Controls;assembly=" + assemblyName + "\"");
-                filecontent = filecontent.Replace("xmlns:ut=\"clr-namespace:Trinity.UI.UIComponents\"", "xmlns:ut=\"clr-namespace:Trinity.UI.UIComponents;assembly=" + assemblyName + "\"");
-                filecontent = filecontent.Replace("xmlns:objects=\"clr-namespace:Trinity.Framework.Objects\"", "xmlns:objects=\"clr-namespace:Trinity.Framework.Objects;assembly=" + assemblyName + "\"");
-                filecontent = filecontent.Replace("xmlns:mock=\"clr-namespace:Trinity.Settings.Mock\"", "xmlns:mock=\"clr-namespace:Trinity.Settings.Mock;assembly=" + assemblyName + "\"");
-                filecontent = filecontent.Replace("xmlns:settings=\"clr-namespace:Trinity.Settings\"", "xmlns:settings=\"clr-namespace:Trinity.Settings;assembly=" + assemblyName + "\"");
-                filecontent = filecontent.Replace("xmlns:charts=\"clr-namespace:LineChartLib\"", "xmlns:charts=\"clr-namespace:LineChartLib;assembly=" + assemblyName + "\"");
-                filecontent = filecontent.Replace("xmlns:ut=\"clr-namespace:Trinity.UI.UIComponents\"", "xmlns:ut=\"clr-namespace:Trinity.UI.UIComponents;assembly=" + assemblyName + "\"");
-                filecontent = filecontent.Replace("xmlns:converters=\"clr-namespace:Trinity.UI.UIComponents.Converters\"", "xmlns:converters=\"clr-namespace:Trinity.UI.UIComponents.Converters;assembly=" + assemblyName + "\"");
-                filecontent = filecontent.Replace("xmlns:radarCanvas=\"clr-namespace:Trinity.UI.UIComponents.RadarCanvas\"", "xmlns:radarCanvas=\"clr-namespace:Trinity.UI.UIComponents.RadarCanvas;assembly=" + assemblyName + "\"");
-                filecontent = filecontent.Replace("xmlns:ui=\"clr-namespace:Trinity.UI.UIComponents\"", "xmlns:ui=\"clr-namespace:Trinity.UI.UIComponents;assembly=" + assemblyName + "\"");
-                filecontent = filecontent.Replace("xmlns:dd=\"clr-namespace:GongSolutions.Wpf.DragDrop\"", "xmlns:dd=\"clr-namespace:GongSolutions.Wpf.DragDrop;assembly=" + assemblyName + "\"");
-                filecontent = filecontent.Replace("xmlns:enums=\"clr-namespace:Trinity.Framework.Objects.Enums\"", "xmlns:enums=\"clr-namespace:Trinity.Framework.Objects.Enums;assembly=" + assemblyName + "\"");
-                filecontent = Regex.Replace(filecontent, "<ResourceDictionary.MergedDictionaries>.*</ResourceDictionary.MergedDictionaries>", string.Empty, RegexOptions.Singleline | RegexOptions.Compiled);
-
+                filecontent = resx.Replace(filecontent, string.Empty);
+                filecontent = xmlns.Replace(filecontent, "$1;assembly=" + assemblyName + "\"");
                 var bytes = Encoding.UTF8.GetBytes(filecontent);
                 _xaml[filePath] = bytes;
-                return (T)XamlReader.Load(new MemoryStream(bytes));
-         
+                using (var stream = new MemoryStream(bytes))
+                {
+                    return (T)XamlReader.Load(stream);
+                }
             }
             catch (Exception ex)
             {
@@ -298,6 +379,10 @@ namespace Trinity.UI
             }
             return default(T);
         }
+
+        private static Regex xmlns { get; } = new Regex("(xmlns:.+?=\\\"clr-namespace:Trinity[\\W\\S][^\\\"]+)\"", RegexOptions.Compiled);
+        private static Regex resx { get; } = new Regex("<ResourceDictionary.MergedDictionaries>.*</ResourceDictionary.MergedDictionaries>", RegexOptions.Singleline | RegexOptions.Compiled);
+        public static object Parralel { get; private set; }
 
         /// <summary>Call when Config Window is closed.</summary>
         /// <param name="sender">The sender.</param>
@@ -324,7 +409,7 @@ namespace Trinity.UI
                     if (!string.IsNullOrWhiteSpace(contentName) && contentName.EndsWith(".xaml"))
                     {
                         // combine and handle relative '..\' in path.
-                        var dirtyFullPath = Path.Combine(uiPath, contentName); 
+                        var dirtyFullPath = Path.Combine(uiPath, contentName);
                         var cleanFullPath = new Uri(dirtyFullPath).LocalPath;
 
                         // Load content from XAML file
@@ -408,7 +493,7 @@ namespace Trinity.UI
                     MinHeight = 400,
                     MinWidth = 200,
                     Title = title,
-                    ResizeMode = ResizeMode.CanResizeWithGrip,  
+                    ResizeMode = ResizeMode.CanResizeWithGrip,
                     //SizeToContent = SizeToContent.WidthAndHeight,
                     SnapsToDevicePixels = true,
                     Topmost = false,

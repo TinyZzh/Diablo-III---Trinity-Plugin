@@ -223,17 +223,14 @@ namespace Trinity.Framework.Actors
             {
                 var commonData = newItem.Value;
                 var type = commonData.ActorType;
-
-                // temp work around to broken ACD object.
-                if (commonData.GameBalanceType == GameBalanceType.Items)
-                    type = ActorType.Item;
-
                 if (type != ActorType.Item)
                     continue;
 
-                //var inventorySlot = commonData.InventorySlot;
-                //if (inventorySlot == InventorySlot.Merchant)
-                //    continue;
+                var inventorySlot = commonData.GetInventorySlot();
+
+                // InventorySlot.None => ground items are updated via RActors loop.
+                if (inventorySlot == InventorySlot.Merchant || inventorySlot == InventorySlot.None)
+                    continue;
 
                 var annId = commonData.AnnId;
                 if (annId == -1)
@@ -260,6 +257,11 @@ namespace Trinity.Framework.Actors
 
         private TrinityItem AddInventoryItem(int id, ACD newItem)
         {
+            //DiaObject rActor;
+            //var seed = _rActors.TryGetValue(id, out rActor) 
+            //    ? ActorFactory.GetActorSeed(newItem)
+            //    : ActorFactory.GetActorSeed(newItem)rActor;
+
             return ActorFactory.CreateActor<TrinityItem>(newItem);
         }
 

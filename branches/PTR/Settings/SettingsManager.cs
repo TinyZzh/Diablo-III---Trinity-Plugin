@@ -22,26 +22,25 @@ namespace Trinity.Settings
 {
     public class SettingsManager
     {
-        private static List<IDynamicSetting> _settings = new List<IDynamicSetting>();
+        private static Dictionary<string, IDynamicSetting> _settings = new Dictionary<string, IDynamicSetting>();
 
-        public static void Add(IDynamicSetting dynamicSettings)
+        public static IDynamicSetting GetSettingByName(string name)
         {
-            _settings.Add(dynamicSettings);
-        }
-
-        public static void AddRange(IEnumerable<IDynamicSetting> dynamicSettings)
-        {
-            _settings.AddRange(dynamicSettings);
+            return _settings.ContainsKey(name) ? _settings[name] : null;
         }
 
         public static IEnumerable<IDynamicSetting> GetDynamicSettings()
         {
+            if (_settings != null)
+                return _settings.Values;
+            
             var result = new List<IDynamicSetting>();
             result.AddRange(RoutineManager.Instance.DynamicSettings);
             result.AddRange(ModuleManager.DynamicSettings);
             result.AddRange(TrinitySettings.Settings.DynamicSettings);
-            result.AddRange(_settings);
+            _settings = result.ToDictionary(k => k.GetName(), v => v);
             return result;
+            
         }
 
         public static string SaveDirectory => Path.Combine(FileManager.SettingsPath, "Saved");
