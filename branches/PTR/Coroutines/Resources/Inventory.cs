@@ -36,11 +36,11 @@ namespace Trinity.Coroutines.Resources
         KeyOfDestruction = 255880,
         KeyOfHate = 255881,
         KeyOfTerror = 255882,
-		CaldeumNightshade = 364281,
-		WestmarchHolyWater = 364975,
-		ArreatWarTapestry = 364290,
-		CorruptedAngelFlesh = 364305,
-		KhanduranRune = 365020,
+        CaldeumNightshade = 364281,
+        WestmarchHolyWater = 364975,
+        ArreatWarTapestry = 364290,
+        CorruptedAngelFlesh = 364305,
+        KhanduranRune = 365020,
         BlackSmithPlan = 192598,
         JewelerPlan = 192600,
     }
@@ -102,7 +102,7 @@ namespace Trinity.Coroutines.Resources
 
             public TimeSpan TimeSinceUpdate
             {
-                get { return DateTime.UtcNow.Subtract(LastUpdated);  }
+                get { return DateTime.UtcNow.Subtract(LastUpdated); }
             }
 
             public MaterialRecord this[InventoryItemType i]
@@ -133,7 +133,7 @@ namespace Trinity.Coroutines.Resources
 
             public List<TrinityItem> GetStacksOfType(InventoryItemType type, InventorySlot location, int quantity)
             {
-                return GetStacksUpToQuantity(Source[type].GetItemsByInventorySlot(location),quantity).ToList();
+                return GetStacksUpToQuantity(Source[type].GetItemsByInventorySlot(location), quantity).ToList();
             }
 
             public bool HasStackQuantityOfType(InventoryItemType type, InventorySlot location, int quantity)
@@ -157,14 +157,13 @@ namespace Trinity.Coroutines.Resources
             }
         }
 
-
         public static IEnumerable<TrinityItem> GetStacksUpToQuantity(List<TrinityItem> materialsStacks, int maxStackQuantity)
         {
             if (materialsStacks == null || !materialsStacks.Any() || materialsStacks.Count == 1)
                 return materialsStacks;
 
             long dbQuantity = 0;
-            var overlimit = 0;            
+            var overlimit = 0;
 
             // First of Non-Stackable Items
             var first = materialsStacks.First();
@@ -172,11 +171,11 @@ namespace Trinity.Coroutines.Resources
                 return new List<TrinityItem> { first };
 
             // Position in the cube matters; it looks like it will fail if
-            // stacks are added after the required amount of ingredient is met, 
+            // stacks are added after the required amount of ingredient is met,
             // as the cube encounters them from top left to bottom right.
 
             var toBeAdded = materialsStacks.TakeWhile(db =>
-            {            
+            {
                 var thisStackQuantity = db.ItemStackQuantity;
 
                 if (dbQuantity + thisStackQuantity < maxStackQuantity)
@@ -215,18 +214,21 @@ namespace Trinity.Coroutines.Resources
             }
 
             private long? _backpackStackQuantity;
+
             public long BackpackStackQuantity
             {
                 get { return _backpackStackQuantity ?? (_backpackStackQuantity = BackpackItems.Where(i => i.IsValid).Select(i => i.ItemStackQuantity).Sum()).Value; }
             }
 
             private long? _stashStackQuantity;
+
             public long StashStackQuantity
             {
                 get { return _stashStackQuantity ?? (_stashStackQuantity = StashItems.Where(i => i.IsValid).Select(i => i.ItemStackQuantity).Sum()).Value; }
             }
 
             private long? _totalStackQuantity;
+
             public long TotalStackQuantity
             {
                 get { return _totalStackQuantity ?? (_totalStackQuantity = StashStackQuantity + BackpackStackQuantity).Value; }
@@ -252,6 +254,7 @@ namespace Trinity.Coroutines.Resources
                         case InventorySlot.BackpackItems:
                             items.AddRange(BackpackItems);
                             break;
+
                         case InventorySlot.SharedStash:
                             items.AddRange(StashItems);
                             break;
@@ -292,7 +295,7 @@ namespace Trinity.Coroutines.Resources
                     //InvalidItemDynamicIds.Add(item.AnnId);
                     continue;
                 }
-                    
+
                 var itemSNO = item.ActorSnoId;
                 if (materialSNOs.Contains(itemSNO))
                 {
@@ -319,7 +322,7 @@ namespace Trinity.Coroutines.Resources
                 var itemSNO = item.ActorSnoId;
                 if (materialSNOs.Contains(itemSNO))
                 {
-                    var type = (InventoryItemType) itemSNO;
+                    var type = (InventoryItemType)itemSNO;
                     var materialRecord = materials[type];
                     materialRecord.StashItems.Add(item);
                     materialRecord.Type = type;
@@ -331,6 +334,7 @@ namespace Trinity.Coroutines.Resources
         }
 
         private static HashSet<int> _blacklistedDynamicIds;
+
         public static HashSet<int> InvalidItemDynamicIds
         {
             get { return _blacklistedDynamicIds ?? (_blacklistedDynamicIds = new HashSet<int>()); }
@@ -404,8 +408,6 @@ namespace Trinity.Coroutines.Resources
             365020, //Type: Item, Name: Khanduran Rune
             361988, //Type: Item, Name: Forgotten Soul
         };
-
-
 
         public static List<TrinityItem> OfType(IEnumerable<InventoryItemType> types)
         {
@@ -544,33 +546,33 @@ namespace Trinity.Coroutines.Resources
             {
                 get { return Items.Where(i => i.ActorSnoId == (int)InventoryItemType.DeathsBreath).ToList(); }
             }
-			
+
             public static List<TrinityItem> ForgottenSoul
             {
                 get { return Items.Where(i => i.ActorSnoId == (int)InventoryItemType.ForgottenSoul).ToList(); }
-            }			
-			
+            }
+
             public static List<TrinityItem> CaldeumNightshade
             {
                 get { return Items.Where(i => i.ActorSnoId == (int)InventoryItemType.CaldeumNightshade).ToList(); }
-            }			
+            }
 
-			public static List<TrinityItem> WestmarchHolyWater
+            public static List<TrinityItem> WestmarchHolyWater
             {
                 get { return Items.Where(i => i.ActorSnoId == (int)InventoryItemType.WestmarchHolyWater).ToList(); }
-            }		
-			
-			public static List<TrinityItem> ArreatWarTapestry
+            }
+
+            public static List<TrinityItem> ArreatWarTapestry
             {
                 get { return Items.Where(i => i.ActorSnoId == (int)InventoryItemType.ArreatWarTapestry).ToList(); }
-            }			
+            }
 
-			public static List<TrinityItem> CorruptedAngelFlesh
+            public static List<TrinityItem> CorruptedAngelFlesh
             {
                 get { return Items.Where(i => i.ActorSnoId == (int)InventoryItemType.CorruptedAngelFlesh).ToList(); }
-            }	
-			
-			public static List<TrinityItem> KhanduranRune
+            }
+
+            public static List<TrinityItem> KhanduranRune
             {
                 get { return Items.Where(i => i.ActorSnoId == (int)InventoryItemType.KhanduranRune).ToList(); }
             }
@@ -637,39 +639,36 @@ namespace Trinity.Coroutines.Resources
             {
                 get { return Items.Where(i => i.ActorSnoId == (int)InventoryItemType.DeathsBreath).ToList(); }
             }
-			
+
             public static List<TrinityItem> ForgottenSoul
             {
                 get { return Items.Where(i => i.ActorSnoId == (int)InventoryItemType.ForgottenSoul).ToList(); }
-            }			
-			
+            }
+
             public static List<TrinityItem> CaldeumNightshade
             {
                 get { return Items.Where(i => i.ActorSnoId == (int)InventoryItemType.CaldeumNightshade).ToList(); }
-            }			
+            }
 
-			public static List<TrinityItem> WestmarchHolyWater
+            public static List<TrinityItem> WestmarchHolyWater
             {
                 get { return Items.Where(i => i.ActorSnoId == (int)InventoryItemType.WestmarchHolyWater).ToList(); }
-            }		
-			
-			public static List<TrinityItem> ArreatWarTapestry
+            }
+
+            public static List<TrinityItem> ArreatWarTapestry
             {
                 get { return Items.Where(i => i.ActorSnoId == (int)InventoryItemType.ArreatWarTapestry).ToList(); }
-            }			
+            }
 
-			public static List<TrinityItem> CorruptedAngelFlesh
+            public static List<TrinityItem> CorruptedAngelFlesh
             {
                 get { return Items.Where(i => i.ActorSnoId == (int)InventoryItemType.CorruptedAngelFlesh).ToList(); }
-            }	
-			
-			public static List<TrinityItem> KhanduranRune
+            }
+
+            public static List<TrinityItem> KhanduranRune
             {
                 get { return Items.Where(i => i.ActorSnoId == (int)InventoryItemType.KhanduranRune).ToList(); }
-            }	            			
+            }
         }
-
-
     }
 }
-

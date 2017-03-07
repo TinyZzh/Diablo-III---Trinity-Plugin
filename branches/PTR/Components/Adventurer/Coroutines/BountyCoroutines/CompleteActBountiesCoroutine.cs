@@ -1,8 +1,8 @@
+using Buddy.Coroutines;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Game.Exploration;
@@ -12,14 +12,11 @@ using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
-using LogLevel = Trinity.Components.Adventurer.Util.LogLevel;
 
 namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
 {
     public class CompleteActBountiesCoroutine
     {
-
         private const int TYRAEL = 114622;
 
         private static Dictionary<Act, Vector3> TyraelPositions = new Dictionary<Act, Vector3>
@@ -47,6 +44,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
         }
 
         protected bool _logStateChange;
+
         protected bool LogStateChange
         {
             get
@@ -58,6 +56,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
         }
 
         private States _state;
+
         public States State
         {
             get { return _state; }
@@ -78,7 +77,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             _act = act;
         }
 
-
         public virtual async Task<bool> GetCoroutine()
         {
             if (BrainBehavior.IsVendoring) return false;
@@ -86,18 +84,25 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             {
                 case States.NotStarted:
                     return await NotStarted();
+
                 case States.ReturningToTown:
                     return await ReturningToTown();
+
                 case States.TownRun:
                     return TownRun();
+
                 case States.MovingToTyrael:
                     return await MovingToTyrael();
+
                 case States.InteractingWithTyrael:
                     return await InteractingWithTyrael();
+
                 case States.Completed:
                     return await Completed();
+
                 case States.Failed:
                     return await Failed();
+
                 case States.AlreadyDone:
                     return AlreadyDone();
             }
@@ -118,7 +123,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
 
             if (IsInZone)
             {
-                State=States.TownRun;
+                State = States.TownRun;
                 return false;
             }
             State = States.ReturningToTown;
@@ -135,8 +140,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             }
             if (!await WaypointCoroutine.UseWaypoint(WaypointFactory.ActHubs[_act])) return false;
 
-
-
             return false;
         }
 
@@ -144,7 +147,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
 
         private bool TownRun()
         {
-
             if (BrainBehavior.IsVendoring)
             {
                 return false;
@@ -172,7 +174,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
 
         private async Task<bool> InteractingWithTyrael()
         {
-
             if (await _interactionCoroutine.GetCoroutine())
             {
                 if (!ZetaDia.ActInfo.AllQuests.Any(q => q.Quest == BountyHelpers.ActBountyFinishingQuests[_act] && q.State == QuestState.InProgress))
@@ -184,7 +185,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
                 if (tyrael == null)
                 {
                     Util.Logger.Error("[CompleteActBounties] Couldn't detect Tyrael. Failing");
-                    State=States.Failed;
+                    State = States.Failed;
                     return false;
                 }
                 if (tyrael.IsFullyValid() && tyrael.CommonData.MarkerType == MarkerType.Exclamation)
@@ -196,10 +197,8 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             return false;
         }
 
-
         private async Task<bool> Completed()
         {
-
             Util.Logger.Log(Util.LogLevel.Overlay, "[ActBounties] Successfully completed {0} bounties", _act);
             _isDone = true;
             await Coroutine.Sleep(4000);
@@ -220,7 +219,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             return true;
         }
 
-
         public bool IsInZone
         {
             get
@@ -228,7 +226,5 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
                 return ExplorationData.ActHubWorldIds[_act] == AdvDia.CurrentWorldId;
             }
         }
-
-
     }
 }

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Coroutines.Resources;
 using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
@@ -108,7 +108,6 @@ namespace Trinity.Coroutines.Town
                 //}
 
                 return types == null || types.Contains(GetItemSelectionType(i));
-
             }).ToList();
 
             Logger.Log(LogCategory.Behavior, "[CubeRaresToLegendary] {0} Valid Rares in Backpack", rares.Count);
@@ -169,7 +168,7 @@ namespace Trinity.Coroutines.Town
         /// <summary>
         /// Convert rares into legendaries with Kanai's cube
         /// </summary>
-        /// <param name="types">restrict the rares that can be selected by ItemType</param>        
+        /// <param name="types">restrict the rares that can be selected by ItemType</param>
         public static async Task<bool> Execute(List<ItemSelectionType> types = null)
         {
             while (CanRun(types))
@@ -202,7 +201,7 @@ namespace Trinity.Coroutines.Town
                     var transmuteGroup = new List<TrinityItem>();
 
                     // Position in the cube matters; it looks like it will fail if
-                    // stacks are added after the required amount of ingredient is met, 
+                    // stacks are added after the required amount of ingredient is met,
                     // as the cube encounters them from top left to bottom right.
 
                     transmuteGroup.Add(item);
@@ -210,7 +209,7 @@ namespace Trinity.Coroutines.Town
                     transmuteGroup.AddRange(Inventory.GetStacksUpToQuantity(Inventory.Backpack.VeiledCrystals, 50));
                     transmuteGroup.AddRange(Inventory.GetStacksUpToQuantity(Inventory.Backpack.ReusableParts, 50));
                     transmuteGroup.AddRange(Inventory.GetStacksUpToQuantity(Inventory.Backpack.DeathsBreath, 25));
-                    
+
                     await Transmute.Execute(transmuteGroup);
                     await Coroutine.Sleep(1500);
 
@@ -250,8 +249,5 @@ namespace Trinity.Coroutines.Town
 
             return true;
         }
-
-
-
     }
 }

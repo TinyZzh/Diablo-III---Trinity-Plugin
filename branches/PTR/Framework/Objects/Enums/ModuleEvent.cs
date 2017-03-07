@@ -10,6 +10,6 @@ namespace Trinity.Framework.Objects.Enums
         PluginDisabled,
         PluginEnabled,
         PluginInitialized,
-        Shutdown,        
+        Shutdown,
     }
 }

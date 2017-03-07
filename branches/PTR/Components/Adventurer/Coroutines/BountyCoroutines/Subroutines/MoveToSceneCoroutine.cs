@@ -7,7 +7,6 @@ using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Adventurer.Game.Quests;
 using Trinity.Components.Adventurer.Util;
 using Zeta.Common;
-using Zeta.Game;
 using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
@@ -17,7 +16,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
         private readonly int _questId;
         private readonly int _worldId;
         private readonly string _sceneName;
-
 
         private bool _isDone;
         private States _state;
@@ -49,14 +47,12 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             }
         }
 
-        #endregion
+        #endregion State
 
         public bool IsDone
         {
             get { return _isDone || AdvDia.CurrentWorldId != _worldId; }
         }
-
-
 
         public MoveToSceneCoroutine(int questId, int worldId, string sceneName, bool zergSafe = false)
         {
@@ -65,10 +61,9 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             _sceneName = sceneName;
         }
 
-
         public async Task<bool> GetCoroutine()
         {
-            if(_scene != null && _scene.IsInScene(AdvDia.MyPosition))
+            if (_scene != null && _scene.IsInScene(AdvDia.MyPosition))
             {
                 Logger.Debug($"Currently in Target Scene: {_scene.Name}. IsSubScene={_scene.SubScene}");
                 State = States.Completed;
@@ -78,12 +73,16 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             {
                 case States.NotStarted:
                     return await NotStarted();
+
                 case States.Searching:
                     return await Searching();
+
                 case States.Moving:
                     return await Moving();
+
                 case States.Completed:
                     return await Completed();
+
                 case States.Failed:
                     return await Failed();
             }
@@ -231,11 +230,10 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                         //    _objectiveLocation = Vector3.Zero;
                         //}
                     }
-
                 }
                 else
                 {
-                    _objectiveLocation = Vector3.Zero;                    
+                    _objectiveLocation = Vector3.Zero;
                 }
             }
         }

@@ -8,6 +8,7 @@ namespace Trinity.Components.Adventurer.Util
     public static class FileUtils
     {
         private static string _demonBuddyPath;
+
         public static string DemonBuddyPath
         {
             get
@@ -19,6 +20,7 @@ namespace Trinity.Components.Adventurer.Util
         }
 
         private static string _pluginPath;
+
         public static string PluginPath
         {
             get
@@ -30,6 +32,7 @@ namespace Trinity.Components.Adventurer.Util
         }
 
         private static string _pluginPath2;
+
         public static string PluginPath2
         {
             get
@@ -41,6 +44,7 @@ namespace Trinity.Components.Adventurer.Util
         }
 
         private static string _logPath;
+
         public static string LogPath
         {
             get
@@ -84,7 +88,5 @@ namespace Trinity.Components.Adventurer.Util
                 return null;
             }
         }
-
-
     }
 }

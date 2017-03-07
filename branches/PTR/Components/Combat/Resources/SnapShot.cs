@@ -38,7 +38,3 @@ namespace Trinity.Components.Combat.Resources
         }
     }
 }
-
-
-
-

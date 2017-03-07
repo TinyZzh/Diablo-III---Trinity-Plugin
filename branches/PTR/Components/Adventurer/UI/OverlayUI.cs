@@ -10,7 +10,6 @@
 //{
 //    class OverlayUI
 //    {
-
 //        private static bool _added;
 //        public static bool Visible { get; private set; }
 //        private static TextBlock _logBox;
@@ -24,7 +23,6 @@
 //            Visible = true;
 //        }
 
-
 //        internal static void AddLineToLog(string message)
 //        {
 //            //ZetaDia.Overlay.Dispatcher.Invoke(
@@ -33,7 +31,6 @@
 //            //        _logBox.Text = message;
 //            //    });
 //        }
-
 
 //        internal static void RemoveOverlayComponents()
 //        {
@@ -112,6 +109,5 @@
 //        }
 
 //    }
-
 
 //}

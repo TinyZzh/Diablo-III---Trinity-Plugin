@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Coroutines.BountyCoroutines;
-using Trinity.Components.Adventurer.Util;
 using Trinity.Framework.Helpers;
-using Trinity.ProfileTags;
-using Zeta.Bot;
 using Zeta.Game;
 using Zeta.Game.Internals.Service;
 using Zeta.Game.Internals.SNO;
@@ -79,10 +75,10 @@ namespace Trinity.Components.Adventurer.Game.Quests
 
             //    Logger.Info($"[BountyStatistics][FailedQuest] QuestId: {item1.QuestId}, IncompleteCount: {incompleteCount},  SuccessCount: {successCount}, Act: {item1.Act}, Name: {item1.Name} TimeAvg: {wastedAvg}");
             //}
-
         }
 
         private static long _lastPulseTime;
+
         public static void Pulse()
         {
             //if (PluginTime.ReadyToUse(_lastPulseTime, 2000))
@@ -133,7 +129,6 @@ namespace Trinity.Components.Adventurer.Game.Quests
             CompletedBountyActs = 0;
             RestartsFromUnsupported = 0;
         }
-
     }
 
     public class BountyStatistic
@@ -166,9 +161,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
 
         private BountyStatistic()
         {
-
         }
-
 
         public static BountyStatistic GetInstance(int questId)
         {
@@ -196,7 +189,5 @@ namespace Trinity.Components.Adventurer.Game.Quests
             BountyStatistics.Stats.Add(stat);
             return stat;
         }
-
-
     }
 }

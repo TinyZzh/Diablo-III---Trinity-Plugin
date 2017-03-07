@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Buddy.Coroutines;
+using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Coroutines.Resources;
 using Trinity.Framework;
-using Zeta.Bot;
 using Zeta.Game;
-using Zeta.Common;
-using Zeta.Game.Internals.Actors;
 using Logger = Trinity.Framework.Helpers.Logger;
 
 namespace Trinity.Coroutines.Town
 {
     public static class IdentifyItems
     {
-        public static async Task<bool> Execute()        
+        public static async Task<bool> Execute()
         {
             if (!ZetaDia.IsInTown)
             {
@@ -32,7 +27,7 @@ namespace Trinity.Coroutines.Town
 
             var timeout = DateTime.UtcNow.Add(TimeSpan.FromSeconds(30));
 
-            while(Inventory.Backpack.Items.Any(i => i.IsUnidentified))
+            while (Inventory.Backpack.Items.Any(i => i.IsUnidentified))
             {
                 if (DateTime.UtcNow > timeout)
                     break;

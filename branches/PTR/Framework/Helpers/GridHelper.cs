@@ -30,7 +30,4 @@ namespace Trinity.Framework.Helpers
             return Navigation.CanRayCast(@from, to);
         }
     }
-
 }
-
-

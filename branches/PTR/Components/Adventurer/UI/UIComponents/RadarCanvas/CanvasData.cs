@@ -19,7 +19,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
             {
                 return;
             }
-                
 
             var previousSize = CanvasSize;
 
@@ -72,7 +71,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
         /// Last instance for acess via extensions/properties.
         /// </summary>
         public static CanvasData LastCanvas { get; set; }
-        
+
         public delegate void CanvasSizeChanged(Size sizeBefore, Size sizeAfter);
 
         public event CanvasSizeChanged OnCanvasSizeChanged;

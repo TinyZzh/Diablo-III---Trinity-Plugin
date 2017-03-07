@@ -11,7 +11,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
 {
     public class UILoader
     {
-
         private static Dictionary<string, string> _xaml = new Dictionary<string, string>();
 
         /// <summary>Loads the and transform xaml file.</summary>
@@ -73,8 +72,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
                 filecontent = filecontent.Replace("xmlns:enums=\"clr-namespace:Trinity.Framework.Objects.Enums\"", "xmlns:enums=\"clr-namespace:Trinity.Framework.Objects.Enums;assembly=" + assemblyName + "\"");
                 filecontent = Regex.Replace(filecontent, "<ResourceDictionary.MergedDictionaries>.*</ResourceDictionary.MergedDictionaries>", string.Empty, RegexOptions.Singleline | RegexOptions.Compiled);
 
-
-
                 // Remove Template designer reference
                 //filecontent = filecontent.Replace("<ResourceDictionary.MergedDictionaries><ResourceDictionary Source=\"..\\Template.xaml\"/></ResourceDictionary.MergedDictionaries>", string.Empty);
                 //filecontent = filecontent.Replace("<ResourceDictionary.MergedDictionaries><ResourceDictionary Source=\"Template.xaml\"/></ResourceDictionary.MergedDictionaries>", string.Empty);
@@ -91,10 +88,5 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
                 return default(T);
             }
         }
-
-
-
-
-
     }
 }

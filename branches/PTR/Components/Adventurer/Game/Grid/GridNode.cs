@@ -14,7 +14,9 @@ namespace Trinity.Components.Adventurer.Game.Grid
         public NavCellFlags Flags { get { return _navCellDefinition.Flags; } }
         public GridPoint GridPoint { get; set; }
 
-        private GridNode() { }
+        private GridNode()
+        {
+        }
 
         public static GridNode Create(Vector2 center, GridScene gridScene, NavCellDefinition navCell)
         {

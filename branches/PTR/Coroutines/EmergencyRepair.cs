@@ -1,10 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Trinity.DbProvider;
-using Trinity.Framework;
-using Trinity.Framework.Helpers;
-using Zeta.Bot.Coroutines;
 using Zeta.Game;
 
 namespace Trinity.Coroutines
@@ -28,9 +23,8 @@ namespace Trinity.Coroutines
                 }
                 catch
                 {
- 
                 }
-                if (itemCount > 0 && durabilitySum/itemCount < 0.05)
+                if (itemCount > 0 && durabilitySum / itemCount < 0.05)
                     needEmergencyRepair = true;
             }
             return needEmergencyRepair;

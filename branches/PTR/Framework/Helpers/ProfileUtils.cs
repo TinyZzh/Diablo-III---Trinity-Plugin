@@ -1,24 +1,10 @@
-﻿using System.Collections;
-using System.Windows.Forms;
-using System.Xml.Linq;
-using System.Xml.XPath;
-using log4net.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Buddy.Coroutines;
-using Zeta.Bot;
 using Zeta.Bot.Navigation;
-using Zeta.Bot.Profile;
-using Zeta.Bot.Profile.Common;
-using Zeta.Bot.Profile.Composites;
-using Zeta.Bot.Settings;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
-using Zeta.Game.Internals.SNO;
-using Zeta.TreeSharp;
-using Action = System.Action;
 
 namespace Trinity.Framework.Helpers
 {
@@ -164,7 +150,7 @@ namespace Trinity.Framework.Helpers
         //public delegate ProfileBehavior TagProcessingDelegate(ProfileBehavior node, int index, Type type);
 
         ///// <summary>
-        ///// Walks through profile nodes recursively, 
+        ///// Walks through profile nodes recursively,
         ///// TagProcessingDelegate is called for every Tag.
         ///// The original tag is replaced by tag returned by TagProcessingDelegate
         ///// </summary>
@@ -283,6 +269,5 @@ namespace Trinity.Framework.Helpers
         //        return Vector3.Zero;
         //    }
         //}
-
     }
 }

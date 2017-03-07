@@ -37,8 +37,6 @@ namespace Trinity.Framework.Avoidance.Handlers
                     grid.FlagAvoidanceNodes(obstacleNodes, AvoidanceFlags.NavigationBlocking, avoidance, 5);
                 }
             }
-
         }
     }
 }
-

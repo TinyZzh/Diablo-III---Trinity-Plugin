@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
 using Trinity.Components.Adventurer.Coroutines.BountyCoroutines;
 using Trinity.Components.Adventurer.Coroutines.CommonSubroutines;
@@ -10,11 +7,7 @@ using Trinity.Components.Adventurer.Game.Events;
 using Trinity.Components.Adventurer.Settings;
 using Trinity.Components.Adventurer.UI;
 using Trinity.Framework.Objects;
-using Trinity.Settings;
-using Trinity.UI;
 using Zeta.Bot;
-using Zeta.Bot.Navigation;
-using JsonSerializer = Trinity.Components.Adventurer.Util.JsonSerializer;
 
 namespace Trinity.Components.Adventurer
 {
@@ -25,7 +18,6 @@ namespace Trinity.Components.Adventurer
 
         private Adventurer()
         {
-    
         }
 
         protected override int UpdateIntervalMs => 50;
@@ -51,7 +43,7 @@ namespace Trinity.Components.Adventurer
         }
 
         public static bool IsAdventurerTagRunning()
-        {            
+        {
             //const string tagsNameSpace = "Trinity.Components.Adventurer.Tags";
             //if (ProfileManager.OrderManager == null || ProfileManager.OrderManager.CurrentBehavior == null)
             //{
@@ -69,6 +61,7 @@ namespace Trinity.Components.Adventurer
             }
             return ProfileManager.OrderManager.CurrentBehavior.GetType().Name;
         }
+
         public static ISubroutine GetCurrentCoroutine()
         {
             return GenericBountyCoroutine.LastBountySubroutine;
@@ -77,13 +70,21 @@ namespace Trinity.Components.Adventurer
         #region Explicit IDynamicSetting Implementation
 
         string IDynamicSetting.GetName() => Name;
-        UserControl IDynamicSetting.GetControl() => ConfigWindow.Instance.Content as UserControl;
-        object IDynamicSetting.GetDataContext() => PluginSettings.Current.GetDataContext();
-        string IDynamicSetting.GetCode() => PluginSettings.Current.GenerateCode();
-        void IDynamicSetting.ApplyCode(string code) => PluginSettings.Current.ApplySettingsCode(code);
-        void IDynamicSetting.Reset() => PluginSettings.Current.LoadDefaults();
-        void IDynamicSetting.Save() { }
 
-        #endregion
+        UserControl IDynamicSetting.GetControl() => ConfigWindow.Instance.Content as UserControl;
+
+        object IDynamicSetting.GetDataContext() => PluginSettings.Current.GetDataContext();
+
+        string IDynamicSetting.GetCode() => PluginSettings.Current.GenerateCode();
+
+        void IDynamicSetting.ApplyCode(string code) => PluginSettings.Current.ApplySettingsCode(code);
+
+        void IDynamicSetting.Reset() => PluginSettings.Current.LoadDefaults();
+
+        void IDynamicSetting.Save()
+        {
+        }
+
+        #endregion Explicit IDynamicSetting Implementation
     }
 }

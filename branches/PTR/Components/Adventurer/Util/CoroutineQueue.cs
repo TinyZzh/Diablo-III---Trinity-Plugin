@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Components.Adventurer.Coroutines;
 using Trinity.Framework;
 using Zeta.Bot;
@@ -60,7 +60,6 @@ namespace Trinity.Components.Adventurer.Util
             if (IsQueued(coroutine))
                 return false;
 
-            
             _queue.Enqueue(coroutine);
             return true;
         }
@@ -83,7 +82,7 @@ namespace Trinity.Components.Adventurer.Util
                 if (disposable != null)
                 {
                     disposable.Dispose();
-                }                
+                }
             }
             return false;
         }

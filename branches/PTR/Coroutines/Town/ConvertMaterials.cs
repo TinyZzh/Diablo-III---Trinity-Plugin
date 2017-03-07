@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Buddy.Coroutines;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Coroutines.Resources;
 using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
@@ -51,7 +51,6 @@ namespace Trinity.Coroutines.Town
                 }
 
                 return true;
-
             }).ToList();
         }
 
@@ -74,7 +73,7 @@ namespace Trinity.Coroutines.Town
 
             Inventory.Materials.Update();
             Inventory.Materials.LogCounts();
-    
+
             if (checkStash)
             {
                 if (Inventory.Materials[InventoryItemType.DeathsBreath].TotalStackQuantity >= 1 && Inventory.Materials[from].TotalStackQuantity > 100)
@@ -83,7 +82,7 @@ namespace Trinity.Coroutines.Town
                         from, Inventory.Materials[from].TotalStackQuantity, to);
 
                     return true;
-                }                                                    
+                }
             }
 
             if (Inventory.Materials[from].BackpackStackQuantity > 100)
@@ -103,8 +102,8 @@ namespace Trinity.Coroutines.Town
         /// <summary>
         /// Converts crafting materials into other types of crafting materials
         /// </summary>
-        /// <param name="from">the type of material you will consume</param>        
-		/// <param name="to">the type of material you will get more of</param>        
+        /// <param name="from">the type of material you will consume</param>
+		/// <param name="to">the type of material you will get more of</param>
         public static async Task<bool> Execute(InventoryItemType from, InventoryItemType to)
         {
             Logger.Log("[ConvertMaterials] Wooo! Lets convert some {0} to {1}", from, to);
@@ -119,13 +118,13 @@ namespace Trinity.Coroutines.Town
             }
 
             var backpackDeathsBreathAmount = Inventory.Backpack.DeathsBreath.Select(i => i.ItemStackQuantity).Sum();
-			var backpackFromMaterialAmount = Inventory.Backpack.OfType(from).Select(i => i.ItemStackQuantity).Sum();
-			var backpackToMaterialAmount = Inventory.Backpack.OfType(to).Select(i => i.ItemStackQuantity).Sum();
+            var backpackFromMaterialAmount = Inventory.Backpack.OfType(from).Select(i => i.ItemStackQuantity).Sum();
+            var backpackToMaterialAmount = Inventory.Backpack.OfType(to).Select(i => i.ItemStackQuantity).Sum();
 
             Inventory.Materials.Update();
             var sacraficialItems = GetSacraficialItems(to);
 
-            Logger.LogVerbose("[ConvertMaterials] Starting Material Counts DeathsBreath={0} {1}={2} {3}={4} SacraficialItems={5}", 
+            Logger.LogVerbose("[ConvertMaterials] Starting Material Counts DeathsBreath={0} {1}={2} {3}={4} SacraficialItems={5}",
                 backpackDeathsBreathAmount, from, backpackFromMaterialAmount, to, backpackToMaterialAmount, sacraficialItems.Count);
 
             while (CanRun(from, to))
@@ -142,7 +141,7 @@ namespace Trinity.Coroutines.Town
 
                 var item = sacraficialItems.First();
                 var transmuteGroup = new List<TrinityItem>
-				{
+                {
                     Inventory.Backpack.DeathsBreath.First(),
                     item
                 };
@@ -163,26 +162,26 @@ namespace Trinity.Coroutines.Town
                 await Coroutine.Yield();
 
                 var newToAmount = Inventory.Backpack.OfType(to).Select(i => i.Attributes.ItemStackQuantity).Sum();
-				if(newToAmount > backpackToMaterialAmount || Core.Actors.IsAnnIdValid(item.AnnId))
-				{
-					Logger.Log("[ConvertMaterials] Converted materials '{0}' ---> '{1}'", from, to);
-					backpackToMaterialAmount = newToAmount;
-					backpackFromMaterialAmount = Inventory.Backpack.OfType(from).Select(i => i.ItemStackQuantity).Sum();
-					backpackDeathsBreathAmount = Inventory.Backpack.DeathsBreath.Select(i => i.ItemStackQuantity).Sum();
-				    ConsecutiveFailures = 0;
-				}
-				else
-				{
-				    ConsecutiveFailures++;
-				    if (ConsecutiveFailures > 3)
-				    {
+                if (newToAmount > backpackToMaterialAmount || Core.Actors.IsAnnIdValid(item.AnnId))
+                {
+                    Logger.Log("[ConvertMaterials] Converted materials '{0}' ---> '{1}'", from, to);
+                    backpackToMaterialAmount = newToAmount;
+                    backpackFromMaterialAmount = Inventory.Backpack.OfType(from).Select(i => i.ItemStackQuantity).Sum();
+                    backpackDeathsBreathAmount = Inventory.Backpack.DeathsBreath.Select(i => i.ItemStackQuantity).Sum();
+                    ConsecutiveFailures = 0;
+                }
+                else
+                {
+                    ConsecutiveFailures++;
+                    if (ConsecutiveFailures > 3)
+                    {
                         Inventory.InvalidItemDynamicIds.Add(item.AcdId);
-				    }
+                    }
 
-					Logger.LogError("[ConvertMaterials] Failed to convert materials");
-					return false;
-				}
-                
+                    Logger.LogError("[ConvertMaterials] Failed to convert materials");
+                    return false;
+                }
+
                 await Coroutine.Sleep(100);
                 await Coroutine.Yield();
             }
@@ -238,6 +237,5 @@ namespace Trinity.Coroutines.Town
             sacraficialItems.RemoveAll(i => Inventory.InvalidItemDynamicIds.Contains(i.AcdId));
             return sacraficialItems;
         }
-
     }
 }

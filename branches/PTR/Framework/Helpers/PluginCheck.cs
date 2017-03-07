@@ -134,7 +134,7 @@ namespace Trinity.Framework.Helpers
         }
 
         /// <summary>
-        /// Installs the latest version of the TrinityPlugin routine 
+        /// Installs the latest version of the TrinityPlugin routine
         /// </summary>
         private static void InstallTrinityRoutine()
         {
@@ -185,7 +185,5 @@ namespace Trinity.Framework.Helpers
                 return FileManager.CompareFileHeader(FileManager.CombatRoutineSourcePath, FileManager.CombatRoutineDestinationPath);
             }
         }
-
-
     }
 }

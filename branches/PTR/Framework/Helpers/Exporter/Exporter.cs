@@ -9,5 +9,3 @@
         private static EnumExporter _enumExporter;
     }
 }
-
-

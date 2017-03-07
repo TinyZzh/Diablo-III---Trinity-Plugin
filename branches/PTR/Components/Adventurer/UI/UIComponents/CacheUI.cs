@@ -10,7 +10,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
 {
     public class CacheUI
     {
-
         private static bool _isUpdating;
 
         public static CacheUIDataModel DataModel
@@ -46,7 +45,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
                     DataModel.IsRadarWindowVisible = true;
                 }
             }
-
         }
 
         private static void PulsatorOnPulse(object sender, EventArgs eventArgs)
@@ -63,7 +61,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             return dataModel;
         }
 
-
         public static void Initialize()
         {
             _internalTimer = new DispatcherTimer();
@@ -71,7 +68,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             _internalTimer.Interval = new TimeSpan(0, 0, 0, 0, 25);
             _internalTimer.Start();
         }
-
 
         private static void InternalTimerTick(object sender, EventArgs e)
         {
@@ -138,7 +134,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
                     DataModel.IsRadarWindowVisible = false;
                     _radarWindow = null;
                 };
-
             }
         }
 
@@ -162,8 +157,8 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             try
             {
                 if (DataModel.IsRadarWindowVisible && DateTime.UtcNow.Subtract(_lastUpdated).TotalMilliseconds < 50)
-                    return;   
-                                        
+                    return;
+
                 var userControl = _radarWindow.Content as UserControl;
                 if (userControl == null) return;
                 var canvas = userControl.Content as global::Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas.RadarCanvas;
@@ -177,5 +172,4 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             }
         }
     }
-
 }

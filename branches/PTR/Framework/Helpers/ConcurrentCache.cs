@@ -14,9 +14,13 @@ namespace Trinity.Framework.Helpers
         private readonly RemovedAction _removedAction;
 
         public delegate IList<TSourceValue> SourceProducer();
+
         public delegate TK KeyProducer(TSourceValue item);
+
         public delegate TCacheValue UpdateFactory(TK key, TCacheValue existingItem, TSourceValue newItem, out bool success);
+
         public delegate TCacheValue CreateFactory(TK key, TSourceValue newItem, out bool success);
+
         public delegate void RemovedAction(TCacheValue existingItem);
 
         public ConcurrentCache(SourceProducer sourceProducer, KeyProducer keyProducer, UpdateFactory updateFactory, CreateFactory createFactory, RemovedAction removedAction = null)
@@ -62,8 +66,11 @@ namespace Trinity.Framework.Helpers
         }
 
         public int Count => Items.Count;
+
         public void Clear() => Items.Clear();
+
         public IEnumerator<TCacheValue> GetEnumerator() => Items.Values.GetEnumerator();
+
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

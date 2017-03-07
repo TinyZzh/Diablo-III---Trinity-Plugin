@@ -8,7 +8,7 @@ using System.Windows.Input;
 using JetBrains.Annotations;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects.Attributes;
-using Trinity.Framework.Objects.Memory.Sno.Types;
+using Trinity.Framework.Objects.Memory;
 
 namespace Trinity.UI.UIComponents
 {

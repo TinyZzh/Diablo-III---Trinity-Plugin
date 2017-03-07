@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Coroutines.Resources;
 using Trinity.Framework;
 using Trinity.Framework.Objects;
@@ -50,11 +50,11 @@ namespace Trinity.Coroutines.Town
             if (!settingsTypes.Any())
             {
                 Logger.LogVerbose("[CubeItemsToMaterials] No materials have been selected in settings", _highest.Type, _highest.TotalStackQuantity);
-            }        
+            }
 
             Logger.LogVerbose("[CubeItemsToMaterials] Selected {0} as the material with highest count - {1}", _highest.Type, _highest.TotalStackQuantity);
 
-            var _validTypes = settingsTypes.Where( t => t != _highest.Type);
+            var _validTypes = settingsTypes.Where(t => t != _highest.Type);
             _materials = Inventory.Materials.OfTypes(_validTypes);
 
             bool result = false;
@@ -68,7 +68,7 @@ namespace Trinity.Coroutines.Town
                 else
                 {
                     Logger.LogVerbose("[CubeItemsToMaterials] NO - {0} -> {1}", _highest.Type, material.Key);
-                }                    
+                }
             }
 
             LastCanRunCheck = DateTime.UtcNow;
@@ -85,7 +85,7 @@ namespace Trinity.Coroutines.Town
 
             if (!Inventory.Materials.HasStackQuantityOfTypes(Inventory.MaterialConversionTypes, InventorySlot.BackpackItems, 100) && !await TakeItemsFromStash.Execute(Inventory.RareUpgradeIds, 5000))
                 return true;
-                
+
             Logger.LogVerbose("[CubeItemsToMaterials] Time to Convert some junk into delicious crafting materials.");
 
             if (!await MoveToAndInteract.Execute(TownInfo.KanaisCube))
@@ -111,10 +111,9 @@ namespace Trinity.Coroutines.Town
                 await Coroutine.Sleep(100);
                 await Coroutine.Yield();
             }
-          
+
             Logger.LogVerbose("[Cube] CubeItemsToMaterials Finished!");
             return true;
         }
-
     }
 }

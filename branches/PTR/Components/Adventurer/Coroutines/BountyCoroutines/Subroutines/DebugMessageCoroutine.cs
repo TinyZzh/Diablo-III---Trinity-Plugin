@@ -1,13 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Trinity.Components.Adventurer.Cache;
-using Trinity.Components.Adventurer.Game.Actors;
-using Trinity.Components.Adventurer.Game.Combat;
-using Trinity.Components.Adventurer.Game.Exploration;
+﻿using System.Threading.Tasks;
 using Trinity.Components.Adventurer.Game.Quests;
-using Trinity.Components.Adventurer.Util;
-using Zeta.Common;
-using Zeta.Game;
 using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
@@ -33,12 +25,10 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
 
         public void Reset()
         {
- 
         }
 
         public void DisablePulse()
         {
-
         }
 
         public BountyData BountyData { get; }

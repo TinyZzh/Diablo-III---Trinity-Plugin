@@ -114,7 +114,7 @@ namespace Trinity.Framework.Helpers
         }
 
         /// <summary>
-        /// The value under the given key. New entries are added at the end of the order. Updating an existing entry does not change its position.     
+        /// The value under the given key. New entries are added at the end of the order. Updating an existing entry does not change its position.
         /// </summary>
         public TValue this[TKey key]
         {

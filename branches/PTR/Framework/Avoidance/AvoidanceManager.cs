@@ -6,7 +6,6 @@ using Trinity.Framework.Avoidance.Settings;
 using Trinity.Framework.Avoidance.Structures;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
-using Trinity.Settings;
 using Trinity.UI;
 using Zeta.Common;
 using Zeta.Game;
@@ -54,7 +53,7 @@ namespace Trinity.Framework.Avoidance
 
         protected override void OnPulse()
         {
-            if (!TrinityPlugin.IsEnabled || ZetaDia.IsLoadingWorld)
+            if (!TrinityPlugin.IsEnabled || ZetaDia.Globals.IsLoadingWorld)
                 return;
 
             UpdateAvoidances();
@@ -69,7 +68,7 @@ namespace Trinity.Framework.Avoidance
 
             if (!Settings.Entries.Any(s => s.IsEnabled))
                 return;
-  
+
             var source = Core.Actors.AllRActors.ToList();
 
             foreach (var actor in source)
@@ -126,16 +125,23 @@ namespace Trinity.Framework.Avoidance
         #region Settings
 
         public AvoidanceSettings Settings { get; set; } = new AvoidanceSettings();
+
         public string GetName() => "AvoidanceSettings";
+
         public UserControl GetControl() => UILoader.LoadXamlByFileName<UserControl>("AvoidanceSettings.xaml");
+
         public object GetDataContext() => Settings;
+
         public string GetCode() => Settings.Save();
+
         public void ApplyCode(string code) => Settings.Load(code);
+
         public void Reset() => Settings.LoadDefaults();
-        public void Save() {}
 
-        #endregion
+        public void Save()
+        {
+        }
 
-
+        #endregion Settings
     }
 }

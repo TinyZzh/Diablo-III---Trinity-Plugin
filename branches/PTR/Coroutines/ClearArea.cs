@@ -40,7 +40,7 @@ namespace Trinity.Coroutines
                 IsClearing = true;
                 TrinityTownRun.IsVendoring = false;
                 Combat.CombatMode = CombatMode.KillAll;
-                StartWorld = ZetaDia.CurrentWorldSnoId;
+                StartWorld = ZetaDia.Globals.WorldSnoId;
                 StartPosition = ZetaDia.Me.Position;
             }
         }
@@ -66,7 +66,7 @@ namespace Trinity.Coroutines
             if (noMonsters)
             {
                 Logger.LogDebug($"No Monsters nearby, go back to portal position. Distance={StartPosition.Distance(ZetaDia.Me.Position)}");
-                await MoveTo.Execute(StartPosition, "Town Portal Position", 15f, () => ZetaDia.CurrentWorldSnoId != StartWorld || Navigator.StuckHandler.IsStuck || PlayerMover.IsBlocked);
+                await MoveTo.Execute(StartPosition, "Town Portal Position", 15f, () => ZetaDia.Globals.WorldSnoId != StartWorld || Navigator.StuckHandler.IsStuck || PlayerMover.IsBlocked);
                 Stop();
                 return false;
             }
@@ -75,19 +75,19 @@ namespace Trinity.Coroutines
             if (clearFinished)
             {
                 Logger.LogDebug("Clear timer finished, go back to portal position. Distance={StartPosition.Distance(ZetaDia.Me.Position)}");
-                await MoveTo.Execute(StartPosition, "Town Portal Position", 15f, () => ZetaDia.CurrentWorldSnoId != StartWorld || Navigator.StuckHandler.IsStuck || PlayerMover.IsBlocked);
+                await MoveTo.Execute(StartPosition, "Town Portal Position", 15f, () => ZetaDia.Globals.WorldSnoId != StartWorld || Navigator.StuckHandler.IsStuck || PlayerMover.IsBlocked);
                 Stop();
                 return false;
             }
 
-            var worldChanged = ZetaDia.CurrentWorldSnoId != StartWorld;
+            var worldChanged = ZetaDia.Globals.WorldSnoId != StartWorld;
             if (worldChanged)
             {
                 Logger.LogDebug("World Changed, Stop Clearing");
                 Stop();
                 return false;
             }
-              
+
             return true;
         }
     }

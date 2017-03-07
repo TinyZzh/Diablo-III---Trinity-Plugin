@@ -3,13 +3,12 @@ using System.Linq;
 using Trinity.Components.Adventurer.Cache;
 using Zeta.Common;
 using Zeta.Game;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Components.Adventurer.Game.Exploration
 {
     public sealed class NavigationGrid : Grid<NavigationNode>
     {
-        private const int GRID_BOUNDS = 2500;        
+        private const int GRID_BOUNDS = 2500;
 
         private static Lazy<NavigationGrid> _currentGrid;
 
@@ -20,12 +19,12 @@ namespace Trinity.Components.Adventurer.Game.Exploration
                 _currentGrid = new Lazy<NavigationGrid>(() => new NavigationGrid());
                 return _currentGrid.Value;
             }
-  
-            if (_currentGrid == null || _currentGrid.Value == null || ZetaDia.WorldId != _currentGrid.Value.WorldDynamicId)
+
+            if (_currentGrid == null || _currentGrid.Value == null || ZetaDia.Globals.WorldId != _currentGrid.Value.WorldDynamicId)
                 _currentGrid = new Lazy<NavigationGrid>(() => new NavigationGrid());
 
             return _currentGrid.Value;
-        }        
+        }
 
         public static NavigationGrid Instance
         {
@@ -55,6 +54,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
         {
             _currentGrid = null;
         }
+
         public bool IsValidGridWorldPosition(Vector3 position)
         {
             return position.X > 0 && position.Y > 0 && position != Vector3.Zero && position.X < (MaxX * BoxSize) && position.Y < (MaxY * BoxSize);
@@ -81,8 +81,8 @@ namespace Trinity.Components.Adventurer.Game.Exploration
             foreach (var iNode in nodes.Where(n => n.NodeFlags.HasFlag(NodeFlags.AllowWalk)))
             {
                 var node = iNode as NavigationNode;
-                if(node == null)
-                    continue;                
+                if (node == null)
+                    continue;
 
                 node.AStarValue = 1;
 

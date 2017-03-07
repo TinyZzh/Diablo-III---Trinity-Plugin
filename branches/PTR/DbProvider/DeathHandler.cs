@@ -1,9 +1,7 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using System;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
-using System.Threading;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Framework;
 using Trinity.Framework.Helpers;
 using Trinity.Reference;
@@ -16,8 +14,6 @@ using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
 using Zeta.Game.Internals.SNO;
-using Zeta.TreeSharp;
-using Action = Zeta.TreeSharp.Action;
 using Logger = Trinity.Framework.Helpers.Logger;
 
 namespace Trinity.DbProvider
@@ -52,8 +48,8 @@ namespace Trinity.DbProvider
             if (_isDead != isDead)
             {
                 if (isDead)
-                {                    
-                    _deathCounter = LastDeathTime.Subtract(DateTime.UtcNow).TotalSeconds > 60 ? 0 : _deathCounter +1;
+                {
+                    _deathCounter = LastDeathTime.Subtract(DateTime.UtcNow).TotalSeconds > 60 ? 0 : _deathCounter + 1;
                     _deathNeedRepairCounter = LastDeathTime.Subtract(DateTime.UtcNow).TotalSeconds < 60 && EquipmentNeedsEmergencyRepair(5) ? _deathNeedRepairCounter + 1 : 0;
                     LastDeathTime = DateTime.UtcNow;
                     _resButtonsVisibleStart = DateTime.MinValue;
@@ -62,7 +58,7 @@ namespace Trinity.DbProvider
                     DeathsThisSession++;
                     DeathsThisSession++;
 
-                    Logger.Log("[Death] You died lol! RecentDeaths={0} RecentDeathsNeedingRepair={1}", _deathCounter, _deathNeedRepairCounter);                  
+                    Logger.Log("[Death] You died lol! RecentDeaths={0} RecentDeathsNeedingRepair={1}", _deathCounter, _deathNeedRepairCounter);
                 }
                 else
                 {
@@ -70,7 +66,7 @@ namespace Trinity.DbProvider
 
                     //if (Core.Settings.Combat.Misc.FleeInGhostMode)
                     //{
-                        await MoveWhileGhosted();
+                    await MoveWhileGhosted();
                     //}
 
                     if (EquipmentNeedsEmergencyRepair(5))
@@ -85,7 +81,7 @@ namespace Trinity.DbProvider
             {
                 return false;
             }
-            
+
             var reviveAtCorpseButton = UIElement.FromHash(0xE3CBD66296A39588);
             var reviveAtCheckPointButton = UIElement.FromHash(0xBFAAF48BA9316742);
             var acceptRessurectionButton = UIElement.FromHash(0x712D458486D6F062);
@@ -94,7 +90,7 @@ namespace Trinity.DbProvider
             var checkpointButtonReady = reviveAtCheckPointButton.IsVisible && reviveAtCheckPointButton.IsEnabled;
             var corpseButtonReady = reviveAtCorpseButton.IsVisible && reviveAtCorpseButton.IsEnabled;
             var townButtonReady = reviveInTownButton.IsVisible && reviveInTownButton.IsEnabled;
-            var isInRift = GameData.RiftWorldIds.Contains(ZetaDia.CurrentWorldSnoId);
+            var isInRift = GameData.RiftWorldIds.Contains(ZetaDia.Globals.WorldSnoId);
             var isInGreaterRift = isInRift && ZetaDia.CurrentRift != null && ZetaDia.CurrentRift.Type == RiftType.Greater;
             var noMoreCorpseRevives = !isInGreaterRift && ZetaDia.Me.CommonData.CorpseResurrectionCharges == 0;
             var waitingForCorpseResurrect = ZetaDia.CurrentTime < ZetaDia.Me.CommonData.CorpseResurrectionAllowedGameTime;
@@ -103,18 +99,18 @@ namespace Trinity.DbProvider
 
             if (reviveAtCheckPointButton.IsVisible)
                 _resButtonsVisibleStart = DateTime.UtcNow;
-           
+
             var resurrectButtonsVisible = _resButtonsVisibleStart != DateTime.MinValue;
             if (resurrectButtonsVisible != _resurrectButtonsVisible)
-            {                
+            {
                 if (resurrectButtonsVisible)
                 {
                     Logger.LogVerbose("[Death] Buttons are now visible");
-                    var maxWaitTime = ZetaDia.Me.IsParticipatingInTieredLootRun ? Math.Min(deathCount * 5, 30) -2 : 4;
+                    var maxWaitTime = ZetaDia.Me.IsParticipatingInTieredLootRun ? Math.Min(deathCount * 5, 30) - 2 : 4;
                     _corpseReviveAvailableTime = new DateTime(_resButtonsVisibleStart.Ticks).Add(TimeSpan.FromSeconds(maxWaitTime));
                 }
                 _resurrectButtonsVisible = resurrectButtonsVisible;
-            }                
+            }
 
             var remainingTimeSecs = (_corpseReviveAvailableTime - DateTime.UtcNow).TotalSeconds;
             var resLimit = isInGreaterRift ? 16 : 10;
@@ -160,7 +156,7 @@ namespace Trinity.DbProvider
                 reviveInTownButton.Click();
             }
             else
-            {                
+            {
                 Logger.LogVerbose("[Death] Waiting...");
             }
 
@@ -171,7 +167,7 @@ namespace Trinity.DbProvider
         public async static Task<bool> MoveWhileGhosted()
         {
             var safespot = Core.Avoidance.GridEnricher.SafeNodeLayer.Positions.OrderBy(d =>
-                d.Distance(Core.Avoidance.GridEnricher.MonsterCentroid) + 
+                d.Distance(Core.Avoidance.GridEnricher.MonsterCentroid) +
                 d.Distance(Core.Avoidance.GridEnricher.AvoidanceCentroid)).FirstOrDefault();
 
             if (safespot == Vector3.Zero)
@@ -217,6 +213,5 @@ namespace Trinity.DbProvider
         {
             get { return ZetaDia.Actors.GetActorsOfType<DiaPlayer>(true).FirstOrDefault(p => p?.CommonData != null && p.RActorId != Core.Player.RActorGuid && p.Distance < 100f) != null; }
         }
-
     }
 }

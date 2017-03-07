@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Game.Combat;
@@ -11,7 +11,6 @@ using Trinity.Components.Adventurer.Game.Exploration.SceneMapping;
 using Trinity.Components.Adventurer.Game.Quests;
 using Trinity.Components.Adventurer.Settings;
 using Trinity.Components.Adventurer.Util;
-using Trinity.DbProvider;
 using Zeta.Bot.Navigation;
 using Zeta.Common;
 using Zeta.Game;
@@ -67,7 +66,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             }
         }
 
-        #endregion
+        #endregion State
 
         public bool IsDone
         {
@@ -145,18 +144,25 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             {
                 case States.NotStarted:
                     return await NotStarted();
+
                 case States.Searching:
                     return await Searching();
+
                 case States.Moving:
                     return await Moving();
+
                 case States.MovingToExitScene:
                     return await MovingToExitScene();
+
                 case States.MovingToNearestScene:
                     return await MovingToNearestScene();
+
                 case States.Entering:
                     return await Entering();
+
                 case States.Completed:
                     return await Completed();
+
                 case States.Failed:
                     return await Failed();
             }
@@ -246,7 +252,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
 
                 _deathGateLocation = Vector3.Zero;
             }
-
 
             if (!await NavigationCoroutine.MoveTo(_objectiveLocation, 15))
                 return false;
@@ -398,7 +403,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             _isDone = true;
             return false;
         }
-
 
         private long _lastScanTime;
         private Vector3 _previouslyFoundLocation = Vector3.Zero;

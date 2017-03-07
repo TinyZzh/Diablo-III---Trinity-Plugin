@@ -6,6 +6,7 @@ using Trinity.Components.Adventurer.Game.Quests;
 using Trinity.Components.Adventurer.Util;
 using Zeta.Bot;
 using Zeta.Game;
+
 //using Adventurer.Game.Grid;
 
 namespace Trinity.Components.Adventurer.Game.Events
@@ -66,9 +67,8 @@ namespace Trinity.Components.Adventurer.Game.Events
             BountyStatistics.Report();
         }
 
-
         private static void Pulsator_OnPulse(object sender, EventArgs e)
-        {            
+        {
             PulseUpdates();
         }
 
@@ -78,11 +78,10 @@ namespace Trinity.Components.Adventurer.Game.Events
             if (curFrame == _lastUpdate) return;
             _lastUpdate = curFrame;
 
-            // Trinity uses adventurer scenestorage and grid base 
+            // Trinity uses adventurer scenestorage and grid base
             ScenesStorage.Update();
             ExplorationGrid.PulseSetVisited();
             BountyStatistics.Pulse();
         }
-
     }
 }

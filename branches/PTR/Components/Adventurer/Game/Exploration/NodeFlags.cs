@@ -24,6 +24,4 @@ namespace Trinity.Components.Adventurer.Game.Exploration
         RoundedCorner3 = (uint)32768,
         NearWall = (uint)65536,
     }
-
-
 }

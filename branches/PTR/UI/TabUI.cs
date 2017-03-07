@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
@@ -13,49 +12,29 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using Trinity.Coroutines.Resources;
 using Trinity.Coroutines.Town;
-using Trinity.DbProvider;
 using Trinity.Framework;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects.Enums;
-using Trinity.Framework.Objects.Memory;
-using Trinity.Framework.Objects.Memory.Debug;
-using Trinity.Framework.Objects.Memory.Misc;
-using Trinity.Framework.Objects.Memory.Sno;
-using Trinity.Items;
 using Trinity.Reference;
-using Trinity.UI.UIComponents;
 using Zeta.Bot;
-using Zeta.Bot.Navigation;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
-using Zeta.Game.Internals.SNO;
 using Zeta.TreeSharp;
-using Trinity.Framework.Actors;
-using Trinity.Framework.Actors.ActorTypes;
 using Logger = Trinity.Framework.Helpers.Logger;
-using MemoryHelper = Trinity.Framework.Helpers.MemoryHelper;
-using TrinityItemQuality = Trinity.Settings.TrinityItemQuality;
 using UIElement = Zeta.Game.Internals.UIElement;
 
 // For Debug Watch Panel Namespace.
-using Trinity.Framework.Helpers;
+
 using Trinity.Framework.Objects;
-using Trinity.Framework.Objects.Enums;
-using Trinity.Framework.Objects.Memory;
+
 using Trinity.Framework.Objects.Memory.UX;
-using Trinity.Framework.Objects.Memory.Containers;
 using Trinity.Framework.Objects.Memory.Attributes;
-using Trinity.Framework.Objects.Memory.Sno;
-using Trinity.Framework.Objects.Memory.Misc;
-using Trinity.Framework.Objects.Memory.Sno.Helpers;
-using Trinity.Framework.Objects.Memory.Sno.Types;
 using Trinity.Items.Sorting;
 using Trinity.Settings;
 using Trinity.UI.Visualizer;
 using ScenesStorage = Trinity.Components.Adventurer.Game.Exploration.ScenesStorage;
-using System.Threading.Tasks;
 using Trinity.Routines.Wizard;
 
 namespace Trinity.UI
@@ -80,7 +59,7 @@ namespace Trinity.UI
             //           $"CurrenThreadId={Thread.CurrentThread.ManagedThreadId}" +
             //           $"CanAccessMainWindow={Application.Current.MainWindow.CheckAccess()}");
 
-            if (!DemonBuddyUI.MainWindow.CheckAccess())
+            if (!Application.Current.MainWindow.CheckAccess())
             {
                 Logger.Log("Current Thread {0} '{1}' cannot access MainWindow Dispatcher",
                     Thread.CurrentThread.ManagedThreadId, Thread.CurrentThread.Name);
@@ -88,10 +67,9 @@ namespace Trinity.UI
                 return;
             }
 
-            DemonBuddyUI.MainWindow.Dispatcher.Invoke(() =>
+            Application.Current.MainWindow.Dispatcher.Invoke(() =>
             {
-
-                var mainWindow = DemonBuddyUI.MainWindow;
+                var mainWindow = Application.Current.MainWindow;
 
                 _tabGrid = new UniformGrid
                 {
@@ -132,7 +110,6 @@ namespace Trinity.UI
                             //CreateButton("> Stop Tests", StopTestHandler),
                             CreateButton("> Unit Monitor", StartUnitMonitor),
                             CreateButton("> Player Monitor", StartPlayerMonitor),
-
                 });
 
                 CreateGroup("Tools", new List<Control>
@@ -142,35 +119,32 @@ namespace Trinity.UI
                             //CreateButton("Log Run Time", btnClick_LogRunTime),
                             CreateButton("Open Log File", OpenLogFileHandler),
                             CreateButton("Open Settings File", OpenSettingsFileHandler),
-                      
+
                             //CreateButton("Log Town Actor", LogTownActor),
-                            //CreateButton("Test UIElement", TestUIElement),                                                       
+                            //CreateButton("Test UIElement", TestUIElement),
                             //CreateButton("Test SNOReader", TestSNOReader),
                             //CreateButton("Dump Offsets", DumpOffsets),
                             //CreateButton("Start Internals", StartInternals),
                             //CreateButton("Stop Internals", StopInternals),
                             //CreateButton("Clsoe Vendor", CloseVendorWindowTest),
 
-                      
-
                             //CreateButton("Test", TestUIElement),
 
                             CreateButton("Upgrade Rares", UpgradeBackpackRares),
                             //CreateButton("Extract Powers", ExtractBackpackPowers),
                             CreateButton("ItemList Check", btnClick_TestItemList),
-                            
 
                             //CreateButton("Stash Test", StashItems),
                             //CreateButton("Test Internals", TestInternals),
                         });
 
                 //CreateButton("Scan UIElement", btnClick_ScanUIElement)
-                //CreateButton("Reload Item Rules", ReloadItemRulesEventHandler);                    
+                //CreateButton("Reload Item Rules", ReloadItemRulesEventHandler);
                 //CreateButton("Show Cache", ShowCacheWindowEventHandler);
                 //CreateButton("Open Radar", OpenRadarButtonHandler);
-                //CreateButton("Start Progression", StartProgressionTestHandler);             
-                //CreateButton("Stop Progression", StopProgressionTestHandler);                                    
-                //CreateButton("Cache Test", CacheTestCacheEventHandler);                    
+                //CreateButton("Start Progression", StartProgressionTestHandler);
+                //CreateButton("Stop Progression", StopProgressionTestHandler);
+                //CreateButton("Cache Test", CacheTestCacheEventHandler);
                 //CreateButton("Special Test", btnClick_SpecialTestHandler);
                 //CreateButton("1000 Rare => Magic", btnClick_MassConvertRareToMagic);
                 //CreateButton("Move to Stash", btnClick_MoveToStash);
@@ -190,7 +164,6 @@ namespace Trinity.UI
                     return;
 
                 tabs.Items.Add(_tabItem);
-
             });
         }
 
@@ -217,15 +190,14 @@ namespace Trinity.UI
             }
         }
 
-
         /**************
-         * 
+         *
          * WARNING
-         * 
+         *
          * ALWAYS surround your RoutedEventHandlers in try/catch. Failure to do so will result in Demonbuddy CRASHING if an exception is thrown.
-         * 
+         *
          * WARNING
-         *  
+         *
          *************/
 
         private static void DumpOffsets(object sender, RoutedEventArgs routedEventArgs)
@@ -254,7 +226,6 @@ namespace Trinity.UI
                     //Logger.LogRaw(scan.Floats.ToString());
 
                     //Logger.Log($"WorldEnv == {Core.World.EnvironmentType}");
-
                 }
             }
             catch (Exception ex)
@@ -391,30 +362,29 @@ namespace Trinity.UI
         {
             try
             {
-                var unitAtts = new Dictionary<int, HashSet<ActorAttributeType>>();
-                var unitLastDamage = new Dictionary<int, float>();
+                //var unitAtts = new Dictionary<int, HashSet<ActorAttributeType>>();
+                //var unitLastDamage = new Dictionary<int, float>();
 
-                if (!ZetaDia.IsInGame)
-                    return;
+                //if (!ZetaDia.IsInGame)
+                //    return;
 
-                using (ZetaDia.Memory.AcquireFrame())
-                {
-                    ZetaDia.Actors.Update();
+                //using (ZetaDia.Memory.AcquireFrame())
+                //{
+                //    ZetaDia.Actors.Update();
 
-                    Func<DiaObject, bool> isValid = u => u != null && u.IsValid && u.CommonData != null && u.CommonData.IsValid && !u.CommonData.IsDisposed;
-                    var testunits = ZetaDia.Actors.GetActorsOfType<DiaUnit>(true).Where(u => isValid(u) && u.RActorId != ZetaDia.Me.RActorId && ZetaDia.Me.TeamId != u.TeamId).ToList();
-                    var testunit = testunits.OrderBy(u => u.Distance).FirstOrDefault();
-                    if (testunit == null || testunit.CommonData == null)
-                    {
-                        testunit = ZetaDia.Me;
-                    }
+                //    Func<DiaObject, bool> isValid = u => u != null && u.IsValid && u.CommonData != null && u.CommonData.IsValid && !u.CommonData.IsDisposed;
+                //    var testunits = ZetaDia.Actors.GetActorsOfType<DiaUnit>(true).Where(u => isValid(u) && u.RActorId != ZetaDia.Me.RActorId && ZetaDia.Me.TeamId != u.TeamId).ToList();
+                //    var testunit = testunits.OrderBy(u => u.Distance).FirstOrDefault();
+                //    if (testunit == null || testunit.CommonData == null)
+                //    {
+                //        testunit = ZetaDia.Me;
+                //    }
 
-                    var acd = MemoryWrapper.Create<ActorCommonData>(testunit.CommonData.BaseAddress);
-                    var atts = new Trinity.Framework.Objects.Memory.Attributes.Attributes(acd.FastAttributeGroupId);
-                    Logger.Log($"-- Dumping Attribtues for {acd.Name} (Sno={acd.ActorSnoId} Ann={acd.AnnId}) at {acd.Position} ----");
-                    Logger.Log(atts + "\r\n");
-                }
-
+                //    var acd = MemoryWrapper.Create<ActorCommonData>(testunit.CommonData.BaseAddress);
+                //    var atts = new Trinity.Framework.Objects.Memory.Attributes.Attributes(acd.FastAttributeGroupId);
+                //    Logger.Log($"-- Dumping Attribtues for {acd.Name} (Sno={acd.ActorSnoId} Ann={acd.AnnId}) at {acd.Position} ----");
+                //    Logger.Log(atts + "\r\n");
+                //}
             }
             catch (Exception ex)
             {
@@ -426,88 +396,85 @@ namespace Trinity.UI
         {
             try
             {
-                var unitAtts = new Dictionary<int, HashSet<ActorAttributeType>>();
-                var unitLastDamage = new Dictionary<int, float>();
+                //var unitAtts = new Dictionary<int, HashSet<ActorAttributeType>>();
+                //var unitLastDamage = new Dictionary<int, float>();
 
-                if (!ZetaDia.IsInGame)
-                    return;
+                //if (!ZetaDia.IsInGame)
+                //    return;
 
-                var endTime = DateTime.UtcNow + TimeSpan.FromSeconds(30);
-                Task.Run(() =>
-                {
-                    while (DateTime.UtcNow < endTime)
-                    {
-                        Thread.Sleep(250);
+                //var endTime = DateTime.UtcNow + TimeSpan.FromSeconds(30);
+                //Task.Run(() =>
+                //{
+                //    while (DateTime.UtcNow < endTime)
+                //    {
+                //        Thread.Sleep(250);
 
-                        using (ZetaDia.Memory.AcquireFrame())
-                        {
-                            ZetaDia.Actors.Update();
+                //        //using (ZetaDia.Memory.AcquireFrame())
+                //        //{
+                //        //    ZetaDia.Actors.Update();
 
-                            //Func<DiaObject, bool> isValid =
-                            //    u =>
-                            //        u != null && u.IsValid && u.CommonData != null && u.CommonData.IsValid &&
-                            //        !u.CommonData.IsDisposed;
-                            //var testunits =
-                            //    ZetaDia.Actors.GetActorsOfType<DiaUnit>(true)
-                            //        .Where(
-                            //            u =>
-                            //                isValid(u) && u.RActorId != ZetaDia.Me.RActorId && ZetaDia.Me.TeamId != u.TeamId)
-                            //        .ToList();
-                            //var testunit = testunits.OrderBy(u => u.Distance).FirstOrDefault();
-                            //if (testunit == null || testunit.CommonData == null)
-                            //{
-                                var testunit = ZetaDia.Me;
-                            //}
+                //        //    //Func<DiaObject, bool> isValid =
+                //        //    //    u =>
+                //        //    //        u != null && u.IsValid && u.CommonData != null && u.CommonData.IsValid &&
+                //        //    //        !u.CommonData.IsDisposed;
+                //        //    //var testunits =
+                //        //    //    ZetaDia.Actors.GetActorsOfType<DiaUnit>(true)
+                //        //    //        .Where(
+                //        //    //            u =>
+                //        //    //                isValid(u) && u.RActorId != ZetaDia.Me.RActorId && ZetaDia.Me.TeamId != u.TeamId)
+                //        //    //        .ToList();
+                //        //    //var testunit = testunits.OrderBy(u => u.Distance).FirstOrDefault();
+                //        //    //if (testunit == null || testunit.CommonData == null)
+                //        //    //{
+                //        //    var testunit = ZetaDia.Me;
+                //        //    //}
 
-                            var acd = MemoryWrapper.Create<ActorCommonData>(testunit.CommonData.BaseAddress);
-                            var ann = acd.AnnId;
-                            var atts = new Trinity.Framework.Objects.Memory.Attributes.Attributes(acd.FastAttributeGroupId);
+                //        //    var acd = MemoryWrapper.Create<ActorCommonData>(testunit.CommonData.BaseAddress);
+                //        //    var ann = acd.AnnId;
+                //        //    var atts = new Trinity.Framework.Objects.Memory.Attributes.Attributes(acd.FastAttributeGroupId);
 
+                //        //    if (_lastAtts == null || ann != _lastAnn)
+                //        //    {
+                //        //        _lastAtts = null;
+                //        //        Logger.Log($"-- Dumping Attribtues for {acd.Name} (Sno={acd.ActorSnoId} Ann={acd.AnnId}) at {acd.Position} ----");
+                //        //        Logger.Log(atts + "\r\n");
+                //        //    }
 
-                            if (_lastAtts == null || ann != _lastAnn)
-                            {
-                                _lastAtts = null;
-                                Logger.Log($"-- Dumping Attribtues for {acd.Name} (Sno={acd.ActorSnoId} Ann={acd.AnnId}) at {acd.Position} ----");
-                                Logger.Log(atts + "\r\n");
-                            }
+                //        //    if (_lastAtts != null)
+                //        //    {
+                //        //        foreach (var att in atts.Items)
+                //        //        {
+                //        //            var curValue = att.Value.GetValue();
+                //        //            if (_lastAtts.ContainsKey(att.Key))
+                //        //            {
+                //        //                var lastValue = _lastAtts[att.Key].GetValue();
+                //        //                if (Convert.ToInt32(lastValue) != Convert.ToInt32(curValue))
+                //        //                {
+                //        //                    Logger.Log($"-- Attribute {att} changed from {lastValue}");
+                //        //                }
+                //        //            }
+                //        //            else
+                //        //            {
+                //        //                Logger.Log($"-- Attribute Added {att}");
+                //        //            }
+                //        //        }
 
-                            if (_lastAtts != null)
-                            {
-                                foreach (var att in atts.Items)
-                                {
-                                    var curValue = att.Value.GetValue();
-                                    if (_lastAtts.ContainsKey(att.Key))
-                                    {
-                                        var lastValue = _lastAtts[att.Key].GetValue();
-                                        if (Convert.ToInt32(lastValue) != Convert.ToInt32(curValue))
-                                        {
-                                            Logger.Log($"-- Attribute {att} changed from {lastValue}");
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Logger.Log($"-- Attribute Added {att}");
-                                    }
-                                }
+                //        //        foreach (var att in _lastAtts)
+                //        //        {
+                //        //            var lastValue = att.Value.GetValue();
+                //        //            if (!atts.Items.ContainsKey(att.Key))
+                //        //            {
+                //        //                Logger.Log(
+                //        //                    $"-- Attribute removed {(ActorAttributeType)att.Key} Value was {lastValue}");
+                //        //            }
+                //        //        }
+                //        //    }
 
-                                foreach (var att in _lastAtts)
-                                {
-                                    var lastValue = att.Value.GetValue();
-                                    if (!atts.Items.ContainsKey(att.Key))
-                                    {
-                                        Logger.Log(
-                                            $"-- Attribute removed {(ActorAttributeType)att.Key} Value was {lastValue}");
-                                    }
-                                }
-                            }
-
-                            _lastAtts = atts.Items;
-                            _lastAnn = ann;
-                        }
-
-                    }
-                });
-
+                //        //    _lastAtts = atts.Items;
+                //        //    _lastAnn = ann;
+                //        //}
+                //    }
+                //});
             }
             catch (Exception ex)
             {
@@ -517,98 +484,93 @@ namespace Trinity.UI
 
         private static void StartUnitMonitor(object sender, RoutedEventArgs routedEventArgs)
         {
-            try
-            {
-                var unitAtts = new Dictionary<int, HashSet<ActorAttributeType>>();
-                var unitLastDamage = new Dictionary<int, float>();
+            //try
+            //{
+            //    var unitAtts = new Dictionary<int, HashSet<ActorAttributeType>>();
+            //    var unitLastDamage = new Dictionary<int, float>();
 
-                if (!ZetaDia.IsInGame)
-                    return;
+            //    if (!ZetaDia.IsInGame)
+            //        return;
 
-                var endTime = DateTime.UtcNow + TimeSpan.FromSeconds(30);
-                Task.Run(() =>
-                {
-                    while (DateTime.UtcNow < endTime)
-                    {
-                        Thread.Sleep(250);
+            //    var endTime = DateTime.UtcNow + TimeSpan.FromSeconds(30);
+            //    Task.Run(() =>
+            //    {
+            //        while (DateTime.UtcNow < endTime)
+            //        {
+            //            Thread.Sleep(250);
 
-                        using (ZetaDia.Memory.AcquireFrame())
-                        {
-                            ZetaDia.Actors.Update();
+            //            using (ZetaDia.Memory.AcquireFrame())
+            //            {
+            //                ZetaDia.Actors.Update();
 
-                            Func<DiaObject, bool> isValid =
-                                u =>
-                                    u != null && u.IsValid && u.CommonData != null && u.CommonData.IsValid &&
-                                    !u.CommonData.IsDisposed;
-                            var testunits =
-                                ZetaDia.Actors.GetActorsOfType<DiaUnit>(true)
-                                    .Where(
-                                        u =>
-                                            isValid(u) && u.RActorId != ZetaDia.Me.RActorId && ZetaDia.Me.TeamId != u.TeamId)
-                                    .ToList();
-                            var testunit = testunits.OrderBy(u => u.Distance).FirstOrDefault();
-                            if (testunit == null || testunit.CommonData == null)
-                            {
-                                testunit = ZetaDia.Me;
-                            }
+            //                Func<DiaObject, bool> isValid =
+            //                    u =>
+            //                        u != null && u.IsValid && u.CommonData != null && u.CommonData.IsValid &&
+            //                        !u.CommonData.IsDisposed;
+            //                var testunits =
+            //                    ZetaDia.Actors.GetActorsOfType<DiaUnit>(true)
+            //                        .Where(
+            //                            u =>
+            //                                isValid(u) && u.RActorId != ZetaDia.Me.RActorId && ZetaDia.Me.TeamId != u.TeamId)
+            //                        .ToList();
+            //                var testunit = testunits.OrderBy(u => u.Distance).FirstOrDefault();
+            //                if (testunit == null || testunit.CommonData == null)
+            //                {
+            //                    testunit = ZetaDia.Me;
+            //                }
 
-                            var acd = MemoryWrapper.Create<ActorCommonData>(testunit.CommonData.BaseAddress);
-                            var ann = acd.AnnId;
-                            var atts = new Trinity.Framework.Objects.Memory.Attributes.Attributes(acd.FastAttributeGroupId);
+            //                var acd = MemoryWrapper.Create<ActorCommonData>(testunit.CommonData.BaseAddress);
+            //                var ann = acd.AnnId;
+            //                var atts = new Trinity.Framework.Objects.Memory.Attributes.Attributes(acd.FastAttributeGroupId);
 
+            //                if (_lastAtts == null || ann != _lastAnn)
+            //                {
+            //                    _lastAtts = null;
+            //                    Logger.Log($"-- Dumping Attribtues for {acd.Name} (Sno={acd.ActorSnoId} Ann={acd.AnnId}) at {acd.Position} ----");
+            //                    Logger.Log(atts + "\r\n");
+            //                }
 
-                            if (_lastAtts == null || ann != _lastAnn)
-                            {
-                                _lastAtts = null;
-                                Logger.Log($"-- Dumping Attribtues for {acd.Name} (Sno={acd.ActorSnoId} Ann={acd.AnnId}) at {acd.Position} ----");
-                                Logger.Log(atts + "\r\n");
-                            }
+            //                if (_lastAtts != null)
+            //                {
+            //                    foreach (var att in atts.Items)
+            //                    {
+            //                        var curValue = att.Value.GetValue();
+            //                        if (_lastAtts.ContainsKey(att.Key))
+            //                        {
+            //                            var lastValue = _lastAtts[att.Key].GetValue();
+            //                            if (Convert.ToInt32(lastValue) != Convert.ToInt32(curValue))
+            //                            {
+            //                                Logger.Log($"-- Attribute {att} changed from {lastValue}");
+            //                            }
+            //                        }
+            //                        else
+            //                        {
+            //                            Logger.Log($"-- Attribute Added {att}");
+            //                        }
+            //                    }
 
-                            if (_lastAtts != null)
-                            {
-                                foreach (var att in atts.Items)
-                                {
-                                    var curValue = att.Value.GetValue();
-                                    if (_lastAtts.ContainsKey(att.Key))
-                                    {
-                                        var lastValue = _lastAtts[att.Key].GetValue();
-                                        if (Convert.ToInt32(lastValue) != Convert.ToInt32(curValue))
-                                        {
-                                            Logger.Log($"-- Attribute {att} changed from {lastValue}");
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Logger.Log($"-- Attribute Added {att}");
-                                    }
-                                }
+            //                    foreach (var att in _lastAtts)
+            //                    {
+            //                        var lastValue = att.Value.GetValue();
+            //                        if (!atts.Items.ContainsKey(att.Key))
+            //                        {
+            //                            Logger.Log(
+            //                                $"-- Attribute removed {(ActorAttributeType)att.Key} Value was {lastValue}");
+            //                        }
+            //                    }
+            //                }
 
-                                foreach (var att in _lastAtts)
-                                {
-                                    var lastValue = att.Value.GetValue();
-                                    if (!atts.Items.ContainsKey(att.Key))
-                                    {
-                                        Logger.Log(
-                                            $"-- Attribute removed {(ActorAttributeType) att.Key} Value was {lastValue}");
-                                    }
-                                }
-                            }
-
-                            _lastAtts = atts.Items;
-                            _lastAnn = ann;
-                        }
-
-                    }
-                });
-
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("Error Starting LazyCache: " + ex);
-            }
+            //                _lastAtts = atts.Items;
+            //                _lastAnn = ann;
+            //            }
+            //        }
+            //    });
+            //}
+            //catch (Exception ex)
+            //{
+            //    Logger.LogError("Error Starting LazyCache: " + ex);
+            //}
         }
-
-
 
         private static void LogPowerDataHandler(object sender, RoutedEventArgs routedEventArgs)
         {
@@ -638,7 +600,6 @@ namespace Trinity.UI
                     //    data.Tags.ForEach(t => Logger.Log($"{t.Key} = {t.Value}"));
                     //}
                 }
-
             }
             catch (Exception ex)
             {
@@ -648,34 +609,33 @@ namespace Trinity.UI
 
         private static void StartPlayerTestHandler(object sender, RoutedEventArgs routedEventArgs)
         {
-            try
-            {
-                var unitAtts = new Dictionary<int, HashSet<ActorAttributeType>>();
-                var unitLastDamage = new Dictionary<int, float>();
+            //try
+            //{
+            //    var unitAtts = new Dictionary<int, HashSet<ActorAttributeType>>();
+            //    var unitLastDamage = new Dictionary<int, float>();
 
-                if (!ZetaDia.IsInGame)
-                    return;
+            //    if (!ZetaDia.IsInGame)
+            //        return;
 
-                using (ZetaDia.Memory.AcquireFrame())
-                {
-                    ZetaDia.Actors.Update();
-                    //var testunit = ZetaDia.Me;
+            //    using (ZetaDia.Memory.AcquireFrame())
+            //    {
+            //        ZetaDia.Actors.Update();
+            //        //var testunit = ZetaDia.Me;
 
-                    Func<DiaObject, bool> isValid = u => u != null && u.IsValid && u.CommonData != null && u.CommonData.IsValid && !u.CommonData.IsDisposed;
-                    var testunits = ZetaDia.Actors.GetActorsOfType<DiaObject>(true).Where(u => isValid(u) && u.RActorId == ZetaDia.Me.RActorId).ToList();
-                    var testunit = testunits.OrderBy(u => u.Distance).FirstOrDefault();
+            //        Func<DiaObject, bool> isValid = u => u != null && u.IsValid && u.CommonData != null && u.CommonData.IsValid && !u.CommonData.IsDisposed;
+            //        var testunits = ZetaDia.Actors.GetActorsOfType<DiaObject>(true).Where(u => isValid(u) && u.RActorId == ZetaDia.Me.RActorId).ToList();
+            //        var testunit = testunits.OrderBy(u => u.Distance).FirstOrDefault();
 
-                    var acd = MemoryWrapper.Create<ActorCommonData>(testunit.CommonData.BaseAddress);
-                    var atts = new Trinity.Framework.Objects.Memory.Attributes.Attributes(acd.FastAttributeGroupId);
-                    Logger.Log($"-- Dumping Attribtues for {acd.Name} (Sno={acd.ActorSnoId} Ann={acd.AnnId}) at {acd.Position} ----");
-                    Logger.Log(atts + "\r\n");
-                }
-
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("Error Starting LazyCache: " + ex);
-            }
+            //        var acd = MemoryWrapper.Create<ActorCommonData>(testunit.CommonData.BaseAddress);
+            //        var atts = new Trinity.Framework.Objects.Memory.Attributes.Attributes(acd.FastAttributeGroupId);
+            //        Logger.Log($"-- Dumping Attribtues for {acd.Name} (Sno={acd.ActorSnoId} Ann={acd.AnnId}) at {acd.Position} ----");
+            //        Logger.Log(atts + "\r\n");
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Logger.LogError("Error Starting LazyCache: " + ex);
+            //}
         }
 
         private static void StartDataTestHandler(object sender, RoutedEventArgs routedEventArgs)
@@ -689,7 +649,6 @@ namespace Trinity.UI
                 {
                     ZetaDia.Actors.Update();
                     Core.Update();
-
 
                     //ClassMapper.MapRecursively(SnoManager.Groups.Actor.DataType);
                     //ClassMapper.MapRecursively(SnoManager.Groups.Monster.DataType);
@@ -795,16 +754,13 @@ namespace Trinity.UI
 
                     //if (count == 0)
                     //    Logger.Log("No new passive powers were found");
-
                 }
-
             }
             catch (Exception ex)
             {
                 Logger.LogError("Exception: " + ex);
             }
         }
-
 
         private static void OpenLogFileHandler(object sender, RoutedEventArgs e)
         {
@@ -862,12 +818,11 @@ namespace Trinity.UI
                 ServiceType = ServiceType.{GetMerchantType(nearestActor)},
                 IsGizmo = {(nearestActor is DiaGizmo).ToString().ToLower()},
                 IsUnit = {(nearestActor is DiaUnit).ToString().ToLower()},
-                WorldSnoId = {ZetaDia.CurrentWorldSnoId},
+                WorldSnoId = {ZetaDia.Globals.WorldSnoId},
                 LevelAreaId = {ZetaDia.CurrentLevelAreaSnoId},
-            }};              
+            }};
                     ");
                 }
-
             }
             catch (Exception ex)
             {
@@ -971,131 +926,11 @@ namespace Trinity.UI
                     //}
 
                     //Root.NormalLayer.BattleNetStore_main.LayoutRoot.OverlayContainer.CurrencyPurchase.PurchaseButtonStackPanel1.PurchaseButtonTemplate2.TextDefault.PriceBannerTemplate.DiscountBanner;
-
                 }
-
             }
             catch (Exception ex)
             {
                 Logger.LogError("Error in TestUIElement: {0} {1}", logFile, ex.Message);
-            }
-        }
-
-        private static void TestSNOReader(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                using (ZetaDia.Memory.AcquireFrame(true))
-                {
-                    //var snoreader = (SNOReader)Activator.CreateInstance(typeof(SNOReader),
-                    //   BindingFlags.NonPublic | BindingFlags.Instance,
-                    //   null, new object[] { }, null);
-
-                    //string[] names = Enum.GetNames(typeof(ClientSNOTable));
-                    //for (int i = 0; i < names.Length; i++)
-                    //{
-                    //    var table = snoreader[(ClientSNOTable)i];
-
-                    //    Logger.Log($"SNOTable TableType={table.TableType} IsValid={table.IsValid} IsDisposed={table.IsDisposed} IsDisposing={table.IsDisposing}");
-
-                    //    if (table.TableType == ClientSNOTable.Actor)
-                    //    {
-                    //        //var recordPtr = table.GetRecordPtr((int)SNOActor.Wizard_Female);
-                    //        var record = table.GetRecord<SNORecordActor>((int)SNOActor.Wizard_Female);
-                    //        Logger.Log($"SNOActor.Wizard_Female MonsterSnoId={record.MonsterSnoId}  Sphere.Center={record.Sphere.Center}");
-                    //        record.Dispose();
-                    //    }
-                    //}
-                }
-
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("Error in TestSNOReader: {0} {1}");
-            }
-        }
-
-        //private static void TestInternals(object sender, RoutedEventArgs e)
-        //{
-        //    try
-        //    {
-        //        using (ZetaDia.Memory.AcquireFrame())
-        //        {
-        //           // ZetaInternals.Update();
-
-        //            //CachedActorManager.Update();
-
-        //            //var items = CachedActorManager.Items;
-        //            //var firstItem = items.FirstOrDefault();
-        //            //if (firstItem != null)
-        //            //    Logger.Log($"Item: {firstItem.Name}");
-
-        //            foreach (var entry in SnoManager.GameBalance.Cache)
-        //            {
-        //                var gbId = entry.Key;
-        //                var record = entry.Value;
-
-        //                if (record is ItemTypeRecord)
-        //                {
-        //                    var itemTypeRecord = (ItemTypeRecord)record;
-        //                    var name = Encoding.UTF8.GetString(MemoryHelper.GetMinByteArray(itemTypeRecord.InternalName));
-        //                    Logger.Log($"{name} = {gbId},");
-        //                }
-        //            }
-
-        //            //var tItems = CachedActorManager.TrinityItems;
-        //            // var test = ZetaInternals.ACDManager;
-        //        }
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Logger.LogError("Error in TestInternals: {0} {1}");
-        //    }
-        //}
-
-        private static void StartInternals(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                //ActorManager.Start();
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("Error in StartInternals: {0} {1}");
-            }
-        }
-
-        private static void StopInternals(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                //ActorManager.Stop();
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("Error in StopInternals: {0} {1}");
-            }
-        }
-
-        private static void CloseVendorWindowTest(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                UIElement.FromHash(0x109597E125942DA4).Click();
-                UIElement.FromHash(0xF98A8466DE237BD5).Click();
-
-                //Mouseover: 0x109597E125942DA4, Name: Root.NormalLayer.shop_dialog_mainPage.button_exit
-                //Mouseover: 0xF98A8466DE237BD5, Name: Root.NormalLayer.vendor_dialog_mainPage.vendor_button_exit
-                //Mouseover: 0x617664A4EFBC3AC2, Name: Root.NormalLayer.rift_dialog_mainPage.LayoutRoot.CloseButton
-                //Mouseover: 0x368FF8C552241695, Name: Root.NormalLayer.inventory_dialog_mainPage.inventory_button_exit
-                //Mouseover: 0xEDE91C4942014134, Name: Root.NormalLayer.SkillPane_main.LayoutRoot.CloseButton
-                //Mouseover: 0x368FF8C552241695, Name: Root.NormalLayer.inventory_dialog_mainPage.inventory_button_exit
-                //Mouseover: 0xF98A8466DE237BD5, Name: Root.NormalLayer.vendor_dialog_mainPage.vendor_button_exit
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("Error in StopInternals: {0} {1}");
             }
         }
 
@@ -1126,36 +961,35 @@ namespace Trinity.UI
 
         private static void StartGizmoTestHandler(object sender, RoutedEventArgs routedEventArgs)
         {
-            try
-            {
-                var unitAtts = new Dictionary<int, HashSet<ActorAttributeType>>();
-                var unitLastDamage = new Dictionary<int, float>();
+            //try
+            //{
+            //    var unitAtts = new Dictionary<int, HashSet<ActorAttributeType>>();
+            //    var unitLastDamage = new Dictionary<int, float>();
 
-                if (!ZetaDia.IsInGame)
-                    return;
+            //    if (!ZetaDia.IsInGame)
+            //        return;
 
-                using (ZetaDia.Memory.AcquireFrame())
-                {
-                    ZetaDia.Actors.Update();
-                    Func<DiaObject, bool> isValid = u => u != null && u.IsValid && u.CommonData != null && u.CommonData.IsValid && !u.CommonData.IsDisposed;
-                    var testunits = ZetaDia.Actors.GetActorsOfType<DiaGizmo>(true).Where(u => isValid(u) && u.RActorId != ZetaDia.Me.RActorId).ToList();
-                    var testunit = testunits.OrderBy(u => u.Distance).FirstOrDefault();
-                    if (testunit == null || testunit.CommonData == null)
-                    {
-                        return;
-                    }
+            //    using (ZetaDia.Memory.AcquireFrame())
+            //    {
+            //        ZetaDia.Actors.Update();
+            //        Func<DiaObject, bool> isValid = u => u != null && u.IsValid && u.CommonData != null && u.CommonData.IsValid && !u.CommonData.IsDisposed;
+            //        var testunits = ZetaDia.Actors.GetActorsOfType<DiaGizmo>(true).Where(u => isValid(u) && u.RActorId != ZetaDia.Me.RActorId).ToList();
+            //        var testunit = testunits.OrderBy(u => u.Distance).FirstOrDefault();
+            //        if (testunit == null || testunit.CommonData == null)
+            //        {
+            //            return;
+            //        }
 
-                    var acd = MemoryWrapper.Create<ActorCommonData>(testunit.CommonData.BaseAddress);
-                    var atts = new Trinity.Framework.Objects.Memory.Attributes.Attributes(acd.FastAttributeGroupId);
-                    Logger.Log($"-- Dumping Attribtues for {acd.Name} (Sno={acd.ActorSnoId} Ann={acd.AnnId}) at {acd.Position} ----");
-                    Logger.Log(atts + "\r\n");
-                }
-
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("Error Starting LazyCache: " + ex);
-            }
+            //        var acd = MemoryWrapper.Create<ActorCommonData>(testunit.CommonData.BaseAddress);
+            //        var atts = new Trinity.Framework.Objects.Memory.Attributes.Attributes(acd.FastAttributeGroupId);
+            //        Logger.Log($"-- Dumping Attribtues for {acd.Name} (Sno={acd.ActorSnoId} Ann={acd.AnnId}) at {acd.Position} ----");
+            //        Logger.Log(atts + "\r\n");
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Logger.LogError("Error Starting LazyCache: " + ex);
+            //}
         }
 
         private static void MonitorActors(DiaObject testunit, Dictionary<int, HashSet<ActorAttributeType>> unitAtts)
@@ -1187,7 +1021,6 @@ namespace Trinity.UI
                     }
                     else
                     {
-
                         //var annIdResult = testunit.CommonData.GetAttribute<int>((annId << 12) + ((int)att & 0xFFF));
                         //var acdIdResult = testunit.CommonData.GetAttribute<int>((acdId << 12) + ((int)att & 0xFFF));
                         //if (annIdResult > 0 || acdIdResult > 0)
@@ -1255,7 +1088,6 @@ namespace Trinity.UI
                 }
             }
 
-
             //var List<SNOPower> testPowers = new List<SNOPower>
             //{
             //    SNOPower.None
@@ -1277,8 +1109,6 @@ namespace Trinity.UI
             //}
 
             //Logger.Log("),"testunit.CommonData.GetAttribute<int>((SNOPower.None << 12) + ((int)ActorAttributeType.None & 0xFFF)));
-
-
         }
 
         private static void StopTestHandler(object sender, RoutedEventArgs routedEventArgs)
@@ -1316,8 +1146,6 @@ namespace Trinity.UI
         //        Logger.LogError("Error Starting LazyCache: " + ex);
         //    }
         //}
-
-
 
         private static void btnClick_UpgradeRares(object sender, RoutedEventArgs routedEventArgs)
         {
@@ -1434,7 +1262,6 @@ namespace Trinity.UI
                         var r = !Coroutines.Town.ConvertMaterials.CanRun(fromMaterial, to) || CheckConvertTimeout() || !result;
                         working = !r;
                         return r;
-
                     }, 50, () => working = false);
                     conversions++;
                 }
@@ -1532,14 +1359,12 @@ namespace Trinity.UI
                 {
                     UIElement.FromHash(0x244BD04C84DF92F1).FindDecedentsWithText("jeweler");
                 }
-
             }
             catch (Exception ex)
             {
                 Logger.LogError("Error btnClick_ScanUIElement:" + ex);
             }
         }
-
 
         private static void ShowMainTrinityUIEventHandler(object sender, RoutedEventArgs routedEventArgs)
         {
@@ -1630,21 +1455,19 @@ namespace Trinity.UI
                 Logger.Log("This feature has been disabled");
                 return;
 
-                var result = MessageBox.Show("Are you sure? This may remove and salvage/sell items from your stash! Permanently!", "Clean Stash Confirmation",
-                    MessageBoxButton.OKCancel);
+                //var result = MessageBox.Show("Are you sure? This may remove and salvage/sell items from your stash! Permanently!", "Clean Stash Confirmation",
+                //    MessageBoxButton.OKCancel);
 
-                if (result == MessageBoxResult.OK)
-                {
-
-                    //CleanStash.RunCleanStash();
-                }
+                //if (result == MessageBoxResult.OK)
+                //{
+                //    //CleanStash.RunCleanStash();
+                //}
             }
             catch (Exception ex)
             {
                 Logger.LogError("Error Cleaning Stash:" + ex);
             }
         }
-
 
         #region TabMethods
 
@@ -1666,7 +1489,7 @@ namespace Trinity.UI
         {
             var button = new Button
             {
-                //Width = 120,                
+                //Width = 120,
                 Background = Brushes.DarkSlateBlue,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,
@@ -1742,7 +1565,7 @@ namespace Trinity.UI
             _tabGrid.Children.Add(group);
         }
 
-        static TextBlock CreateTitle(string title)
+        private static TextBlock CreateTitle(string title)
         {
             return new TextBlock
             {
@@ -1758,7 +1581,6 @@ namespace Trinity.UI
             };
         }
 
-        #endregion
+        #endregion TabMethods
     }
 }
-

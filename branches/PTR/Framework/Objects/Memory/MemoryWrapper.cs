@@ -1,15 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
 using System.Text;
-using System.Threading.Tasks;
 using Trinity.Framework.Helpers;
-using Trinity.Framework.Objects.Enums;
-using Trinity.Framework.Objects.Memory.Misc;
-using Trinity.Framework.Objects.Memory.Sno.Types;
+using Trinity.Framework.Objects.Memory.Sno.Helpers;
+using Trinity.Framework.Objects.Memory;
 using Zeta.Game;
 
 namespace Trinity.Framework.Objects.Memory
@@ -31,7 +27,9 @@ namespace Trinity.Framework.Objects.Memory
 
         public IntPtr ParentAddress { get; private set; }
 
-        public MemoryWrapper() { }
+        public MemoryWrapper()
+        {
+        }
 
         public MemoryWrapper(IntPtr ptr)
         {
@@ -61,7 +59,7 @@ namespace Trinity.Framework.Objects.Memory
                 item.ParentAddress = BaseAddress;
                 if (serializeBaseAddress != default(IntPtr))
                     item.BaseSerializationAddress = serializeBaseAddress;
-                return item;             
+                return item;
             }
             catch (Exception ex)
             {
@@ -78,7 +76,7 @@ namespace Trinity.Framework.Objects.Memory
             var item = Create<T>(BaseAddress + offset);
             item.SetSerializationInfo(BaseAddress, data);
             item.ParentAddress = BaseAddress;
-            return item;        
+            return item;
         }
 
         protected T ReadAbsoluteObject<T>(IntPtr address) where T : MemoryWrapper, new()
@@ -89,7 +87,7 @@ namespace Trinity.Framework.Objects.Memory
             }
             try
             {
-                return Create<T>(address);             
+                return Create<T>(address);
             }
             catch (Exception ex)
             {
@@ -164,14 +162,14 @@ namespace Trinity.Framework.Objects.Memory
 
         public List<T> ReadObjects<T>(int offset, int count) where T : MemoryWrapper, new()
         {
-            var size = typeof (T).SizeOf();
+            var size = typeof(T).SizeOf();
             if (size <= 0)
                 return null;
-         
-            var results = new List<T>();       
+
+            var results = new List<T>();
             for (var i = 0; i < count; i++)
             {
-                var item = Create<T>(BaseAddress + offset + i*size);
+                var item = Create<T>(BaseAddress + offset + i * size);
                 item.ParentAddress = BaseAddress;
                 results.Add(item);
             }
@@ -187,7 +185,7 @@ namespace Trinity.Framework.Objects.Memory
             var results = new List<T>();
             var count = 0;
             while (true)
-            {          
+            {
                 var item = Create<T>(BaseAddress + offset + count * size);
                 if (item == null)
                     break;
@@ -201,7 +199,7 @@ namespace Trinity.Framework.Objects.Memory
             return results;
         }
 
-        public List<T> ReadObjects<T>(int offset, Predicate<T> stopCondition, Func<T,T> creatorFunc) where T : MemoryWrapper, new()
+        public List<T> ReadObjects<T>(int offset, Predicate<T> stopCondition, Func<T, T> creatorFunc) where T : MemoryWrapper, new()
         {
             var size = typeof(T).SizeOf();
             if (size <= 0)
@@ -233,11 +231,11 @@ namespace Trinity.Framework.Objects.Memory
 
         public List<T> ReadObjects<T>(int offset, int count, Predicate<T> validCondition) where T : MemoryWrapper, new()
         {
-            var size = typeof (T).SizeOf();
+            var size = typeof(T).SizeOf();
             if (size <= 0)
                 return null;
-       
-            var results = new List<T>();       
+
+            var results = new List<T>();
             for (var i = 0; i < count; i++)
             {
                 var item = Create<T>(BaseAddress + offset + i * size);
@@ -385,7 +383,7 @@ namespace Trinity.Framework.Objects.Memory
                     {
                         Logger.LogError($"ReadSerializedObjects was unable to get a size for {type.Name}");
                     }
-                    
+
                     if (serializeBase == IntPtr.Zero)
                     {
                         if (BaseSerializationAddress != IntPtr.Zero)
@@ -439,7 +437,6 @@ namespace Trinity.Framework.Objects.Memory
 
         protected virtual void OnUpdated()
         {
-
         }
 
         public T ReadPointer<T>(IntPtr address) where T : MemoryWrapper, new()
@@ -455,7 +452,7 @@ namespace Trinity.Framework.Objects.Memory
         {
             if (!IsValid)
                 return default(T);
-                 
+
             var ptr = ReadOffset<IntPtr>(offset);
             return ReadAbsoluteObject<T>(ptr);
         }
@@ -485,9 +482,3 @@ namespace Trinity.Framework.Objects.Memory
     //    public int Length;
     //}
 }
-
-
-
-
-
-

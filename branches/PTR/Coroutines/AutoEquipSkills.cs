@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Framework;
 using Trinity.Framework.Objects;
 using Trinity.Reference;
@@ -20,6 +17,7 @@ namespace Trinity.Coroutines
         private int _lastLevel;
 
         private static AutoEquipSkills _instance;
+
         public static AutoEquipSkills Instance
         {
             get { return _instance ?? (_instance = (new AutoEquipSkills())); }
@@ -46,7 +44,7 @@ namespace Trinity.Coroutines
 
             //if (DateTime.UtcNow.Subtract(Settings.TrinityPlugin.BotStartTime).TotalSeconds < 10)
             //    return false;
-       
+
             if (_lastLevel == level)
                 return false;
 
@@ -62,7 +60,7 @@ namespace Trinity.Coroutines
         private Build _lastBuild;
 
         private async Task<bool> Equip()
-        {           
+        {
             var builds = GetBuildsForClass(Core.Player.ActorClass);
             var build = builds.OrderByDescending(b => b.Level).FirstOrDefault(b => b.Level <= Core.Player.Level);
             if (build == null)
@@ -86,14 +84,19 @@ namespace Trinity.Coroutines
             {
                 case ActorClass.Witchdoctor:
                     return WitchDoctorLevelingBuilds;
+
                 case ActorClass.Crusader:
                     return CrusaderLevelingBuilds;
+
                 case ActorClass.DemonHunter:
                     return DemonHunterLevelingBuilds;
+
                 case ActorClass.Wizard:
                     return WizardLevelingBuilds;
+
                 case ActorClass.Barbarian:
                     return BarbarianLevelingBuilds;
+
                 case ActorClass.Monk:
                     return MonkLevelingBuilds;
             }
@@ -148,7 +151,7 @@ namespace Trinity.Coroutines
                     {  Skills.Crusader.IronSkin, Runes.Crusader.None },
                     {  Skills.Crusader.Provoke, Runes.Crusader.None },
                     {  Skills.Crusader.ShieldBash, Runes.Crusader.ShatteredShield }
-                },            
+                },
                 Passives = new List<Passive>
                 {
                     Passives.Crusader.Fervor
@@ -1230,8 +1233,8 @@ namespace Trinity.Coroutines
 
         public List<Build> WitchDoctorLevelingBuilds = new List<Build>
         {
-            new Build {                                  
-                Level = 3,              
+            new Build {
+                Level = 3,
                 Skills = new Dictionary<Skill, Rune>
                 {
                     {  Skills.WitchDoctor.CorpseSpiders, Runes.WitchDoctor.None },
@@ -1410,11 +1413,6 @@ namespace Trinity.Coroutines
                     Passives.WitchDoctor.FetishSycophants
                 }
             },
-
         };
-
-
     }
-
 }
-

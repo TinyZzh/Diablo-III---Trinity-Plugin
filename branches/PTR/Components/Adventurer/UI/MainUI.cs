@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using Trinity.Components.Adventurer.Util;
 using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Components.Adventurer.UI
@@ -9,7 +8,7 @@ namespace Trinity.Components.Adventurer.UI
     internal static class MainUI
     {
         private static Grid _mainTabGrid;
-        static Button _configureAdventurerButton;
+        private static Button _configureAdventurerButton;
 
         internal static void InstallButtons()
         {
@@ -42,7 +41,6 @@ namespace Trinity.Components.Adventurer.UI
 
         internal static void RemoveButtons()
         {
-
             Application.Current.Dispatcher.Invoke(
                 () =>
                 {
@@ -71,7 +69,6 @@ namespace Trinity.Components.Adventurer.UI
                 Margin = new Thickness(428, 10, 0, 0),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
-
             };
             button.Click += Configure_Click; ;
             return button;
@@ -86,7 +83,6 @@ namespace Trinity.Components.Adventurer.UI
                 {
                     try
                     {
-
                         instance.ShowDialog();
                     }
                     catch (Exception ex)
@@ -96,7 +92,5 @@ namespace Trinity.Components.Adventurer.UI
                 });
             }
         }
-
-
     }
 }

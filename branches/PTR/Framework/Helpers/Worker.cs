@@ -9,7 +9,9 @@ namespace Trinity.Framework.Helpers
     /// </summary>
     public class Worker
     {
-        public Worker() { }
+        public Worker()
+        {
+        }
 
         private static Thread _thread;
         private static Func<bool> _worker;
@@ -17,7 +19,9 @@ namespace Trinity.Framework.Helpers
         public static int WaitTime;
 
         public delegate void WorkerEvent();
+
         public static event WorkerEvent OnStopped = () => { };
+
         public static event WorkerEvent OnStarted = () => { };
 
         public static bool IsRunning
@@ -61,13 +65,13 @@ namespace Trinity.Framework.Helpers
         public static void Stop()
         {
             try
-            {               
+            {
                 if (!IsRunning)
                     return;
 
                 Logger.LogDebug("Shutting down thread");
-               
-                _thread.Abort(new { RequestingThreadId = Thread.CurrentThread.ManagedThreadId});
+
+                _thread.Abort(new { RequestingThreadId = Thread.CurrentThread.ManagedThreadId });
             }
             catch (Exception)
             {
@@ -85,7 +89,7 @@ namespace Trinity.Framework.Helpers
             while (_working)
             {
                 try
-                {                    
+                {
                     Thread.Sleep(Math.Max(1, WaitTime));
 
                     if (_worker == null)
@@ -98,7 +102,7 @@ namespace Trinity.Framework.Helpers
                 {
                     _working = false;
                     Logger.LogDebug("Aborting Thread: {0}, StateInfo={1}", _thread.ManagedThreadId, ex.ExceptionState);
-                    Thread.ResetAbort();                    
+                    Thread.ResetAbort();
                 }
                 catch (Exception ex)
                 {
@@ -110,6 +114,5 @@ namespace Trinity.Framework.Helpers
 
             OnStopped.Invoke();
         }
-
     }
 }

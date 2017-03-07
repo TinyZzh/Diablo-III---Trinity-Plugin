@@ -63,7 +63,6 @@ namespace Trinity.Components.Adventurer.Game.Quests
 
             // Try to get the kill bounty
 
-
             //// Try to get the kill bounty
             //if (bounty == null && bountyInfo.Info.DisplayName.Replace("Bounty: ", string.Empty).StartsWith("Kill ") && TryGetKillBounty((int)bountyInfo.Quest, out bounty))
             //{
@@ -85,7 +84,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
             if (bounty == null)
             {
                 bounty = new GenericBountyCoroutine((int)bountyInfo.Quest);
-                //if (bounty.QuestData.Steps.First().Objectives.Any(o => o.ObjectiveType == QuestStepObjectiveType.EnterLevelArea)) 
+                //if (bounty.QuestData.Steps.First().Objectives.Any(o => o.ObjectiveType == QuestStepObjectiveType.EnterLevelArea))
                 //    return null;
                 //if (bounty.QuestData.QuestType != BountyQuestType.KillMonster && bounty.QuestData.QuestType != BountyQuestType.ClearZone)
                 //    return null;
@@ -103,5 +102,4 @@ namespace Trinity.Components.Adventurer.Game.Quests
             return bounty;
         }
     }
-
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Trinity.Framework.Objects.Enums;
 using Trinity.UI.UIComponents;
 
@@ -55,7 +54,7 @@ namespace Trinity.Framework.Objects.Attributes
     public sealed class RoutineBehaviorAttribute : Attribute
     {
     }
-    
+
     /// <summary>
     ///     Attribute to set author name.
     /// </summary>
@@ -80,6 +79,7 @@ namespace Trinity.Framework.Objects.Attributes
         {
             SourcePropertyName = sourcePropertyName;
         }
+
         public string SourcePropertyName { get; set; }
     }
 
@@ -102,7 +102,6 @@ namespace Trinity.Framework.Objects.Attributes
         public ComparisonOperator Operator { get; set; }
         public string SourcePropertyName { get; set; }
     }
-
 
     /// <summary>
     ///     Attribute to set limits to decimal property.
@@ -127,16 +126,16 @@ namespace Trinity.Framework.Objects.Attributes
         NoLabel = 1 << 0,
         Unused = 1 << 1,
         Inline = 1 << 2,
-    }    
+    }
 
     /// <summary>
-        ///     Attribute to set limits to decimal property.
-        /// </summary>
-        [AttributeUsage(AttributeTargets.Property)]
+    ///     Attribute to set limits to decimal property.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property)]
     public sealed class UIControlAttribute : Attribute
     {
-        //public UIControlAttribute(UIControlType type, 
-        //    string sourceEnumerable = "", 
+        //public UIControlAttribute(UIControlType type,
+        //    string sourceEnumerable = "",
         //    string displayProperty = "",
         //    string storageProperty = "",
         //    UIControlOptions options = UIControlOptions.None)
@@ -175,20 +174,22 @@ namespace Trinity.Framework.Objects.Attributes
             {
                 Flags = (Enum)flags;
                 Mask = Convert.ToInt64(flags);
-            }            
-            else if (type == typeof (int))
+            }
+            else if (type == typeof(int))
             {
                 Mask = Convert.ToInt64(flags);
             }
-            else if (type == typeof(long))        
+            else if (type == typeof(long))
             {
                 Mask = (long)flags;
             }
         }
+
         public FlagExclusionAttribute(int flags)
         {
             Mask = Convert.ToInt64(flags);
         }
+
         public FlagExclusionAttribute(long flags)
         {
             Mask = flags;

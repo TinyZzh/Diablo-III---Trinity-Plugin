@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Trinity.Components.Combat;
 using Trinity.Coroutines;
-using Trinity.Framework.Objects.Enums;
 using Trinity.Modules;
 using Zeta.Bot.Coroutines;
 using Zeta.Bot.Navigation;

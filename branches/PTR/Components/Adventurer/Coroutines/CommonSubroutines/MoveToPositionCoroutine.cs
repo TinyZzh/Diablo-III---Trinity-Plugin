@@ -5,7 +5,6 @@ using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Adventurer.Game.Quests;
 using Zeta.Bot.Navigation;
 using Zeta.Common;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Components.Adventurer.Coroutines.CommonSubroutines
 {
@@ -42,7 +41,7 @@ namespace Trinity.Components.Adventurer.Coroutines.CommonSubroutines
             }
         }
 
-        #endregion
+        #endregion State
 
         public bool IsDone
         {
@@ -51,7 +50,7 @@ namespace Trinity.Components.Adventurer.Coroutines.CommonSubroutines
 
         public MoveToPositionCoroutine(int worldId, Vector3 position, int distance = 1)
         {
-            _startTime = DateTime.UtcNow;            
+            _startTime = DateTime.UtcNow;
             _distance = distance;
             _worldId = worldId;
             _position = position;
@@ -63,10 +62,13 @@ namespace Trinity.Components.Adventurer.Coroutines.CommonSubroutines
             {
                 case States.NotStarted:
                     return NotStarted();
+
                 case States.Moving:
                     return await Moving();
+
                 case States.Completed:
                     return Completed();
+
                 case States.Failed:
                     return Failed();
             }
@@ -101,7 +103,7 @@ namespace Trinity.Components.Adventurer.Coroutines.CommonSubroutines
             {
                 return false;
             }
-            
+
             if (NavigationCoroutine.LastResult == CoroutineResult.Failure)
             {
                 Util.Logger.DebugSetting("[MoveToPosition] CoroutineResult.Failure");
@@ -137,6 +139,5 @@ namespace Trinity.Components.Adventurer.Coroutines.CommonSubroutines
             _isDone = true;
             return true;
         }
-
     }
 }

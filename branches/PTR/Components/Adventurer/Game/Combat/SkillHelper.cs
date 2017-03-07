@@ -22,6 +22,7 @@ namespace Trinity.Components.Adventurer.Game.Combat
                 {
                     default:
                         return SNOPower.Weapon_Melee_Instant;
+
                     case ItemType.Axe:
                     case ItemType.CeremonialDagger:
                     case ItemType.Dagger:
@@ -34,8 +35,10 @@ namespace Trinity.Components.Adventurer.Game.Combat
                     case ItemType.Sword:
                     case ItemType.MightyWeapon:
                         return SNOPower.Weapon_Melee_Instant;
+
                     case ItemType.Wand:
                         return SNOPower.Weapon_Ranged_Wand;
+
                     case ItemType.Bow:
                     case ItemType.Crossbow:
                     case ItemType.HandCrossbow:
@@ -43,6 +46,7 @@ namespace Trinity.Components.Adventurer.Game.Combat
                 }
             }
         }
+
         /// <summary>
         /// Gets the default weapon distance based on the current equipped primary weapon
         /// </summary>
@@ -55,8 +59,10 @@ namespace Trinity.Components.Adventurer.Game.Combat
                     case SNOPower.Weapon_Ranged_Instant:
                     case SNOPower.Weapon_Ranged_Projectile:
                         return 65f;
+
                     case SNOPower.Weapon_Ranged_Wand:
                         return 55f;
+
                     default:
                         return 12f;
                 }

@@ -16,10 +16,13 @@ namespace Trinity.Components.Adventurer.Game.Grid
 
         [DataMember]
         public int SceneSNO { get; set; }
+
         [DataMember]
         public List<NavCellDefinition> NavCellDefinitions { get; set; }
 
-        private SceneDefinition() { }
+        private SceneDefinition()
+        {
+        }
 
         public static SceneDefinition Create(Scene.NavMesh mesh, NavZone zone, NavZoneDef navZoneDef)
         {
@@ -42,6 +45,7 @@ namespace Trinity.Components.Adventurer.Game.Grid
             var sceneDefinition = new SceneDefinition { SceneSNO = mesh.SceneSnoId };
 
             #region NavCells
+
             var cachedNavCells = new List<NavCellDefinition>();
             var sceneNavCells = navZoneDef.NavCells.ToList();
 
@@ -50,12 +54,11 @@ namespace Trinity.Components.Adventurer.Game.Grid
                 cachedNavCells.AddRange(sceneNavCells.Select(NavCellDefinition.Create));
             }
             sceneDefinition.NavCellDefinitions = cachedNavCells;
-            #endregion
 
+            #endregion NavCells
 
             if (USE_DISK_CACHE)
             {
-
                 var serializedScene = JsonSerializer.Serialize(sceneDefinition);
                 File.WriteAllText(filePath, serializedScene);
             }

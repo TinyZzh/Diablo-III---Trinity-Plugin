@@ -56,7 +56,7 @@ namespace Trinity.Framework.Helpers
             if (currentName != null && currentName.Contains(text))
             {
                 elements.Add(element);
-            }   
+            }
 
             foreach (var child in UIElement.GetChildren(element))
             {
@@ -65,7 +65,7 @@ namespace Trinity.Framework.Helpers
                     elements.AddRange(childResullts);
             }
 
-            return elements;        
+            return elements;
         }
 
         public static void DebugTestClickChildren(this UIElement element)
@@ -76,7 +76,7 @@ namespace Trinity.Framework.Helpers
             foreach (var child in UIElement.GetChildren(element))
             {
                 var result = child.SafeClick();
-                Logger.Log("Click {0} on {1} ({2})", result, child.Name, child.Hash);                
+                Logger.Log("Click {0} on {1} ({2})", result, child.Name, child.Hash);
                 Thread.Sleep(50);
             }
         }
@@ -91,7 +91,7 @@ namespace Trinity.Framework.Helpers
             if (!caseSensitive)
                 name = name.ToLowerInvariant();
 
-            for (int i = parts.Count()-1; i >= 0; i--)
+            for (int i = parts.Count() - 1; i >= 0; i--)
             {
                 var part = caseSensitive ? parts[i] : parts[i].ToLowerInvariant();
 
@@ -103,13 +103,13 @@ namespace Trinity.Framework.Helpers
                 else
                 {
                     if (part == name)
-                        break;                    
+                        break;
                 }
 
                 parts.RemoveAt(i);
             }
 
-            var path = string.Join(".",parts);
+            var path = string.Join(".", parts);
 
             return UIElement.FromName(path);
         }
@@ -117,7 +117,7 @@ namespace Trinity.Framework.Helpers
         public static UIElement GetParent(this UIElement element)
         {
             var parts = element.Name.Split('.').ToList();
-            parts.RemoveAt(parts.Count-1);
+            parts.RemoveAt(parts.Count - 1);
             var path = string.Join(".", parts);
             return UIElement.FromName(path);
         }
@@ -149,6 +149,5 @@ namespace Trinity.Framework.Helpers
 
             return element.Click();
         }
-
     }
 }

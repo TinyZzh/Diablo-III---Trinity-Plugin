@@ -29,7 +29,7 @@ namespace Trinity.ProfileTags
                 ZetaDia.Me.CommonData.IsValid &&
                 !ZetaDia.Me.IsDead &&
                 (
-                    ZetaDia.IsLoadingWorld ||
+                    ZetaDia.Globals.IsLoadingWorld ||
                     ZetaDia.Me.CommonData.AnimationState == AnimationState.Casting ||
                     ZetaDia.Me.CommonData.AnimationState == AnimationState.Channeling ||
                     ZetaDia.Me.CommonData.AnimationState == AnimationState.Transform ||

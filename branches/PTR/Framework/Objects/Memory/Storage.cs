@@ -1,6 +1,6 @@
 ﻿using System;
 using Trinity.Framework.Objects.Memory.Misc;
-using Trinity.Framework.Objects.Memory.Symbols.Types;
+using Trinity.Framework.Objects.Memory;
 using Zeta.Game;
 
 namespace Trinity.Framework.Objects.Memory
@@ -13,12 +13,12 @@ namespace Trinity.Framework.Objects.Memory
 
         public int CurrentGameLevel => ReadOffset<int>(0x30);
 
-        public Difficulty CurrentDifficulty => (Difficulty)ReadOffset<int>(0x04)+1;
-
-        public int GameTick => ReadOffset<int>(0x118);
+        public GameDifficulty CurrentDifficulty => (GameDifficulty)ReadOffset<int>(0x04)+1;
+        public int GameTick => ReadOffset<int>(0x120);
     }
 
 }
+
 
 
 

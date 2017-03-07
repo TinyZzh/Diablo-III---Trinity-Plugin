@@ -126,6 +126,7 @@ namespace Trinity.Framework.Avoidance.Structures
 
         private DateTime _lastUpdatedDistance = DateTime.MinValue;
         private float _cachedDistance;
+
         public float Distance
         {
             get
@@ -140,6 +141,7 @@ namespace Trinity.Framework.Avoidance.Structures
         }
 
         private List<AvoidanceNode> _adjacentNodes;
+
         public List<AvoidanceNode> AdjacentNodes
         {
             get { return _adjacentNodes ?? (_adjacentNodes = AvoidanceGrid.Instance.GetNeighbors(this)); }
@@ -156,5 +158,4 @@ namespace Trinity.Framework.Avoidance.Structures
             return unchecked((int)Center.X * 31 ^ (int)Center.Y * 79);
         }
     }
-
 }

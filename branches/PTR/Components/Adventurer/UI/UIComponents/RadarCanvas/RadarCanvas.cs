@@ -15,13 +15,13 @@ using Zeta.Bot.Navigation;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals.SNO;
+
 //using Adventurer.Game.Grid;
 using LineSegment = System.Windows.Media.LineSegment;
 using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
 {
-
     public class RadarCanvas : Canvas
     {
         public RadarCanvas()
@@ -90,21 +90,21 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
             get { return (IList)GetValue(ItemsSourceProperty); }
         }
 
-        static void OnItemsSourceChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+        private static void OnItemsSourceChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
             var radarCanvas = obj as RadarCanvas;
             if (radarCanvas != null)
                 radarCanvas.OnItemsSourceChanged(args);
         }
 
-        #endregion
+        #endregion ItemSource Property
 
         #region ItemSource Changed Event Handling
 
         /// <summary>
         /// ItemSource binding on control is set
         /// </summary>
-        void OnItemsSourceChanged(DependencyPropertyChangedEventArgs args)
+        private void OnItemsSourceChanged(DependencyPropertyChangedEventArgs args)
         {
             UpdateData();
 
@@ -120,12 +120,12 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
         /// <summary>
         /// When objects inside ItemSource collection change
         /// </summary>
-        void OnItemsSourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+        private void OnItemsSourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
             UpdateData();
         }
 
-        #endregion
+        #endregion ItemSource Changed Event Handling
 
         #region Canvas Changed Event Handling
 
@@ -146,7 +146,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
             return availableSize;
         }
 
-        #endregion
+        #endregion Canvas Changed Event Handling
 
         /// <summary>
         /// Go through the ItemSource collection and calculate their canvas positions
@@ -160,7 +160,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
                     if (DesiredSize.Height <= 0 || DesiredSize.Width <= 0)
                         return;
 
-                    if (!IsVisible || ZetaDia.Me == null || ZetaDia.IsLoadingWorld || !ZetaDia.IsInGame)
+                    if (!IsVisible || ZetaDia.Me == null || ZetaDia.Globals.IsLoadingWorld || !ZetaDia.IsInGame)
                         return;
 
                     Objects.Clear();
@@ -171,7 +171,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
                     // and whos position all other points should be plotted against.
 
                     using (ZetaDia.Memory.AcquireFrame())
-                    {                        
+                    {
                         var center = ZetaDia.Me;
                         if (center == null)
                             return;
@@ -180,15 +180,14 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
                         {
                             CachedActorName = "Player",
                             CachedActorRadius = 6,
-                            CachedActorPosition = AdvDia.MyPosition,                            
+                            CachedActorPosition = AdvDia.MyPosition,
                         };
 
                         CenterActor.Morph.CanvasData = CanvasData;
-                        CenterActor.Morph.Update(AdvDia.MyPosition);                 
+                        CenterActor.Morph.Update(AdvDia.MyPosition);
                         CanvasData.CenterVector = CenterActor.CachedActorPosition;
                         CanvasData.CenterMorph = CenterActor.Morph;
                         UpdateRelativeDrawings();
-                     
 
                         UpdateGridNodesData();
                         UpdateSceneData();
@@ -197,7 +196,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
 
                 // Trigger Canvas to Render
                 InvalidateVisual();
-
             }
             catch (Exception ex)
             {
@@ -217,7 +215,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
             if (!BotEvents.IsBotRunning)
                 return;
 
-            if (ZetaDia.IsLoadingWorld)
+            if (ZetaDia.Globals.IsLoadingWorld)
                 return;
 
             try
@@ -228,7 +226,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
                 var maxX = instance.MaxX;
                 var minY = instance.MinY;
                 var maxY = instance.MaxY;
-
 
                 if (maxX <= 0 && maxY <= 0)
                     return;
@@ -250,7 +247,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
             {
                 Logger.Error($"RadarCanvas Exception, UpdateGridNodesData: {ex}");
             }
-
         }
 
         public List<ExplorationNode> NavigableNodes = new IndexedList<ExplorationNode>();
@@ -293,7 +289,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
             }
         }
 
-
         /// <summary>
         /// OnRender is a core part of Canvas, replace it with our render code. Can be manually triggered by InvalidateVisual();
         /// Its very important to minimize work in OnRender, use UpdateData() to cache whatever it is you need.
@@ -302,14 +297,13 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
         {
             using (new PerformanceLogger("RadarUI Render"))
             {
-
                 //if (Math.Abs(CanvasData.CanvasSize.Width) < 0.001f && Math.Abs(CanvasData.CanvasSize.Height) < 0.001f || CanvasData.CenterVector == Vector3.Zero)
                 //    return;
 
                 //if (Math.Abs(CenterActor.Point.X) < 0.001f && Math.Abs(CenterActor.Point.Y) < 0.001f)
                 //    return;
 
-                //if (!ZetaDia.IsInGame || ZetaDia.IsLoadingWorld)
+                //if (!ZetaDia.IsInGame || ZetaDia.Globals.IsLoadingWorld)
                 //    return;
 
                 try
@@ -319,7 +313,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
                     DrawPointsOfInterest(dc, CanvasData);
                     DrawCurrentPath(dc, CanvasData);
                     DrawNavigation(dc, CanvasData);
-                    DrawActor(dc, CanvasData, CenterActor);             
+                    DrawActor(dc, CanvasData, CenterActor);
                 }
                 catch (Exception ex)
                 {
@@ -343,7 +337,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
                     var toObjectivePen = new Pen(Brushes.Yellow, 0.2);
                     dc.DrawLine(toObjectivePen, canvas.Center, marker.Position.ToCanvasPoint());
                 }
-
             }
             catch (Exception ex)
             {
@@ -365,7 +358,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
             }
         }
 
-
         private void DrawGridNodes(DrawingContext dc, CanvasData canvas)
         {
             var curX = 0;
@@ -380,7 +372,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
                 //        var node = ExplorationGrid.Instance.InnerGrid[x, y] as ExplorationNode;
                 //        if (node != null && node.HasEnoughNavigableCells)
                 //        {
-
                 foreach (var node in NavigableNodes)
                 {
                     Brush nodeBrush;
@@ -417,10 +408,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
 
                 //    }
                 //}
-
-
-
-
             }
             catch (Exception ex)
             {
@@ -494,6 +481,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
                     using (var groupdc = drawing.Open())
                     {
                         #region Terrain
+
                         if (adventurerScene.Cells != null)
                         {
                             var figures = new List<PathFigure>();
@@ -516,9 +504,11 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
                             geo.GetOutlinedPathGeometry();
                             groupdc.DrawGeometry(RadarResources.WalkableTerrain, null, geo);
                         }
-                        #endregion
+
+                        #endregion Terrain
 
                         #region Scene Borders
+
                         var sceneTopLeft = new Vector3(adventurerScene.Min.X, adventurerScene.Min.Y, 0);
                         var sceneTopRight = new Vector3(adventurerScene.Max.X, adventurerScene.Min.Y, 0);
                         var sceneBottomLeft = new Vector3(adventurerScene.Min.X, adventurerScene.Max.Y, 0);
@@ -528,9 +518,11 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
                         groupdc.DrawGeometry(null, RadarResources.WalkableTerrainBorder, new LineGeometry(sceneBottomLeft.ToCanvasPoint(), sceneBottomRight.ToCanvasPoint()));
                         groupdc.DrawGeometry(null, RadarResources.WalkableTerrainBorder, new LineGeometry(sceneTopLeft.ToCanvasPoint(), sceneBottomLeft.ToCanvasPoint()));
                         groupdc.DrawGeometry(null, RadarResources.WalkableTerrainBorder, new LineGeometry(sceneTopRight.ToCanvasPoint(), sceneBottomRight.ToCanvasPoint()));
-                        #endregion
+
+                        #endregion Scene Borders
 
                         #region Scene Title
+
                         var textPoint = adventurerScene.Center.ToVector3().ToCanvasPoint();
                         var glyphRun = DrawingUtilities.CreateGlyphRun(adventurerScene.Name, 10, textPoint);
                         groupdc.DrawGlyphRun(Brushes.Wheat, glyphRun);
@@ -538,9 +530,11 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
                         textPoint.Y = textPoint.Y + 20;
                         glyphRun = DrawingUtilities.CreateGlyphRun($"[{adventurerScene.Min.X}, {adventurerScene.Min.Y}][{adventurerScene.Max.X}, {adventurerScene.Max.Y}]" + (adventurerScene.Max - adventurerScene.Min) + " " + (adventurerScene.HasChild ? "HasSubScene" : string.Empty) + " " + (adventurerScene.SubScene != null ? " (Loaded)" : string.Empty), 8, textPoint);
                         groupdc.DrawGlyphRun(Brushes.Wheat, glyphRun);
-                        #endregion
+
+                        #endregion Scene Title
 
                         #region Nodes
+
                         var sceneNodePen = new Pen { Brush = Brushes.Black, Thickness = 0.1f };
                         foreach (var node in adventurerScene.Nodes)
                         {
@@ -570,11 +564,8 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
                             //    //groupdc.DrawEllipse(Brushes.LightSlateGray, sceneNodePen, navPoint.Center.ToVector3().ToCanvasPoint(), (float)GridSize / 2, (float)GridSize / 2);
                             //}
                         }
-                        #endregion
 
-
-
-
+                        #endregion Nodes
                     }
 
                     // Have to use SceneHash as key because scenes can appear multiple times with the same name
@@ -586,7 +577,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
                         WorldId = adventurerScene.DynamicWorldId,
                         //Image = new DrawingImage(drawing),
                         //ImageRect = drawing.Bounds
-
                     });
                 }
 
@@ -603,14 +593,12 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
                     //    continue;
                     //dc.DrawImage(pair.Value.Image, pair.Value.ImageRect);
                 }
-
             }
             catch (Exception ex)
             {
                 Logger.Debug("Exception in RadarUI.DrawScenes(). {0} {1} {2}", ex.Message, ex.InnerException, ex);
             }
         }
-
 
         private Brush GetNavCellBrush(NavCellFlags flags)
         {
@@ -733,9 +721,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
         //                //}
         //                #endregion
 
-
-
-
         //            }
 
         //            // Have to use SceneHash as key because scenes can appear multiple times with the same name
@@ -772,7 +757,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
         //    }
         //}
 
-
         private void DrawActor(DrawingContext dc, CanvasData canvas, RadarObject radarObject)
         {
             try
@@ -792,7 +776,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
                 dc.DrawEllipse(Brushes.Transparent, RadarResources.LineOfSightLightPen, radarObject.Point, 45 * GridSize, 45 * GridSize);
 
                 DrawActorLabel(dc, canvas, radarObject, res.Brush);
-
             }
             catch (Exception ex)
             {
@@ -851,15 +834,5 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
             var glyphRun = DrawingUtilities.CreateGlyphRun(text, textSize, radarObject.Point);
             dc.DrawGlyphRun(brush, glyphRun);
         }
-
-
-
     }
-
-
-
-
-
-
-
 }

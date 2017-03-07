@@ -14,9 +14,8 @@ namespace Trinity.Framework.Helpers
     // https://msdn.microsoft.com/en-us/library/acxa5b99(VS.80).aspx
 
     [StructLayout(LayoutKind.Explicit)]
-    struct Union
+    internal struct Union
     {
-
         [FieldOffset(0)]
         public uint Number;
 

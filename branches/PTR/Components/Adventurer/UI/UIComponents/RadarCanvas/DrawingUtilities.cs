@@ -80,15 +80,16 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
                              rect.Top + rect.Height / 2);
         }
 
-        private static Dictionary<ushort,double> _glyphWidths = new Dictionary<ushort, double>();
+        private static Dictionary<ushort, double> _glyphWidths = new Dictionary<ushort, double>();
         private static GlyphTypeface _glyphTypeface;
+
         public static GlyphRun CreateGlyphRun(string text, double size, Point position)
         {
             if (_glyphTypeface == null)
             {
                 Typeface typeface = new Typeface("Arial");
                 if (!typeface.TryGetGlyphTypeface(out _glyphTypeface))
-                    throw new InvalidOperationException("No glyphtypeface found");                
+                    throw new InvalidOperationException("No glyphtypeface found");
             }
 
             ushort[] glyphIndexes = new ushort[text.Length];
@@ -117,6 +118,5 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
 
             return glyphRun;
         }
-
     }
 }

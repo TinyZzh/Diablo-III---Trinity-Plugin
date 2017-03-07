@@ -1,19 +1,15 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Components.Combat;
 using Trinity.Framework;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
-using Trinity.Items;
-using Trinity.Reference;
-using Zeta.Game;
 using Zeta.Bot;
 using Zeta.Bot.Navigation;
+using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
 
@@ -26,7 +22,7 @@ namespace Trinity.Coroutines
     public class AutoEquipItems
     {
         public AutoEquipItems()
-        {            
+        {
             // Always run after start to help with debugging
             BotMain.OnStart += ibot => { _lastFreeBackpackSlots = 0; };
         }
@@ -35,17 +31,18 @@ namespace Trinity.Coroutines
         private int _lastFreeBackpackSlots;
 
         private static AutoEquipItems _instance;
+
         public static AutoEquipItems Instance
         {
             get { return _instance ?? (_instance = (new AutoEquipItems())); }
-        }        
+        }
 
         public async Task<bool> Execute()
         {
             if (!Core.Settings.Items.AutoEquipItems)
                 return false;
 
-            if (!Core.Player.IsValid || Core.Player.IsInCombat || !ZetaDia.IsInGame || ZetaDia.IsLoadingWorld)
+            if (!Core.Player.IsValid || Core.Player.IsInCombat || !ZetaDia.IsInGame || ZetaDia.Globals.IsLoadingWorld)
                 return false;
 
             if (DateTime.UtcNow.Subtract(_lastEquipCheckTime).TotalSeconds < 5)
@@ -65,7 +62,7 @@ namespace Trinity.Coroutines
 
             foreach (var item in ZetaDia.Me.Inventory.Equipped)
             {
-                // DB's Inventory Equipped collection sometimes gets messed up and has duplicate items. 
+                // DB's Inventory Equipped collection sometimes gets messed up and has duplicate items.
                 if (_equippedItems.ContainsKey(item.InventorySlot))
                     continue;
 
@@ -78,7 +75,7 @@ namespace Trinity.Coroutines
             {
                 CachedACDItem currentlyEquipped;
                 if (!_equippedItems.TryGetValue(slot, out currentlyEquipped))
-                     _equippedItems.Add(slot, null);
+                    _equippedItems.Add(slot, null);
 
                 var backpackItems = GetBackpackItemsForSlot(slot);
                 if (backpackItems == null)
@@ -96,10 +93,10 @@ namespace Trinity.Coroutines
                         Core.Player.ActorClass == ActorClass.Crusader || // Crusader uses shield bash ability to level.
                         Core.Player.ActorClass == ActorClass.DemonHunter && !backpackItem.IsClassItem))
                         continue;
-                         
-                    var bestUpgradeFoundSoFar = _upgrades[slot];                    
+
+                    var bestUpgradeFoundSoFar = _upgrades[slot];
                     if (IsUpgrade(backpackItem, currentlyEquipped, bestUpgradeFoundSoFar))
-                        _upgrades[slot] = backpackItem;                                         
+                        _upgrades[slot] = backpackItem;
                 }
             }
 
@@ -119,7 +116,7 @@ namespace Trinity.Coroutines
                 //    if (offhand != null)
                 //        UnequipItem(offhand);
                 //}
-                    
+
                 await EquipItem(upgrade.Value.AcdItem, upgrade.Key);
                 await Coroutine.Sleep(500);
             }
@@ -160,7 +157,7 @@ namespace Trinity.Coroutines
                 while (ZetaDia.Me.LoopingAnimationEndTime > 0)
                 {
                     await Coroutine.Sleep(750);
-                }                        
+                }
                 return true;
             }
             return false;
@@ -170,7 +167,7 @@ namespace Trinity.Coroutines
         /// Sockets equipped or backpack weapons rubies.
         /// </summary>
         private async Task<bool> EquipWeaponSocket()
-        {           
+        {
             var gem = GetGemForAttributeType(PlayerAttributeType.Strength);
             if (gem == null)
                 return false;
@@ -195,7 +192,7 @@ namespace Trinity.Coroutines
                 return true;
             }
 
-            return false;            
+            return false;
         }
 
         /// <summary>
@@ -203,7 +200,7 @@ namespace Trinity.Coroutines
         /// </summary>
         /// <returns></returns>
         private async Task<bool> EquipArmorSockets()
-        { 
+        {
             var attrType = GetAttributeTypeForClass(Core.Player.ActorClass);
             var gem = GetGemForAttributeType(attrType);
 
@@ -243,9 +240,11 @@ namespace Trinity.Coroutines
                 case ActorClass.Crusader:
                 case ActorClass.Barbarian:
                     return PlayerAttributeType.Strength;
+
                 case ActorClass.Monk:
                 case ActorClass.DemonHunter:
                     return PlayerAttributeType.Dexterity;
+
                 case ActorClass.Witchdoctor:
                 case ActorClass.Wizard:
                     return PlayerAttributeType.Intelligence;
@@ -266,17 +265,19 @@ namespace Trinity.Coroutines
         private ACDItem GetGemForAttributeType(PlayerAttributeType attributeType)
         {
             var gems = ZetaDia.Me.Inventory.Backpack.Where(i => i.IsGem).OrderByDescending(i => i.GemQuality);
-            
+
             switch (attributeType)
             {
                 case PlayerAttributeType.Strength:
                     return gems.FirstOrDefault(i => i.Name.ToLower().Contains("ruby"));
+
                 case PlayerAttributeType.Intelligence:
                     return gems.FirstOrDefault(i => i.Name.ToLower().Contains("topaz"));
+
                 case PlayerAttributeType.Dexterity:
                     return gems.FirstOrDefault(i => i.Name.ToLower().Contains("emerald"));
-            }  
-            
+            }
+
             return gems.FirstOrDefault(i => i.Name.ToLower().Contains("amethyst"));
         }
 
@@ -338,11 +339,15 @@ namespace Trinity.Coroutines
         }
 
         private IEnumerable<CachedACDItem> _backpackEquipment;
+
         public IEnumerable<CachedACDItem> BackpackEquipment
         {
-            get { return _backpackEquipment ?? (_backpackEquipment = ZetaDia.Me.Inventory.Backpack
-                    .Select(CachedACDItem.GetTrinityItem)
-                    .Where(i => i.AcdItem.IsValid && i.IsEquipment && i.IsUsableByClass(Core.Player.ActorClass) && !i.IsUnidentified)); }
+            get
+            {
+                return _backpackEquipment ?? (_backpackEquipment = ZetaDia.Me.Inventory.Backpack
+                  .Select(CachedACDItem.GetTrinityItem)
+                  .Where(i => i.AcdItem.IsValid && i.IsEquipment && i.IsUsableByClass(Core.Player.ActorClass) && !i.IsUnidentified));
+            }
         }
 
         private IEnumerable<InventorySlot> _slots = new List<InventorySlot>
@@ -397,7 +402,7 @@ namespace Trinity.Coroutines
                 var offHandWeight = GetWeight(equippedOffhand);
                 var result = oldItemWeight + offHandWeight < newItemWeight;
 
-                Logger.LogVerbose("   > {0}={1}, MainHand({3})+Offhand({4}) >> {2}", 
+                Logger.LogVerbose("   > {0}={1}, MainHand({3})+Offhand({4}) >> {2}",
                     newItem.RealName, newItemWeight, result ? "Upgrade" : "Skip", oldItemWeight, offHandWeight);
 
                 return result;
@@ -416,7 +421,7 @@ namespace Trinity.Coroutines
                 return result;
             }
 
-            Logger.LogVerbose("   > {0}={1} >> {2}",  newItem.RealName, newItemWeight, oldItemWeight < newItemWeight ? "Upgrade" : "Skip");
+            Logger.LogVerbose("   > {0}={1} >> {2}", newItem.RealName, newItemWeight, oldItemWeight < newItemWeight ? "Upgrade" : "Skip");
             return oldItemWeight < newItemWeight;
         }
 
@@ -447,11 +452,11 @@ namespace Trinity.Coroutines
             }
 
             if (item.Quality >= ItemQuality.Legendary && IsModifiedByGemOfEase(item.AcdItem))
-                 return weight + 50000;
+                return weight + 50000;
 
             if (ZetaDia.Me.Level < item.AcdItem.RequiredLevel)
                 return 0;
-                
+
             return weight;
         }
 
@@ -465,8 +470,8 @@ namespace Trinity.Coroutines
 
         private double GetOffhandWeight(CachedACDItem item)
         {
-            var classMultiplier = item.IsClassItem ? 1.5 : 1;            
-            return (GetAttributeWeight(item) + GetCriticalWeight(item) + item.AcdItem.DamageAverageTotalAll) * classMultiplier;            
+            var classMultiplier = item.IsClassItem ? 1.5 : 1;
+            return (GetAttributeWeight(item) + GetCriticalWeight(item) + item.AcdItem.DamageAverageTotalAll) * classMultiplier;
         }
 
         private double GetArmorWeight(CachedACDItem item)
@@ -488,7 +493,7 @@ namespace Trinity.Coroutines
 
         private double GetMiscWeight(CachedACDItem item)
         {
-            return (int) item.Quality + item.Armor/20;
+            return (int)item.Quality + item.Armor / 20;
         }
 
         private double GetCriticalWeight(CachedACDItem item)
@@ -672,7 +677,6 @@ namespace Trinity.Coroutines
 
         public CachedACDItem()
         {
-
         }
 
         public int CompareTo(object obj)
@@ -736,7 +740,6 @@ namespace Trinity.Coroutines
                 Logger.LogError("Error getting TrinityItem {0}", ex.Message);
                 return default(CachedACDItem);
             }
-
         }
 
         private static bool GetIsOffhand(CachedACDItem cItem)
@@ -802,6 +805,7 @@ namespace Trinity.Coroutines
                 case TrinityItemBaseType.WeaponTwoHand:
                 case TrinityItemBaseType.FollowerItem:
                     return true;
+
                 default:
                     return false;
             }
@@ -878,8 +882,4 @@ namespace Trinity.Coroutines
             }
         }
     }
-
 }
-
-
-

@@ -1,33 +1,24 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web.UI.WebControls.WebParts;
-using Buddy.Coroutines;
-using IronPython.Modules;
 using Trinity.Components.Combat;
 using Trinity.Coroutines.Resources;
 using Trinity.Framework;
+using Trinity.Framework.Actors.ActorTypes;
+using Trinity.Framework.Events;
+using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects.Enums;
-using Trinity.Items;
+using Trinity.Reference;
 using Zeta.Bot;
-using Zeta.Bot.Coroutines;
-using Zeta.Bot.Logic;
 using Zeta.Bot.Navigation;
 using Zeta.Bot.Settings;
 using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
 using Zeta.Game.Internals.Actors.Gizmos;
-using Trinity.Framework.Actors;
-using Trinity.Framework.Actors.ActorTypes;
-using Trinity.Framework.Events;
-using Trinity.Framework.Helpers;
-using Trinity.Framework.Objects.Memory.Containers;
-using Trinity.Reference;
-using Extensions = Zeta.Common.Extensions;
 
 namespace Trinity.Coroutines.Town
 {
@@ -116,7 +107,7 @@ namespace Trinity.Coroutines.Town
 
                 var isStashFull = false;
 
-                // Get items again to make sure they are valid and current this tick           
+                // Get items again to make sure they are valid and current this tick
                 var freshItems = Inventory.Backpack.Items.Where(ShouldStash).Where(i => AllowedToStash(dontStashCraftingMaterials, i)).ToList();
                 if (!freshItems.Any())
                 {
@@ -468,7 +459,6 @@ namespace Trinity.Coroutines.Town
             }
         }
 
-
         public static int GetBestStashLocation(TrinityItem item, out int col, out int row)
         {
             col = 0;
@@ -588,7 +578,6 @@ namespace Trinity.Coroutines.Town
 
         private static bool CanStackOnPage(TrinityItem item, int stashPageNumber, ref int col, ref int row, InventoryMap itemsOnStashPage)
         {
-
             if (item.IsUnidentified)
                 return false;
 
@@ -704,7 +693,6 @@ namespace Trinity.Coroutines.Town
             return false;
         }
 
-
         public class InventoryMap : Dictionary<Tuple<int, int>, TrinityItem>
         {
             public InventoryMap(Dictionary<Tuple<int, int>, TrinityItem> dictionary) : base(dictionary)
@@ -770,7 +758,4 @@ namespace Trinity.Coroutines.Town
 
         public static int TotalStashPages => ZetaDia.Me.NumSharedStashSlots / 70;
     }
-
 }
-
-

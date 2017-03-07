@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Components.Adventurer.Cache;
+using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Adventurer.Game.Rift;
 using Trinity.Components.Adventurer.Settings;
-using Trinity.Components.Adventurer.Game.Actors;
-using Trinity.Coroutines.Resources;
 using Trinity.Reference;
 using Zeta.Bot;
 using Zeta.Bot.Coroutines;
@@ -17,7 +16,6 @@ using Zeta.Common;
 using Zeta.Common.Helpers;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
 using RiftStep = Trinity.Components.Adventurer.Game.Rift.RiftStep;
 
 namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
@@ -67,7 +65,6 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             }
         }
 
-
         private async Task<bool> GetCoroutine()
         {
             if (_isPulsing)
@@ -81,18 +78,25 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             {
                 case States.NotStarted:
                     return NotStarted();
+
                 case States.UrshiSpawned:
                     return UrshiSpawned();
+
                 case States.SearchingForUrshi:
                     return await SearchingForUrshi();
+
                 case States.MovingToUrshi:
                     return await MovingToUrshi();
+
                 case States.InteractingWithUrshi:
                     return await InteractingWithUrshi();
+
                 case States.UpgradingGems:
                     return await UpgradingGems();
+
                 case States.Completed:
                     return Completed();
+
                 case States.Failed:
                     return Failed();
             }
@@ -111,7 +115,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
 
         public Guid Id { get; set; }
 
-        #endregion
+        #endregion State
 
         private bool NotStarted()
         {
@@ -134,7 +138,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                 State = States.MovingToUrshi;
                 return false;
             }
-            if (!await ExplorationCoroutine.Explore(new HashSet<int> {AdvDia.CurrentLevelAreaId}))
+            if (!await ExplorationCoroutine.Explore(new HashSet<int> { AdvDia.CurrentLevelAreaId }))
             {
                 Util.Logger.Info("[UpgradeGems] Exploration for urshi has failed, the sadness!");
                 State = States.Failed;
@@ -188,7 +192,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             _enableGemUpgradeLogs = false;
             State = States.UpgradingGems;
             return false;
-        }        
+        }
 
         private async Task<bool> UpgradingGems()
         {
@@ -207,7 +211,6 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                 Util.Logger.Info("[UpgradeGems] I couldn't find any gems to upgrade, failing.");
                 State = States.Failed;
                 return false;
-
             }
             _enableGemUpgradeLogs = false;
             if (AdvDia.RiftQuest.Step == RiftStep.Cleared)
@@ -235,7 +238,6 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                 State = States.Completed;
                 return false;
             }
-
 
             return false;
         }
@@ -299,10 +301,10 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
 
         private void PulseChecks()
         {
-            if (BrainBehavior.IsVendoring || !ZetaDia.IsInGame || ZetaDia.IsLoadingWorld || ZetaDia.IsPlayingCutscene)
+            if (BrainBehavior.IsVendoring || !ZetaDia.IsInGame || ZetaDia.Globals.IsLoadingWorld || ZetaDia.Globals.IsPlayingCutscene)
             {
                 DisablePulse();
-            }            
+            }
         }
 
         public void Dispose()
@@ -326,6 +328,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             DisablePulse();
             return true;
         }
+
         private bool Failed()
         {
             DisablePulse();

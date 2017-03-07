@@ -7,7 +7,7 @@ using Zeta.TreeSharp;
 namespace Trinity.Framework.Helpers
 {
     /// <summary>
-    /// Runs a Task<T> as a Buddy Coroutine (via TreeSharp Composite) in a new thread.    
+    /// Runs a Task<T> as a Buddy Coroutine (via TreeSharp Composite) in a new thread.
     /// </summary>
     public class TaskDispatcher
     {
@@ -16,16 +16,16 @@ namespace Trinity.Framework.Helpers
         public static int TickDelayMin = 5;
         public static int TickDelayMax = 15;
 
-        public static void Start<T>(Func<object, Task<T>> task, Func<object,bool> stopCondition = null)
+        public static void Start<T>(Func<object, Task<T>> task, Func<object, bool> stopCondition = null)
         {
             var isStarted = false;
 
             Worker.Start(() =>
-            {                   
+            {
                 using (new AquireFrameHelper())
                 {
                     try
-                    {                        
+                    {
                         if (!isStarted)
                         {
                             Logger.Log("[TaskDispatcher] Starting Task, thread={0}", Thread.CurrentThread.ManagedThreadId);
@@ -36,7 +36,7 @@ namespace Trinity.Framework.Helpers
                         Tick();
                     }
                     catch (InvalidOperationException ex)
-                    {                            
+                    {
                         Logger.LogDebug("[TaskDispatcher] Exception: {0}", ex);
                     }
                 }
@@ -57,7 +57,7 @@ namespace Trinity.Framework.Helpers
                         return true;
                     }
                 }
-             
+
                 Thread.Sleep(Components.Adventurer.Util.Randomizer.GetRandomNumber(TickDelayMin, TickDelayMax));
                 return false;
             });

@@ -5,7 +5,6 @@ using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Game.Combat;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Zeta.Common;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Components.Adventurer.Coroutines
 {
@@ -71,12 +70,16 @@ namespace Trinity.Components.Adventurer.Coroutines
             {
                 case States.NotStarted:
                     return NotStarted();
+
                 case States.Clearing:
                     return await Clearing();
+
                 case States.ForceClearing:
                     return await ForceClearing();
+
                 case States.Cleared:
                     return await Cleared();
+
                 case States.Completed:
                     return Completed();
             }
@@ -111,7 +114,6 @@ namespace Trinity.Components.Adventurer.Coroutines
                 State = States.Completed;
                 return true;
             }
-
 
             return false;
         }

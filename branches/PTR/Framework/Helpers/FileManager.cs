@@ -143,6 +143,7 @@ namespace Trinity.Framework.Helpers
                 return _DemonBuddyPath;
             }
         }
+
         private static string _DemonBuddyPath;
 
         /// <summary>
@@ -158,6 +159,7 @@ namespace Trinity.Framework.Helpers
                 return _PluginPath;
             }
         }
+
         private static string _PluginPath;
 
         /// <summary>
@@ -271,6 +273,7 @@ namespace Trinity.Framework.Helpers
                 return _trinityImagesPath;
             }
         }
+
         private static string _trinityImagesPath;
 
         /// <summary>
@@ -288,6 +291,7 @@ namespace Trinity.Framework.Helpers
                 return _trinityLogsPath;
             }
         }
+
         private static string _trinityLogsPath;
 
         /// <summary>
@@ -331,6 +335,7 @@ namespace Trinity.Framework.Helpers
         }
 
         private static string _battleTagName;
+
         public static string BattleTagName
         {
             get
@@ -350,6 +355,7 @@ namespace Trinity.Framework.Helpers
                 return _UiPath;
             }
         }
+
         private static string _UiPath;
 
         public static string VersionPath
@@ -361,6 +367,7 @@ namespace Trinity.Framework.Helpers
                 return _versionPath;
             }
         }
+
         private static string _versionPath;
 
         /// <summary>
@@ -378,8 +385,8 @@ namespace Trinity.Framework.Helpers
                 return _referencePath;
             }
         }
-        private static string _referencePath;
 
+        private static string _referencePath;
 
         /// <summary>
         /// Copies a file and if necessary creates destination directory
@@ -416,7 +423,7 @@ namespace Trinity.Framework.Helpers
             {
                 Path.Combine(DemonBuddyPath, "Routines", "GilesPlugin"),
                 Path.Combine(DemonBuddyPath, "Routines", "GilesBlankCombatRoutine"),
-                Path.Combine(DemonBuddyPath, "Routines", "Trinity")                
+                Path.Combine(DemonBuddyPath, "Routines", "Trinity")
             };
 
             foreach (string routinePath in oldRoutines)
@@ -539,6 +546,7 @@ namespace Trinity.Framework.Helpers
             //file is not locked
             return false;
         }
+
         public static bool IsFileReadLocked(FileInfo file)
         {
             if (!File.Exists(file.FullName))

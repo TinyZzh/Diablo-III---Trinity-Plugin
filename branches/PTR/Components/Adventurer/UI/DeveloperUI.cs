@@ -8,12 +8,12 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 using System.Windows.Media;
 using Trinity.Components.Adventurer.Cache;
+using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Game.Events;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Adventurer.Game.Quests;
 using Trinity.Components.Adventurer.UI.UIComponents;
 using Trinity.Components.Adventurer.Util;
-using Trinity.Components.Adventurer.Game.Actors;
 using Zeta.Bot;
 using Zeta.Common;
 using Zeta.Game;
@@ -28,7 +28,7 @@ using TabControl = System.Windows.Controls.TabControl;
 
 namespace Trinity.Components.Adventurer.UI
 {
-    class DeveloperUI
+    internal class DeveloperUI
     {
         private static TabItem _tabItem;
 
@@ -42,7 +42,6 @@ namespace Trinity.Components.Adventurer.UI
                     if (tabs == null)
                         return;
                     tabs.Items.Remove(_tabItem);
-
                 }
             );
         }
@@ -68,7 +67,6 @@ namespace Trinity.Components.Adventurer.UI
             Application.Current.Dispatcher.Invoke(
                 () =>
                 {
-
                     var mainWindow = Application.Current.MainWindow;
                     //var settings = new UniformGrid
                     //{
@@ -124,10 +122,8 @@ namespace Trinity.Components.Adventurer.UI
                     //tests.Children.Add(CreateButton("Dump Bounty Quests", DumpBountyQuests_Click));
                     //tests.Children.Add(CreateButton("Dump Backpack", DumpBackpack_Click));
                     //tests.Children.Add(CreateButton("Dump Party Members", DumpParty_Click));
-                    //tests.Children.Add(CreateButton("Dump Test1", DumpDynamicBounty_Click));                    
+                    //tests.Children.Add(CreateButton("Dump Test1", DumpDynamicBounty_Click));
                     //tests.Children.Add(CreateButton("Dump Waypoint", DumpWaypoint_Click));
-
-
 
                     //var mapUiContainer = new StackPanel { Background = Brushes.DimGray, Height = 176, Margin = new Thickness(0, 2, 0, 2)};
 
@@ -159,8 +155,6 @@ namespace Trinity.Components.Adventurer.UI
                     uniformGrid.Children.Add(coroutineHelpers2);
                     uniformGrid.Children.Add(coroutineHelpers3);
 
-
-
                     _tabItem = new TabItem
                     {
                         Header = "Adventurer",
@@ -191,7 +185,8 @@ namespace Trinity.Components.Adventurer.UI
         }
 
         #region UI Elements
-        static TextBlock CreateTitle(string title)
+
+        private static TextBlock CreateTitle(string title)
         {
             return new TextBlock
             {
@@ -207,7 +202,7 @@ namespace Trinity.Components.Adventurer.UI
             };
         }
 
-        static Button CreateButton(string title, RoutedEventHandler eventFunc, Thickness margin = default(Thickness), Brush backrground = null)
+        private static Button CreateButton(string title, RoutedEventHandler eventFunc, Thickness margin = default(Thickness), Brush backrground = null)
         {
             if (margin == default(Thickness))
             {
@@ -229,7 +224,8 @@ namespace Trinity.Components.Adventurer.UI
             button.Click += eventFunc;
             return button;
         }
-        #endregion
+
+        #endregion UI Elements
 
         private static void DumpExperience_Click(object sender, RoutedEventArgs e)
         {
@@ -240,7 +236,6 @@ namespace Trinity.Components.Adventurer.UI
             }
             try
             {
-
                 if (!ZetaDia.IsInGame)
                     return;
 
@@ -272,10 +267,8 @@ namespace Trinity.Components.Adventurer.UI
                     Util.Logger.Raw("Result {0}", result);
                     Util.Logger.Raw("Result2 {0}", result2);
 
-
                     Util.Logger.Raw(" ");
                 }
-
             }
             catch (Exception ex)
             {
@@ -283,12 +276,12 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void ToggleRadarUI_Click(object sender, RoutedEventArgs e)
+        private static void ToggleRadarUI_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Dispatcher.Invoke(CacheUI.ToggleRadarWindow);
         }
 
-        static void DumpLevelAreaScenes_Click(object sender, RoutedEventArgs e)
+        private static void DumpLevelAreaScenes_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -326,7 +319,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void DumpActor_Click(object sender, RoutedEventArgs e)
+        private static void DumpActor_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -355,7 +348,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -383,7 +375,6 @@ namespace Trinity.Components.Adventurer.UI
                     Util.Logger.Raw("Actor Details for actorId: {0}", actorId);
                     ObjectDumper.Write(actor, 1);
                     Logger.Raw("Untargetable: {0}", actor.CommonData.GetAttribute<int>(ActorAttributeType.Untargetable));
-
                 }
             }
             catch (Exception ex)
@@ -392,7 +383,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void DumpMe_Click(object sender, RoutedEventArgs e)
+        private static void DumpMe_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -405,7 +396,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -413,7 +403,6 @@ namespace Trinity.Components.Adventurer.UI
 
                     ZetaDia.Actors.Update();
                     //AdvDia.Update();
-
 
                     //foreach (var attribute in Enum.GetValues(typeof(ActorAttributeType)).Cast<ActorAttributeType>())
                     //{
@@ -431,7 +420,6 @@ namespace Trinity.Components.Adventurer.UI
                             Logger.Raw("Offset for BnetHeroId: {0}", i);
                         }
                     }
-
                 }
             }
             catch (Exception ex)
@@ -440,7 +428,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void DumpBountyQuests_Click(object sender, RoutedEventArgs e)
+        private static void DumpBountyQuests_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -476,10 +464,8 @@ namespace Trinity.Components.Adventurer.UI
                         ObjectDumper.Write(quest, 1);
                     }
 
-
                     Logger.Raw(" ");
                     ObjectDumper.Write(ZetaDia.Me, 1);
-
                 }
             }
             catch (Exception ex)
@@ -488,7 +474,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void DumpObjects_Click(object sender, RoutedEventArgs e)
+        private static void DumpObjects_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -501,7 +487,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -537,7 +522,6 @@ namespace Trinity.Components.Adventurer.UI
                             );
                     }
 
-
                     var objects =
                         ZetaDia.Actors.GetActorsOfType<DiaObject>(true)
                             .Where(o => o.IsValid && o.CommonData != null && o.CommonData.IsValid)
@@ -563,7 +547,6 @@ namespace Trinity.Components.Adventurer.UI
                             );
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -571,7 +554,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void DumpBackpack_Click(object sender, RoutedEventArgs e)
+        private static void DumpBackpack_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -584,7 +567,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -599,7 +581,6 @@ namespace Trinity.Components.Adventurer.UI
 
                     foreach (var actor in objects)
                     {
-
                         Logger.Raw(
                             "ActorId: {0}, Type: {1}, Name: {2}",
                             actor.ActorSnoId,
@@ -609,7 +590,6 @@ namespace Trinity.Components.Adventurer.UI
                             );
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -620,7 +600,8 @@ namespace Trinity.Components.Adventurer.UI
         private static Dictionary<int, int> _partyMembersFirstHit = new Dictionary<int, int>();
         private static Dictionary<int, int> _partyMembersSecondtHit = new Dictionary<int, int>();
         private static bool isFirstHit = true;
-        static void DumpParty_Click(object sender, RoutedEventArgs e)
+
+        private static void DumpParty_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -633,7 +614,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -684,7 +664,6 @@ namespace Trinity.Components.Adventurer.UI
                     }
                     isFirstHit = !isFirstHit;
                 }
-
             }
             catch (Exception ex)
             {
@@ -692,7 +671,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void DumpMapMarkers_Click(object sender, RoutedEventArgs e)
+        private static void DumpMapMarkers_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -705,7 +684,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -723,7 +701,6 @@ namespace Trinity.Components.Adventurer.UI
                             ZetaDia.Minimap.Markers.CurrentWorldMarkers.OrderBy(
                                 m => Vector3.Distance(myPosition, m.Position)).Take(100))
                     {
-
                         var locationInfo = string.Format("x=\"{0:0}\" y=\"{1:0}\" z=\"{2:0}\" ", mapMarker.Position.X,
                             mapMarker.Position.Y, mapMarker.Position.Z);
                         Logger.Raw(
@@ -746,7 +723,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void DumpUnsupportedBounties_Click(object sender, RoutedEventArgs e)
+        private static void DumpUnsupportedBounties_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -759,7 +736,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -789,9 +765,7 @@ namespace Trinity.Components.Adventurer.UI
                     {
                         DumpBountyInfo(bountyInfo, wpNr);
                     }
-
                 }
-
             }
             catch (Exception ex)
             {
@@ -799,7 +773,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void DumpWaypoint_Click(object sender, RoutedEventArgs e)
+        private static void DumpWaypoint_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -812,7 +786,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -822,14 +795,12 @@ namespace Trinity.Components.Adventurer.UI
 
                     DumpNearbyWaypoint();
                 }
-
             }
             catch (Exception ex)
             {
                 Logger.Error(ex.ToString());
             }
         }
-
 
         public static void DumpNearbyWaypoint()
         {
@@ -846,13 +817,13 @@ namespace Trinity.Components.Adventurer.UI
                         ".LayoutRoot.Name").Text;
 
                 Logger.Raw("{{ {0}, new WaypointData({0}, {1}, {2}, \"{3}\") }}",
-                    wp.WaypointNumber, ZetaDia.CurrentLevelAreaSnoId, ZetaDia.CurrentWorldSnoId, name);
+                    wp.WaypointNumber, ZetaDia.CurrentLevelAreaSnoId, ZetaDia.Globals.WorldSnoId, name);
 
                 UIManager.ToggleWaypointMap();
             }
         }
 
-        static void DumpDynamicBounty_Click(object sender, RoutedEventArgs e)
+        private static void DumpDynamicBounty_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -865,7 +836,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -875,7 +845,6 @@ namespace Trinity.Components.Adventurer.UI
 
                     CheckForDynamicBounties();
                 }
-
             }
             catch (Exception ex)
             {
@@ -907,7 +876,7 @@ namespace Trinity.Components.Adventurer.UI
             ;
         }
 
-        static void DumpBountyInfo(BountyInfo bountyInfo, int waypointNumber)
+        private static void DumpBountyInfo(BountyInfo bountyInfo, int waypointNumber)
         {
             Logger.Raw("// {0} - {1} ({2})", bountyInfo.Act, bountyInfo.Info.DisplayName, (int)bountyInfo.Quest);
             Logger.Raw("Bounties.Add(new BountyData");
@@ -924,10 +893,9 @@ namespace Trinity.Components.Adventurer.UI
             Logger.Raw("    }");
             Logger.Raw("});");
             Logger.Raw(" ");
-
         }
 
-        static void MoveToPosition_Click(object sender, RoutedEventArgs e)
+        private static void MoveToPosition_Click(object sender, RoutedEventArgs e)
         {
             if (!ZetaDia.IsInGame || ZetaDia.Me == null)
                 return;
@@ -947,11 +915,10 @@ namespace Trinity.Components.Adventurer.UI
                 Logger.Raw("new MoveToPositionCoroutine({3}, new Vector3({0}, {1}, {2})),",
                     (int)ZetaDia.Me.Position.X, (int)ZetaDia.Me.Position.Y, (int)ZetaDia.Me.Position.Z,
                     AdvDia.CurrentWorldId);
-
             }
         }
 
-        static void MoveToScene_Click(object sender, RoutedEventArgs e)
+        private static void MoveToScene_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -965,7 +932,6 @@ namespace Trinity.Components.Adventurer.UI
                 ScenesStorage.Update();
                 SafeFrameLock.ExecuteWithinFrameLock(() =>
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -982,7 +948,6 @@ namespace Trinity.Components.Adventurer.UI
                         AdvDia.CurrentWorldId,
                         AdvDia.CurrentWorldScene.Name,
                         AdvDia.CurrentWorldScene.SubScene.Name);
-
                 }, true);
             }
             catch (Exception ex)
@@ -991,7 +956,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void MoveToScenePosition_Click(object sender, RoutedEventArgs e)
+        private static void MoveToScenePosition_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -1002,8 +967,6 @@ namespace Trinity.Components.Adventurer.UI
 
                 using (ZetaDia.Memory.AcquireFrame())
                 {
-
-
                     if (ZetaDia.Me == null)
                         return;
 
@@ -1032,7 +995,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void MoveToMapMarker_Click(object sender, RoutedEventArgs e)
+        private static void MoveToMapMarker_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -1045,7 +1008,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -1059,7 +1021,6 @@ namespace Trinity.Components.Adventurer.UI
                         ? (int)ZetaDia.ActInfo.ActiveBounty.Quest
                         : 0;
 
-
                     Logger.Raw(" ");
                     foreach (var objectiveMarker in objectiveMarkers)
                     {
@@ -1068,7 +1029,6 @@ namespace Trinity.Components.Adventurer.UI
                         Logger.Raw(" ");
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -1076,7 +1036,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void MoveToActor_Click(object sender, RoutedEventArgs e)
+        private static void MoveToActor_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -1089,7 +1049,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -1122,7 +1081,6 @@ namespace Trinity.Components.Adventurer.UI
                         Logger.Raw(" ");
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -1130,7 +1088,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void EnterLevelArea_Click(object sender, RoutedEventArgs e)
+        private static void EnterLevelArea_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -1143,7 +1101,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -1190,7 +1147,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void ClearLevelArea_Click(object sender, RoutedEventArgs e)
+        private static void ClearLevelArea_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -1203,7 +1160,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -1226,7 +1182,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void ClearAreaForNSeconds_Click(object sender, RoutedEventArgs e)
+        private static void ClearAreaForNSeconds_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -1239,7 +1195,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -1277,7 +1232,6 @@ namespace Trinity.Components.Adventurer.UI
                         0, 45);
                     Logger.Raw(" ");
                 }
-
             }
             catch (Exception ex)
             {
@@ -1285,7 +1239,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void MoveToPositionTag_Click(object sender, RoutedEventArgs e)
+        private static void MoveToPositionTag_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -1309,18 +1263,15 @@ namespace Trinity.Components.Adventurer.UI
                     if (ZetaDia.WorldInfo.IsGenerated)
                     {
                         Logger.Raw(
-                            $@"     <MoveToPosition questId=""{questId}"" stepId=""{questStep}"" worldSnoId=""{ZetaDia
-                                .CurrentWorldSnoId}"" levelAreaSnoId=""{ZetaDia.CurrentLevelAreaSnoId}"" sceneSnoId=""{sceneId}"" sceneName=""{sceneName}"" sceneX=""{scenePosition
+                            $@"     <MoveToPosition questId=""{questId}"" stepId=""{questStep}"" worldSnoId=""{ZetaDia.Globals.WorldSnoId}"" levelAreaSnoId=""{ZetaDia.CurrentLevelAreaSnoId}"" sceneSnoId=""{sceneId}"" sceneName=""{sceneName}"" sceneX=""{scenePosition
                                 .X:F0}"" sceneY=""{scenePosition.Y:F0}"" sceneZ=""{scenePosition.Z:F0}"" isGenerated=""true"" />");
                     }
                     else
                     {
                         Logger.Raw(
                             $@"     <MoveToPosition questId=""{questId}"" stepId=""{questStep}"" x=""{ZetaDia.Me
-                                .Position.X:F0}"" y=""{ZetaDia.Me.Position.Y:F0}"" z=""{ZetaDia.Me.Position.Z:F0}"" worldSnoId=""{ZetaDia
-                                .CurrentWorldSnoId}"" levelAreaSnoId=""{ZetaDia.CurrentLevelAreaSnoId}"" sceneSnoId=""{sceneId}"" sceneName=""{sceneName}"" sceneX=""{scenePosition
+                                .Position.X:F0}"" y=""{ZetaDia.Me.Position.Y:F0}"" z=""{ZetaDia.Me.Position.Z:F0}"" worldSnoId=""{ZetaDia.Globals.WorldSnoId}"" levelAreaSnoId=""{ZetaDia.CurrentLevelAreaSnoId}"" sceneSnoId=""{sceneId}"" sceneName=""{sceneName}"" sceneX=""{scenePosition
                                 .X:F0}"" sceneY=""{scenePosition.Y:F0}"" sceneZ=""{scenePosition.Z:F0}"" isGenerated=""false"" />");
-
                     }
                 }
             }
@@ -1330,7 +1281,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void IfWorld_Click(object sender, RoutedEventArgs e)
+        private static void IfWorld_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -1341,7 +1292,7 @@ namespace Trinity.Components.Adventurer.UI
                 {
                     Logger.Raw($@"
 
-        <If condition=""CurrentWorldId == {ZetaDia.CurrentWorldSnoId}"">
+        <If condition=""CurrentWorldId == {ZetaDia.Globals.WorldSnoId}"">
 
         </If>
                     ");
@@ -1353,7 +1304,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void IfScene_Click(object sender, RoutedEventArgs e)
+        private static void IfScene_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -1383,7 +1334,8 @@ namespace Trinity.Components.Adventurer.UI
                 Logger.Error(ex.ToString());
             }
         }
-        static void InteractTag_Click(object sender, RoutedEventArgs e)
+
+        private static void InteractTag_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -1420,7 +1372,7 @@ namespace Trinity.Components.Adventurer.UI
                         var actorId = actor?.ActorSnoId ?? 0;
                         var actorName = actor?.Name.Split('-').First() ?? string.Empty;
                         var scenePosition = actor != null ? AdvDia.CurrentWorldScene.GetRelativePosition(actor.Position) : Vector3.Zero;
-                        Logger.Raw($@"     <Interact questId=""{questId}"" stepId=""{questStep}"" actorId=""{actorId}"" actorName=""{actorName}"" x=""{ZetaDia.Me.Position.X:F0}"" y=""{ZetaDia.Me.Position.Y:F0}"" z=""{ZetaDia.Me.Position.Z:F0}"" worldSnoId=""{ZetaDia.CurrentWorldSnoId}"" levelAreaSnoId=""{ZetaDia.CurrentLevelAreaSnoId}"" sceneSnoId=""{sceneId}"" sceneName=""{sceneName}"" sceneX=""{scenePosition.X:F0}"" sceneY=""{scenePosition.Y:F0}"" sceneZ=""{scenePosition.Z:F0}"" />");
+                        Logger.Raw($@"     <Interact questId=""{questId}"" stepId=""{questStep}"" actorId=""{actorId}"" actorName=""{actorName}"" x=""{ZetaDia.Me.Position.X:F0}"" y=""{ZetaDia.Me.Position.Y:F0}"" z=""{ZetaDia.Me.Position.Z:F0}"" worldSnoId=""{ZetaDia.Globals.WorldSnoId}"" levelAreaSnoId=""{ZetaDia.CurrentLevelAreaSnoId}"" sceneSnoId=""{sceneId}"" sceneName=""{sceneName}"" sceneX=""{scenePosition.X:F0}"" sceneY=""{scenePosition.Y:F0}"" sceneZ=""{scenePosition.Z:F0}"" />");
                     }
                 }
             }
@@ -1452,7 +1404,7 @@ namespace Trinity.Components.Adventurer.UI
         //            var actor = ZetaDia.Me;
         //            var actorId = actor?.ActorSnoId ?? 0;
         //            var scenePosition = actor != null ? AdvDia.CurrentWorldScene.GetRelativePosition(actor.Position) : Vector3.Zero;
-        //            Logger.Raw($@"     <MoveToScenePosition questId=""{questId}"" stepId=""{questStep}"" actorId=""{actorId}"" worldSnoId=""{ZetaDia.CurrentWorldSnoId}"" levelAreaSnoId=""{ZetaDia.CurrentLevelAreaSnoId}"" sceneSnoId=""{sceneId}"" sceneName=""{sceneName}"" sceneX=""{scenePosition.X:F0}"" sceneY=""{scenePosition.Y:F0}"" sceneZ=""{scenePosition.Z:F0}"" />");
+        //            Logger.Raw($@"     <MoveToScenePosition questId=""{questId}"" stepId=""{questStep}"" actorId=""{actorId}"" worldSnoId=""{ZetaDia.Globals.WorldSnoId}"" levelAreaSnoId=""{ZetaDia.CurrentLevelAreaSnoId}"" sceneSnoId=""{sceneId}"" sceneName=""{sceneName}"" sceneX=""{scenePosition.X:F0}"" sceneY=""{scenePosition.Y:F0}"" sceneZ=""{scenePosition.Z:F0}"" />");
 
         //        }
         //    }
@@ -1462,7 +1414,7 @@ namespace Trinity.Components.Adventurer.UI
         //    }
         //}
 
-        static void MoveToMapMarkerTag_Click(object sender, RoutedEventArgs e)
+        private static void MoveToMapMarkerTag_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -1475,7 +1427,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -1489,7 +1440,6 @@ namespace Trinity.Components.Adventurer.UI
                         ? (int)ZetaDia.ActInfo.ActiveBounty.Quest
                         : 0;
 
-
                     Logger.Raw(" ");
                     foreach (var objectiveMarker in objectiveMarkers)
                     {
@@ -1498,7 +1448,6 @@ namespace Trinity.Components.Adventurer.UI
                         Logger.Raw(" ");
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -1506,7 +1455,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void MoveToActorTag_Click(object sender, RoutedEventArgs e)
+        private static void MoveToActorTag_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -1519,7 +1468,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -1552,7 +1500,6 @@ namespace Trinity.Components.Adventurer.UI
                         Logger.Raw(" ");
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -1560,7 +1507,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void EnterLevelAreaTag_Click(object sender, RoutedEventArgs e)
+        private static void EnterLevelAreaTag_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -1573,7 +1520,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -1620,7 +1566,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void ClearLevelAreaTag_Click(object sender, RoutedEventArgs e)
+        private static void ClearLevelAreaTag_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -1633,7 +1579,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -1656,7 +1601,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void ClearAreaForNSecondsTag_Click(object sender, RoutedEventArgs e)
+        private static void ClearAreaForNSecondsTag_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -1669,7 +1614,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -1707,7 +1651,6 @@ namespace Trinity.Components.Adventurer.UI
                         0, 45);
                     Logger.Raw(" ");
                 }
-
             }
             catch (Exception ex)
             {
@@ -1715,7 +1658,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void WaitForNSeconds_Click(object sender, RoutedEventArgs e)
+        private static void WaitForNSeconds_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -1728,7 +1671,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -1763,7 +1705,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void InteractWithUnit_Click(object sender, RoutedEventArgs e)
+        private static void InteractWithUnit_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -1776,7 +1718,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -1814,7 +1755,6 @@ namespace Trinity.Components.Adventurer.UI
                         Logger.Raw(" ");
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -1822,7 +1762,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        static void InteractWithGizmo_Click(object sender, RoutedEventArgs e)
+        private static void InteractWithGizmo_Click(object sender, RoutedEventArgs e)
         {
             if (BotEvents.IsBotRunning)
             {
@@ -1835,8 +1775,6 @@ namespace Trinity.Components.Adventurer.UI
                     return;
                 using (ZetaDia.Memory.AcquireFrame(true))
                 {
-
-
                     if (ZetaDia.Me == null)
                         return;
                     if (!ZetaDia.Me.IsValid)
@@ -1874,13 +1812,11 @@ namespace Trinity.Components.Adventurer.UI
                         Logger.Raw(" ");
                     }
                 }
-
             }
             catch (Exception ex)
             {
                 Logger.Error(ex.ToString());
             }
         }
-
     }
 }

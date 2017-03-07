@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Buddy.Overlay;
+using System;
 using System.Windows;
 using System.Windows.Threading;
-using Buddy.Overlay;
 using Zeta.Bot;
 using Zeta.Game;
 
@@ -39,7 +39,7 @@ namespace Trinity.Components.Adventurer.UI
 
         public virtual void OnInternalTimerTick()
         {
-            if (ZetaDia.Me == null || ZetaDia.Me.IsDead || IsDialogVisible || ZetaDia.IsLoadingWorld)
+            if (ZetaDia.Me == null || ZetaDia.Me.IsDead || IsDialogVisible || ZetaDia.Globals.IsLoadingWorld)
             {
                 Hide();
             }
@@ -98,10 +98,8 @@ namespace Trinity.Components.Adventurer.UI
             Control.Visibility = Visibility.Visible;
         }
 
-
         public void UITestMethod()
         {
-
         }
 
         public bool IsPaused { get; set; }

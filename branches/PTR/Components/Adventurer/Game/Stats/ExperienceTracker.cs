@@ -26,7 +26,7 @@ namespace Trinity.Components.Adventurer.Game.Stats
         {
             if (_startTime == DateTime.MinValue)
                 _startTime = DateTime.UtcNow;
-            _tickStartTime = DateTime.UtcNow;            
+            _tickStartTime = DateTime.UtcNow;
             CurrentExperience = 0;
             _tick++;
             _lastSeen = GetLastSeen();
@@ -54,7 +54,7 @@ namespace Trinity.Components.Adventurer.Game.Stats
                 ReportExperience(reporterName);
             }
             IsStarted = false;
-        }        
+        }
 
         private void ReportExperience(string reporterName)
         {
@@ -78,7 +78,6 @@ namespace Trinity.Components.Adventurer.Game.Stats
             if (MinExperience == 0 || MinExperience > ThisExpHour)
                 MinExperience = ThisExpHour;
 
-            
             Logger.Warn("[{0}] Runs count: {1}", reporterName, _tick);
             Logger.Warn("[{0}] This run time: {1}:{2:D2}:{3:D2}", reporterName, TimeOfLastRun.Hours, TimeOfLastRun.Minutes, TimeOfLastRun.Seconds);
             Logger.Warn("[{0}] Average run time: {1}:{2:D2}:{3:D2}", reporterName, AverageRunTime.Hours, AverageRunTime.Minutes, AverageRunTime.Seconds);

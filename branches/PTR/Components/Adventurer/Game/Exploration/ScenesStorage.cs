@@ -31,7 +31,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
         //        return SceneIds.GetOrAdd(AdvDia.WorldId, c => new HashSet<string>());
         //    }
         //}
-		
+
         static ScenesStorage()
         {
             GameEvents.OnWorldChanged += GameEvents_OnWorldChanged;
@@ -46,15 +46,16 @@ namespace Trinity.Components.Adventurer.Game.Exploration
 
         private static void PurgeOldScenes()
         {
-            var currentWorldDynamicId = ZetaDia.WorldId;
+            var currentWorldDynamicId = ZetaDia.Globals.WorldId;
             var now = DateTime.UtcNow;
             CurrentWorldScenes.RemoveAll(s => s.DynamicWorldId != currentWorldDynamicId && now.Subtract(s.GridCreatedTime).TotalSeconds > 240);
-        }		
+        }
 
         public static List<WorldScene> CurrentWorldScenes
         {
             get { return _currentWorldScenes ?? (_currentWorldScenes = new List<WorldScene>()); }
         }
+
         public static HashSet<string> CurrentWorldSceneIds
         {
             get { return _currentWorldSceneIds ?? (_currentWorldSceneIds = new HashSet<string>()); }
@@ -64,7 +65,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
         {
             get
             {
-                var worldId = ZetaDia.WorldId;
+                var worldId = ZetaDia.Globals.WorldId;
                 return
                     CurrentWorldScenes.FirstOrDefault(
                         s => s.DynamicWorldId == worldId && AdvDia.MyPosition.X >= s.Min.X && AdvDia.MyPosition.Y >= s.Min.Y && AdvDia.MyPosition.X <= s.Max.X && AdvDia.MyPosition.Y <= s.Max.Y);
@@ -72,8 +73,8 @@ namespace Trinity.Components.Adventurer.Game.Exploration
         }
 
         public static void Update()
-        {            
-            var currentWorldId = ZetaDia.WorldId;
+        {
+            var currentWorldId = ZetaDia.Globals.WorldId;
             if (currentWorldId <= 0)
                 return;
 
@@ -81,7 +82,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
             {
                 Logger.Debug("[SceneStorage] World has changed from {0} to {1}", _currentWorld, currentWorldId);
                 _currentWorld = currentWorldId;
-                Reset();                
+                Reset();
             }
 
             using (new PerformanceLogger("[ScenesStorage] Update Scenes", true))
@@ -104,7 +105,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
                     }
                     throw;
                 }
-                
+
                 int worldId = 0;
                 foreach (var scene in newScenes)
                 {
@@ -131,7 +132,6 @@ namespace Trinity.Components.Adventurer.Game.Exploration
                     }
                     catch (NullReferenceException)
                     {
-
                     }
                 }
 
@@ -145,7 +145,6 @@ namespace Trinity.Components.Adventurer.Game.Exploration
                     }
                     ScenesAdded?.Invoke(addedScenes);
                 }
-
             }
         }
 
@@ -160,7 +159,6 @@ namespace Trinity.Components.Adventurer.Game.Exploration
             };
             return sceneData;
         }
-
 
         public delegate void GridProviderEventHandler(List<WorldScene> provider);
 
@@ -191,7 +189,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
             foreach (var grid in GridStore.GetCurrentGrids())
             {
                 grid.Reset();
-            } 
+            }
         }
 
         public static void ResetVisited()

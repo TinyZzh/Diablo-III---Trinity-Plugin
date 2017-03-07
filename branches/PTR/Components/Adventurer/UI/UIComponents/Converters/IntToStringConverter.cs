@@ -38,18 +38,20 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.Converters
             {
                 return (T)ChangeType(typeof(T), value);
             }
+
             public static object ChangeType(object value, Type type)
             {
                 return ChangeType(type, value);
             }
+
             public static object ChangeType(Type t, object value)
             {
                 TypeConverter tc = TypeDescriptor.GetConverter(t);
                 return tc.ConvertFrom(value);
             }
+
             public static void RegisterTypeConverter<T, TC>() where TC : TypeConverter
             {
-
                 TypeDescriptor.AddAttributes(typeof(T), new TypeConverterAttribute(typeof(TC)));
             }
         }

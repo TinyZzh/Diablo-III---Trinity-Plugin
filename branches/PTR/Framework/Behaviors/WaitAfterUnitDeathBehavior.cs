@@ -1,20 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Buddy.Coroutines;
+using System;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
-using Org.BouncyCastle.Asn1.X509;
-using Trinity.Components.Combat;
-using Trinity.Coroutines;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Events;
 using Trinity.Framework.Helpers;
-using Trinity.Framework.Objects.Enums;
-using Trinity.Framework.Objects.Memory.Misc;
-using Zeta.Bot.Coroutines;
-using Zeta.Bot.Navigation;
-using Zeta.Common;
 using Logger = Trinity.Framework.Helpers.Logger;
 
 namespace Trinity.Framework.Behaviors
@@ -53,14 +42,14 @@ namespace Trinity.Framework.Behaviors
                 WaitTimeMs = TimeSpan.FromMilliseconds(waitMs);
                 WaitCondition = waitCondition;
                 WaitReason = reason;
-            }   
+            }
             return await Run(async () => LastDiedUnit != null && await WaitCheck(), WaitAction, waitMs * 2);
         }
 
         public void Clear()
         {
             LastDiedUnit = null;
-            WaitStartTime = DateTime.MinValue;                                    
+            WaitStartTime = DateTime.MinValue;
         }
 
         private async Task<bool> WaitCheck()
@@ -88,8 +77,5 @@ namespace Trinity.Framework.Behaviors
             Logger.Warn($"Finished waiting after unit death: {LastDiedUnit?.Name}, TimeWaited={LastRunTime:g}");
             return true;
         }
-
-
     }
 }
-

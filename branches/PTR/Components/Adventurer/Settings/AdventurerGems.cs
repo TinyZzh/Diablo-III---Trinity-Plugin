@@ -5,9 +5,6 @@ using Trinity.Framework;
 using Trinity.Framework.Helpers;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
-using Trinity.UI.UIComponents;
-using System.Collections.Specialized;
-using System;
 
 namespace Trinity.Components.Adventurer.Settings
 {
@@ -22,7 +19,7 @@ namespace Trinity.Components.Adventurer.Settings
             }
         }
 
-        FullyObservableCollection<AdventurerGemSetting> _gemSettings;
+        private FullyObservableCollection<AdventurerGemSetting> _gemSettings;
 
         /// <summary>
         /// A list of gem settings and fixed data distict by TYPE of gem

@@ -79,7 +79,7 @@ namespace Trinity
                     if (ZetaDia.Me == null)
                         return;
 
-                    if (!ZetaDia.IsInGame || !ZetaDia.Me.IsValid || ZetaDia.IsLoadingWorld)
+                    if (!ZetaDia.IsInGame || !ZetaDia.Me.IsValid || ZetaDia.Globals.IsLoadingWorld)
                         return;
 
                     GameUI.SafeClickUIButtons();

@@ -1,26 +1,22 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using System;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Coroutines.CommonSubroutines;
 using Trinity.Components.Adventurer.Game.Actors;
-using Trinity.Components.Adventurer.Game.Exploration.SceneMapping;
 using Trinity.Components.Adventurer.Util;
-using Trinity.DbProvider;
 using Trinity.Framework;
 using Trinity.Framework.Helpers;
 using Zeta.Bot.Navigation;
 using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
-using Zeta.Game.Internals.SNO;
 using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Components.Adventurer.Coroutines
 {
     public sealed class InteractionCoroutine : ISubroutine
     {
-
         #region State
 
         public enum States
@@ -34,6 +30,7 @@ namespace Trinity.Components.Adventurer.Coroutines
         }
 
         private States _state;
+
         public States State
         {
             get { return _state; }
@@ -48,7 +45,7 @@ namespace Trinity.Components.Adventurer.Coroutines
             }
         }
 
-        #endregion
+        #endregion State
 
         private readonly int _actorId;
         private readonly TimeSpan _timeOut;
@@ -68,7 +65,7 @@ namespace Trinity.Components.Adventurer.Coroutines
             _timeOut = timeOut;
             _sleepTime = sleepTime;
             _interactAttempts = interactAttempts;
-            _startingWorldId = ZetaDia.CurrentWorldSnoId;
+            _startingWorldId = ZetaDia.Globals.WorldSnoId;
 
             if (_timeOut != default(TimeSpan))
             {
@@ -94,20 +91,24 @@ namespace Trinity.Components.Adventurer.Coroutines
             {
                 case States.NotStarted:
                     return NotStarted();
+
                 case States.Checking:
                     return Checking();
+
                 case States.Interacting:
                     return await Interacting();
+
                 case States.TimedOut:
                     return TimedOut();
+
                 case States.Completed:
                     return Completed();
+
                 case States.Failed:
                     return Failed();
             }
             return false;
         }
-
 
         private bool NotStarted()
         {
@@ -138,7 +139,6 @@ namespace Trinity.Components.Adventurer.Coroutines
                 var gizmoActor = (DiaGizmo)actor;
                 if (gizmoActor.IsDestructibleObject)
                 {
-
                 }
             }
 
@@ -177,7 +177,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                 return false;
             }
 
-            if (ZetaDia.IsLoadingWorld)
+            if (ZetaDia.Globals.IsLoadingWorld)
             {
                 Logger.Debug("Waiting for world load");
                 await Coroutine.Sleep(500);
@@ -218,7 +218,7 @@ namespace Trinity.Components.Adventurer.Coroutines
 
             if (_isPortal)
             {
-                var worldId = ZetaDia.CurrentWorldSnoId;
+                var worldId = ZetaDia.Globals.WorldSnoId;
                 if (worldId != _startingWorldId)
                 {
                     Logger.Debug($"World changed from {_startingWorldId} to {worldId}, assuming done.");
@@ -261,7 +261,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                 }
             }
 
-            // Sleep time would have to be set to 0/low for this to be checked during gate travel.  
+            // Sleep time would have to be set to 0/low for this to be checked during gate travel.
             if (ZetaDia.Me.IsUsingDeathGate())
             {
                 Logger.Debug("Used Death Gate!");
@@ -314,7 +314,7 @@ namespace Trinity.Components.Adventurer.Coroutines
 
         private async Task<bool> Interact(DiaObject actor)
         {
-            //var world = ZetaDia.WorldId;
+            //var world = ZetaDia.Globals.WorldId;
             //bool retVal = false;
             //switch (actor.ActorType)
             //{
@@ -336,10 +336,10 @@ namespace Trinity.Components.Adventurer.Coroutines
             //        break;
             //}
 
-            //if (!ZetaDia.IsLoadingWorld && world == ZetaDia.WorldId)
+            //if (!ZetaDia.Globals.IsLoadingWorld && world == ZetaDia.Globals.WorldId)
             //{
-                //Logger.DebugSetting($"Fallback Interaction Used");
-                //actor.Interact();
+            //Logger.DebugSetting($"Fallback Interaction Used");
+            //actor.Interact();
             //}
 
             var ret = actor.Interact();
@@ -351,7 +351,6 @@ namespace Trinity.Components.Adventurer.Coroutines
             return ret;
         }
 
-
         public void Reset()
         {
             _interactionStartedAt = default(DateTime);
@@ -362,7 +361,6 @@ namespace Trinity.Components.Adventurer.Coroutines
 
         public void DisablePulse()
         {
-
         }
     }
 }

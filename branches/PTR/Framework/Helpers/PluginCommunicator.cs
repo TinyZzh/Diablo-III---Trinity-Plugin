@@ -77,7 +77,7 @@
 //                    Logger.Log("Resetting Gold/XP Inactivity at request of {0}", sender.Name);
 //                    GoldInactivity.Instance.ResetCheckGold();
 //                    XpInactivity.Instance.ResetCheckXp();
-//                    return Respond(true);                   
+//                    return Respond(true);
 //            }
 //            return Respond(PluginCommunicationResult.InvalidCommand);
 //        }

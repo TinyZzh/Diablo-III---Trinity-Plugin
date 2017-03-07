@@ -331,7 +331,7 @@ namespace Trinity.Items.Sorting
 
             if (!ZetaDia.IsInGame)
                 return false;
-            if (ZetaDia.IsLoadingWorld)
+            if (ZetaDia.Globals.IsLoadingWorld)
                 return false;
             if (!ZetaDia.Me.IsFullyValid())
                 return false;

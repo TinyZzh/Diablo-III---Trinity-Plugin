@@ -16,7 +16,7 @@ namespace Trinity.Framework.Helpers
         /// <typeparam name="TKey">Type parameter for the keys to be compared,
         /// after being projected from the elements</typeparam>
         /// <param name="projection">Projection to use when determining the key of an element</param>
-        /// <returns>A comparer which will compare elements by projecting 
+        /// <returns>A comparer which will compare elements by projecting
         /// each element to its key, and comparing keys</returns>
         public static ProjectionEqualityComparer<TSource, TKey> Create<TSource, TKey>(Func<TSource, TKey> projection)
         {
@@ -40,11 +40,10 @@ namespace Trinity.Framework.Helpers
         {
             return new ProjectionEqualityComparer<TSource, TKey>(projection);
         }
-
     }
 
     /// <summary>
-    /// Class generic in the source only to produce instances of the 
+    /// Class generic in the source only to produce instances of the
     /// doubly generic class, optionally using type inference.
     /// </summary>
     public static class ProjectionEqualityComparer<TSource>
@@ -56,7 +55,7 @@ namespace Trinity.Framework.Helpers
         /// after being projected from the elements</typeparam>
         /// <param name="projection">Projection to use when determining the key of an element</param>
         /// <returns>A comparer which will compare elements by projecting each element to its key,
-        /// and comparing keys</returns>        
+        /// and comparing keys</returns>
         public static ProjectionEqualityComparer<TSource, TKey> Create<TKey>(Func<TSource, TKey> projection)
         {
             return new ProjectionEqualityComparer<TSource, TKey>(projection);
@@ -67,14 +66,14 @@ namespace Trinity.Framework.Helpers
     /// Comparer which projects each element of the comparison to a key, and then compares
     /// those keys using the specified (or default) comparer for the key type.
     /// </summary>
-    /// <typeparam name="TSource">Type of elements which this comparer 
+    /// <typeparam name="TSource">Type of elements which this comparer
     /// will be asked to compare</typeparam>
     /// <typeparam name="TKey">Type of the key projected
     /// from the element</typeparam>
     public class ProjectionEqualityComparer<TSource, TKey> : IEqualityComparer<TSource>
     {
-        readonly Func<TSource, TKey> projection;
-        readonly IEqualityComparer<TKey> comparer;
+        private readonly Func<TSource, TKey> projection;
+        private readonly IEqualityComparer<TKey> comparer;
 
         /// <summary>
         /// Creates a new instance using the specified projection, which must not be null.

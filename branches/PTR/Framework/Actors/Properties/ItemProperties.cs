@@ -8,6 +8,7 @@ using Trinity.Framework.Objects;
 using Trinity.Framework.Objects.Enums;
 using Trinity.Framework.Objects.Memory.Misc;
 using Trinity.Framework.Objects.Memory.Sno;
+using Trinity.Framework.Objects.Memory.Sno.Helpers;
 using Trinity.Reference;
 using Trinity.Settings;
 using Zeta.Bot;
@@ -65,7 +66,7 @@ namespace Trinity.Framework.Actors.Properties
             var realname = GetName(actor.GameBalanceId);
             actor.Name = string.IsNullOrEmpty(realname) ? actor.InternalName : realname;
 
-            var gbi = SnoManager.GameBalanceHelper.GetRecord<SnoGameBalanceItem>(SnoGameBalanceType.Items, actor.GameBalanceId);
+            var gbi = GameBalanceHelper.GetRecord<SnoGameBalanceItem>(SnoGameBalanceType.Items, actor.GameBalanceId);
             actor.ItemLevel = actor.RequiredLevel; //gbi.ItemLevel;
             actor.InternalName = gbi.InternalName;
             actor.MaxStackCount = gbi.StackSize;
@@ -133,7 +134,6 @@ namespace Trinity.Framework.Actors.Properties
 
         public static void Update(TrinityItem actor)
         {
-
             if (actor.ActorType != ActorType.Item)
                 return;
 
@@ -197,7 +197,6 @@ namespace Trinity.Framework.Actors.Properties
             cacheObject.AcdId = cacheObject.CommonData.ACDId;
         }
 
-
         public static GlobeTypes GetGlobeType(TrinityActor cacheObject)
         {
             switch (cacheObject.Type)
@@ -215,8 +214,6 @@ namespace Trinity.Framework.Actors.Properties
             }
             return GlobeTypes.None;
         }
-
-
 
         public static FollowerType GetFollowerType(int actorSnoId)
         {
@@ -255,7 +252,6 @@ namespace Trinity.Framework.Actors.Properties
                 }
             }
 
-
             if (actor.ItemQualityLevel >= ItemQuality.Legendary || actor.IsCraftingReagent)
             {
                 return !actor.Attributes.IsTradeable || actor.Attributes.ItemTradePlayerLow.Contains(Core.MemoryModel.Hero.PlayerTradeId);
@@ -268,10 +264,5 @@ namespace Trinity.Framework.Actors.Properties
 
             return false;
         }
-
     }
 }
-
-
-
-

@@ -1,28 +1,22 @@
-﻿using System;
-using System.IO;
+﻿using Buddy.Coroutines;
+using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Components.Combat;
-using Trinity.Coroutines.Resources;
-using Trinity.DbProvider;
 using Trinity.Framework;
-using Trinity.Items;
+using Trinity.Framework.Helpers;
+using Trinity.Modules;
+using Trinity.Reference;
 using Zeta.Bot;
 using Zeta.Bot.Coroutines;
 using Zeta.Bot.Logic;
 using Zeta.Bot.Navigation;
-using Zeta.Bot.Settings;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
 using Zeta.Game.Internals.SNO;
-using Trinity.Framework.Actors;
-using Trinity.Framework.Helpers;
-using Trinity.Modules;
-using Trinity.Reference;
 using Logger = Trinity.Framework.Helpers.Logger;
 
 namespace Trinity.Coroutines.Town
@@ -54,7 +48,7 @@ namespace Trinity.Coroutines.Town
                 if (await ClearArea.Execute())
                 {
                     Logger.LogDebug("Clearing");
-                    return false;  
+                    return false;
                 }
 
                 CheckForDBVendoringBug();
@@ -89,14 +83,14 @@ namespace Trinity.Coroutines.Town
                 Logger.LogDebug("Town run started");
                 //IsVendoring = true;
 
-                if (ZetaDia.IsLoadingWorld)
+                if (ZetaDia.Globals.IsLoadingWorld)
                 {
                     return true;
                 }
 
                 if (!ZetaDia.IsInTown)
                 {
-                    if(ZetaDia.Me.IsInCombat && !ClearArea.IsClearing && ZetaDia.Actors.GetActorsOfType<DiaUnit>().Any(u => u?.CommonData != null && u.CommonData.IsValid && u.IsAlive && u.IsHostile && u.Distance < 16f))
+                    if (ZetaDia.Me.IsInCombat && !ClearArea.IsClearing && ZetaDia.Actors.GetActorsOfType<DiaUnit>().Any(u => u?.CommonData != null && u.CommonData.IsValid && u.IsAlive && u.IsHostile && u.Distance < 16f))
                     {
                         ClearArea.Start();
                     }
@@ -120,10 +114,9 @@ namespace Trinity.Coroutines.Town
 
                 Logger.LogVerbose($"Starting Townrun");
 
-
                 IsInTownVendoring = true;
 
-                while (DateTime.UtcNow.Subtract(ChangeEvents.WorldId.LastChanged).TotalMilliseconds < 2000 || ZetaDia.IsLoadingWorld || ZetaDia.CurrentWorldSnoId <= 0)
+                while (DateTime.UtcNow.Subtract(ChangeEvents.WorldId.LastChanged).TotalMilliseconds < 2000 || ZetaDia.Globals.IsLoadingWorld || ZetaDia.Globals.WorldSnoId <= 0)
                 {
                     await Coroutine.Sleep(2000);
                 }
@@ -136,8 +129,6 @@ namespace Trinity.Coroutines.Town
                 var checkCycles = 2;
                 while (!Core.Player.IsInventoryLockedForGreaterRift)
                 {
-
-
                     if (!Core.Actors.Inventory.Any())
                     {
                         Logger.LogError("Something went terribly wrong, no items found");
@@ -201,14 +192,13 @@ namespace Trinity.Coroutines.Town
                     }
                 }
 
-                await StashItems.Execute();                
+                await StashItems.Execute();
                 //await StashItems.SortStashPages();
                 //await UseCraftingRecipes.Execute();
                 await RepairItems.Execute();
 
                 Logger.Log("Finished Town Run woo!");
                 DontAttemptTownRunUntil = DateTime.UtcNow + TimeSpan.FromSeconds(15);
-
 
                 if (StartedOutOfTown)
                 {
@@ -224,8 +214,6 @@ namespace Trinity.Coroutines.Town
             }
             return false;
         }
-
-
 
         public static async Task<bool> Any(params Func<Task<bool>>[] taskProducers)
         {
@@ -368,11 +356,11 @@ namespace Trinity.Coroutines.Town
 
             Navigator.PlayerMover.MoveStop();
             await Coroutine.Wait(2000, () => !ZetaDia.Me.Movement.IsMoving);
-            
+
             Logger.Warn("Starting Town Run");
             StartedOutOfTown = true;
 
-            if (!ZetaDia.IsInTown && !ZetaDia.IsLoadingWorld)
+            if (!ZetaDia.IsInTown && !ZetaDia.Globals.IsLoadingWorld)
             {
                 ZetaDia.Me.UseTownPortal();
             }
@@ -463,7 +451,7 @@ namespace Trinity.Coroutines.Town
 
             await Coroutine.Sleep(1000);
 
-            if (ZetaDia.IsInTown && !ZetaDia.IsLoadingWorld)
+            if (ZetaDia.IsInTown && !ZetaDia.Globals.IsLoadingWorld)
             {
                 Logger.Log("Trying again to use return portal.");
                 var gizmo = ZetaDia.Actors.GetActorsOfType<DiaGizmo>().FirstOrDefault(g => g.ActorInfo.GizmoType == GizmoType.HearthPortal);
@@ -476,7 +464,7 @@ namespace Trinity.Coroutines.Town
                 }
             }
 
-            await Coroutine.Wait(5000, () => !ZetaDia.IsLoadingWorld);
+            await Coroutine.Wait(5000, () => !ZetaDia.Globals.IsLoadingWorld);
 
             return true;
         }
@@ -485,6 +473,7 @@ namespace Trinity.Coroutines.Town
 
         private static DateTime _brainVendoringStarted;
         private static bool _isVendoring;
+
         private static void CheckForDBVendoringBug()
         {
             // An exception in DB core during town run will cause IsVendoring to never be set to false.
@@ -505,8 +494,6 @@ namespace Trinity.Coroutines.Town
             }
         }
 
-        #endregion
+        #endregion Remove when DB bug is fixed
     }
 }
-
-

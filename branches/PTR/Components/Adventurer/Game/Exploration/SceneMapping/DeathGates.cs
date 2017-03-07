@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using IronPython.Modules;
 using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Rift;
 using Trinity.Framework.Helpers;
@@ -20,9 +19,9 @@ namespace Trinity.Components.Adventurer.Game.Exploration.SceneMapping
         static DeathGates()
         {
             // The top of the d3 minimap is 0,0.
-            // X axis increases from top right to bottom left, 
-            // Y axis increases from top left to bottom right.      
-            // Scene size of 240/240      
+            // X axis increases from top right to bottom left,
+            // Y axis increases from top left to bottom right.
+            // Scene size of 240/240
 
             SceneDefs.Add(338627, new DeathGateScene
             {
@@ -167,7 +166,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration.SceneMapping
 
         private static void GameEventsOnOnWorldChanged(object sender, EventArgs eventArgs)
         {
-            _scenes.RemoveAll(s => s.WorldScene.DynamicWorldId != ZetaDia.WorldId);
+            _scenes.RemoveAll(s => s.WorldScene.DynamicWorldId != ZetaDia.Globals.WorldId);
             BuildGateScenes(ScenesStorage.CurrentWorldScenes);
         }
 
@@ -295,7 +294,6 @@ namespace Trinity.Components.Adventurer.Game.Exploration.SceneMapping
             }
         }
 
-
         public static bool IsInDeathGateWorld => ExplorationData.FortressLevelAreaIds.Contains(AdvDia.CurrentLevelAreaId) || ExplorationData.FortressWorldIds.Contains(AdvDia.CurrentWorldId);
         public static bool IsInOutsideRegion => !IsInExitRegion && !IsInEnterRegion;
         public static bool IsInExitRegion => ExitRegion.Contains(AdvDia.MyPosition);
@@ -309,6 +307,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration.SceneMapping
                 {
                     case DeathGateType.EnterSequence:
                         return EnterScenes;
+
                     case DeathGateType.ExitSequence:
                         return ExitScenes;
                 }
@@ -428,7 +427,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration.SceneMapping
             // rifts are not so predictable, and they can have normal scenes between death gate scenes.
             if (AdvDia.RiftQuest.Step != RiftStep.NotStarted)
             {
-                // handle target destinations that are within a death gate scene. 
+                // handle target destinations that are within a death gate scene.
                 var sceneClickedInside = Scenes.FirstOrDefault(s => s.WorldScene != null && s.WorldScene.IsInScene(destination));
                 if (sceneClickedInside != null)
                 {
@@ -494,7 +493,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration.SceneMapping
         }
 
         /// <summary>
-        /// Pick the correct gate from the current sequence for a given target direction and current position.        
+        /// Pick the correct gate from the current sequence for a given target direction and current position.
         /// </summary>
         /// <param name="mySide">indicates which side of a death gate devide the player is currently, DeepSide is towards 0,0/exit; ShallowSide is towards the world entrance</param>
         /// <param name="targetDepth">indicates which direction the destination is in, Deeper is towards 0,0/exit; Shallower is towards the world entrance</param>
@@ -511,12 +510,15 @@ namespace Trinity.Components.Adventurer.Game.Exploration.SceneMapping
                     case SceneDepth.Deeper:
                         bestGatePosition = NextGateScene.ShallowPortalPosition;
                         return true;
+
                     case SceneDepth.Same:
                         bestGatePosition = CurrentGateScene.DeepPortalPosition;
                         return true;
+
                     case SceneDepth.Shallower:
                         bestGatePosition = CurrentGateScene.DeepPortalPosition;
                         return true;
+
                     case SceneDepth.NotFound:
                         bestGatePosition = CurrentGateScene.DeepPortalPosition;
                         return true;
@@ -530,12 +532,15 @@ namespace Trinity.Components.Adventurer.Game.Exploration.SceneMapping
                     case SceneDepth.Deeper:
                         bestGatePosition = CurrentGateScene.ShallowPortalPosition;
                         return true;
+
                     case SceneDepth.Same:
                         bestGatePosition = CurrentGateScene.ShallowPortalPosition;
                         return true;
+
                     case SceneDepth.Shallower:
                         bestGatePosition = PreviousGateScene.DeepPortalPosition;
                         return true;
+
                     case SceneDepth.NotFound:
                         bestGatePosition = CurrentGateScene.ShallowPortalPosition;
                         return true;
@@ -552,6 +557,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration.SceneMapping
                 case GateSide.DeepSide:
                     bestGatePosition = CurrentGateScene.DeepPortalPosition;
                     return true;
+
                 case GateSide.ShallowSide:
                     bestGatePosition = CurrentGateScene.ShallowPortalPosition;
                     return true;
@@ -560,6 +566,5 @@ namespace Trinity.Components.Adventurer.Game.Exploration.SceneMapping
             bestGatePosition = Vector3.Zero;
             return false;
         }
-
     }
 }

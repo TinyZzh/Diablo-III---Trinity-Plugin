@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Linq;
 using Trinity.Framework.Avoidance.Structures;
 using Trinity.Framework.Helpers;
@@ -17,7 +16,7 @@ namespace Trinity.Framework.Avoidance.Handlers
                     var part = avoidance.Definition.GetPart(actor.Animation);
                     if (actor.Animation != part.Animation)
                         continue;
-                    
+
                     var radius = Math.Max(part.Radius, actor.Radius) * avoidance.Settings.DistanceMultiplier;
                     var nonCachedRotation = actor.Rotation;
                     var arcDegrees = Math.Max(15, part.AngleDegrees);
@@ -32,7 +31,3 @@ namespace Trinity.Framework.Avoidance.Handlers
         }
     }
 }
-
-
-
-

@@ -66,7 +66,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
 
                             IsWindowCreated = true;
 
-
                             Application.Current.MainWindow.Closing += (sender, args) =>
                             {
                                 Logger.Debug("ThreadedWindow: Closing {0} window ", name);
@@ -125,10 +124,9 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             {
                 Logger.Debug("Unable to create ThreadedWindow: {0}", ex);
             }
-
         }
 
-        // It takes a while for the thread to start up and new window to exist. 
+        // It takes a while for the thread to start up and new window to exist.
         // This tick allows the delay of dispatch until thread/window are ready to handle them
         private void InternalTimerTick(object sender, EventArgs e)
         {

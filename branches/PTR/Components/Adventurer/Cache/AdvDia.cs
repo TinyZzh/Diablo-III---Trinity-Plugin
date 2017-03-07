@@ -11,14 +11,12 @@ using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Components.Adventurer.Cache
 {
     public static class AdvDia
     {
         //public static uint LastUpdatedFrame { get; private set; }
-
 
         //private static Lazy<RiftQuest> _riftQuest = new Lazy<RiftQuest>(() => new RiftQuest());
 
@@ -47,31 +45,29 @@ namespace Trinity.Components.Adventurer.Cache
 
         public static int CurrentWorldId
         {
-            get { return PropertyReader<int>.SafeReadValue(() => ZetaDia.CurrentWorldSnoId); }
+            get { return PropertyReader<int>.SafeReadValue(() => ZetaDia.Globals.WorldSnoId); }
         }
 
         public static INavigationProvider Navigator { get; set; }
 
-        public static MainGridProvider MainGridProvider => (MainGridProvider) Zeta.Bot.Navigation.Navigator.SearchGridProvider;
+        public static MainGridProvider MainGridProvider => (MainGridProvider)Zeta.Bot.Navigation.Navigator.SearchGridProvider;
 
         public static DefaultNavigationProvider DefaultNavigationProvider => Zeta.Bot.Navigation.Navigator.NavigationProvider as DefaultNavigationProvider;
 
         public static int CurrentWorldDynamicId
         {
-            get { return PropertyReader<int>.SafeReadValue(() => ZetaDia.WorldId); }
-
+            get { return PropertyReader<int>.SafeReadValue(() => ZetaDia.Globals.WorldId); }
         }
 
         public static int CurrentLevelAreaId
         {
             get { return PropertyReader<int>.SafeReadValue(() => ZetaDia.CurrentLevelAreaSnoId); }
-
         }
 
         public static Vector3 MyPosition { get; set; }
 
         public static Vector3 GetMyPositionFromMemory()
-        {                            
+        {
             return PropertyReader<Vector3>.SafeReadValue(() => ZetaDia.Me.Position);
         }
 
@@ -83,13 +79,11 @@ namespace Trinity.Components.Adventurer.Cache
         public static WorldScene CurrentWorldScene
         {
             get { return ScenesStorage.CurrentScene; }
-
         }
 
         public static bool IsInTown
         {
             get { return PropertyReader<bool>.SafeReadValue(() => ZetaDia.IsInTown); }
-
         }
 
         public static int BattleNetHeroId
@@ -103,7 +97,6 @@ namespace Trinity.Components.Adventurer.Cache
             {
                 return PropertyReader<List<MinimapMarker>>.SafeReadValue(() => ZetaDia.Minimap.Markers.CurrentWorldMarkers.Where(m => m.IsValid && m.NameHash != -1).ToList());
             }
-
         }
 
         public static RiftQuest RiftQuest { get { return PropertyReader<RiftQuest>.SafeReadValue(() => new RiftQuest()); } }
@@ -120,7 +113,6 @@ namespace Trinity.Components.Adventurer.Cache
         public static SNOAnim MyCurrentAnimation
         {
             get { return PropertyReader<SNOAnim>.SafeReadValue(() => ZetaDia.Me.CommonData.CurrentAnimation); }
-
         }
 
         public static string BattleNetBattleTagName
@@ -130,9 +122,8 @@ namespace Trinity.Components.Adventurer.Cache
 
         public static bool IsInArchonForm
         {
-            get { return ZetaDia.Me.GetAllBuffs().Any(b => b.SNOId == (int) SNOPower.Wizard_Archon); }
+            get { return ZetaDia.Me.GetAllBuffs().Any(b => b.SNOId == (int)SNOPower.Wizard_Archon); }
         }
-
 
         //static AdvDia()
         //{
@@ -153,8 +144,8 @@ namespace Trinity.Components.Adventurer.Cache
         //{
         //    var result = SafeFrameLock.ExecuteWithinFrameLock(() =>
         //     {
-        //         _currentWorldId = new PropertyReader<int>(() => ZetaDia.CurrentWorldSnoId, (v) => v == 0 || v == -1);
-        //         _currentWorldDynamicId = new PropertyReader<int>(() => ZetaDia.WorldId, (v) => v == 0 || v == -1);
+        //         _currentWorldId = new PropertyReader<int>(() => ZetaDia.Globals.WorldSnoId, (v) => v == 0 || v == -1);
+        //         _currentWorldDynamicId = new PropertyReader<int>(() => ZetaDia.Globals.WorldId, (v) => v == 0 || v == -1);
         //         _currentLevelAreaId = new PropertyReader<int>(() => ZetaDia.CurrentLevelAreaSnoId, (v) => v == 0 || v == -1);
         //         _myPosition = new PropertyReader<Vector3>(() => ZetaDia.Me.Position, (v) => v == Vector3.Zero);
         //         _currentScene = new PropertyReader<Scene>(() => ZetaDia.Me.CurrentScene, (v) => v == null);
@@ -173,12 +164,12 @@ namespace Trinity.Components.Adventurer.Cache
         //}
     }
 
-
     public class PropertyReader<T>
     {
         private readonly Func<T> _valueFactory;
         private readonly Func<T, bool> _failureCondition;
         private T _value;
+
         public PropertyReader(Func<T> valueFactory, Func<T, bool> failureCondition = null, bool lazyEvaluate = false)
         {
             _valueFactory = valueFactory;
@@ -201,10 +192,12 @@ namespace Trinity.Components.Adventurer.Cache
         public class ReadEntrance : IDisposable
         {
             public static int Count { get; private set; }
+
             public ReadEntrance()
             {
                 Count++;
             }
+
             public void Dispose()
             {
                 Count--;
@@ -226,7 +219,6 @@ namespace Trinity.Components.Adventurer.Cache
                         return valueFactory();
                     }
                 }
-
             }
             catch (ACDAttributeLookupFailedException acdEx)
             {
@@ -240,7 +232,5 @@ namespace Trinity.Components.Adventurer.Cache
             }
             return default(T);
         }
-
     }
-
 }

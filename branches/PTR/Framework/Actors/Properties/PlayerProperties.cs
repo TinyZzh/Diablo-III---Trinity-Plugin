@@ -49,30 +49,28 @@ namespace Trinity.Framework.Actors.Properties
                 case (int)SNOActor.Wizard_Female:
                 case (int)SNOActor.Wizard_Male:
                     return ActorClass.Wizard;
+
                 case (int)SNOActor.Barbarian_Female:
                 case (int)SNOActor.Barbarian_Male:
                     return ActorClass.Barbarian;
+
                 case (int)SNOActor.Demonhunter_Female:
                 case (int)SNOActor.Demonhunter_Male:
                     return ActorClass.DemonHunter;
+
                 case (int)SNOActor.X1_Crusader_Female:
                 case (int)SNOActor.X1_Crusader_Male:
                     return ActorClass.Crusader;
+
                 case (int)SNOActor.WitchDoctor_Female:
                 case (int)SNOActor.WitchDoctor_Male:
                     return ActorClass.Witchdoctor;
+
                 case (int)SNOActor.Monk_Female:
                 case (int)SNOActor.Monk_Male:
                     return ActorClass.Monk;
             }
             return ActorClass.Invalid;
         }
-
-
     }
-
-
 }
-
-
-

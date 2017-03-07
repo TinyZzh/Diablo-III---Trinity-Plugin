@@ -1,27 +1,15 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using GreyMagic;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Web.UI.WebControls.WebParts;
-using Buddy.Coroutines;
-using GreyMagic;
-using IronPython.Modules;
 using Trinity.Components.Combat;
 using Trinity.Coroutines.Resources;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Events;
 using Trinity.Framework.Helpers;
-using Trinity.Framework.Objects.Enums;
-using Trinity.Items;
 using Zeta.Bot;
-using Zeta.Bot.Coroutines;
-using Zeta.Bot.Logic;
-using Zeta.Bot.Settings;
 using Zeta.Game;
-using Zeta.Game.Internals;
-using Zeta.Game.Internals.Actors;
 
 namespace Trinity.Coroutines.Town
 {
@@ -74,9 +62,9 @@ namespace Trinity.Coroutines.Town
 
             var dropCount = 0;
             foreach (var item in itemsToDrop)
-            { 
-                if(await Drop(item))
-                    dropCount++;               
+            {
+                if (await Drop(item))
+                    dropCount++;
             }
 
             await Coroutine.Sleep(2000);
@@ -104,7 +92,7 @@ namespace Trinity.Coroutines.Town
                 Logger.Log($"[DropItems] --> Failed to Drop {item.Name} ({item.ActorSnoId}) in town. AnnId={item.AnnId} ");
                 DroppedItemAnnIds.Add(item.AnnId);
             }
-            
+
             if (dropResult)
             {
                 DroppedItemAnnIds.Add(item.AnnId);
@@ -115,9 +103,5 @@ namespace Trinity.Coroutines.Town
 
             return false;
         }
-
     }
-
 }
-
-

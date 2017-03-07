@@ -71,7 +71,7 @@ namespace Trinity.Modules
         public bool ParticipatingInTieredLootRun { get; private set; }
         public bool IsInTown { get; private set; }
         public bool IsInCombat { get; private set; }
-        public int BloodShards { get; private set; }
+        public long BloodShards { get; private set; }
         public bool IsRanged { get; private set; }
         public bool IsValid { get; private set; }
         public int TieredLootRunlevel { get; private set; }
@@ -130,7 +130,7 @@ namespace Trinity.Modules
                     return;
                 }
 
-                if (ZetaDia.IsLoadingWorld)
+                if (ZetaDia.Globals.IsLoadingWorld)
                 {
                     IsLoadingWorld = true;
                     IsValid = false;
@@ -158,8 +158,8 @@ namespace Trinity.Modules
                     IsLoadingWorld = false;
 
 
-                    WorldDynamicId = ZetaDia.WorldId;
-                    WorldSnoId = ZetaDia.CurrentWorldSnoId;
+                    WorldDynamicId = ZetaDia.Globals.WorldId;
+                    WorldSnoId = ZetaDia.Globals.WorldSnoId;
 
                     if (DateTime.UtcNow.Subtract(LastVerySlowUpdate).TotalMilliseconds > 5000)
                         UpdateVerySlowChangingData();
@@ -340,7 +340,7 @@ namespace Trinity.Modules
             //Zeta.Game.ZetaDia.Me.CommonData.GetAttribute<int>(Zeta.Game.Internals.Actors.ActorAttributeType.TieredLootRunRewardChoiceState) > 0;
 
             Coinage = ZetaDia.PlayerData.Coinage;
-            CurrentExperience = (long)ZetaDia.Me.CurrentExperience;
+            CurrentExperience = ZetaDia.Me.CurrentExperience;
 
             IsInPandemoniumFortress = GameData.PandemoniumFortressWorlds.Contains(WorldSnoId) ||
                     GameData.PandemoniumFortressLevelAreaIds.Contains(LevelAreaId);
@@ -564,7 +564,7 @@ namespace Trinity.Modules
                     ZetaDia.Me.CommonData.IsValid &&
                     !ZetaDia.Me.IsDead &&
                     (
-                        ZetaDia.IsLoadingWorld ||
+                        ZetaDia.Globals.IsLoadingWorld ||
                         ZetaDia.Me.CommonData.AnimationState == AnimationState.Casting ||
                         ZetaDia.Me.CommonData.AnimationState == AnimationState.Channeling ||
                         ZetaDia.Me.CommonData.AnimationState == AnimationState.Transform ||

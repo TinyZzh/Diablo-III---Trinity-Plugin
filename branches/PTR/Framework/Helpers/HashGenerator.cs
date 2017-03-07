@@ -38,7 +38,7 @@ namespace Trinity.Framework.Helpers
             }
         }
 
-        static UInt64 CalculateKnuthHash(string read)
+        private static UInt64 CalculateKnuthHash(string read)
         {
             UInt64 hashedValue = 3074457345618258791ul;
             for (int i = 0; i < read.Length; i++)
@@ -53,9 +53,9 @@ namespace Trinity.Framework.Helpers
         {
             //using (MD5 md5 = MD5.Create())
             //{
-                //string objHashBase = actorSnoId + internalName + position + type + TrinityPlugin.CurrentWorldDynamicId;
-                //string objHash = CalculateKnuthHash(objHashBase).ToString(); //GetMd5Hash(md5, objHashBase);
-                //return objHash;
+            //string objHashBase = actorSnoId + internalName + position + type + TrinityPlugin.CurrentWorldDynamicId;
+            //string objHash = CalculateKnuthHash(objHashBase).ToString(); //GetMd5Hash(md5, objHashBase);
+            //return objHash;
             //}
 
             return CalculateKnuthHash(actorSnoId + internalName + position + type).ToString();
@@ -70,6 +70,7 @@ namespace Trinity.Framework.Helpers
         {
             return GenerateWorldObjectHash(obj.ActorSnoId, obj.Position, obj.GetType().ToString(), obj.WorldId);
         }
+
         /// <summary>
         /// This is a "psuedo" hash, and used just to compare objects which might have a shifting RActorGUID
         /// </summary>
@@ -101,10 +102,11 @@ namespace Trinity.Framework.Helpers
                 return BitConverter.ToString(data);
             }
         }
-        // Verify a hash against a string. 
-        static bool VerifySha1Hash(MD5 md5Hash, string input, string hash)
+
+        // Verify a hash against a string.
+        private static bool VerifySha1Hash(MD5 md5Hash, string input, string hash)
         {
-            // Hash the input. 
+            // Hash the input.
             string hashOfInput = GetMd5Hash(md5Hash, input);
 
             // Create a StringComparer an compare the hashes.

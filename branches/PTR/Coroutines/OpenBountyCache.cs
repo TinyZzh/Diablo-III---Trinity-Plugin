@@ -1,21 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using Buddy.Coroutines;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Coroutines.Town;
 using Trinity.Framework;
-using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Objects.Enums;
-using Trinity.Items;
-using Trinity.Reference;
 using Zeta.Game;
-using Zeta.Bot;
-using Zeta.Bot.Navigation;
-using Zeta.Common;
-using Zeta.Game.Internals.Actors;
 using Logger = Trinity.Framework.Helpers.Logger;
 
 namespace Trinity.Coroutines
@@ -34,7 +23,7 @@ namespace Trinity.Coroutines
                 {
                     if (item.RawItemType == RawItemType.TreasureBag)
                     {
-                        Logger.Log($"Opening Treasure Bag {bagsOpened+1}, Id={item.AnnId}");
+                        Logger.Log($"Opening Treasure Bag {bagsOpened + 1}, Id={item.AnnId}");
                         ZetaDia.Me.Inventory.UseItem(item.AnnId);
                         bagsOpened++;
                         await Coroutine.Sleep(500);
@@ -51,10 +40,4 @@ namespace Trinity.Coroutines
             return false;
         }
     }
-
-
 }
-
-
-
-

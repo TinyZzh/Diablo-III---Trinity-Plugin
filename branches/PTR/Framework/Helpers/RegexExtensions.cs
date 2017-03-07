@@ -15,11 +15,11 @@ namespace Trinity.Framework.Helpers
 
             public ILookup<string, RegexNumberResult> NumberByGroupName;
             public ILookup<string, RegexStringResult> StringByGroupName;
-            public ILookup<string, RegexResult> ValueByGroupName; 
-           
+            public ILookup<string, RegexResult> ValueByGroupName;
+
             public Regex Regex { get; set; }
             public string Input { get; set; }
-            public MatchCollection Matches { get; set; }            
+            public MatchCollection Matches { get; set; }
         }
 
         public class RegexResult
@@ -43,13 +43,13 @@ namespace Trinity.Framework.Helpers
             public int GroupIndex;
             public string StringValue;
         }
-        
+
         /// <summary>
         /// Find matches in regex pattern containing groups
         /// </summary>
         public static RegexGroupCollectionResult GroupMatches(this Regex regex, string input, string pattern = "")
-        {        
-            if(!string.IsNullOrEmpty(pattern))
+        {
+            if (!string.IsNullOrEmpty(pattern))
                 regex = new Regex(pattern);
 
             var matches = regex.Matches(input);
@@ -113,8 +113,6 @@ namespace Trinity.Framework.Helpers
                         StringValue = capture.Value
                     });
                 }
-
-               
             }
 
             result.ValueByGroupName = result.Values.ToLookup(o => o.GroupName, o => o);

@@ -1,22 +1,19 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Components.Combat;
 using Trinity.Coroutines.Resources;
 using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
-using Trinity.Items;
+using Trinity.Framework.Events;
+using Trinity.Framework.Helpers;
+using Trinity.Reference;
 using Zeta.Bot;
 using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
-using Trinity.Framework.Actors;
-using Trinity.Framework.Events;
-using Trinity.Framework.Helpers;
-using Trinity.Reference;
 
 namespace Trinity.Coroutines.Town
 {
@@ -144,7 +141,7 @@ namespace Trinity.Coroutines.Town
                     if (rares.Count > 0)
                     {
                         Logger.LogVerbose($"[SalvageItems] Bulk Salvaging {rares.Count} Rare");
-                        if(ZetaDia.Me.Inventory.SalvageItemsOfRarity(SalvageRarity.Rare))
+                        if (ZetaDia.Me.Inventory.SalvageItemsOfRarity(SalvageRarity.Rare))
                         {
                             rares.ForEach(ItemEvents.FireItemSalvaged);
                         }
@@ -186,7 +183,7 @@ namespace Trinity.Coroutines.Town
                     Logger.Log($"Salvaging: {item.Name} ({item.ActorSnoId}) Ancient={item.IsAncient}");
                     ZetaDia.Me.Inventory.SalvageItem(item.AnnId);
                     Inventory.InvalidItemDynamicIds.Add(item.AnnId);
-                    ItemEvents.FireItemSalvaged(item);                    
+                    ItemEvents.FireItemSalvaged(item);
                 }
 
                 await Coroutine.Sleep(Rnd.Next(750, 1250));
@@ -223,12 +220,5 @@ namespace Trinity.Coroutines.Town
             ItemQuality.Legendary,
             ItemQuality.Special,
         };
-
-
-
     }
-
 }
-
-
-

@@ -16,7 +16,6 @@ namespace Trinity.Components.Adventurer.Game.Quests
 {
     public static class BountyHelpers
     {
-
         //ActorId: 365020, Type: Item, Name: Khanduran Rune //A1
         //ActorId: 364281, Type: Item, Name: Caldeum Nightshade //A2
         //ActorId: 364290, Type: Item, Name: Arreat War Tapestry //A3
@@ -37,15 +36,19 @@ namespace Trinity.Components.Adventurer.Game.Quests
                 case Act.A1:
                     matSno = Act1BountyMatSNO;
                     break;
+
                 case Act.A2:
                     matSno = Act2BountyMatSNO;
                     break;
+
                 case Act.A3:
                     matSno = Act3BountyMatSNO;
                     break;
+
                 case Act.A4:
                     matSno = Act4BountyMatSNO;
                     break;
+
                 case Act.A5:
                     matSno = Act5BountyMatSNO;
                     break;
@@ -64,7 +67,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
 
         public static Dictionary<int, ObjectiveActor> DynamicBountyPortals = new Dictionary<int, ObjectiveActor>
         {
-            //texture = 81058 
+            //texture = 81058
 
             { -2005510577, new ObjectiveActor { MarkerNameHash = -2005510577, ActorId = 446440, DestWorldId = 443801 } },
             { 498366490, new ObjectiveActor { MarkerNameHash = 498366490, ActorId = 448494, DestWorldId = 448396 } },
@@ -78,7 +81,6 @@ namespace Trinity.Components.Adventurer.Game.Quests
             { 1012330756, new ObjectiveActor { MarkerNameHash = 1012330756, ActorId = 448491, DestWorldId = 448381 } },
             { -2002131030, new ObjectiveActor { MarkerNameHash = -2002131030, ActorId = 446559, DestWorldId = 443686 } },
             { 37697317, new ObjectiveActor { MarkerNameHash = 37697317, ActorId = 444404, DestWorldId = 443756 } },
-
         };
 
         public static Vector3 ScanForMarkerLocation(int markerNameHash, int searchRadius)
@@ -119,12 +121,10 @@ namespace Trinity.Components.Adventurer.Game.Quests
             return Vector3.Zero;
         }
 
-
         public static bool AreAllActBountiesCompleted(Act act)
         {
             return !ZetaDia.ActInfo.Bounties.Any(b => b.Act == act && b.Info.State != QuestState.Completed);
         }
-
 
         public static DiaGizmo GetPortalNearMarkerPosition(Vector3 position)
         {
@@ -142,8 +142,6 @@ namespace Trinity.Components.Adventurer.Game.Quests
             }
         }
 
-
-
         public static bool JustEnteredWorld
         {
             get
@@ -160,26 +158,26 @@ namespace Trinity.Components.Adventurer.Game.Quests
         {
             var result =
                 ZetaDia.ActInfo.Bounties.Count(
-                    b => b.Act == act && BountyDataFactory.GetBountyData((int) b.Quest) != null) == 5;
+                    b => b.Act == act && BountyDataFactory.GetBountyData((int)b.Quest) != null) == 5;
             if (!result)
             {
                 Logger.Debug("[Bounties] Unsupported bounties are detected in {0}", act);
             }
             return result;
         }
-		
-		public static bool AnyUnsupportedBounties()
-		{
-			List<Act> _acts = new List<Act> { Act.A1, Act.A2, Act.A3, Act.A4, Act.A5 };
-			for (int i = 0; i < 5; i++)
-			{
-				if (!AreAllActBountiesSupported(_acts[i]))
-				{
-					return true;
-				}
-			}			
-			return false;
-		}
+
+        public static bool AnyUnsupportedBounties()
+        {
+            List<Act> _acts = new List<Act> { Act.A1, Act.A2, Act.A3, Act.A4, Act.A5 };
+            for (int i = 0; i < 5; i++)
+            {
+                if (!AreAllActBountiesSupported(_acts[i]))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         public static bool IsActEnabledOnSettings(Act act)
         {
@@ -187,12 +185,16 @@ namespace Trinity.Components.Adventurer.Game.Quests
             {
                 case Act.A1:
                     return PluginSettings.Current.BountyAct1;
+
                 case Act.A2:
                     return PluginSettings.Current.BountyAct2;
+
                 case Act.A3:
                     return PluginSettings.Current.BountyAct3;
+
                 case Act.A4:
                     return PluginSettings.Current.BountyAct4;
+
                 case Act.A5:
                     return PluginSettings.Current.BountyAct5;
             }

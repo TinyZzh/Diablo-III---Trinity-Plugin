@@ -12,7 +12,7 @@ using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Avoidance.Structures;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
-using Trinity.Framework.Objects.Memory.Symbols.Types;
+using Trinity.Framework.Objects.Memory;
 using Trinity.Reference;
 using Trinity.Routines.Crusader;
 using Trinity.Settings;

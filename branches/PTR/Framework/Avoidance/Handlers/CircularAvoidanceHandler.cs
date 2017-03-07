@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Linq;
 using Trinity.Framework.Avoidance.Structures;
-using Trinity.Framework.Helpers;
 
 namespace Trinity.Framework.Avoidance.Handlers
 {
     public class CircularAvoidanceHandler : IAvoidanceHandler
     {
         public void UpdateNodes(AvoidanceGrid grid, Structures.Avoidance avoidance)
-        {            
+        {
             foreach (var actor in avoidance.Actors)
             {
                 if (actor == null || !actor.IsValid)
@@ -23,7 +21,7 @@ namespace Trinity.Framework.Avoidance.Handlers
                 var nodes = grid.GetNodesInRadius(actor.Position, finalRadius);
 
                 if (avoidance.Settings.Prioritize)
-                { 
+                {
                     //Logger.Log(LogCategory.Avoidance, $"<CircularAvoidanceHandler> marking {nodes.Count} nodes critical for actor {actor}, def={avoidance.Definition.Name}");
                     Core.DBGridProvider.AddCellWeightingObstacle(actor.ActorSnoId, finalRadius);
                     grid.FlagAvoidanceNodes(nodes, AvoidanceFlags.Avoidance | AvoidanceFlags.CriticalAvoidance, avoidance, 50);
@@ -33,13 +31,7 @@ namespace Trinity.Framework.Avoidance.Handlers
                     //Logger.Log(LogCategory.Avoidance, $"<CircularAvoidanceHandler> marking {nodes.Count} nodes for actor {actor}, def={avoidance.Definition.Name}");
                     grid.FlagAvoidanceNodes(nodes, AvoidanceFlags.Avoidance, avoidance, 10);
                 }
-
             }
         }
-
     }
 }
-
-
-
-

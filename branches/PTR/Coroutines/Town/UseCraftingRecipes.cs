@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Coroutines.Resources;
 using Trinity.Reference;
 using Zeta.Game;
@@ -84,7 +84,7 @@ namespace Trinity.Coroutines.Town
                 {
                     Logger.LogVerbose("[UseCraftingRecipes] Moving to Jeweler");
 
-                    if (!await MoveToAndInteract.Execute(TownInfo.Jeweler))                     
+                    if (!await MoveToAndInteract.Execute(TownInfo.Jeweler))
                     {
                         Logger.LogVerbose("[UseCraftingRecipes] Failed to move to Jeweler");
                         return true;
@@ -105,14 +105,12 @@ namespace Trinity.Coroutines.Town
                     {
                         Logger.LogVerbose("[UseCraftingRecipes] Failed to get items from Stash");
                         return true;
-                    }                        
-                }   
-                             
+                    }
+                }
             }
 
             Logger.Log("[UseCraftingRecipes] Finished!");
             return true;
         }
-
     }
 }

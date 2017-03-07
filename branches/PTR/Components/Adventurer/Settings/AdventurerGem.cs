@@ -1,28 +1,24 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using Trinity.Components.Adventurer.Cache;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Helpers;
 using Zeta.Game;
-using Zeta.Game.Internals.Actors;
 
 namespace Trinity.Components.Adventurer.Settings
 {
-
     [DataContract]
     public class AdventurerGem
     {
-
         public int Guid { get; set; }
+
         [DataMember]
         public int SNO { get; set; }
+
         [DataMember]
         public int Rank { get; set; }
 
         public string DisplayRank => IsMaxRank ? "MAX" : Rank.ToString();
 
- 
         public string Name { get; set; }
 
         public int UpgradeChance => IsMaxRank ? 0 : CalculateUpgradeChance(CurrentRiftLevel, Rank);
@@ -32,18 +28,20 @@ namespace Trinity.Components.Adventurer.Settings
         public int CurrentRiftLevel { get; set; }
 
         public bool IsEquiped { get; set; }
-       
+
         public bool IsMaxRank { get; set; }
-     
+
         public int MaxRank { get; set; }
-   
+
         public bool HasRankCap { get; set; }
 
         public AdventurerGemSetting Settings { get; set; }
 
         public string DisplayName => $"{Name} (Rank: {Rank}, Upgrade Chance: {UpgradeChance}% @ {CurrentRiftLevel})";
 
-        public AdventurerGem() { }
+        public AdventurerGem()
+        {
+        }
 
         public AdventurerGem(TrinityItem gem, int riftLevel)
         {
@@ -66,7 +64,6 @@ namespace Trinity.Components.Adventurer.Settings
 
             IsEquiped = !IsMaxRank && gem.InventorySlot == InventorySlot.Socket;
         }
-
 
         /// <summary>
         /// Gets the number of upgrades that would be possible for this gem on a given rift level and chance percent
@@ -115,7 +112,5 @@ namespace Trinity.Components.Adventurer.Settings
             if (result >= -15) return 1;
             return 0;
         }
-
-
     }
 }

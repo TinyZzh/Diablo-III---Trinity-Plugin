@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using System;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Util;
@@ -13,7 +13,6 @@ namespace Trinity.Components.Adventurer.Coroutines
 {
     public sealed class UsePortalCoroutine
     {
-
         private static UsePortalCoroutine _usePortalCoroutine;
         private static int _usePortalActorSNO;
         private static int _usePortalSourceWorldDynamicId;
@@ -47,6 +46,7 @@ namespace Trinity.Components.Adventurer.Coroutines
         }
 
         private States _state;
+
         public States State
         {
             get { return _state; }
@@ -61,7 +61,7 @@ namespace Trinity.Components.Adventurer.Coroutines
             }
         }
 
-        #endregion
+        #endregion State
 
         private readonly int _actorId;
         private readonly int _sourceWorldDynamicId;
@@ -73,25 +73,27 @@ namespace Trinity.Components.Adventurer.Coroutines
             _sourceWorldDynamicId = sourceWorldDynamicId;
         }
 
-
         private async Task<bool> GetCoroutine()
         {
             switch (State)
             {
                 case States.NotStarted:
                     return NotStarted();
+
                 case States.Checking:
                     return await Checking();
+
                 case States.Interacting:
                     return await Interacting();
+
                 case States.Completed:
                     return Completed();
+
                 case States.Failed:
                     return Failed();
             }
             return false;
         }
-
 
         private bool NotStarted()
         {
@@ -126,7 +128,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                 {
                     State = States.Failed;
                 }
-                await NavigationCoroutine.MoveTo(actor.Position, (int) actor.Distance - 1);
+                await NavigationCoroutine.MoveTo(actor.Position, (int)actor.Distance - 1);
                 _interactAttempts = 0;
             }
             State = States.Interacting;
@@ -138,7 +140,7 @@ namespace Trinity.Components.Adventurer.Coroutines
         private async Task<bool> Interacting()
         {
             _interactAttempts++;
-            if (ZetaDia.IsLoadingWorld)
+            if (ZetaDia.Globals.IsLoadingWorld)
             {
                 Logger.Debug("[UsePortal] Waiting for the world to load");
                 await Coroutine.Sleep(250);
@@ -152,7 +154,6 @@ namespace Trinity.Components.Adventurer.Coroutines
                 State = States.Failed;
                 return false;
             }
-
 
             if (await Interact(actor))
             {
@@ -185,11 +186,13 @@ namespace Trinity.Components.Adventurer.Coroutines
                         case GizmoType.ReturnPortal:
                             retVal = ZetaDia.Me.UsePower(SNOPower.GizmoOperatePortalWithAnimation, actor.Position);
                             break;
+
                         default:
                             retVal = ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, actor.Position);
                             break;
                     }
                     break;
+
                 case ActorType.Monster:
                     retVal = ZetaDia.Me.UsePower(SNOPower.Axe_Operate_NPC, actor.Position);
                     break;
@@ -198,10 +201,9 @@ namespace Trinity.Components.Adventurer.Coroutines
             // Doubly-make sure we interact
             actor.Interact();
             _interactAttempts++;
-            GameEvents.FireWorldTransferStart();            
+            GameEvents.FireWorldTransferStart();
             await Coroutine.Sleep(_sleepTime);
             return retVal;
         }
-
     }
 }

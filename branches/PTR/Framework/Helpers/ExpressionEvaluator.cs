@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.CSharp.RuntimeBinder;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Globalization;
@@ -6,10 +7,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
-using Microsoft.CSharp.RuntimeBinder;
 using Binder = Microsoft.CSharp.RuntimeBinder.Binder;
 
-// Compacted version of https://csharpeval.codeplex.com/ 
+// Compacted version of https://csharpeval.codeplex.com/
 // Since we aren't allowed to include .dll files in plugins.
 // Includes custom fix for CompiledExpression<T> compile error
 
@@ -20,9 +20,15 @@ namespace Trinity.Framework.Helpers
         private Action _compiledAction;
         private Func<T> _compiledMethod;
 
-        public CompiledExpression() { Parser = new Parser { TypeRegistry = TypeRegistry }; }
+        public CompiledExpression()
+        {
+            Parser = new Parser { TypeRegistry = TypeRegistry };
+        }
 
-        public CompiledExpression(string expression) { Parser = new Parser(expression) { TypeRegistry = TypeRegistry }; }
+        public CompiledExpression(string expression)
+        {
+            Parser = new Parser(expression) { TypeRegistry = TypeRegistry };
+        }
 
         public object Global { set { Parser.Global = value; } }
 
@@ -85,12 +91,12 @@ namespace Trinity.Framework.Helpers
 
         public CompiledExpression()
         {
-            Parser = new Parser {TypeRegistry = TypeRegistry};
+            Parser = new Parser { TypeRegistry = TypeRegistry };
         }
 
         public CompiledExpression(string expression)
         {
-            Parser = new Parser(expression) {TypeRegistry = TypeRegistry};
+            Parser = new Parser(expression) { TypeRegistry = TypeRegistry };
         }
 
         public object Global { set { Parser.Global = value; } }
@@ -172,19 +178,35 @@ namespace Trinity.Framework.Helpers
             }
         }
 
-        public void RegisterDefaultTypes() { TypeRegistry.RegisterDefaultTypes(); }
+        public void RegisterDefaultTypes()
+        {
+            TypeRegistry.RegisterDefaultTypes();
+        }
 
-        public void RegisterType(string key, object type) { TypeRegistry.Add(key, type); }
+        public void RegisterType(string key, object type)
+        {
+            TypeRegistry.Add(key, type);
+        }
 
-        protected Expression BuildTree(Expression scopeParam = null, bool isCall = false) { return Parser.BuildTree(scopeParam, isCall); }
+        protected Expression BuildTree(Expression scopeParam = null, bool isCall = false)
+        {
+            return Parser.BuildTree(scopeParam, isCall);
+        }
 
         protected abstract void ClearCompiledMethod();
 
-        protected void Parse() { Parser.Parse(); }
+        protected void Parse()
+        {
+            Parser.Parse();
+        }
 
-        public void RegisterNamespace(string p) { }
+        public void RegisterNamespace(string p)
+        {
+        }
 
-        public void RegisterAssembly(Assembly assembly) { }
+        public void RegisterAssembly(Assembly assembly)
+        {
+        }
 
         protected Expression WrapExpression(Expression source, bool castToObject = true)
         {
@@ -201,7 +223,10 @@ namespace Trinity.Framework.Helpers
 
     public class HelperMethods
     {
-        public static bool IsANumber(string str, int ptr) { return (!IsNumeric(str, ptr - 1) & (str[ptr] == '-') & IsNumeric(str, ptr + 1)) || IsNumeric(str, ptr); }
+        public static bool IsANumber(string str, int ptr)
+        {
+            return (!IsNumeric(str, ptr - 1) & (str[ptr] == '-') & IsNumeric(str, ptr + 1)) || IsNumeric(str, ptr);
+        }
 
         public static bool IsNumeric(string str, int ptr)
         {
@@ -222,9 +247,15 @@ namespace Trinity.Framework.Helpers
             return true;
         }
 
-        public static bool IsAlpha(char chr) { return (chr >= 'A' & chr <= 'Z') || (chr >= 'a' & chr <= 'z'); }
+        public static bool IsAlpha(char chr)
+        {
+            return (chr >= 'A' & chr <= 'Z') || (chr >= 'a' & chr <= 'z');
+        }
 
-        internal static bool IsWhiteSpace(string str, int ptr) { return (str[ptr] == ' ' || str[ptr] == '\t'); }
+        internal static bool IsWhiteSpace(string str, int ptr)
+        {
+            return (str[ptr] == ' ' || str[ptr] == '\t');
+        }
     }
 
     internal class OpToken : Token
@@ -253,7 +284,10 @@ namespace Trinity.Framework.Helpers
 
     internal class MemberToken : OpToken
     {
-        public MemberToken() { Value = "."; }
+        public MemberToken()
+        {
+            Value = ".";
+        }
 
         public string Name { get; set; }
     }
@@ -269,12 +303,17 @@ namespace Trinity.Framework.Helpers
 
     internal class TernaryOperator : Operator<Func<Expression, Expression, Expression, Expression>>
     {
-        public TernaryOperator(string value, int precedence, bool leftassoc, Func<Expression, Expression, Expression, Expression> func) : base(value, precedence, leftassoc, func) { Arguments = 3; }
+        public TernaryOperator(string value, int precedence, bool leftassoc, Func<Expression, Expression, Expression, Expression> func) : base(value, precedence, leftassoc, func)
+        {
+            Arguments = 3;
+        }
     }
 
     internal class IndexOperator : Operator<Func<Expression, Expression, Expression>>
     {
-        public IndexOperator(string value, int precedence, bool leftassoc, Func<Expression, Expression, Expression> func) : base(value, precedence, leftassoc, func) { }
+        public IndexOperator(string value, int precedence, bool leftassoc, Func<Expression, Expression, Expression> func) : base(value, precedence, leftassoc, func)
+        {
+        }
     }
 
     internal interface IOperator
@@ -288,12 +327,16 @@ namespace Trinity.Framework.Helpers
 
     internal class Operators : Operator<Func<bool, bool, Expression, string, List<Expression>, Expression>>
     {
-        public Operators(string value, int precedence, bool leftassoc, Func<bool, bool, Expression, string, List<Expression>, Expression> func) : base(value, precedence, leftassoc, func) { }
+        public Operators(string value, int precedence, bool leftassoc, Func<bool, bool, Expression, string, List<Expression>, Expression> func) : base(value, precedence, leftassoc, func)
+        {
+        }
     }
 
     internal class TernarySeparatorOperator : Operator<Func<Expression, Expression>>
     {
-        public TernarySeparatorOperator(string value, int precedence, bool leftassoc, Func<Expression, Expression> func) : base(value, precedence, leftassoc, func) { }
+        public TernarySeparatorOperator(string value, int precedence, bool leftassoc, Func<Expression, Expression> func) : base(value, precedence, leftassoc, func)
+        {
+        }
     }
 
     internal abstract class Operator<T> : IOperator
@@ -322,7 +365,10 @@ namespace Trinity.Framework.Helpers
         public bool LeftAssoc { get; set; }
         public ExpressionType ExpressionType { get; set; }
 
-        public virtual T GetFunc() { return Func; }
+        public virtual T GetFunc()
+        {
+            return Func;
+        }
     }
 
     internal class OperatorCollection : Dictionary<string, IOperator>
@@ -335,7 +381,10 @@ namespace Trinity.Framework.Helpers
             base.Add(key, op);
         }
 
-        public bool ContainsFirstKey(char key) { return _firstlookup.Contains(key); }
+        public bool ContainsFirstKey(char key)
+        {
+            return _firstlookup.Contains(key);
+        }
 
         public bool IsOperator(string c)
         {
@@ -477,7 +526,10 @@ namespace Trinity.Framework.Helpers
             throw new Exception(string.Format("Member not found: {0}.{1}", le.Type.Name, membername));
         }
 
-        private static Expression CallToString(Expression instance) { return Expression.Call(typeof(Convert), "ToString", null, instance, Expression.Constant(CultureInfo.InvariantCulture)); }
+        private static Expression CallToString(Expression instance)
+        {
+            return Expression.Call(typeof(Convert), "ToString", null, instance, Expression.Constant(CultureInfo.InvariantCulture));
+        }
 
         public static Expression Add(Expression le, Expression re)
         {
@@ -501,7 +553,10 @@ namespace Trinity.Framework.Helpers
             return Expression.ArrayAccess(le, re);
         }
 
-        public static Expression TernarySeparator(Expression le) { return le; }
+        public static Expression TernarySeparator(Expression le)
+        {
+            return le;
+        }
     }
 
     internal class OpFuncArgs
@@ -531,24 +586,39 @@ namespace Trinity.Framework.Helpers
             _typeActions.Add(typeof(TernarySeparatorOperator), OpFuncServiceProviders.TernarySeparatorOperatorFunc);
         }
 
-        public static Func<OpFuncArgs, Expression> Resolve(Type type) { return Instance.ResolveType(type); }
+        public static Func<OpFuncArgs, Expression> Resolve(Type type)
+        {
+            return Instance.ResolveType(type);
+        }
 
-        private Func<OpFuncArgs, Expression> ResolveType(Type type) { return _typeActions[type]; }
+        private Func<OpFuncArgs, Expression> ResolveType(Type type)
+        {
+            return _typeActions[type];
+        }
     }
 
     internal class TypeOperator : Operator<Func<Expression, Type, UnaryExpression>>
     {
-        public TypeOperator(string value, int precedence, bool leftassoc, Func<Expression, Type, UnaryExpression> func) : base(value, precedence, leftassoc, func) { Arguments = 1; }
+        public TypeOperator(string value, int precedence, bool leftassoc, Func<Expression, Type, UnaryExpression> func) : base(value, precedence, leftassoc, func)
+        {
+            Arguments = 1;
+        }
     }
 
     internal class UnaryOperator : Operator<Func<Expression, UnaryExpression>>
     {
-        public UnaryOperator(string value, int precedence, bool leftassoc, Func<Expression, UnaryExpression> func, ExpressionType expressionType) : base(value, precedence, leftassoc, func, expressionType) { Arguments = 1; }
+        public UnaryOperator(string value, int precedence, bool leftassoc, Func<Expression, UnaryExpression> func, ExpressionType expressionType) : base(value, precedence, leftassoc, func, expressionType)
+        {
+            Arguments = 1;
+        }
     }
 
     internal static class TypeExtensions
     {
-        public static bool IsDynamic(this Type type) { return type.GetInterfaces().Contains(typeof(IDynamicMetaObjectProvider)) || type == typeof(object); }
+        public static bool IsDynamic(this Type type)
+        {
+            return type.GetInterfaces().Contains(typeof(IDynamicMetaObjectProvider)) || type == typeof(object);
+        }
     }
 
     internal class OpFuncServiceProviders
@@ -633,7 +703,10 @@ namespace Trinity.Framework.Helpers
             return ((TernaryOperator)args.Op).Func(condition, truthy, falsy);
         }
 
-        public static Expression TernarySeparatorOperatorFunc(OpFuncArgs args) { return args.ExprStack.Pop(); }
+        public static Expression TernarySeparatorOperatorFunc(OpFuncArgs args)
+        {
+            return args.ExprStack.Pop();
+        }
     }
 
     internal class MethodResolution
@@ -645,7 +718,10 @@ namespace Trinity.Framework.Helpers
 
         private static readonly BindingFlags findFlags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.OptionalParamBinding | BindingFlags.DeclaredOnly;
 
-        private static Type[] GetTypesInNamespace(Assembly assembly, string nameSpace) { return assembly.GetTypes().Where(t => string.Equals(t.Namespace, nameSpace, StringComparison.Ordinal)).ToArray(); }
+        private static Type[] GetTypesInNamespace(Assembly assembly, string nameSpace)
+        {
+            return assembly.GetTypes().Where(t => string.Equals(t.Namespace, nameSpace, StringComparison.Ordinal)).ToArray();
+        }
 
         public static Expression GetExactMatch(Type type, Expression instance, string membername, List<Expression> args)
         {
@@ -720,18 +796,23 @@ namespace Trinity.Framework.Helpers
                         case TypeCode.SByte:
                             if (num >= sbyte.MinValue && num <= sbyte.MaxValue) canConv = true;
                             break;
+
                         case TypeCode.Byte:
                             if (num >= byte.MinValue && num <= byte.MaxValue) canConv = true;
                             break;
+
                         case TypeCode.Int16:
                             if (num >= short.MinValue && num <= short.MaxValue) canConv = true;
                             break;
+
                         case TypeCode.UInt16:
                             if (num >= ushort.MinValue && num <= ushort.MaxValue) canConv = true;
                             break;
+
                         case TypeCode.UInt32:
                             if (num >= uint.MinValue && num <= uint.MaxValue) canConv = true;
                             break;
+
                         case TypeCode.UInt64:
                             if (num >= 0) canConv = true;
                             break;
@@ -895,7 +976,10 @@ namespace Trinity.Framework.Helpers
             return found;
         }
 
-        public static bool IsNullableType(Type t) { return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>); }
+        public static bool IsNullableType(Type t)
+        {
+            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>);
+        }
 
         public static bool IsBoxingConversion(Type from, Type to)
         {
@@ -920,7 +1004,10 @@ namespace Trinity.Framework.Helpers
             return results;
         }
 
-        public static List<MethodInfo> GetMethodInfos(Type env, string memberName) { return env.GetMethods(findFlags).Where(mi => mi.Name == memberName && (!IsVirtual(mi) || HasVTable(mi))).ToList(); }
+        public static List<MethodInfo> GetMethodInfos(Type env, string memberName)
+        {
+            return env.GetMethods(findFlags).Where(mi => mi.Name == memberName && (!IsVirtual(mi) || HasVTable(mi))).ToList();
+        }
     }
 
     public class Parser
@@ -962,7 +1049,10 @@ namespace Trinity.Framework.Helpers
             _operators = new OperatorCollection { { ".", new Operators(".", 12, true, OperatorCustomExpressions.MemberAccess) }, { "!", new UnaryOperator("!", 11, false, Expression.Not, ExpressionType.Not) }, { "*", new BinaryOperator("*", 10, true, Expression.Multiply, ExpressionType.Multiply) }, { "/", new BinaryOperator("/", 10, true, Expression.Divide, ExpressionType.Divide) }, { "%", new BinaryOperator("%", 10, true, Expression.Modulo, ExpressionType.Modulo) }, { "+", new BinaryOperator("+", 9, true, OperatorCustomExpressions.Add, ExpressionType.Add) }, { "-", new BinaryOperator("-", 9, true, Expression.Subtract, ExpressionType.Subtract) }, { "<<", new BinaryOperator("<<", 8, true, Expression.LeftShift, ExpressionType.LeftShift) }, { ">>", new BinaryOperator(">>", 8, true, Expression.RightShift, ExpressionType.RightShift) }, { "<", new BinaryOperator("<", 7, true, Expression.LessThan, ExpressionType.LessThan) }, { ">", new BinaryOperator(">", 7, true, Expression.GreaterThan, ExpressionType.GreaterThan) }, { "<=", new BinaryOperator("<=", 7, true, Expression.LessThanOrEqual, ExpressionType.LessThanOrEqual) }, { ">=", new BinaryOperator(">=", 7, true, Expression.GreaterThanOrEqual, ExpressionType.GreaterThanOrEqual) }, { "==", new BinaryOperator("==", 6, true, Expression.Equal, ExpressionType.Equal) }, { "!=", new BinaryOperator("!=", 6, true, Expression.NotEqual, ExpressionType.NotEqual) }, { "&", new BinaryOperator("&", 5, true, Expression.And, ExpressionType.And) }, { "^", new BinaryOperator("^", 4, true, Expression.ExclusiveOr, ExpressionType.ExclusiveOr) }, { "|", new BinaryOperator("|", 3, true, Expression.Or, ExpressionType.Or) }, { "&&", new BinaryOperator("&&", 2, true, Expression.AndAlso, ExpressionType.AndAlso) }, { "||", new BinaryOperator("||", 1, true, Expression.OrElse, ExpressionType.OrElse) }, { ":", new TernarySeparatorOperator(":", 2, false, OperatorCustomExpressions.TernarySeparator) }, { "=", new BinaryOperator("=", 1, false, Expression.Assign, ExpressionType.Assign) }, { "?", new TernaryOperator("?", 1, false, Expression.Condition) } };
         }
 
-        private bool IsInBounds() { return _ptr < _pstr.Length; }
+        private bool IsInBounds()
+        {
+            return _ptr < _pstr.Length;
+        }
 
         public Expression Parse(string expression)
         {
@@ -1002,6 +1092,7 @@ namespace Trinity.Framework.Helpers
                                         case '\\':
                                             tokenbuilder.Append(nextchar);
                                             break;
+
                                         default:
                                             throw new Exception("Unrecognized escape sequence");
                                     }
@@ -1124,6 +1215,7 @@ namespace Trinity.Framework.Helpers
                                 case "Int32":
                                     val = isNeg ? -Convert.ToInt32(token, 16) : Convert.ToInt32(token, 16);
                                     break;
+
                                 case "Int64":
                                     val = isNeg ? -Convert.ToInt64(token, 16) : Convert.ToInt64(token, 16);
                                     break;
@@ -1179,22 +1271,27 @@ namespace Trinity.Framework.Helpers
                                         ntype = typeof(double);
                                         val = double.Parse(token, CultureInfo.InvariantCulture);
                                         break;
+
                                     case "f":
                                         ntype = typeof(float);
                                         val = float.Parse(token, CultureInfo.InvariantCulture);
                                         break;
+
                                     case "m":
                                         ntype = typeof(decimal);
                                         val = decimal.Parse(token, CultureInfo.InvariantCulture);
                                         break;
+
                                     case "l":
                                         ntype = typeof(long);
                                         val = long.Parse(token, CultureInfo.InvariantCulture);
                                         break;
+
                                     case "u":
                                         ntype = typeof(uint);
                                         val = uint.Parse(token, CultureInfo.InvariantCulture);
                                         break;
+
                                     case "ul":
                                     case "lu":
                                         ntype = typeof(ulong);
@@ -1488,7 +1585,12 @@ namespace Trinity.Framework.Helpers
     {
         private static readonly TypeConversion Instance = new TypeConversion();
         private readonly Dictionary<Type, int> _typePrecedence;
-        private TypeConversion() { _typePrecedence = new Dictionary<Type, int> { { typeof(object), 0 }, { typeof(bool), 1 }, { typeof(byte), 2 }, { typeof(int), 3 }, { typeof(short), 4 }, { typeof(long), 5 }, { typeof(float), 6 }, { typeof(double), 7 } }; }
+
+        private TypeConversion()
+        {
+            _typePrecedence = new Dictionary<Type, int> { { typeof(object), 0 }, { typeof(bool), 1 }, { typeof(byte), 2 }, { typeof(int), 3 }, { typeof(short), 4 }, { typeof(long), 5 }, { typeof(float), 6 }, { typeof(double), 7 } };
+        }
+
         internal static void Convert(ref Expression le, ref Expression re)
         {
             if (Instance._typePrecedence.ContainsKey(le.Type) && Instance._typePrecedence.ContainsKey(re.Type))
@@ -1497,11 +1599,13 @@ namespace Trinity.Framework.Helpers
                 if (Instance._typePrecedence[le.Type] < Instance._typePrecedence[re.Type]) le = Expression.Convert(le, re.Type);
             }
         }
+
         internal static Expression Convert(Expression le, Type type)
         {
             if (Instance._typePrecedence.ContainsKey(le.Type) && Instance._typePrecedence.ContainsKey(type)) { if (Instance._typePrecedence[le.Type] < Instance._typePrecedence[type]) return Expression.Convert(le, type); }
             return le;
         }
+
         internal static int CanConvert(Type from, Type to)
         {
             if (Instance._typePrecedence.ContainsKey(from) && Instance._typePrecedence.ContainsKey(to)) { return Instance._typePrecedence[to] - Instance._typePrecedence[from]; }
@@ -1510,6 +1614,7 @@ namespace Trinity.Framework.Helpers
             return -1;
         }
     }
+
     public class TypeRegistry : Dictionary<string, object>
     {
         public TypeRegistry()
@@ -1524,6 +1629,7 @@ namespace Trinity.Framework.Helpers
             Add("object", typeof(object));
             Add("string", typeof(string));
         }
+
         public void RegisterDefaultTypes()
         {
             Add("DateTime", typeof(DateTime));

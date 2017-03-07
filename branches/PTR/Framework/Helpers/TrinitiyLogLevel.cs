@@ -1,8 +1,7 @@
-﻿
-namespace Trinity.Framework.Helpers
+﻿namespace Trinity.Framework.Helpers
 {
     /// <summary>
-    /// Enumerate severity level for logging 
+    /// Enumerate severity level for logging
     /// </summary>
     public enum TrinityLogLevel
     {

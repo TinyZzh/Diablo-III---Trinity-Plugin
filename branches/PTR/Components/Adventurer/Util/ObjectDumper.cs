@@ -119,7 +119,6 @@ namespace Trinity.Components.Adventurer.Util
             {
                 Logger.Raw("{0}{1}: {2}", GetIndent(level, extraDepth), name, RemoveNewLines(value.ToString()));
             }
-
         }
 
         private static string RemoveNewLines(string value)

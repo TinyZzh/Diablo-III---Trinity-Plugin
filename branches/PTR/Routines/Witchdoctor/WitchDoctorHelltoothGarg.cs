@@ -9,7 +9,7 @@ using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
-using Trinity.Framework.Objects.Memory.Symbols.Types;
+using Trinity.Framework.Objects.Memory;
 using Trinity.Reference;
 using Trinity.Settings;
 using Trinity.UI;

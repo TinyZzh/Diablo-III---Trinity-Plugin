@@ -40,8 +40,6 @@ namespace Trinity.Framework.Avoidance.Handlers
                     Logger.LogError("Exception {0}", ex);
                 }
             }
-
         }
     }
 }
-

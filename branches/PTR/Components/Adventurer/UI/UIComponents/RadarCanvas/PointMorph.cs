@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows;
 using Zeta.Common;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
 {
@@ -10,7 +9,9 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
     /// </summary>
     public class PointMorph
     {
-        public PointMorph() { }
+        public PointMorph()
+        {
+        }
 
         public PointMorph(CanvasData canvasData)
         {
@@ -126,10 +127,10 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
                 RawPoint = new Point(RawDrawPositionX, RawDrawPositionY);
                 RawGridPoint = new Point(RawDrawPositionX / CanvasData.GridSquareSize.Width, RawDrawPositionY / CanvasData.GridSquareSize.Height);
 
-                // Switched to manual calculations because WPF transforms are very slow 
+                // Switched to manual calculations because WPF transforms are very slow
                 // (0.0015ms+ each versus 0.0000ms for raw math).
                 Point = RawPoint.Rotate(CanvasData.Center, CanvasData.GobalRotationAngle);
-                Point = Point.FlipX(CanvasData.Center);               
+                Point = Point.FlipX(CanvasData.Center);
 
                 GridPoint = new Point((int)(Point.X / CanvasData.GridSquareSize.Width), (int)(Point.Y / CanvasData.GridSquareSize.Height));
                 IsBeyondCanvas = Point.X < 0 || Point.X > CanvasData.CanvasSize.Width || Point.Y < 0 || Point.Y > CanvasData.CanvasSize.Height;
@@ -139,7 +140,5 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
                 Util.Logger.Debug("Exception in RadarUI.PointMorph.Update(). {0} {1}", ex.Message, ex.InnerException);
             }
         }
-
-
     }
 }

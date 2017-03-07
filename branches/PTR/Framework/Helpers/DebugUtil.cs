@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Text;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Objects;
-using Trinity.Framework.Objects.Memory.Reference;
 using Trinity.Items;
 using Trinity.Items.Sorting;
 using Trinity.Reference;
@@ -19,7 +18,6 @@ namespace Trinity.Framework.Helpers
 {
     public static class DebugExtentions
     {
-
         public static VarianceResult DetailedCompare<T>(this T val1, T val2)
         {
             if (val1 == null || val2 == null)
@@ -44,7 +42,7 @@ namespace Trinity.Framework.Helpers
         public static void CompareValue<T>(T val1, T val2, string propName, IndexedList<Variance> newVariances)
         {
             var v = new Variance
-            {                
+            {
                 Name = propName,
                 valA = val1,
                 valB = val2
@@ -55,7 +53,6 @@ namespace Trinity.Framework.Helpers
 
             if (v.valA == null || v.valB == null)
                 newVariances.Add(v);
-
             else if (!v.valA.Equals(v.valB))
                 newVariances.Add(v);
         }
@@ -65,7 +62,6 @@ namespace Trinity.Framework.Helpers
     {
         public VarianceResult()
         {
-            
         }
 
         public VarianceResult(List<Variance> variances)
@@ -97,13 +93,12 @@ namespace Trinity.Framework.Helpers
         public object valB { get; set; }
     }
 
-    class DebugUtil
+    internal class DebugUtil
     {
         private static DateTime _lastCacheClear = DateTime.MinValue;
         private static Dictionary<int, CachedBuff> _lastBuffs = new Dictionary<int, CachedBuff>();
         private static Dictionary<string, DateTime> _seenAnimationCache = new Dictionary<string, DateTime>();
         private static Dictionary<int, DateTime> _seenUnknownCache = new Dictionary<int, DateTime>();
-
 
         public static void LogAnimation(TrinityActor cacheObject)
         {
@@ -162,7 +157,6 @@ namespace Trinity.Framework.Helpers
 
                 if (_seenUnknownCache.Any())
                     _seenUnknownCache = _seenUnknownCache.Where(p => p.Value < age).ToDictionary(p => p.Key, p => p.Value);
-
             }
             _lastCacheClear = DateTime.UtcNow;
         }
@@ -171,8 +165,6 @@ namespace Trinity.Framework.Helpers
         {
             return Core.Settings != null && Core.Settings.Advanced.LogCategories.HasFlag(category);
         }
-
-
 
         internal static void LogOnPulse()
         {
@@ -312,7 +304,6 @@ namespace Trinity.Framework.Helpers
                     //Logger.Log("\n\r ringNativeDiff \n\r {0}", ringNativeDiff);
                     //Logger.Log("\n\r gemNativeDiff \n\r {0}", gemNativeDiff);
 
-
                     Logger.Log(level, LogCategory.UserInformation, "------ Active Skills / Runes ------", SkillUtils.Active.Count, SkillUtils.Active.Count);
 
                     Action<Skill> logSkill = s =>
@@ -324,8 +315,6 @@ namespace Trinity.Framework.Helpers
                             );
                     };
 
-
-
                     SkillUtils.Active.ForEach(logSkill);
 
                     Logger.Log(level, LogCategory.UserInformation, "------ Passives ------", SkillUtils.Active.Count, SkillUtils.Active.Count);
@@ -333,7 +322,6 @@ namespace Trinity.Framework.Helpers
                     Action<Passive> logPassive = p => Logger.Log(level, LogCategory.UserInformation, "Passive: {0}", p.Name);
 
                     PassiveUtils.Active.ForEach(logPassive);
-
                 }
             }
             catch (Exception ex)
@@ -358,15 +346,12 @@ namespace Trinity.Framework.Helpers
                 Logger.Log(level, LogCategory.UserInformation, "Resolution: " + SystemInformation.Resolution);
             }
             catch (Exception)
-            {                
-               
+            {
             }
         }
 
-
         internal static void DumpReferenceItems(TrinityLogLevel level = TrinityLogLevel.Debug)
         {
-
             var path = Path.Combine(FileManager.DemonBuddyPath, "Plugins\\Trinity\\Resources\\JS Class Generator\\ItemReference.js");
 
             if (File.Exists(path))
@@ -389,14 +374,6 @@ namespace Trinity.Framework.Helpers
 
             Logger.Log("Dumped Reference Items to: {0}", path);
         }
-
-        internal static void GenerateGameData()
-        {
-            Logger.Log($"Dumping Reference Files to {FileManager.ReferencePath}");
-            ReferenceGenerator.GenerateFiles();
-        }
-
-        
 
         public static string RemoveApostophes(string input)
         {
@@ -487,7 +464,7 @@ namespace Trinity.Framework.Helpers
 
         public static string WriteLinesToLog(string logFileName, string lines, bool deleteFirst = false)
         {
-            return WriteLinesToLog(logFileName, new List<string> {lines}, deleteFirst);
+            return WriteLinesToLog(logFileName, new List<string> { lines }, deleteFirst);
         }
 
         /// <summary>
@@ -521,7 +498,7 @@ namespace Trinity.Framework.Helpers
         {
             Logger.Log("Starting ItemList Backpack Test");
 
-            var backpackItems =  Core.Inventory.Backpack;
+            var backpackItems = Core.Inventory.Backpack;
             var total = backpackItems.Count;
             var toBeStashed = 0;
 
@@ -578,7 +555,6 @@ namespace Trinity.Framework.Helpers
             Logger.Log(sbTopList.ToString());
         }
 
-
         public static void DumpItems(DumpItemLocation location)
         {
             using (ZetaDia.Memory.SaveCacheState())
@@ -592,18 +568,23 @@ namespace Trinity.Framework.Helpers
                     case DumpItemLocation.All:
                         itemList = ZetaDia.Actors.GetActorsOfType<ACDItem>(true).Select(i => new ItemWrapper(i)).OrderBy(i => i.InventorySlot).ThenBy(i => i.Name).ToList();
                         break;
+
                     case DumpItemLocation.Backpack:
                         itemList = ZetaDia.Me.Inventory.Backpack.Select(i => new ItemWrapper(i)).ToList();
                         break;
+
                     case DumpItemLocation.Merchant:
                         itemList = ZetaDia.Me.Inventory.MerchantItems.Select(i => new ItemWrapper(i)).ToList();
                         break;
+
                     case DumpItemLocation.Ground:
                         itemList = ZetaDia.Actors.GetActorsOfType<DiaItem>(true).Select(i => new ItemWrapper(i.CommonData)).ToList();
                         break;
+
                     case DumpItemLocation.Equipped:
                         itemList = ZetaDia.Me.Inventory.Equipped.Select(i => new ItemWrapper(i)).ToList();
                         break;
+
                     case DumpItemLocation.Stash:
                         if (UIElements.StashWindow.IsVisible)
                         {
@@ -680,10 +661,8 @@ namespace Trinity.Framework.Helpers
                     {
                         Logger.Log("Exception reading Item PropertyLoader\n{0}", ex.ToString());
                     }
-
                 }
             }
-
         }
 
         private static void PrintObjectProperties<T>(T item)

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.DbProvider;
 using Trinity.Framework.Actors.ActorTypes;
@@ -10,7 +9,6 @@ using Trinity.Framework.Avoidance.Structures;
 using Trinity.Framework.Helpers;
 using Zeta.Common;
 using Zeta.Game;
-using Zeta.Game.Internals.SNO;
 using Direction = Trinity.Components.Adventurer.Game.Exploration.Direction;
 using Logger = Trinity.Framework.Helpers.Logger;
 using NodeFlags = Trinity.Components.Adventurer.Game.Exploration.NodeFlags;
@@ -44,7 +42,7 @@ namespace Trinity.Framework.Avoidance
             {
                 _currentGrid = new AvoidanceGrid();
             }
-            else if (_currentGrid == null || ZetaDia.WorldId != _currentGrid.WorldDynamicId)
+            else if (_currentGrid == null || ZetaDia.Globals.WorldId != _currentGrid.WorldDynamicId)
             {
                 _currentGrid = new AvoidanceGrid();
             }
@@ -109,7 +107,6 @@ namespace Trinity.Framework.Avoidance
         public Vector3 GetPathCastPosition(float maxDistance, bool updatePath = false)
         {
             return GetFurthestPathPosition(Core.DBNavProvider.CurrentPath, maxDistance, RayType.Cast, updatePath);
-
         }
 
         public Vector3 GetPathWalkPosition(float maxDistance, bool updatePath = false)
@@ -137,8 +134,8 @@ namespace Trinity.Framework.Avoidance
             for (int i = path.Index; i < path.Count; i++)
             {
                 var point = path[i];
-                if (startPosition.Distance(point) > maxDistance || 
-                    type == RayType.Cast && !CanRayCast(startPosition, point) || 
+                if (startPosition.Distance(point) > maxDistance ||
+                    type == RayType.Cast && !CanRayCast(startPosition, point) ||
                     type == RayType.Walk && !CanRayWalk(startPosition, point))
                 {
                     path.Index = i;
@@ -189,9 +186,8 @@ namespace Trinity.Framework.Avoidance
             return reachablePosition;
         }
 
-
         public bool RayFromTargetMissingFlagsCount(Vector3 origin, Vector3 target, int requiredFlagCount, params AvoidanceFlags[] flags)
-        {            
+        {
             var flagTolerenceCounts = flags.ToDictionary(k => k, v => 0);
             if (!IsValidGridWorldPosition(origin) || !IsValidGridWorldPosition(target)) return false;
             foreach (var node in GetRayLine(target, origin).Select(point => InnerGrid[point.X, point.Y]))
@@ -235,7 +231,6 @@ namespace Trinity.Framework.Avoidance
 
         public override void Reset()
         {
-
         }
 
         protected override void OnUpdated(SceneData newNodes)
@@ -461,11 +456,11 @@ namespace Trinity.Framework.Avoidance
         //    if (nearest == null)
         //        return flags;
 
-        //    var nodes = new HashSet<AvoidanceNode>(nearest.AdjacentNodes) { nearest };            
+        //    var nodes = new HashSet<AvoidanceNode>(nearest.AdjacentNodes) { nearest };
         //    foreach (var flag in nodes.SelectMany(node => Flags.Where(flag => node.AvoidanceFlags.HasFlag(flag))))
         //    {
         //        flags.Add(flag);
-        //    }            
+        //    }
         //    return flags;
         //}
 
@@ -498,7 +493,5 @@ namespace Trinity.Framework.Avoidance
             var node = GetNearestNode(position);
             return node != null && node.NodeFlags.HasFlag(NodeFlags.AllowWalk) && node.IsWalkable;
         }
-
     }
 }
-

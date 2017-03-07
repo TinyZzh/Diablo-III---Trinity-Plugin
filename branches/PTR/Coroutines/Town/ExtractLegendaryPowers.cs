@@ -1,15 +1,14 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Components.Combat;
 using Trinity.Coroutines.Resources;
 using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
-using Trinity.Items;
 using Trinity.Reference;
 using Trinity.Settings;
 using Zeta.Common;
@@ -28,7 +27,7 @@ namespace Trinity.Coroutines.Town
         private static DateTime DisabledUntil = DateTime.MinValue;
         private static readonly TimeSpan DisableDuration = TimeSpan.FromMinutes(1);
 
-        public static Dictionary<InventoryItemType, int> ExtractLegendaryPowerRecipe = new Dictionary <InventoryItemType, int>
+        public static Dictionary<InventoryItemType, int> ExtractLegendaryPowerRecipe = new Dictionary<InventoryItemType, int>
         {
             {InventoryItemType.KhanduranRune, 1},
             {InventoryItemType.CaldeumNightshade, 1},
@@ -123,7 +122,7 @@ namespace Trinity.Coroutines.Town
             if (Core.Settings.KanaisCube.ExtractLegendaryPowers == CubeExtractOption.None)
                 return result;
 
-           // var source = ZetaDia.Actors.ACDList.OfType<ACDItem>().Where(i => i.InventorySlot == slot);
+            // var source = ZetaDia.Actors.ACDList.OfType<ACDItem>().Where(i => i.InventorySlot == slot);
             var source = Inventory.AllItems.Where(i => i.InventorySlot == slot);
             var alreadyCubedIds = new HashSet<int>(ZetaDia.PlayerData.KanaisPowersExtractedActorSnoIds);
 
@@ -255,7 +254,7 @@ namespace Trinity.Coroutines.Town
                 else if (StashHasMaterials)
                 {
                     Logger.Log("[ExtractLegendaryPowers] Getting Materials from Stash");
-                    if (!await TakeItemsFromStash.Execute(ExtractLegendaryPowerRecipe.Select(pair => (int) pair.Key), 5000))
+                    if (!await TakeItemsFromStash.Execute(ExtractLegendaryPowerRecipe.Select(pair => (int)pair.Key), 5000))
                         return false;
                 }
                 else if (_stashCandidates.Any() && Core.Settings.KanaisCube.CubeExtractFromStash)

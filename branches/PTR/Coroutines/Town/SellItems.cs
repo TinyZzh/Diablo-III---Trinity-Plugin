@@ -1,23 +1,18 @@
-﻿using System;
+﻿using Buddy.Coroutines;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Components.Combat;
 using Trinity.Coroutines.Resources;
 using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Events;
-using Trinity.Items;
+using Trinity.Framework.Helpers;
 using Trinity.Reference;
 using Zeta.Bot;
-using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals;
-using Zeta.Game.Internals.Actors;
 using Logger = Trinity.Framework.Helpers.Logger;
-using Trinity.Framework.Helpers;
 
 namespace Trinity.Coroutines.Town
 {
@@ -47,7 +42,6 @@ namespace Trinity.Coroutines.Town
 
         public async static Task<bool> Execute()
         {
-   
             if (!ZetaDia.IsInTown)
             {
                 Logger.LogVerbose("[SellItems] Need to be in town to sell items");
@@ -75,7 +69,6 @@ namespace Trinity.Coroutines.Town
                 Logger.LogError("[SellItems] Unable to find merchant info for this area :(");
                 return false;
             }
-
 
             if (!UIElements.VendorWindow.IsVisible)
             {
@@ -117,8 +110,5 @@ namespace Trinity.Coroutines.Town
             Logger.LogError($"[SellItems] Failed to sell items");
             return false;
         }
-
     }
-
 }
-

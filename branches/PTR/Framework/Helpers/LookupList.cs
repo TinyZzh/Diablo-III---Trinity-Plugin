@@ -33,7 +33,7 @@ namespace Trinity.Framework.Helpers
             UpdateLookup();
         }
 
-        static bool Compare<T>(T object1, T object2)
+        private static bool Compare<T>(T object1, T object2)
         {
             //Get the type of the object
             var type = typeof(T);

@@ -19,7 +19,9 @@ namespace Trinity.Components.Adventurer.Game.Grid
         public SceneDefinition SceneDefinition { get; private set; }
         public List<GridNode> GridNodes { get; private set; }
 
-        private GridScene() { }
+        private GridScene()
+        {
+        }
 
         public static GridScene Create(Scene scene, Scene.NavMesh mesh, NavZone zone)
         {

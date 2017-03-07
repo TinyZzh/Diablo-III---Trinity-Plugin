@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Adventurer.Util;
@@ -30,7 +30,6 @@ namespace Trinity.Components.Adventurer.Coroutines
             return false;
         }
 
-
         private readonly HashSet<int> _levelAreaIds;
 
         private enum States
@@ -41,6 +40,7 @@ namespace Trinity.Components.Adventurer.Coroutines
         }
 
         private States _state;
+
         private States State
         {
             get { return _state; }
@@ -63,7 +63,6 @@ namespace Trinity.Components.Adventurer.Coroutines
             _allowReExplore = allowReExplore;
         }
 
-
         private async Task<bool> GetCoroutine()
         {
             if (_breakCondition != null && _breakCondition.Invoke())
@@ -76,8 +75,10 @@ namespace Trinity.Components.Adventurer.Coroutines
             {
                 case States.NotStarted:
                     return NotStarted();
+
                 case States.Exploring:
                     return await Exploring();
+
                 case States.Completed:
                     return Completed();
             }
@@ -141,12 +142,12 @@ namespace Trinity.Components.Adventurer.Coroutines
 
                 if (_currentDestination != destination)
                 {
-                    Logger.Debug($"[Exploration] Destination Changed from {_currentDestination?.NavigableCenter} to {destination.NavigableCenter}");                    
+                    Logger.Debug($"[Exploration] Destination Changed from {_currentDestination?.NavigableCenter} to {destination.NavigableCenter}");
                     _currentDestination = destination;
                 }
                 if (_currentDestination != null)
-                {  
-                    Logger.DebugSetting($"[Exploration] Current Destination {_currentDestination?.NavigableCenter}, CanRayWalk={CanRayWalkDestination} MyPosition={AdvDia.MyPosition}");                   
+                {
+                    Logger.DebugSetting($"[Exploration] Current Destination {_currentDestination?.NavigableCenter}, CanRayWalk={CanRayWalkDestination} MyPosition={AdvDia.MyPosition}");
                     _currentDestination.IsCurrentDestination = true;
                 }
                 //_newNodePickTimer.Reset();
@@ -174,11 +175,11 @@ namespace Trinity.Components.Adventurer.Coroutines
                         {
                             Logger.DebugSetting($"[Exploration] Failed to Navigate to {_currentDestination.NavigableCenter} {_currentDestination.FailedNavigationAttempts} times; Ignoring Node.");
                             _currentDestination.IsVisited = true;
-                            _currentDestination.IsIgnored = true;                            
-                            _currentDestination.IsCurrentDestination = false;                            
+                            _currentDestination.IsIgnored = true;
+                            _currentDestination.IsCurrentDestination = false;
                             _currentDestination = null;
                             _failedNavigationAttempts++;
-                        }                        
+                        }
                     }
                     else
                     {
@@ -205,7 +206,6 @@ namespace Trinity.Components.Adventurer.Coroutines
                             return false;
                         }
                     }
-
                 }
                 return false;
             }
@@ -220,13 +220,9 @@ namespace Trinity.Components.Adventurer.Coroutines
 
         public bool CanRayWalkDestination => NavigationGrid.Instance.CanRayWalk(AdvDia.MyPosition, _currentDestination.NavigableCenter);
 
-
         private bool Completed()
         {
             return true;
         }
-
     }
-
-
 }

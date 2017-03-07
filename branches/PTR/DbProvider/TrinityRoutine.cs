@@ -1,8 +1,8 @@
 ﻿// VERSION 1.2.0
 
+using log4net;
 using System;
 using System.Windows;
-using log4net;
 using Zeta.Bot;
 using Zeta.Common;
 using Zeta.Common.Plugins;
@@ -16,6 +16,7 @@ namespace Trinity.DbProvider
     public class TrinityRoutine : CombatRoutine
     {
         private static readonly ILog Log = Logger.GetLoggerInstanceForType();
+
         public override void Initialize()
         {
             foreach (PluginContainer plugin in PluginManager.Plugins)
@@ -45,7 +46,7 @@ namespace Trinity.DbProvider
                         if (plugin.Plugin.Name == "Trinity")
                         {
                             return plugin.Plugin.DisplayWindow;
-                        }                         
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -65,7 +66,7 @@ namespace Trinity.DbProvider
         {
             get
             {
-                if (!ZetaDia.IsInGame || ZetaDia.IsLoadingWorld)
+                if (!ZetaDia.IsInGame || ZetaDia.Globals.IsLoadingWorld)
                 {
                     // Return none if we are oog to make sure we can start the bot anytime.
                     return ActorClass.Invalid;
@@ -87,6 +88,5 @@ namespace Trinity.DbProvider
 
         public override Composite Combat { get { return new Action(); } }
         public override Composite Buff { get { return new Action(); } }
-
     }
 }

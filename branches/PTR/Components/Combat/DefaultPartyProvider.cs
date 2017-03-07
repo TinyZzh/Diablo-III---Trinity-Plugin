@@ -24,7 +24,7 @@ namespace Trinity.Components.Combat
         public IPartyMember Leader => Players.OrderByDescending(p => p.HitPointsMax).FirstOrDefault();
         public ITargetable PriorityTarget => Leader.Target;
         public Vector3 FightLocation => Leader.Position;
+
         public override string ToString() => $"{GetType().Name}: Members={Members.Count()}";
     }
 }
-

@@ -30,7 +30,6 @@ namespace Trinity.UI
 {
     public class UILoader
     {
-
         public static void Preload()
         {
             //PreLoadResources();
@@ -82,7 +81,6 @@ namespace Trinity.UI
         //    sw.Stop();
         //    Logger.Log($"{path} preloaded in {sw.Elapsed.TotalMilliseconds}ms");
         //}
-
 
         internal static void PreLoadResources()
         {
@@ -150,7 +148,7 @@ namespace Trinity.UI
         /// </summary>
         public static event LoaderEvent OnSettingsWindowOpened = () => { };
 
-        #endregion
+        #endregion Events
 
         public static Window GetDisplayWindow(string uiPath)
         {
@@ -347,8 +345,6 @@ namespace Trinity.UI
         //    return null;
         //}
 
-
-
         /// <summary>Loads the and transform xaml file.</summary>
         /// <param name="filePath">The absolute path to xaml file.</param>
         /// <returns><see cref="Stream"/> which contains transformed XAML file.</returns>
@@ -388,7 +384,7 @@ namespace Trinity.UI
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         /// <exception cref="System.NotImplementedException"></exception>
-        static void WindowClosed(object sender, EventArgs e)
+        private static void WindowClosed(object sender, EventArgs e)
         {
             Logger.Log(TrinityLogLevel.Verbose, LogCategory.UI, "Window closed.");
             ConfigWindow = null;
@@ -401,11 +397,11 @@ namespace Trinity.UI
         {
             try
             {
-                // Loop in Children of parent control of type FrameworkElement 
+                // Loop in Children of parent control of type FrameworkElement
                 foreach (FrameworkElement ctrl in LogicalTreeHelper.GetChildren(parentControl).OfType<FrameworkElement>())
                 {
                     string contentName = ctrl.Tag as string;
-                    // Tag contains a string end with ".xaml" : It's dymanic content 
+                    // Tag contains a string end with ".xaml" : It's dymanic content
                     if (!string.IsNullOrWhiteSpace(contentName) && contentName.EndsWith(".xaml"))
                     {
                         // combine and handle relative '..\' in path.
@@ -484,7 +480,7 @@ namespace Trinity.UI
                     return null;
                 }
 
-                var ownerWindow = DemonBuddyUI.MainWindow;
+                var ownerWindow = Application.Current.MainWindow;
 
                 window = new Window
                 {
@@ -531,7 +527,7 @@ namespace Trinity.UI
                     window = null;
                 };
 
-                //ownerWindow.ContentRendered += (sender, args) => OnModalWindowOpened();               
+                //ownerWindow.ContentRendered += (sender, args) => OnModalWindowOpened();
             }
             catch (XamlParseException ex)
             {
@@ -570,7 +566,5 @@ namespace Trinity.UI
             window.Width = window.Width + size.Width;
             window.Height = window.Height + size.Height;
         }
-
-
     }
 }

@@ -20,6 +20,7 @@ namespace Trinity.Components.Adventurer.Game.Combat
                 //}.OnStart();
             }
         }
+
         public static void TurnCombatOn()
         {
             if (!CombatTargeting.Instance.AllowedToKillMonsters)
@@ -40,7 +41,6 @@ namespace Trinity.Components.Adventurer.Game.Combat
         {
             get { return CombatTargeting.Instance.AllowedToKillMonsters ? CombatState.Enabled : CombatState.Disabled; }
         }
-
     }
 
     public enum CombatState

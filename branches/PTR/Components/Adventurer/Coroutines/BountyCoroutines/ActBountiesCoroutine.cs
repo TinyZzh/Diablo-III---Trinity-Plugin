@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Adventurer.Game.Quests;
@@ -8,8 +7,6 @@ using Zeta.Game;
 
 namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
 {
-    using Framework;
-
     public class ActBountiesCoroutine
     {
         public readonly Act Act;
@@ -17,7 +14,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
         private CompleteActBountiesCoroutine _completeActBountiesCoroutine;
         private List<BountyCoroutine> _bountyCoroutines;
         private BountyCoroutine _currentBountyCoroutine;
-
 
         #region State
 
@@ -33,6 +29,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
         }
 
         protected bool _logStateChange;
+
         protected bool LogStateChange
         {
             get
@@ -58,7 +55,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             }
         }
 
-        #endregion
+        #endregion State
 
         public ActBountiesCoroutine(Act act)
         {
@@ -95,7 +92,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             return false;
         }
 
-
         private async Task<bool> NotStarted()
         {
             //if (!BountyHelpers.IsActEnabledOnSettings(Act))
@@ -120,7 +116,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             }
             State = States.RunningBounties;
             return false;
-
         }
 
         private async Task<bool> RunningBounties()
@@ -161,7 +156,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
                     //}
                     //else
                     //{
-                        _currentBountyCoroutine = _bountyCoroutines[0];
+                    _currentBountyCoroutine = _bountyCoroutines[0];
                     //}
                 }
                 else
@@ -181,7 +176,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             if (_currentBountyCoroutine.State == BountyCoroutine.States.Failed)
             {
                 //Logger.Info("[ActBounties] Looks like the bounty has failed, skipping the rest of the act.");
-                State=States.Failed;
+                State = States.Failed;
                 return false;
             }
             _bountyCoroutines.Remove(_currentBountyCoroutine);
@@ -209,22 +204,18 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             return true;
         }
 
-
         private async Task<bool> UnsupportedBountyFound()
         {
             Logger.Info("[ActBounties] It seems like we have an unsupported bounty in {0}, skipping the act.", Act);
             BountyStatistics.RestartsFromUnsupported++;
             return true;
-
         }
 
         private async Task<bool> ActIsDisabled()
         {
             Logger.Info("[ActBounties] {0} is disabled on settings, skipping the act.", Act);
             return true;
-
         }
-
 
         private async Task<bool> Failed()
         {

@@ -9,7 +9,7 @@ using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
 using Trinity.Framework.Objects.Enums;
 using Trinity.Framework.Objects.Memory.Misc;
-using Trinity.Framework.Objects.Memory.Symbols.Types;
+using Trinity.Framework.Objects.Memory;
 using Trinity.Settings;
 using Zeta.Bot.Navigation;
 using Zeta.Common;

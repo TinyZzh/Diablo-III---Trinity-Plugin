@@ -1,25 +1,18 @@
-﻿using System;
+﻿using QuestTools;
+using System;
+
 //using Trinity.Components.AutoFollow;
 using Trinity.Components.Adventurer;
-using Trinity.Components.Adventurer.Game.Events;
 using Trinity.DbProvider;
 using Trinity.Framework.Actors;
 using Trinity.Framework.Avoidance;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects.Enums;
-using Trinity.Framework.Objects.Memory;
-using Trinity.Framework.Objects.Memory.Misc;
 using Trinity.Modules;
-using Trinity.ProfileTags;
-using Trinity.Routines;
 using Trinity.Settings;
-using Trinity.UI;
-using Trinity.UI.UIComponents;
 using Zeta.Bot;
 using Zeta.Bot.Navigation;
 using Zeta.Game;
-using Zeta.Game.Internals;
-using Zeta.Game.Internals.Actors;
 
 namespace Trinity.Framework
 {
@@ -32,8 +25,11 @@ namespace Trinity.Framework
         // Components
         public static Adventurer Adventurer { get; } = Adventurer.Instance;
 
+        public static Plugin QuestTools { get; } = new Plugin();
+
         // Modules
         public static InventoryCache Inventory { get; } = new InventoryCache();
+
         public static ActorCache Actors { get; } = new ActorCache();
         public static HotbarCache Hotbar { get; } = new HotbarCache();
         public static PlayerCache Player { get; } = new PlayerCache();
@@ -55,9 +51,9 @@ namespace Trinity.Framework
         public static HeroDataCache HeroData { get; } = new HeroDataCache();
         public static QuestCache Quests { get; } = new QuestCache();
 
-
         // Misc
         public static GridHelper Grids { get; } = new GridHelper();
+
         public static PlayerMover PlayerMover { get; } = new PlayerMover();
         public static StuckHandler StuckHandler { get; } = new StuckHandler();
         public static BlockedCheck BlockedCheck { get; } = new BlockedCheck();
@@ -89,7 +85,7 @@ namespace Trinity.Framework
             //ModuleManager.FireEvent(ModuleEvent.WorldChanged);
         }
 
-        public static bool GameIsReady => ZetaDia.IsInGame && ZetaDia.Me.IsValid && !ZetaDia.IsLoadingWorld && !ZetaDia.IsPlayingCutscene;
+        public static bool GameIsReady => ZetaDia.IsInGame && ZetaDia.Me.IsValid && !ZetaDia.Globals.IsLoadingWorld && !ZetaDia.Globals.IsPlayingCutscene;
 
         private static void Pulse(object sender, EventArgs eventArgs)
         {
@@ -115,11 +111,10 @@ namespace Trinity.Framework
 
         public static void Init()
         {
-
         }
 
         public static void Enable()
-        {                  
+        {
             if (!IsEnabled)
             {
                 Pulsator.OnPulse += Pulse;
@@ -127,17 +122,8 @@ namespace Trinity.Framework
                 GameEvents.OnGameJoined += OnGameJoined;
                 GameEvents.OnGameLeft += OnGameLeft;
                 ModuleManager.EnableAll();
-                Logger.Log("Trinity Framework Enabled");
                 IsEnabled = true;
             }
         }
     }
-
 }
-
-
-
-
-
-
-

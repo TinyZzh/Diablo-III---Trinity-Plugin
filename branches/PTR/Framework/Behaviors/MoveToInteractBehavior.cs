@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Trinity.Components.Combat;
-using Trinity.Coroutines;
 using Trinity.DbProvider;
 using Trinity.Framework.Actors.ActorTypes;
-using Trinity.Framework.Objects.Enums;
 using Zeta.Bot.Coroutines;
 using Zeta.Bot.Navigation;
 using Zeta.Common;
@@ -30,15 +26,15 @@ namespace Trinity.Framework.Behaviors
         {
             var actor = Core.Actors.AllRActors
                 .OrderBy(m => m.Distance)
-                .FirstOrDefault(m => m.Position != Vector3.Zero 
-                    && actorSelector(m) 
+                .FirstOrDefault(m => m.Position != Vector3.Zero
+                    && actorSelector(m)
                     && !m.IsExcludedId && !m.IsExcludedType
-                    && !VisitedActorPositions.Contains(m.Position) 
+                    && !VisitedActorPositions.Contains(m.Position)
                     && (Actor == null || Actor.Distance > m.AxialRadius));
 
             if (actor != null && (IsRunning || (!PlayerMover.IsBlocked && actor.Distance < 500)) && !Navigator.StuckHandler.IsStuck)
             {
-                if(VisitedActorPositions.Count > 500)
+                if (VisitedActorPositions.Count > 500)
                     VisitedActorPositions.Clear();
 
                 Actor = actor;

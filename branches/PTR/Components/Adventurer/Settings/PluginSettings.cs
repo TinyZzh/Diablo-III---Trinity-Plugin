@@ -1,22 +1,17 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
-using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Rift;
 using Trinity.Components.Adventurer.Util;
 using Trinity.Framework.Helpers;
 using Trinity.UI.UIComponents;
-using Zeta.Bot;
-using Zeta.Game;
 using JsonSerializer = Trinity.Components.Adventurer.Util.JsonSerializer;
 using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Components.Adventurer.Settings
 {
-
     [DataContract]
     public class PluginSettings : NotifyBase
     {
@@ -296,7 +291,7 @@ namespace Trinity.Components.Adventurer.Settings
         }
 
         /// <summary>
-        /// Bound to UI rift level dropdown 
+        /// Bound to UI rift level dropdown
         /// </summary>
         public string GreaterRiftLevelRaw
         {
@@ -307,6 +302,7 @@ namespace Trinity.Components.Adventurer.Settings
                 {
                     case 0:
                         return "Max";
+
                     case -1:
                     case -2:
                     case -3:
@@ -318,6 +314,7 @@ namespace Trinity.Components.Adventurer.Settings
                     case -9:
                     case -10:
                         return "Max - " + (GreaterRiftLevel * -1);
+
                     default:
                         return GreaterRiftLevel.ToString();
                 }
@@ -351,7 +348,6 @@ namespace Trinity.Components.Adventurer.Settings
 
         [IgnoreDataMember]
         public List<AdventurerGem> GemUpgradePriority => Gems.Gems;
-
 
         public PluginSettings()
         {
@@ -387,7 +383,6 @@ namespace Trinity.Components.Adventurer.Settings
         {
             get
             {
-
                 var unlockedRiftLevel = HighestUnlockedRiftLevel;
 
                 var levels = new List<string>();
@@ -428,7 +423,6 @@ namespace Trinity.Components.Adventurer.Settings
         }
 
         [IgnoreDataMember]
-
         public List<string> RiftCounts
         {
             get { return new List<string> { "Infinity", "1", "5", "10", "20", "50" }; }
@@ -571,7 +565,6 @@ namespace Trinity.Components.Adventurer.Settings
         [IgnoreDataMember]
         public UpdateOrderDropHandler DropHandler { get; } = new UpdateOrderDropHandler();
 
-        #endregion
+        #endregion DragDrop Handler
     }
-
 }

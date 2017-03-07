@@ -55,7 +55,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             }
         }
 
-        #endregion
+        #endregion State
 
         public bool IsDone
         {
@@ -76,14 +76,19 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             {
                 case States.NotStarted:
                     return await NotStarted();
+
                 case States.Searching:
                     return await Searching();
+
                 case States.Moving:
                     return await Moving();
+
                 case States.Found:
                     return await Found();
+
                 case States.Completed:
                     return await Completed();
+
                 case States.Failed:
                     return await Failed();
             }
@@ -153,6 +158,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
         }
 
         private ClearAreaForNSecondsCoroutine _clearAreaForNSecondsCoroutine;
+
         private async Task<bool> Found()
         {
             if (await _clearAreaForNSecondsCoroutine.GetCoroutine())
@@ -180,7 +186,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             _isDone = true;
             return false;
         }
-
 
         private void ScanForObjective()
         {
@@ -220,7 +225,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                         //}
                     }
                 }
-
             }
         }
 

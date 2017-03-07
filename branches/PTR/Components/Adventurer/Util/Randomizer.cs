@@ -11,6 +11,7 @@ namespace Trinity.Components.Adventurer.Util
         {
             return _random.Next(max);
         }
+
         public static int GetRandomNumber(int min, int max)
         {
             return _random.Next(min, max);

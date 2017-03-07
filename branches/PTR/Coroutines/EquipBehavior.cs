@@ -1,17 +1,11 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
-using System.Text;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Framework;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
-using Trinity.Reference;
-using Zeta.Bot;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
 using Zeta.Game.Internals.SNO;
@@ -86,10 +80,10 @@ namespace Trinity.Coroutines
                     var primarySkills = _skills.Where(s => s.Key.IsPrimary).Take(2).ToList();
                     if (primarySkills.Any())
                     {
-                        for (int i = 0; i < Math.Min(primarySkills.Count,2); i++)
+                        for (int i = 0; i < Math.Min(primarySkills.Count, 2); i++)
                         {
                             var skillDefinition = primarySkills.ElementAtOrDefault(i);
-                            if (Core.Hotbar.ActiveSkills.Any(s => s.Power == skillDefinition.Key.SNOPower && (int) s.Slot == i))
+                            if (Core.Hotbar.ActiveSkills.Any(s => s.Power == skillDefinition.Key.SNOPower && (int)s.Slot == i))
                             {
                                 Logger.LogVerbose("[Auto Skills] Skipping Skill (Already Equipped): {0} ({1}) - {2} in slot {3}",
                                     skillDefinition.Key.Name,
@@ -102,11 +96,10 @@ namespace Trinity.Coroutines
 
                             await EquipSkill(skillDefinition, i);
 
-                            
                             await Coroutine.Sleep(500);
                         }
                     }
-                
+
                     var otherSkills = Skills.Except(primarySkills).ToList();
                     if (otherSkills.Any())
                     {
@@ -115,7 +108,7 @@ namespace Trinity.Coroutines
                             await EquipSkill(otherSkills.ElementAtOrDefault(i), i);
                             await Coroutine.Sleep(500);
                         }
-                    }                  
+                    }
                 }
 
                 if (Passives == null || !Passives.Any())
@@ -131,7 +124,7 @@ namespace Trinity.Coroutines
 
                 await Coroutine.Sleep(250);
 
-                switch(validPasives.Count)
+                switch (validPasives.Count)
                 {
                     case 1:
                         ZetaDia.Me.SetTraits(passivePowers[0]);
@@ -151,7 +144,6 @@ namespace Trinity.Coroutines
                 }
 
                 await Coroutine.Sleep(2000);
-
             }
             catch (Exception ex)
             {
@@ -159,14 +151,13 @@ namespace Trinity.Coroutines
             }
 
             return true;
-
         }
 
         public static Dictionary<int, ActiveSkillEntry> KnownSkills = new Dictionary<int, ActiveSkillEntry>();
 
         public async static Task<bool> EquipSkill(KeyValuePair<Skill, Rune> skill, int slot)
         {
-            if (!ZetaDia.IsInGame || ZetaDia.Me == null || !ZetaDia.Me.IsValid || ZetaDia.IsLoadingWorld || ZetaDia.IsPlayingCutscene)
+            if (!ZetaDia.IsInGame || ZetaDia.Me == null || !ZetaDia.Me.IsValid || ZetaDia.Globals.IsLoadingWorld || ZetaDia.Globals.IsPlayingCutscene)
                 return false;
 
             if (skill.Key == null || skill.Value == null || slot < 0)
@@ -195,9 +186,9 @@ namespace Trinity.Coroutines
             //}
 
             //if (currentLevel < knownSkillRecord.RequiredLevel)
-            //{                
+            //{
             //    Logger.LogError("[Auto Skills] Skill {0} cannot be equipped until level {1}", skill.Key.Name, knownSkillRecord.RequiredLevel);
-            //    return false;                
+            //    return false;
             //}
 
             //if (skill.Value.RuneIndex == -1 && currentLevel < knownSkillRecord.RuneNoneRequiredLevel)
@@ -236,7 +227,7 @@ namespace Trinity.Coroutines
             //    return false;
             //}
 
-            if (currentLevel < skill.Key.RequiredLevel )
+            if (currentLevel < skill.Key.RequiredLevel)
             {
                 Logger.LogError("[Auto Skills] Skill {0} cannot be equipped until level {1}", skill.Key.Name, skill.Key.RequiredLevel);
                 return false;
@@ -250,8 +241,5 @@ namespace Trinity.Coroutines
 
             return true;// ZetaDia.PlayerData.GetActiveSkillBySlot((HotbarSlot)slot).Power == skill.Key.SNOPower;
         }
-
-
     }
 }
-

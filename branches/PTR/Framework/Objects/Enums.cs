@@ -2,7 +2,6 @@
 
 namespace Trinity.Framework.Objects
 {
-
     public enum TargetingType
     {
         Unknown = 0,
@@ -231,7 +230,7 @@ namespace Trinity.Framework.Objects
         Holy = 1 << 4,
         Lightning = 1 << 5,
         Physical = 1 << 6,
-        Poison = 1 << 7,   
+        Poison = 1 << 7,
         Any = Arcane | Cold | Fire | Holy | Lightning | Physical | Poison
     }
 
@@ -296,29 +295,29 @@ namespace Trinity.Framework.Objects
     public enum AreaEffectShapeType
     {
         None = 0,
-        Cone,                
+        Cone,
         Circle,
-        Beam        
+        Beam
     }
 
     [Flags]
     public enum EffectTypeFlags
-    {        
-        None            = 0,
-        Stun            = 1 << 0,
-        Knockback       = 1 << 1,
-        Immobilize      = 1 << 2,
-        Chill           = 1 << 3,
-        Blind           = 1 << 4,
-        Charm           = 1 << 5,
-        Slow            = 1 << 6,
-        Freeze          = 1 << 7, 
+    {
+        None = 0,
+        Stun = 1 << 0,
+        Knockback = 1 << 1,
+        Immobilize = 1 << 2,
+        Chill = 1 << 3,
+        Blind = 1 << 4,
+        Charm = 1 << 5,
+        Slow = 1 << 6,
+        Freeze = 1 << 7,
 
         Any = Freeze | Stun | Knockback | Immobilize | Chill | Blind | Charm | Slow
     }
 
     public enum IgnoreReason
-    {        
+    {
         None = 0,
         Invalid,
         ObjectType,
@@ -346,7 +345,7 @@ namespace Trinity.Framework.Objects
         Settings,
         AlreadyOpen
     }
-    
+
     public enum TrinityPetType
     {
         Unknown = 0,
@@ -359,62 +358,84 @@ namespace Trinity.Framework.Objects
         Hireling,
     }
 
-    
     public enum TrinityMonsterAffix
     {
         Knockback = -2088540441,
+
         //FireAura = -2045268529,
         Electrified = -1752429632,
+
         ArcaneEnchanted = -1669589516,
+
         //DamageAura = -1528345496,
         ExtraHealth = -1512481702,
+
         MissileDampening = -1412750743,
         ReflectsDamage = -1374592233,
+
         //Magical = -1336711954,
         Plagued = -1333953694,
+
         Nightmarish = -1245918914,
+
         //Ballista = -1240082768,
         //PoisonImmune = -1160183133,
         ColdImmune = -865040371,
+
         Shielding = -725865705,
+
         //ManaLeech = -582901282,
         Invulnerable = -522898157,
+
         Teleporter = -507706394,
         ColdAura = -503659797,
+
         //InvulnerableMinions = -444378204,
         FireChains = -439707236,
+
         //ArcaneRing = -410440198,
         //Cursed = -277585146,
         //Clone = -201427767,
         //FireImmune = -198520975,
         Frozen = -163836908,
+
         //Desecrator = -121984286,
         Desecrator = -121983956,
+
         Thunderstorm = -50556465,
         Jailer = -27686857,
         Fast = 3775118,
+
         //Powerful = 86743790,
         //Merger = 94780994,
         //Minion = 99383434,
         Molten = 106438735,
+
         Mortar = 106654229,
         Horde = 127452338,
+
         //Shaman = 332546584,
         //Turret = 387715462,
         Illusionist = 394214687,
+
         Vampiric = 395423867,
         Vortex = 458872904,
         Waller = 481181063,
+
         //Multishot = 548471757,
         //DieTogether = 744441678,
         //LightningAura = 1009631565,
         Wormhole = 1156956365,
+
         Avenger = 1165197192,
+
         //Stoneskin = 1412125528,
         //Doppelganger = 1413174552,
         HealthLink = 1799201764,
+
         //LightningImmune = 1828934319,
         FrozenPulse = 1886876669,
+
         Orbiter = 1905614711,
         PoisonEnchanted = 1929212066,
 
@@ -451,11 +472,10 @@ namespace Trinity.Framework.Objects
         ////ExtraHealth = 3, // Disabled in Patch 2.1.2
         ////Vampiric = 14, // Disabled in Patch 2.1.2
         Rare = 4206314,
+
         Champion = 924743082,//ChampionBase = 924743082,
         Elite = 16, // Can't seem to find this one
         Minion = 99383434,
         Unique = 418225399,
     }
-
 }
-

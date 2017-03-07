@@ -19,13 +19,16 @@ namespace Trinity.Components.Adventurer.Game.Exploration
 
         //public Scene Scene { get; private set; }
         public Vector2 Center { get; private set; }
+
         public List<ExplorationNode> Nodes = new List<ExplorationNode>();
         public string Name { get; private set; }
         public string HashName { get; }
         public Vector2 Min { get; private set; }
         public Vector2 Max { get; private set; }
+
         //public Rect Rect { get; private set; }
         public int LevelAreaId { get; set; }
+
         public bool IsIgnored { get; private set; }
         public bool HasParent { get; set; }
         public bool HasChild { get; set; }
@@ -112,19 +115,22 @@ namespace Trinity.Components.Adventurer.Game.Exploration
             foreach (var n in Nodes.Where(n => n.HasEnoughNavigableCells && n.IsConnectionNode))
             {
                 switch (direction)
-                {   
+                {
                     case SceneExitDirections.North:
                         if (n.TopLeft.X == NorthWest.X)
                             return n.NavigableCenter;
                         break;
+
                     case SceneExitDirections.East:
                         if (n.BottomLeft.Y == NorthEast.Y)
                             return n.NavigableCenter;
                         break;
+
                     case SceneExitDirections.South:
                         if (n.BottomRight.X == SouthEast.X)
                             return n.NavigableCenter;
                         break;
+
                     case SceneExitDirections.West:
                         if (n.TopRight.Y == SouthWest.Y)
                             return n.NavigableCenter;
@@ -144,7 +150,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
             var flag = SceneExitDirections.Unknown;
             if (match.Value.Length > 0)
             {
-                if(match.Value.Contains("N"))
+                if (match.Value.Contains("N"))
                     flag |= SceneExitDirections.North;
                 if (match.Value.Contains("W"))
                     flag |= SceneExitDirections.West;
@@ -214,11 +220,9 @@ namespace Trinity.Components.Adventurer.Game.Exploration
                     EdgePointB = NorthWest,
                 };
             }
-
-
         }
 
-        public HashSet<Vector3> BlacklistedPositions { get; set; }= new HashSet<Vector3>();
+        public HashSet<Vector3> BlacklistedPositions { get; set; } = new HashSet<Vector3>();
 
         public int SnoId { get; set; }
 
@@ -273,7 +277,6 @@ namespace Trinity.Components.Adventurer.Game.Exploration
                 }
             }
 
-
             var navBoxSize = ExplorationData.ExplorationNodeBoxSize;
             var searchBeginning = navBoxSize / 2;
             //var cellCount = _boxSize / navBoxSize;
@@ -287,7 +290,6 @@ namespace Trinity.Components.Adventurer.Game.Exploration
                     Nodes.Add(navNode);
                 }
             }
-
 
             //var width = (int)(Max.X - Min.X);
             //var height = (int)(Max.Y - Min.Y);

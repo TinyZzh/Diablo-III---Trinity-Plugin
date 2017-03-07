@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using System;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
-using Trinity.Coroutines.Resources;
 using Trinity.DbProvider;
 using Trinity.Framework;
 using Trinity.Reference;
@@ -27,14 +26,14 @@ namespace Trinity.Coroutines
             if (string.IsNullOrEmpty(destinationName))
                 destinationName = location.ToString();
 
-            _startingWorldId = ZetaDia.CurrentWorldSnoId;
+            _startingWorldId = ZetaDia.Globals.WorldSnoId;
 
             if (Core.Player.IsInTown)
             {
                 GameUI.CloseVendorWindow();
             }
 
-            while(ZetaDia.Me.LoopingAnimationEndTime > 0)
+            while (ZetaDia.Me.LoopingAnimationEndTime > 0)
             {
                 await Coroutine.Sleep(50);
             }
@@ -46,19 +45,19 @@ namespace Trinity.Coroutines
                 if (Navigator.StuckHandler.IsStuck)
                 {
                     await Navigator.StuckHandler.DoUnstick();
-                    Logger.LogVerbose("MoveTo Finished. (Stuck)", _startingWorldId, ZetaDia.CurrentWorldSnoId);
+                    Logger.LogVerbose("MoveTo Finished. (Stuck)", _startingWorldId, ZetaDia.Globals.WorldSnoId);
                     break;
                 }
 
                 if (stopCondition != null && stopCondition())
                 {
-                    Logger.LogVerbose("MoveTo Finished. (Stop Condition)", _startingWorldId, ZetaDia.CurrentWorldSnoId);
+                    Logger.LogVerbose("MoveTo Finished. (Stop Condition)", _startingWorldId, ZetaDia.Globals.WorldSnoId);
                     return false;
                 }
 
-                if (_startingWorldId != ZetaDia.CurrentWorldSnoId)
+                if (_startingWorldId != ZetaDia.Globals.WorldSnoId)
                 {
-                    Logger.LogVerbose("MoveTo Finished. World Changed from {0} to {1}", _startingWorldId, ZetaDia.CurrentWorldSnoId);
+                    Logger.LogVerbose("MoveTo Finished. World Changed from {0} to {1}", _startingWorldId, ZetaDia.Globals.WorldSnoId);
                     return false;
                 }
 
@@ -74,6 +73,5 @@ namespace Trinity.Coroutines
             Logger.LogVerbose("MoveTo Finished. Distance={0}", distance);
             return true;
         }
-
     }
 }

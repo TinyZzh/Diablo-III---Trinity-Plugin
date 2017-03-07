@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Buddy.Coroutines;
+using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
-using Trinity.Coroutines.Resources;
 using Trinity.Framework;
 using Trinity.Framework.Helpers;
 using Trinity.Reference;
@@ -96,7 +93,7 @@ namespace Trinity.Coroutines.Town
 
             if (shouldRepairAll)
             {
-                ZetaDia.Me.Inventory.RepairAllItems(); 
+                ZetaDia.Me.Inventory.RepairAllItems();
             }
             else
             {
@@ -127,6 +124,5 @@ namespace Trinity.Coroutines.Town
 
             return false;
         }
-
     }
 }

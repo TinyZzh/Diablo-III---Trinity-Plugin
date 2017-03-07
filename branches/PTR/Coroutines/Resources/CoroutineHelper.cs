@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using log4net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
-using log4net;
 using Trinity.Framework;
 using Zeta.Bot;
 using Zeta.Bot.Navigation;
@@ -71,7 +71,6 @@ namespace Trinity.Coroutines.Resources
             {
                 Logger.Info("ForceRunCoroutine Finished");
                 BotMain.IsPausedForStateExecution = false;
-
             }, tickMilliseconds);
         }
 
@@ -104,13 +103,10 @@ namespace Trinity.Coroutines.Resources
 
                         using (ZetaDia.Memory.ReleaseFrame(true))
                         {
-
                         }
 
                         using (ZetaDia.Memory.AcquireFrame(true))
                         {
-                            
-
                             if (!ZetaDia.IsInGame || !ZetaDia.Service.IsValid)
                                 return;
 
@@ -197,7 +193,7 @@ namespace Trinity.Coroutines.Resources
                     if (result is bool)
                         return result;
 
-                    if (result is MoveResult && (MoveResult) (object) result == MoveResult.ReachedDestination)
+                    if (result is MoveResult && (MoveResult)(object)result == MoveResult.ReachedDestination)
                         return true;
 
                     return false;
@@ -223,7 +219,7 @@ namespace Trinity.Coroutines.Resources
                 return true;
             }
 
-            if (!(bool) _updateCoroutine.Result)
+            if (!(bool)_updateCoroutine.Result)
                 return true; // failed, so retry
 
             return false;

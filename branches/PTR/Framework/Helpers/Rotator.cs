@@ -12,13 +12,13 @@ namespace Trinity.Framework.Helpers
         // Usage:
         // var rotator = new Rotator
         // {
-        //     RotateDuration = TimeSpan.FromSeconds(10), 
-        //     StartDelay = TimeSpan.FromSeconds(3), 
-        //     RotateAmount = 360, 
-        //     RotateAntiClockwise = true, 
+        //     RotateDuration = TimeSpan.FromSeconds(10),
+        //     StartDelay = TimeSpan.FromSeconds(3),
+        //     RotateAmount = 360,
+        //     RotateAntiClockwise = true,
         //     StartAngleDegrees = 45
         // };
-        // Task.FromResult(rotator.Rotate());     
+        // Task.FromResult(rotator.Rotate());
 
         public Rotator()
         {
@@ -117,8 +117,6 @@ namespace Trinity.Framework.Helpers
         {
             if (!_angle.HasValue)
                 await Start();
-
-            float newAngle;
 
             while (_timer.Elapsed.TotalMilliseconds <= RotateDuration.TotalMilliseconds && _timer.IsRunning)
             {
@@ -226,6 +224,5 @@ namespace Trinity.Framework.Helpers
             _timer = Stopwatch.StartNew();
             return true;
         }
-
     }
 }

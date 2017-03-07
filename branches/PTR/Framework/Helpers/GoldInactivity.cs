@@ -56,7 +56,7 @@ namespace Trinity.Framework.Helpers
                     ResetCheckGold(); //If not in game, reset the timer
                     return false;
                 }
-                if (ZetaDia.IsLoadingWorld)
+                if (ZetaDia.Globals.IsLoadingWorld)
                 {
                     Logger.Log("Loading world, gold inactivity reset");
                     return false;
@@ -110,6 +110,5 @@ namespace Trinity.Framework.Helpers
         {
             return new Decorator(ret => Instance.GoldInactive(), CommonBehaviors.LeaveGame(ret => "Gold Inactivity Tripped"));
         }
-
     }
 }

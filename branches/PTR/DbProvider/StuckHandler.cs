@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
+using Trinity.Components.Adventurer;
+using Trinity.Components.Adventurer.Coroutines;
 using Trinity.Components.Combat;
 using Trinity.Components.Combat.Resources;
 using Trinity.Framework;
@@ -16,8 +18,6 @@ using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
 using Logger = Trinity.Framework.Helpers.Logger;
-using Trinity.Components.Adventurer;
-using Trinity.Components.Adventurer.Coroutines;
 
 namespace Trinity.DbProvider
 {
@@ -47,8 +47,8 @@ namespace Trinity.DbProvider
 
                 CheckForStuck();
 
-                if(_isStuck)
-                    LastStuckTime = DateTime.UtcNow;                
+                if (_isStuck)
+                    LastStuckTime = DateTime.UtcNow;
 
                 return _isStuck;
             }
@@ -118,7 +118,7 @@ namespace Trinity.DbProvider
 
         public void Reset(string reason = default(string))
         {
-            if(!string.IsNullOrEmpty(reason))
+            if (!string.IsNullOrEmpty(reason))
                 Logger.Log(LogCategory.StuckHandler, $"Not Stuck: {reason}");
 
             _isStuck = false;
@@ -145,7 +145,7 @@ namespace Trinity.DbProvider
             if (ZetaDia.IsInTown && (UIElements.VendorWindow.IsVisible || UIElements.SalvageWindow.IsVisible) && !ZetaDia.Me.Movement.IsMoving)
                 return true;
 
-            if (ZetaDia.Me.IsInConversation || ZetaDia.IsPlayingCutscene || ZetaDia.IsLoadingWorld)
+            if (ZetaDia.Me.IsInConversation || ZetaDia.Globals.IsPlayingCutscene || ZetaDia.Globals.IsLoadingWorld)
             {
                 Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Conversation/CutScene/Loading");
                 return true;
@@ -187,7 +187,7 @@ namespace Trinity.DbProvider
                 Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Waiting (Routine Walk)");
                 return false;
             }
-          
+
             var secondsSincePowerUse = DateTime.UtcNow.Subtract(SpellHistory.LastSpellUseTime).TotalSeconds;
             if (secondsSincePowerUse < 4 && !_invalidBusyPowers.Contains(SpellHistory.LastPowerUsed) && Combat.IsInCombat)
             {
@@ -341,13 +341,13 @@ namespace Trinity.DbProvider
 
         private static async Task<bool> MoveAwayFrom(Vector3 position)
         {
-            var startTime = DateTime.UtcNow;            
+            var startTime = DateTime.UtcNow;
 
             var positions = GenerateUnstickPositions(position);
 
             if (!positions.Any())
             {
-                Logger.LogDebug($"No Unstuck Positions were found. IsMainGridProviderEmpty={Core.DBGridProvider.Width==0}");
+                Logger.LogDebug($"No Unstuck Positions were found. IsMainGridProviderEmpty={Core.DBGridProvider.Width == 0}");
                 return false;
             }
 
@@ -362,7 +362,7 @@ namespace Trinity.DbProvider
                 var distance = targetPosition.Distance(ZetaDia.Me.Position);
 
                 Logger.Log("Moving to {0} Dist={1}", targetPosition, distance);
-                ZetaDia.Me.UsePower(SNOPower.Walk, targetPosition, ZetaDia.WorldId);
+                ZetaDia.Me.UsePower(SNOPower.Walk, targetPosition, ZetaDia.Globals.WorldId);
                 await Coroutine.Sleep(50);
 
                 if (distance < 4f || position.Distance(ZetaDia.Me.Position) > 50f)
@@ -377,7 +377,6 @@ namespace Trinity.DbProvider
             }
             return true;
         }
-
 
         private static List<Vector3> GenerateUnstickPositions(Vector3 avoidPosition)
         {
@@ -396,7 +395,7 @@ namespace Trinity.DbProvider
                 directionalPoints = circlePoints;
             }
             var validatedPoints = directionalPoints.Where(p => Core.DBGridProvider.CanStandAt(p));
-            if(!validatedPoints.Any())
+            if (!validatedPoints.Any())
             {
                 Logger.LogDebug("No validated unstick positions found!");
                 validatedPoints = directionalPoints;
@@ -436,6 +435,5 @@ namespace Trinity.DbProvider
             }
             return result;
         }
-
     }
 }

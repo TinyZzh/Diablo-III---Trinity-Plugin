@@ -8,7 +8,7 @@ namespace Trinity.Framework.Helpers
     /// <summary>
     ///  Extension methods for Exception class.
     /// </summary>
-    static class ExceptionExtensions
+    internal static class ExceptionExtensions
     {
         /// <summary>
         ///  Provides full stack trace for the exception that occurred.
@@ -19,7 +19,7 @@ namespace Trinity.Framework.Helpers
         {
             List<string> environmentStackTraceLines = ExceptionExtensions.GetUserStackTraceLines(environmentStackTrace);
 
-            if(environmentStackTraceLines.Any())
+            if (environmentStackTraceLines.Any())
             {
                 environmentStackTraceLines.RemoveAt(0);
 

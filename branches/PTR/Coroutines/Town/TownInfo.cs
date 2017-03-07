@@ -4,7 +4,6 @@ using Trinity.Reference;
 using Trinity.Settings;
 using Zeta.Common;
 using Zeta.Game;
-using Zeta.Game.Internals.Actors;
 
 namespace Trinity.Coroutines.Town
 {

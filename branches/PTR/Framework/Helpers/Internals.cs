@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Zeta.Game;
@@ -107,10 +106,10 @@ namespace Trinity.Framework.Helpers
 
             [Obsolete("now using ZetaDia AttributeDescripter")]
             public static IntPtr AttributeDescripter => (IntPtr)0x020B2A80;
+
             public static IntPtr SNOTableGameBalance => _offsetsC.ElementAtOrDefault(16);
             public static IntPtr SNOTableActor => _offsetsC.ElementAtOrDefault(18);
             public static IntPtr SNOTablePower => _offsetsC.ElementAtOrDefault(19);
-
         }
 
         public enum ObjectManagerOffsets
@@ -119,5 +118,4 @@ namespace Trinity.Framework.Helpers
             Globals = 0x790
         }
     }
-
 }

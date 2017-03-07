@@ -1,5 +1,4 @@
-﻿
-namespace Trinity.Framework.Helpers
+﻿namespace Trinity.Framework.Helpers
 {
     /// <summary>
     /// A simple two-integer struct for fast comparison purposes and storage in HashSets
@@ -8,6 +7,7 @@ namespace Trinity.Framework.Helpers
     {
         public int A;
         public int B;
+
         public DoubleInt(int a, int b)
         {
             this.A = a;

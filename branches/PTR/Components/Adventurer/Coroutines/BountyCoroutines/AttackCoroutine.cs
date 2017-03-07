@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using Buddy.Coroutines;
+﻿using Buddy.Coroutines;
+using System.Threading.Tasks;
 using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Coroutines.CommonSubroutines;
 using Trinity.Components.Adventurer.Game.Actors;
@@ -39,10 +39,9 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
 
         public void DisablePulse()
         {
-
         }
 
-        #endregion
+        #endregion ISubroutine
 
         #region State
 
@@ -70,7 +69,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             }
         }
 
-        #endregion
+        #endregion State
 
         public virtual async Task<bool> GetCoroutine()
         {
@@ -126,7 +125,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             return false;
         }
 
-
         private async Task<bool> Moving()
         {
             if (!await new MoveToPositionCoroutine(AdvDia.CurrentWorldId, _actor.Position, (int)_attackRange).GetCoroutine())
@@ -178,6 +176,5 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             _isDone = true;
             return false;
         }
-
     }
 }

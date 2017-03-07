@@ -1,5 +1,4 @@
 using System;
-using Trinity.Framework.Actors.ActorTypes;
 
 namespace Trinity.Components.Combat.Resources
 {
@@ -42,13 +41,13 @@ namespace Trinity.Components.Combat.Resources
             }
         }
 
-        public TimeSpan TimeSinceFirstTargeted 
+        public TimeSpan TimeSinceFirstTargeted
             => FirstTargetedTime != DateTime.MinValue ? DateTime.UtcNow - FirstTargetedTime : TimeSpan.Zero;
 
         public TimeSpan TimeSinceLastTargeted
             => LastTargetedTime != DateTime.MinValue ? DateTime.UtcNow - LastTargetedTime : TimeSpan.Zero;
 
-        public override string ToString() 
+        public override string ToString()
             => $"{GetType().Name}: " +
                $"Targeted={TargetedTimes} " +
                $"TotalTime={TotalTargetedTime.TotalSeconds:N2}s " +

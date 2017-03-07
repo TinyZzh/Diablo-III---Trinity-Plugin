@@ -105,9 +105,5 @@ namespace Trinity.Framework.Events
             Logger.Log(LogCategory.ItemEvents, $"ItemGambled {item.Name}");
             OnItemGambled?.Invoke(item);
         }
-
-
     }
-
-
 }

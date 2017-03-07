@@ -22,15 +22,14 @@ namespace Trinity.Framework.Helpers
                         return false;
 
                     return p.GetInterface(configTypeFullName) != null;
-
                 }).ToList();
 
                 foreach (var taskType in configurables)
-                {   
+                {
                     try
                     {
                         var instance = (T)Activator.CreateInstance(taskType);
-                        if (instance == null) continue;       
+                        if (instance == null) continue;
                         Logger.LogVerbose("Instantiated {0}", taskType.Name);
                         Items[taskType.Name] = instance;
                     }
@@ -44,6 +43,4 @@ namespace Trinity.Framework.Helpers
             }
         }
     }
-
 }
-

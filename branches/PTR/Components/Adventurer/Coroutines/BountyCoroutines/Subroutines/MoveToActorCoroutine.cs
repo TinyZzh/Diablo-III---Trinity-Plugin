@@ -7,7 +7,6 @@ using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Adventurer.Game.Quests;
 using Trinity.Components.Adventurer.Util;
 using Zeta.Common;
-using Zeta.Game;
 using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
@@ -48,14 +47,12 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             }
         }
 
-        #endregion
+        #endregion State
 
         public bool IsDone
         {
             get { return _isDone || AdvDia.CurrentWorldId != _worldId; }
         }
-
-
 
         public MoveToActorCoroutine(int questId, int worldId, int actorId, int maxRange = 5000)
         {
@@ -65,19 +62,22 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             _objectiveScanRange = maxRange;
         }
 
-
         public async Task<bool> GetCoroutine()
         {
             switch (State)
             {
                 case States.NotStarted:
                     return await NotStarted();
+
                 case States.Searching:
                     return await Searching();
+
                 case States.Moving:
                     return await Moving();
+
                 case States.Completed:
                     return await Completed();
+
                 case States.Failed:
                     return await Failed();
             }
@@ -187,7 +187,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                         //{
                         //    Logger.Debug("[MoveToObject] Found the objective at distance {0}, but cannot get a path to it.",
                         //        AdvDia.MyPosition.Distance(_objectiveLocation));
-                        //    _objectiveLocation = Vector3.Zero;                            
+                        //    _objectiveLocation = Vector3.Zero;
                         //}
                     }
                 }

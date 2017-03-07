@@ -32,7 +32,7 @@ namespace Trinity.Modules
             if (DateTime.UtcNow.Subtract(LastAssignedParagon).TotalSeconds < 30)
                 return;
 
-            if (!ZetaDia.IsInGame || ZetaDia.IsLoadingWorld || !ZetaDia.Me.IsValid)
+            if (!ZetaDia.IsInGame || ZetaDia.Globals.IsLoadingWorld || !ZetaDia.Me.IsValid)
                 return;
 
             if (IsParagonWindowOpen()) // Dont spend when the user might be clicking buttons, things could get confused.

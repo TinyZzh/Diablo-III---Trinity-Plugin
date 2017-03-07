@@ -10,7 +10,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Objects;
-using Trinity.Items;
 using Trinity.Reference;
 using Trinity.Settings;
 using Zeta.Common;
@@ -24,8 +23,6 @@ namespace Trinity.Framework.Helpers
     /// </summary>
     public static class Extensions
     {
-
-
         public static void RemoveAll<TKey, TValue>(this Dictionary<TKey, TValue> dic, Func<TValue, bool> predicate)
         {
             var keys = dic.Keys.Where(k => predicate(dic[k])).ToList();
@@ -90,9 +87,6 @@ namespace Trinity.Framework.Helpers
             return queue;
         }
 
-
-
-
         public static void Sort<TSource, TKey>(this ObservableCollection<TSource> source, Func<TSource, TKey> keySelector)
         {
             List<TSource> sortedList = source.OrderBy(keySelector).ToList();
@@ -102,7 +96,6 @@ namespace Trinity.Framework.Helpers
                 source.Add(sortedItem);
             }
         }
-
 
         /// <summary>
         /// Fetches value from Dictionary or adds and returns a default value.
@@ -234,23 +227,26 @@ namespace Trinity.Framework.Helpers
             {
                 case ItemQuality.Invalid:
                     return TrinityItemQuality.None;
+
                 case ItemQuality.Inferior:
                 case ItemQuality.Normal:
                 case ItemQuality.Superior:
                     return TrinityItemQuality.Common;
+
                 case ItemQuality.Magic1:
                 case ItemQuality.Magic2:
                 case ItemQuality.Magic3:
                     return TrinityItemQuality.Magic;
+
                 case ItemQuality.Rare4:
                 case ItemQuality.Rare5:
                 case ItemQuality.Rare6:
                     return TrinityItemQuality.Rare;
+
                 case ItemQuality.Legendary:
                 case ItemQuality.Special:
                 default:
                     return TrinityItemQuality.Legendary;
-
             }
         }
 
@@ -305,15 +301,19 @@ namespace Trinity.Framework.Helpers
                 case "{c:ff00ff00}": // Green
                     qualityResult = ItemQuality.Legendary;
                     break;
+
                 case "{c:ffff8000}": // Orange
                     qualityResult = ItemQuality.Legendary;
                     break;
+
                 case "{c:ffffff00}": // Yellow
                     qualityResult = ItemQuality.Rare4;
                     break;
-                case "{c:ff6969ff}": // Magic Blue 
+
+                case "{c:ff6969ff}": // Magic Blue
                     qualityResult = ItemQuality.Magic1;
                     break;
+
                 case "{c:ffffffff}": // White
                     qualityResult = ItemQuality.Normal;
                     break;
@@ -321,18 +321,23 @@ namespace Trinity.Framework.Helpers
                 case "{c:ff99bbff}": // Gem Blue
                     qualityResult = ItemQuality.Normal;
                     break;
+
                 case "{c:ffc236ff}": // Purple
                     qualityResult = ItemQuality.Special;
                     break;
+
                 case "{c:ff888888}": // Gray
                     qualityResult = ItemQuality.Inferior;
                     break;
+
                 case "{c:ff6cd8bb}": // Unique
                     qualityResult = ItemQuality.Rare4;
                     break;
+
                 case "":
                     qualityResult = item.ItemQualityLevel;
                     break;
+
                 default:
                     Logger.Log("Invalid Item Link color={0} internalName={1} name={2} gameBalanceId={3}", linkColor, item.InternalName, item.Name, item.GameBalanceId);
                     qualityResult = item.ItemQualityLevel;
@@ -399,6 +404,7 @@ namespace Trinity.Framework.Helpers
 
             return item.Level;
         }
+
         /// <summary>
         /// Gets the size of the nav cell.
         /// </summary>
@@ -459,7 +465,6 @@ namespace Trinity.Framework.Helpers
             return newText.ToString();
         }
 
-
         public static TrinityItemType GetTrinityItemType(this ACDItem item)
         {
             return TypeConversions.DetermineItemType(item.InternalName, item.ItemType);
@@ -501,5 +506,3 @@ namespace Trinity.Framework.Helpers
         }
     }
 }
-
-

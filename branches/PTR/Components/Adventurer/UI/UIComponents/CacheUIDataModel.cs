@@ -15,6 +15,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
         }
 
         private bool _enabled = true;
+
         public bool Enabled
         {
             get { return _enabled; }
@@ -22,6 +23,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
         }
 
         private bool _isDefaultVisible;
+
         public bool IsDefaultVisible
         {
             get { return _isDefaultVisible; }
@@ -29,6 +31,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
         }
 
         private bool _isLazyCacheVisible = true;
+
         public bool IsLazyCacheVisible
         {
             get { return _isLazyCacheVisible; }
@@ -43,6 +46,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
         //}
 
         private ObservableCollection<int> _lazyCache = new ObservableCollection<int>();
+
         public ObservableCollection<int> LazyCache
         {
             get { return _lazyCache; }
@@ -54,8 +58,8 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             OnPropertyChanged(nameof(LazyCache));
         }
 
-
         private ObservableCollection<ChartDatum> _cacheUpdateTime = new ObservableCollection<ChartDatum>();
+
         public ObservableCollection<ChartDatum> CacheUpdateTime
         {
             get
@@ -66,6 +70,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
         }
 
         private ObservableCollection<ChartDatum> _weightUpdateTime = new ObservableCollection<ChartDatum>();
+
         public ObservableCollection<ChartDatum> WeightUpdateTime
         {
             get
@@ -76,6 +81,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
         protected virtual void OnPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
@@ -105,13 +111,11 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
         public ICommand LaunchRadarUICommand { set; get; }
 
         private bool _isRadarWindowVisible;
+
         public bool IsRadarWindowVisible
         {
             get { return _isRadarWindowVisible; }
             set { SetField(ref _isRadarWindowVisible, value); }
         }
-
-
     }
-
 }

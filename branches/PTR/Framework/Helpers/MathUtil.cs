@@ -9,13 +9,12 @@ using GridPoint = Trinity.Components.Adventurer.Game.Exploration.GridPoint;
 
 namespace Trinity.Framework.Helpers
 {
-    class MathUtil
+    internal class MathUtil
     {
-
         //http://totologic.blogspot.co.nz/2014/01/accurate-point-in-triangle-test.html
 
-        const double Epsilon = 0.001;
-        const double EpsilonSquare = Epsilon * Epsilon;
+        private const double Epsilon = 0.001;
+        private const double EpsilonSquare = Epsilon * Epsilon;
 
         public bool IsNaivePointInTriangle(Vector3 triPoint1, Vector3 triPoint2, Vector3 triPoint3, GridPoint point)
         {
@@ -43,7 +42,6 @@ namespace Trinity.Framework.Helpers
             var yMax = Math.Max(y1, Math.Max(y2, y3)) + Epsilon;
             return !(x < xMin) && !(xMax < x) && !(y < yMin) && !(yMax < y);
         }
-
 
         //        function side(x1, y1, x2, y2, x, y:Number):Number
         //{
@@ -114,8 +112,7 @@ namespace Trinity.Framework.Helpers
             return result;
         }
 
-
-        float[] ArrayAggregate(Func<IEnumerable<float>, float> aggregate, params float[][] arrays)
+        private float[] ArrayAggregate(Func<IEnumerable<float>, float> aggregate, params float[][] arrays)
         {
             //var output = ArrayAggregate(Enumerable.Average, array1, array2, array3, array4);
 
@@ -124,7 +121,7 @@ namespace Trinity.Framework.Helpers
                        .ToArray();
         }
 
-        T[] ArrayAggregate<T>(Func<IEnumerable<T>, T> aggregate, params T[][] arrays)
+        private T[] ArrayAggregate<T>(Func<IEnumerable<T>, T> aggregate, params T[][] arrays)
         {
             return Enumerable.Range(0, arrays[0].Length)
                        .Select(i => aggregate(arrays.Select(a => a.Skip(i).First())))
@@ -205,17 +202,17 @@ namespace Trinity.Framework.Helpers
             return new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation));
         }
 
-
         #region Angle Finding
+
         /// <summary>
         /// Find the angle between two vectors. This will not only give the angle difference, but the direction.
-        /// For example, it may give you -1 radian, or 1 radian, depending on the direction. Angle given will be the 
+        /// For example, it may give you -1 radian, or 1 radian, depending on the direction. Angle given will be the
         /// angle from the FromVector to the DestVector, in radians.
         /// </summary>
         /// <param name="FromVector">Vector to start at.</param>
         /// <param name="DestVector">Destination vector.</param>
         /// <param name="DestVectorsRight">Right vector of the destination vector</param>
-        /// <returns>Signed angle, in radians</returns>        
+        /// <returns>Signed angle, in radians</returns>
         /// <remarks>All three vectors must lie along the same plane.</remarks>
         public static double GetSignedAngleBetween2DVectors(Vector3 FromVector, Vector3 DestVector, Vector3 DestVectorsRight)
         {
@@ -240,6 +237,7 @@ namespace Trinity.Framework.Helpers
 
             return angleBetween;
         }
+
         public float UnsignedAngleBetweenTwoV3(Vector3 v1, Vector3 v2)
         {
             v1.Z = 0;
@@ -249,6 +247,7 @@ namespace Trinity.Framework.Helpers
             double Angle = (float)Math.Acos(Vector3.Dot(v1, v2));
             return (float)Angle;
         }
+
         /// <summary>
         /// Returns the Degree angle of a target location
         /// </summary>
@@ -281,14 +280,15 @@ namespace Trinity.Framework.Helpers
             }
             return (radian % (Math.PI * 2d));
         }
+
         public Vector3 GetDirection(Vector3 origin, Vector3 destination)
         {
             Vector3 direction = destination - origin;
             direction.Normalize();
             return direction;
         }
-        #endregion
 
+        #endregion Angle Finding
 
         public static bool IntersectsPath(Vector3 obstacle, float radius, Vector3 start, Vector3 destination)
         {
@@ -316,8 +316,8 @@ namespace Trinity.Framework.Helpers
             // Halve/Double required angle every 20yd; 60* @ 15yd, 11.25* @ 80yd
             var angularVarianceThreshold = Math.Min(angularVarianceBase / (toDestination / 20), 90);
 
-            //Logger.Log("DistToObj={0} DistToDest={1} relativeAV={2} AVThreshold={3} Result={4}", 
-            //    toObstacle, toDestination, relativeAngularVariance, angularVarianceThreshold, 
+            //Logger.Log("DistToObj={0} DistToDest={1} relativeAV={2} AVThreshold={3} Result={4}",
+            //    toObstacle, toDestination, relativeAngularVariance, angularVarianceThreshold,
             //    toObstacle < toDestination && relativeAngularVariance <= angularVarianceThreshold);
 
             // Obstacle must be than destination
@@ -328,7 +328,7 @@ namespace Trinity.Framework.Helpers
                 if (relativeAngularVariance <= angularVarianceThreshold)
                 {
                     return true;
-                }                
+                }
             }
             return false;
         }
@@ -339,6 +339,7 @@ namespace Trinity.Framework.Helpers
         }
 
         #region Angular Measure Unit Conversion
+
         public static double Normalize180(double angleA, double angleB)
         {
             //Returns an angle in the range -180 to 180
@@ -347,6 +348,7 @@ namespace Trinity.Framework.Helpers
             diffangle = ((diffangle - Math.Floor(diffangle)) * 360.0d) - 180d;
             return diffangle;
         }
+
         public static float NormalizeRadian(float radian)
         {
             if (radian < 0)
@@ -372,24 +374,27 @@ namespace Trinity.Framework.Helpers
         //    return (int)direction * 45;
         //}
 
-        #endregion
+        #endregion Angular Measure Unit Conversion
+
         public static double GetRelativeAngularVariance(Vector3 origin, Vector3 destA, Vector3 destB)
         {
             float fDirectionToTarget = NormalizeRadian((float)Math.Atan2(destA.Y - origin.Y, destA.X - origin.X));
             float fDirectionToObstacle = NormalizeRadian((float)Math.Atan2(destB.Y - origin.Y, destB.X - origin.X));
             return AbsAngularDiffernce(RadianToDegree(fDirectionToTarget), RadianToDegree(fDirectionToObstacle));
         }
+
         public static double AbsAngularDiffernce(double angleA, double angleB)
         {
             return 180d - Math.Abs(180d - Math.Abs(angleA - angleB));
         }
 
         #region Human Readable Headings
+
         public static string GetHeadingToPoint(Vector3 TargetPoint)
         {
             return GetHeading(FindDirectionDegree(Core.Player.Position, TargetPoint));
         }
-        
+
         /// <summary>
         /// Gets string heading NE,S,NE etc
         /// </summary>
@@ -408,7 +413,8 @@ namespace Trinity.Framework.Helpers
 
             return directions[index].ToUpper();
         }
-        #endregion
+
+        #endregion Human Readable Headings
 
         /// <summary>
         /// Gets the center of a given Navigation Zone
@@ -450,14 +456,12 @@ namespace Trinity.Framework.Helpers
             return new Vector3(x, y, z);
         }
 
-        
         public static Vector3 GetEstimatedPosition(Vector3 startPosition, double headingRadians, double time, double targetVelocity)
         {
             double x = startPosition.X + targetVelocity * time * Math.Sin(headingRadians);
             double y = startPosition.Y + targetVelocity * time * Math.Cos(headingRadians);
             return new Vector3((float)x, (float)y, 0);
         }
-
 
         /// <span class="code-SummaryComment"><summary></span>
         /// Uses the Douglas Peucker algorithm to reduce the number of points.
@@ -588,11 +592,10 @@ namespace Trinity.Framework.Helpers
         }
 
         /// <summary>
-        /// Utility for Predictive Firing 
+        /// Utility for Predictive Firing
         /// </summary>
         public class Intercept
         {
-
             /*
                 Intercept intercept = new Intercept();
 
@@ -607,26 +610,26 @@ namespace Trinity.Framework.Helpers
                         0 // Angular velocity
                 );
 
-                // Helper function that converts any angle into  
+                // Helper function that converts any angle into
                 // an angle between +180 and -180 degrees.
                     double turnAngle = normalRelativeAngle(intercept.bulletHeading_deg - robot.getGunHeading());
 
                 // Move gun to target angle
                     robot.setTurnGunRight (turnAngle);
 
-                    if (Math.abs (turnAngle) 
+                    if (Math.abs (turnAngle)
                         <= intercept.angleThreshold) {
                   // Ensure that the gun is pointing at the correct angle
                   if ((intercept.impactPoint.x > 0)
                                 && (intercept.impactPoint.x < getBattleFieldWidth())
                                 && (intercept.impactPoint.y > 0)
                                 && (intercept.impactPoint.y < getBattleFieldHeight())) {
-                    // Ensure that the predicted impact point is within 
+                    // Ensure that the predicted impact point is within
                             // the battlefield
                             fire(bulletPower);
                         }
                     }
-                }                          
+                }
              */
 
             public Vector2 impactPoint = new Vector2(0, 0);
@@ -644,30 +647,30 @@ namespace Trinity.Framework.Helpers
             protected double angularVelocity_rad_per_sec;
 
             public void Calculate(
-                // Initial bullet position x coordinate 
+                    // Initial bullet position x coordinate
                     double xb,
-                // Initial bullet position y coordinate
+                    // Initial bullet position y coordinate
                     double yb,
-                // Initial target position x coordinate
+                    // Initial target position x coordinate
                     double xt,
-                // Initial target position y coordinate
+                    // Initial target position y coordinate
                     double yt,
-                // Target heading
+                    // Target heading
                     double tHeading,
-                // Target velocity
+                    // Target velocity
                     double vt,
-                // Power of the bullet that we will be firing
+                    // Power of the bullet that we will be firing
                     double bPower,
-                // Angular velocity of the target
+                    // Angular velocity of the target
                     double angularVelocityDegPerSec,
-                // target object's radius
+                    // target object's radius
                     double targetsRadius
             )
             {
                 angularVelocity_rad_per_sec = DegreeToRadian(angularVelocityDegPerSec);
 
-                bulletStartingPoint = new Vector2((float) xb, (float) yb);
-                targetStartingPoint = new Vector2((float) xt, (float) yt);
+                bulletStartingPoint = new Vector2((float)xb, (float)yb);
+                targetStartingPoint = new Vector2((float)xt, (float)yt);
 
                 targetHeading = tHeading;
                 targetVelocity = vt;
@@ -691,12 +694,11 @@ namespace Trinity.Framework.Helpers
             {
                 double x = targetStartingPoint.X + targetVelocity * time * Math.Sin(DegreeToRadian(targetHeading));
                 double y = targetStartingPoint.Y + targetVelocity * time * Math.Cos(DegreeToRadian(targetHeading));
-                return new Vector2((float) x, (float) y);
+                return new Vector2((float)x, (float)y);
             }
 
             private double F(double time)
             {
-
                 double vb = 20 - 3 * bulletPower;
 
                 Vector2 targetPosition = GetEstimatedPosition(time);
@@ -709,7 +711,6 @@ namespace Trinity.Framework.Helpers
             private double GetImpactTime(double t0,
                     double t1, double accuracy)
             {
-
                 double X = t1;
                 double lastX = t0;
                 int iterationCount = 0;
@@ -718,7 +719,6 @@ namespace Trinity.Framework.Helpers
                 while ((Math.Abs(X - lastX) >= accuracy)
                         && (iterationCount < 15))
                 {
-
                     iterationCount++;
                     double fX = F(X);
 
@@ -735,12 +735,12 @@ namespace Trinity.Framework.Helpers
 
                 return X;
             }
-
         }
 
-        public class CircularIntercept : Intercept {
-
-            protected new Vector2 GetEstimatedPosition(double time) {
+        public class CircularIntercept : Intercept
+        {
+            protected new Vector2 GetEstimatedPosition(double time)
+            {
                 if (Math.Abs(angularVelocity_rad_per_sec)
                         <= DegreeToRadian(0.1))
                 {
@@ -758,9 +758,8 @@ namespace Trinity.Framework.Helpers
                         * (Math.Sin(initialTargetHeading)
                         - Math.Sin(finalTargetHeading));
 
-                return new Vector2((float) x, (float) y);
+                return new Vector2((float)x, (float)y);
             }
-
         }
 
         public static float ToRadians(float degrees)
@@ -839,7 +838,7 @@ namespace Trinity.Framework.Helpers
         //}
 
         ///*
-        // * 
+        // *
         // * //from leaguesharp.commons
         //        var spellPos = spell.GetCurrentSpellPosition(true);
         //        var sol = Geometry.VectorMovementCollision(spellPos, spell.endPos, spell.info.projectileSpeed, heroPos, ObjectCache.myHeroCache.moveSpeed);
@@ -854,9 +853,8 @@ namespace Trinity.Framework.Helpers
         //        {
         //            return true;
         //        }
-        // * 
+        // *
         // */
-
 
         //public static float VectorMovementCollisionEx(Vector2 targetPos, Vector2 targetDir, float targetSpeed, Vector2 sourcePos, float projSpeed, out bool collision, float extraDelay = 0, float extraDist = 0)
         //{
@@ -1119,6 +1117,7 @@ namespace Trinity.Framework.Helpers
         {
             return new Point(r.Left + (r.Width / 2D), r.Top + (r.Height / 2D));
         }
+
         /// <summary>
         /// Returns the center right point of the rectangle
         /// i.e. the right hand edge, centered vertically.
@@ -1129,6 +1128,7 @@ namespace Trinity.Framework.Helpers
         {
             return new Point(r.Right, r.Top + (r.Height / 2D));
         }
+
         /// <summary>
         /// Returns the center left point of the rectangle
         /// i.e. the left hand edge, centered vertically.
@@ -1139,6 +1139,7 @@ namespace Trinity.Framework.Helpers
         {
             return new Point(r.Left, r.Top + (r.Height / 2D));
         }
+
         /// <summary>
         /// Returns the center bottom point of the rectangle
         /// i.e. the bottom edge, centered horizontally.
@@ -1149,6 +1150,7 @@ namespace Trinity.Framework.Helpers
         {
             return new Point(r.Left + (r.Width / 2D), r.Bottom);
         }
+
         /// <summary>
         /// Returns the center top point of the rectangle
         /// i.e. the topedge, centered horizontally.
@@ -1311,7 +1313,7 @@ namespace Trinity.Framework.Helpers
             while (true);
         }
 
-        const double DefaultDoubleAccuracy = NegativeMachineEpsilon * 10D;
+        private const double DefaultDoubleAccuracy = NegativeMachineEpsilon * 10D;
 
         public static bool IsClose(this double value1, double value2)
         {
@@ -1410,7 +1412,4 @@ namespace Trinity.Framework.Helpers
                   && targetY.LessThanOrClose(maxY);
         }
     }
-
-
-
 }

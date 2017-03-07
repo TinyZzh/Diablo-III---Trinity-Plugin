@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using IronPython.Modules;
 using Trinity.Framework.Objects;
 using Trinity.Framework.Objects.Enums;
-using Zeta.Bot;
 
 namespace Trinity.Framework
 {
@@ -59,6 +57,6 @@ namespace Trinity.Framework
             }
         }
 
-        public static IEnumerable<IDynamicSetting> DynamicSettings => GetModules().OfType<IDynamicSetting>();        
+        public static IEnumerable<IDynamicSetting> DynamicSettings => GetModules().OfType<IDynamicSetting>();
     }
 }

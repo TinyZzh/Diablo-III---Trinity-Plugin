@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines;
 using Trinity.Components.Adventurer.Game.Actors;
@@ -11,22 +10,17 @@ using Trinity.Components.Adventurer.Game.Events;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Adventurer.Game.Exploration.SceneMapping;
 using Trinity.Components.Adventurer.Util;
-using Trinity.Framework;
 using Trinity.Framework.Helpers;
-using Zeta.Bot.Coroutines;
 using Zeta.Bot.Navigation;
 using Zeta.Common;
 using Zeta.Common.Helpers;
 using Zeta.Game;
-using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
 using Zeta.Game.Internals.Actors.Gizmos;
 using Logger = Trinity.Components.Adventurer.Util.Logger;
-using LogLevel = Trinity.Components.Adventurer.Util.LogLevel;
 
 namespace Trinity.Components.Adventurer.Coroutines
 {
-
     public sealed class NavigationCoroutine
     {
         private static NavigationCoroutine _navigationCoroutine;
@@ -65,7 +59,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                 {
                     Logger.DebugSetting($"_navigationCoroutine.State=Failed for {destination}, within a range of (specified={distance}, actual={_navigationCoroutine._distance}). ({callerPath.Split('\\').LastOrDefault()} > {caller} )");
                     return true;
-                } 
+                }
 
                 _navigationCoroutine = null;
                 return true;
@@ -84,6 +78,7 @@ namespace Trinity.Components.Adventurer.Coroutines
         }
 
         private States _state;
+
         private States State
         {
             get { return _state; }
@@ -97,9 +92,11 @@ namespace Trinity.Components.Adventurer.Coroutines
                 {
                     case States.NotStarted:
                         break;
+
                     case States.Moving:
                     case States.MovingToDeathGate:
                         break;
+
                     case States.InteractingWithDeathGate:
                     case States.Completed:
                     case States.Failed:
@@ -108,7 +105,6 @@ namespace Trinity.Components.Adventurer.Coroutines
                 }
                 if (value != States.NotStarted)
                 {
-
                 }
                 _state = value;
             }
@@ -119,12 +115,12 @@ namespace Trinity.Components.Adventurer.Coroutines
             Destination = destination;
             _distance = distance;
             _mover = straightLinePath ? Mover.StraightLine : Mover.Navigator;
-            
+
             if (_distance < 5)
             {
                 _distance = 5;
             }
-        }        
+        }
 
         public async Task<bool> GetCoroutine()
         {
@@ -132,14 +128,19 @@ namespace Trinity.Components.Adventurer.Coroutines
             {
                 case States.NotStarted:
                     return await NotStarted();
+
                 case States.Moving:
                     return await Moving();
+
                 case States.MovingToDeathGate:
                     return await MovingToDeathGate();
+
                 case States.InteractingWithDeathGate:
                     return await InteractingWithDeathGate();
+
                 case States.Completed:
                     return Completed();
+
                 case States.Failed:
                     Logger.DebugSetting($"CanFullyClientPath={await AdvDia.DefaultNavigationProvider.CanFullyClientPathTo(Destination)}");
                     return Failed();
@@ -224,7 +225,6 @@ namespace Trinity.Components.Adventurer.Coroutines
                 }
                 else
                 {
-
                     if (_mover == Mover.StraightLine && PluginTime.ReadyToUse(_lastRaywalkCheck, 200))
                     {
                         if (!NavigationGrid.Instance.CanRayWalk(AdvDia.MyPosition, Destination))
@@ -240,6 +240,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                             LastMoveResult = MoveResult.Moved;
                             Logger.DebugSetting($"MoveTowards Destination={Destination} Dist3D={AdvDia.MyPosition.Distance(Destination)} Dist2D={AdvDia.MyPosition.Distance2D(Destination)}");
                             return false;
+
                         case Mover.Navigator:
 
                             if (AdvDia.Navigator != null)
@@ -252,11 +253,8 @@ namespace Trinity.Components.Adventurer.Coroutines
                             }
                             Logger.DebugSetting($"Navigator MoveResult = {LastMoveResult}, Destination={Destination} Dist3D={AdvDia.MyPosition.Distance(Destination)} Dist2D={AdvDia.MyPosition.Distance2D(Destination)}");
 
-
                             break;
                     }
-
-
                 }
                 switch (LastMoveResult)
                 {
@@ -283,8 +281,10 @@ namespace Trinity.Components.Adventurer.Coroutines
                             }
                         }
                         return false;
+
                     case MoveResult.Failed:
                         break;
+
                     case MoveResult.PathGenerationFailed:
                         Logger.Debug("[Navigation] Path generation failed.");
                         if (distanceToDestination < 100 && NavigationGrid.Instance.CanRayWalk(AdvDia.MyPosition, Destination))
@@ -294,6 +294,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                         }
                         State = States.Failed;
                         return false;
+
                     case MoveResult.UnstuckAttempt:
                         await Navigator.StuckHandler.DoUnstick();
                         if (_unstuckAttemps > 3)
@@ -304,9 +305,11 @@ namespace Trinity.Components.Adventurer.Coroutines
                         _unstuckAttemps++;
                         Logger.Debug("[Navigation] Unstuck attempt #{0}", _unstuckAttemps);
                         break;
+
                     case MoveResult.PathGenerated:
                     case MoveResult.Moved:
                         break;
+
                     case MoveResult.PathGenerating:
                         if (_pathGenetionTimer.IsFinished)
                         {
@@ -329,7 +332,6 @@ namespace Trinity.Components.Adventurer.Coroutines
         private DateTime _timeout = DateTime.MaxValue;
         private Vector3 _deathGatePosition;
 
-
         public static bool IsDeathGateIgnored(Vector3 position, IReadOnlyDictionary<Vector3, DateTime> ignoreList, int seconds = 30)
         {
             return position == Vector3.Zero || ignoreList.ContainsKey(position) && DateTime.UtcNow.Subtract(ignoreList[position]).TotalSeconds < seconds;
@@ -341,7 +343,7 @@ namespace Trinity.Components.Adventurer.Coroutines
         {
             if (_deathGateCoroutine == null)
             {
-                _deathGateCoroutine = new MoveThroughDeathGates(1, AdvDia.CurrentWorldId,1);
+                _deathGateCoroutine = new MoveThroughDeathGates(1, AdvDia.CurrentWorldId, 1);
             }
 
             if (!await _deathGateCoroutine.GetCoroutine())
@@ -411,7 +413,7 @@ namespace Trinity.Components.Adventurer.Coroutines
             //        await Coroutine.Sleep(500);
 
             //        _interactionCoroutine = new InteractionCoroutine(_deathGate.ActorSnoId, TimeSpan.FromMilliseconds(8000), TimeSpan.FromMilliseconds(500));
-            //        State = States.InteractingWithDeathGate;       
+            //        State = States.InteractingWithDeathGate;
             //        break;
             //    case MoveResult.Failed:
             //    case MoveResult.PathGenerationFailed:
@@ -477,7 +479,7 @@ namespace Trinity.Components.Adventurer.Coroutines
         private async Task<bool> SetUsedGatesToIgnored()
         {
             // 'Reference' positions are hardcoded gate positions by SceneSnoId.
-            // These allow gate nativation as soon as a scene is discovered. 
+            // These allow gate nativation as soon as a scene is discovered.
             // And may be slightly off from actual gate actor positions.
 
             if (_deathGate != null)
@@ -520,7 +522,6 @@ namespace Trinity.Components.Adventurer.Coroutines
         {
             Logger.Debug($"[Navigation] Navigation Error (MoveResult: {LastMoveResult}, Distance: {AdvDia.MyPosition.Distance(Destination)}) Failures={FailCount}.");
 
-
             if (LastDestination == Destination)
             {
                 FailCount++;
@@ -548,7 +549,7 @@ namespace Trinity.Components.Adventurer.Coroutines
         private static void Reset()
         {
             Navigator.Clear();
-            ScenesStorage.Reset();            
+            ScenesStorage.Reset();
         }
 
         private enum Mover
@@ -557,6 +558,4 @@ namespace Trinity.Components.Adventurer.Coroutines
             StraightLine
         }
     }
-
-
 }

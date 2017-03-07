@@ -73,11 +73,10 @@ namespace Trinity.Framework.Avoidance.Structures
 
         public void AddRange(IEnumerable<AvoidanceNode> items)
         {
-            foreach(var node in items)
+            foreach (var node in items)
             {
                 Add(node);
             }
         }
-
     }
 }

@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Buddy.Coroutines;
-using Zeta.Bot.Coroutines;
-using Zeta.Bot.Dungeons;
-using Zeta.Common;
+﻿using Buddy.Coroutines;
 using Zeta.Bot.Navigation;
+using Zeta.Common;
 
 namespace Trinity.Framework.Helpers
 {
     public static class NavExtensions
     {
         private static Coroutine _navigateToCoroutine;
+
         internal static MoveResult NavigateTo(Vector3 destination, string destinationName = "")
         {
             if (_navigateToCoroutine == null || _navigateToCoroutine.IsFinished)
@@ -28,12 +22,14 @@ namespace Trinity.Framework.Helpers
         }
 
         private static DefaultNavigationProvider _defaultProvider;
+
         internal static DefaultNavigationProvider DefaultProvider
         {
             get { return _defaultProvider ?? (_defaultProvider = Navigator.GetNavigationProviderAs<DefaultNavigationProvider>()); }
         }
 
         private static Coroutine _canPathWithinDistance;
+
         internal static bool CanPathWithinDistance(Vector3 destination, float pathPrecision)
         {
             if (_canPathWithinDistance == null || _canPathWithinDistance.IsFinished || _canPathWithinDistance.IsDisposed || _canPathWithinDistance.Status == CoroutineStatus.Faulted)
@@ -48,6 +44,7 @@ namespace Trinity.Framework.Helpers
         }
 
         private static Coroutine _canPathFullyClientPathTo;
+
         internal static bool CanPathFullyClientPathTo(Vector3 destination)
         {
             if (_canPathFullyClientPathTo == null || _canPathFullyClientPathTo.IsFinished || _canPathFullyClientPathTo.IsDisposed || _canPathFullyClientPathTo.Status == CoroutineStatus.Faulted)

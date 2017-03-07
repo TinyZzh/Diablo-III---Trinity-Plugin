@@ -27,10 +27,10 @@ namespace Trinity.Framework.Helpers.Exporter
 
             sb.AppendLine(CloseBracketLine(indent) + ";");
 
-            return sb.ToString();            
+            return sb.ToString();
         }
 
-        private void WriteIndentedLoop(IDictionary<string, string> input, int indent, StringBuilder sb, Action<int, string,string> writer)
+        private void WriteIndentedLoop(IDictionary<string, string> input, int indent, StringBuilder sb, Action<int, string, string> writer)
         {
             indent++;
             foreach (var pair in input)
@@ -41,7 +41,3 @@ namespace Trinity.Framework.Helpers.Exporter
         }
     }
 }
-
-
-
-

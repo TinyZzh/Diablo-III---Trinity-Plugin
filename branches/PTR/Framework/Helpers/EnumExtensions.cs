@@ -12,17 +12,16 @@ namespace Trinity.Framework.Helpers
             var enumValues = Enum.GetValues(enumType);
             var newValue = (
                 from object value in enumValues
-                select Convert.ChangeType(value, TypeCode.Int64) 
+                select Convert.ChangeType(value, TypeCode.Int64)
                     into changeType
-                    where changeType != null
-                    select (long) changeType 
+                where changeType != null
+                select (long)changeType
                         into v
-                        where v == 1 || v%2 == 0
-                        select v).Aggregate<long, long>(0, (current, v) => current | v);
+                where v == 1 || v % 2 == 0
+                select v).Aggregate<long, long>(0, (current, v) => current | v);
 
             return (TEnum)Enum.ToObject(enumType, newValue);
         }
-    
 
         private static bool IsSignedTypeCode(TypeCode code)
         {
@@ -33,6 +32,7 @@ namespace Trinity.Framework.Helpers
                 case TypeCode.UInt32:
                 case TypeCode.UInt64:
                     return false;
+
                 default:
                     return true;
             }
@@ -132,7 +132,6 @@ namespace Trinity.Framework.Helpers
             }
         }
 
-
         public static T Add<T>(this Enum type, T value)
         {
             try
@@ -148,7 +147,6 @@ namespace Trinity.Framework.Helpers
                         ), ex);
             }
         }
-
 
         public static T Remove<T>(this Enum type, T value)
         {
@@ -166,6 +164,4 @@ namespace Trinity.Framework.Helpers
             }
         }
     }
-
 }
-

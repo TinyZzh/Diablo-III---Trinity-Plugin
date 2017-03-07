@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Trinity.Components.Adventurer.Game.Events;
 using Trinity.Components.Combat;
 using Trinity.Framework.Actors.ActorTypes;
-using Trinity.Framework.Helpers;
-using Trinity.Framework.Objects.Memory;
 using Trinity.Modules;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
-using Zeta.Game.Internals.Service;
 
 namespace Trinity.Framework
 {
@@ -36,7 +29,7 @@ namespace Trinity.Framework
             => Core.Hotbar.ActivePowers, SlowUpdateInterval);
 
         public static TrinityChangeDetector<int> WorldId { get; } = new TrinityChangeDetector<int>(()
-            => ZetaDia.CurrentWorldSnoId);
+            => ZetaDia.Globals.WorldSnoId);
 
         public static TrinityChangeDetector<int> LevelAreaId { get; } = new TrinityChangeDetector<int>(()
             => ZetaDia.CurrentLevelAreaSnoId);
@@ -52,9 +45,5 @@ namespace Trinity.Framework
 
         public static TrinityChangeDetector<DateTime> ActorsUpdated { get; } = new TrinityChangeDetector<DateTime>(()
             => Core.Actors.LastUpdated);
-
-
     }
 }
-
-

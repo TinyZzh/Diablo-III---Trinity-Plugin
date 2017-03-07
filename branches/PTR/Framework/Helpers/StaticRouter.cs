@@ -21,8 +21,5 @@ namespace Trinity.Framework.Helpers
         {
             _expr = ReflectionHelper.GetPrivateStaticFieldAccessor<T>(parentType, index);
         }
-
-        
     }
 }
-

@@ -26,9 +26,12 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.Converters
     }
 
     public class BoolToStringConverter : BoolToValueConverter<String> { }
+
     public class BoolToBrushConverter : BoolToValueConverter<Brush> { }
+
     public class BoolToVisibilityConverter : BoolToValueConverter<Visibility> { }
+
     public class BoolToObjectConverter : BoolToValueConverter<Object> { }
+
     public class BoolToIntConverter : BoolToValueConverter<int> { }
 }
-

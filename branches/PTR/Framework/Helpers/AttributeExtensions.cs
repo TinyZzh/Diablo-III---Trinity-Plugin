@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Zeta.Game.Internals.Actors;
-using Logger = Trinity.Framework.Helpers.Logger;
 
 namespace Trinity.Framework.Helpers
 {
@@ -48,7 +47,5 @@ namespace Trinity.Framework.Helpers
 
             return default(T);
         }
-
     }
 }
-

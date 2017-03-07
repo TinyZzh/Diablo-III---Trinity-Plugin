@@ -6,9 +6,6 @@ using System.Linq;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
-using Trinity.Framework.Objects.Memory;
-using Trinity.Framework.Objects.Memory.Containers;
-using Trinity.Framework.Objects.Memory.Misc;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
@@ -20,14 +17,11 @@ namespace Trinity.Framework.Actors
     /// <summary>
     /// Maintains the current valid list of actors.
     /// Collections are complete, except for bad data / disposed actors.
-    /// Filtered lists for attacking/interacting can be found in Core.Targets   
+    /// Filtered lists for attacking/interacting can be found in Core.Targets
     /// </summary>
     public class ActorCache : Module
     {
         private Stopwatch _timer = new Stopwatch();
-        //private ExpandoContainer<RActor> _rActorContainer;
-        //internal ExpandoContainer<ActorCommonData> _commonDataContainer;
-
 
         private readonly ConcurrentDictionary<int, ACD> _commonData = new ConcurrentDictionary<int, ACD>();
 
@@ -56,21 +50,8 @@ namespace Trinity.Framework.Actors
             if (!ZetaDia.IsInGame)
                 return;
 
-            //UpdateContainers();
             UpdateObjectsFromMemory();
         }
-
-        //private void UpdateContainers()
-        //{
-        //    if (_rActorContainer == null || !_rActorContainer.IsValid || _rActorContainer.IsDisposed ||
-        //        _commonDataContainer == null || !_commonDataContainer.IsValid || _commonDataContainer.IsDisposed)
-        //    {
-        //        Clear();
-
-        //        _rActorContainer = MemoryWrapper.Create<ExpandoContainer<RActor>>(Internals.Addresses.RActorManager);
-        //        _commonDataContainer = MemoryWrapper.Create<ExpandoContainer<ActorCommonData>>(Internals.Addresses.AcdManager);
-        //    }
-        //}
 
         private void UpdateObjectsFromMemory()
         {
@@ -81,9 +62,7 @@ namespace Trinity.Framework.Actors
             ActivePlayerRActorId = ZetaDia.ActivePlayerRActorId;
 
             UpdateAcds();
-
             UpdateRActors();
-
             UpdateInventory();
 
             CurrentAcdIds = new HashSet<int>(_commonData.Keys);
@@ -103,23 +82,14 @@ namespace Trinity.Framework.Actors
             _annToAcdIndex.Clear();
 
             var oldAcds = new List<int>(_commonData.Keys);
-
-            //foreach (var ptr in ZetaDia.ActorCommonData.Items)
-            //foreach (var acd in ZetaDia.Actors.ACDList.OfType<ACD>())
             foreach (var acd in ZetaDia.ActorCommonData)
             {
-                // acd = ptr.UnsafeCreate<ACD>();
-
-                var acdId = acd.ACDId; //ZetaDia.Memory.Read<int>(ptr); //acd.ACDId;
-
-                //var ann = acd.AnnId;
-
+                var acdId = acd.ACDId;
                 _commonData.AddOrUpdate(acdId,
                     (id) => AddAcd(id, acd),
                     (id, o) => UpdateAcd(id, acd));
 
                 oldAcds.Remove(acdId);
-                //_annToAcdIndex[ann] = (short)acdId;
             }
 
             foreach (var key in oldAcds)
@@ -227,8 +197,6 @@ namespace Trinity.Framework.Actors
                     continue;
 
                 var inventorySlot = commonData.GetInventorySlot();
-
-                // InventorySlot.None => ground items are updated via RActors loop.
                 if (inventorySlot == InventorySlot.Merchant || inventorySlot == InventorySlot.None)
                     continue;
 
@@ -257,11 +225,6 @@ namespace Trinity.Framework.Actors
 
         private TrinityItem AddInventoryItem(int id, ACD newItem)
         {
-            //DiaObject rActor;
-            //var seed = _rActors.TryGetValue(id, out rActor) 
-            //    ? ActorFactory.GetActorSeed(newItem)
-            //    : ActorFactory.GetActorSeed(newItem)rActor;
-
             return ActorFactory.CreateActor<TrinityItem>(newItem);
         }
 
@@ -275,7 +238,7 @@ namespace Trinity.Framework.Actors
             return item;
         }
 
-        #endregion
+        #endregion Update Methods
 
         #region Lookup Methods
 
@@ -295,16 +258,11 @@ namespace Trinity.Framework.Actors
 
         public ACD GetCommonDataByAnnId(int annId)
         {
-            //short index;
-            //if (_annToAcdIndex.TryGetValue(annId, out index))
-            //{
-            //var acd = ZetaDia.ActorCommonData[index];
             var acd = ZetaDia.ActorCommonData[(short)annId];
             if (acd != null && acd.IsValid)
             {
                 return acd;
             }
-            //}
             return null;
         }
 
@@ -343,7 +301,7 @@ namespace Trinity.Framework.Actors
             if (!_annToAcdIndex.TryGetValue(annId, out index))
                 return null;
 
-            var acd = ZetaDia.ActorCommonData[index]; //_commonDataContainer[index];
+            var acd = ZetaDia.ActorCommonData[index];
             if (acd != null && acd.IsValid)
             {
                 var bones = ActorFactory.GetActorSeed(acd);
@@ -354,7 +312,7 @@ namespace Trinity.Framework.Actors
 
         public ACDItem GetAcdItemByAcdId(int acdId)
         {
-            var acd = ZetaDia.ActorCommonData[(short)acdId]; //_commonDataContainer[(short)acdId];
+            var acd = ZetaDia.ActorCommonData[(short)acdId];
             if (acd != null && acd.IsValid)
             {
                 return acd.BaseAddress.UnsafeCreate<ACDItem>();
@@ -382,13 +340,11 @@ namespace Trinity.Framework.Actors
             return acd != null && acd.IsValid;
         }
 
-        #endregion
+        #endregion Lookup Methods
 
         public void Clear()
         {
             Logger.LogDebug("Resetting ActorCache");
-            //_commonDataContainer = null;
-            //_rActorContainer = null;
             _annToAcdIndex.Clear();
             _commonData.ForEach(o => o.Value.UpdatePointer(IntPtr.Zero));
             _rActors.ForEach(o => o.Value.RActor.UpdatePointer(IntPtr.Zero));
@@ -398,8 +354,6 @@ namespace Trinity.Framework.Actors
             CurrentAcdIds.Clear();
             CurrentRActorIds.Clear();
             Me = null;
-            //_rActorContainer = null;
-            //_commonDataContainer = null;
         }
 
         public T GetActorByAcdId<T>(int acdId) where T : TrinityActor
@@ -416,6 +370,5 @@ namespace Trinity.Framework.Actors
 
             return _rActors[rActorId] as T;
         }
-
     }
 }

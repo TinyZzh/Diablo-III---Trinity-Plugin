@@ -1,19 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Components.Combat.Resources;
 using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
-using Trinity.Items;
-using Trinity.Reference;
-using Zeta.Game;
 using Zeta.Bot;
-using Zeta.Bot.Navigation;
-using Zeta.Common;
+using Zeta.Game;
 using Zeta.Game.Internals.Actors;
 using Logger = Trinity.Framework.Helpers.Logger;
 
@@ -23,7 +14,7 @@ namespace Trinity.Coroutines
     {
         static VacuumItems()
         {
-            GameEvents.OnWorldChanged += (sender, args) =>  VacuumedAcdIds.Clear();
+            GameEvents.OnWorldChanged += (sender, args) => VacuumedAcdIds.Clear();
         }
 
         public static void Execute()
@@ -34,9 +25,9 @@ namespace Trinity.Coroutines
             var count = 0;
 
             // Items that shouldn't be picked up are currently excluded from cache.
-            // a pickup evaluation should be added here if that changes.            
+            // a pickup evaluation should be added here if that changes.
 
-            foreach(var item in Core.Targets.OfType<TrinityItem>())
+            foreach (var item in Core.Targets.OfType<TrinityItem>())
             {
                 if (item.Distance > 8f || VacuumedAcdIds.Contains(item.AcdId))
                     continue;
@@ -47,10 +38,10 @@ namespace Trinity.Coroutines
                     continue;
                 }
 
-                count++;       
+                count++;
                 Logger.LogDebug($"Vacuumed: {item.Name} ({item.ActorSnoId}) InternalName={item.InternalName} GbId={item.GameBalanceId}");
                 SpellHistory.RecordSpell(SNOPower.Axe_Operate_Gizmo);
-                VacuumedAcdIds.Add(item.AcdId);            
+                VacuumedAcdIds.Add(item.AcdId);
             }
 
             if (count > 0)
@@ -66,10 +57,4 @@ namespace Trinity.Coroutines
 
         public static HashSet<int> VacuumedAcdIds { get; } = new HashSet<int>();
     }
-
-
 }
-
-
-
-

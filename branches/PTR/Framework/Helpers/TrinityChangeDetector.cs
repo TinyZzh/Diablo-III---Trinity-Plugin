@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Zeta.Game;
 
 namespace Trinity.Framework.Helpers
 {
@@ -14,6 +11,7 @@ namespace Trinity.Framework.Helpers
         bool IsEnabled { get; set; }
         bool HasSubscribers { get; }
         string Name { get; }
+
         bool CheckForChanges();
     }
 
@@ -170,5 +168,4 @@ namespace Trinity.Framework.Helpers
             _detectors.Add(new WeakReference<IChangeDetector>(detector));
         }
     }
-
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Helpers;
@@ -21,10 +20,15 @@ namespace Trinity.Components.Combat
     public interface ILootProvider
     {
         bool ShouldDrop(TrinityItem item, ItemEvaluationType scheduledAction);
+
         bool ShouldStash(TrinityItem item);
+
         bool ShouldSalvage(TrinityItem item);
+
         bool ShouldPickup(TrinityItem item);
+
         bool ShouldSell(TrinityItem item);
+
         bool IsBackpackFull { get; }
     }
 
@@ -62,8 +66,8 @@ namespace Trinity.Components.Combat
                 return true;
             }
 
-            if (item.InternalNameLowerCase.Contains("cosmetic"))
-                return true;
+            //if (item.InternalNameLowerCase.Contains("cosmetic"))
+            //    return true;
 
             if (Core.Settings.Items.DisableLootingInCombat && Combat.IsInCombat && item.Distance > 8f)
                 return false;
@@ -73,7 +77,6 @@ namespace Trinity.Components.Combat
 
             // 451002, //sir williams - 451002 (TentacleBear_C_Unique_Cosmetic_02)
             // portrait - 410998 (Cosmetic_Portrait_Frame_1)
-
 
             //if (Core.Settings.Items.InCombatLooting != SettingMode.Enabled && Combat.IsInCombat)
             //{
@@ -216,8 +219,10 @@ namespace Trinity.Components.Combat
                 case TrinityItemBaseType.Misc:
                 case TrinityItemBaseType.HealthGlobe:
                     return true;
+
                 case TrinityItemBaseType.ProgressionGlobe:
                     return true;
+
                 default:
                     return false;
             }
@@ -303,7 +308,6 @@ namespace Trinity.Components.Combat
             if (GameData.VanityItems.Any(i => item.InternalName.StartsWith(i)))
                 return true;
 
-
             if (GameData.TransmogTable.Contains(item.GameBalanceId) || item.InternalName.StartsWith("Transmog") || item.ActorSnoId == 110952) //Rakanishu's Blade
             {
                 var setting = Core.Settings.Items.SpecialItems.HasFlag(SpecialItemTypes.TransmogWhites);
@@ -344,10 +348,9 @@ namespace Trinity.Components.Combat
                 return true;
             }
 
-
             // Now look for Misc items we might want to keep
-            TrinityItemType tItemType = item.TrinityItemType; 
-            TrinityItemBaseType tBaseType = item.TrinityItemBaseType; 
+            TrinityItemType tItemType = item.TrinityItemType;
+            TrinityItemBaseType tBaseType = item.TrinityItemBaseType;
 
             // Keep any high gems placed in backpack while levelling, so we can socket items with them.
             if (item.IsGem && item.GemQuality >= GemQuality.Marquise && ZetaDia.Me.Level < 70)
@@ -388,7 +391,6 @@ namespace Trinity.Components.Combat
                 }
             }
 
-
             bool isEquipment = (tBaseType == TrinityItemBaseType.Armor ||
                 tBaseType == TrinityItemBaseType.Jewelry ||
                 tBaseType == TrinityItemBaseType.Offhand ||
@@ -403,7 +405,7 @@ namespace Trinity.Components.Combat
 
             if (item.TrinityItemType == TrinityItemType.HoradricCache)
                 return false;
-      
+
             if (item.IsUnidentified)
             {
                 Logger.Log(TrinityLogLevel.Info, LogCategory.UserInformation, "{0} [{1}] = (autokeep unidentified items)", item.Name, item.InternalName);
@@ -482,7 +484,6 @@ namespace Trinity.Components.Combat
                 Logger.Log(TrinityLogLevel.Info, LogCategory.UserInformation, "{0} [{1}] [{2}] = (ignoring Tiered Rift Keys)", item.Name, item.InternalName, tItemType);
                 return false;
             }
-
 
             if (tItemType == TrinityItemType.CraftingPlan)
             {
@@ -593,6 +594,12 @@ namespace Trinity.Components.Combat
                     }
                 }
 
+                if (!Core.Settings.Items.SpecialItems.HasFlag(SpecialItemTypes.TransmogWhites) && GameData.TransmogTable.Contains(item.GameBalanceId) || item.InternalName.StartsWith("Transmog") || item.ActorSnoId == 110952) //Rakanishu's Blade
+                {
+                    reason = "Transmog Setting";
+                    return true;
+                }
+
                 reason = "Default";
                 switch (item.TrinityItemType)
                 {
@@ -609,12 +616,12 @@ namespace Trinity.Components.Combat
                     case TrinityItemBaseType.Jewelry:
                     case TrinityItemBaseType.FollowerItem:
                         return true;
+
                     case TrinityItemBaseType.Gem:
                     case TrinityItemBaseType.Misc:
                     case TrinityItemBaseType.Unknown:
                         return false;
                 }
-
             }
             catch (Exception ex)
             {
@@ -736,6 +743,7 @@ namespace Trinity.Components.Combat
                     case TrinityItemBaseType.Jewelry:
                     case TrinityItemBaseType.FollowerItem:
                         return true;
+
                     case TrinityItemBaseType.Gem:
                     case TrinityItemBaseType.Misc:
                         if (item.TrinityItemType == TrinityItemType.CraftingPlan)
@@ -743,6 +751,7 @@ namespace Trinity.Components.Combat
                         if (item.TrinityItemType == TrinityItemType.CraftingMaterial)
                             return true;
                         return false;
+
                     case TrinityItemBaseType.Unknown:
                         return false;
                 }
@@ -757,7 +766,6 @@ namespace Trinity.Components.Combat
             }
             return false;
         }
-
 
         private static int _lastBackPackCount;
         private static int _lastProtectedSlotsCount;
@@ -894,7 +902,6 @@ namespace Trinity.Components.Combat
                         Math.Min(FreeBagSlotsInTown, unprotectedSlots) :
                         Math.Min(FreeBagSlots, unprotectedSlots);
 
-
                     // free bag slots is less than required
                     if (noFreeSlots || freeBagSlots < minFreeSlots && !forceRefresh)
                     {
@@ -963,6 +970,5 @@ namespace Trinity.Components.Combat
                 }
             }
         }
-
     }
 }

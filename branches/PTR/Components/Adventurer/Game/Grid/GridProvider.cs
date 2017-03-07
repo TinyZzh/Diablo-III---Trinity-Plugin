@@ -16,7 +16,6 @@ namespace Trinity.Components.Adventurer.Game.Grid
 
         private static bool _isUpdateRunning;
 
-
         public static Dictionary<string, GridScene> CachedScenes = new Dictionary<string, GridScene>();
         public static Dictionary<int, SceneDefinition> SceneDefinitions = new Dictionary<int, SceneDefinition>();
 
@@ -50,6 +49,7 @@ namespace Trinity.Components.Adventurer.Game.Grid
         }
 
         private static object _updateLock = new object();
+
         public static void Update()
         {
             if (_isUpdateRunning) return;
@@ -81,7 +81,6 @@ namespace Trinity.Components.Adventurer.Game.Grid
                         {
                             using (new PerformanceLogger("SceneDefinition.Create", true))
                             {
-
                                 var navZoneDef = zone.NavZoneDef;
                                 if (navZoneDef == null || !navZoneDef.IsValid) continue;
 

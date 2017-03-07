@@ -14,13 +14,10 @@
 
 //namespace Adventurer.Reference
 //{
-
 //    public static class QuestDataStorage
 //    {
-
 //        public static QuestData LoadQuestData(int questId)
 //        {
-
 //            var path = Path.Combine(DataPath, "Final");
 //            Directory.CreateDirectory(path);
 //            var fileName = Directory.GetFiles(path).FirstOrDefault(f => f.StartsWith(Path.Combine(path, questId + " - ")));
@@ -152,7 +149,6 @@
 //            }
 //            OverwriteFile(filePath, JsonConvert.SerializeObject(questData, Formatting.Indented));
 
-
 //            //OverwriteFile(filePath.Replace(".txt", ".xml"), XmlSerialize(questData));
 //            if (isCompletedQuest)
 //            {
@@ -175,7 +171,6 @@
 //                    }
 //                    catch (Exception)
 //                    {
-
 //                    }
 //                }
 //            }
@@ -203,7 +198,6 @@
 //            // ReSharper disable once EmptyGeneralCatchClause
 //            catch
 //            {
-
 //            }
 //        }
 
@@ -224,7 +218,6 @@
 //        public static readonly string DemonBuddyPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 //        public static readonly string DataPath = Path.Combine(DemonBuddyPath, "Data", "Adventurer");
 
-
 //        public static void LogQuestInfo(BountyInfo bountyInfo)
 //        {
 //            File.AppendAllLines(Path.Combine(DataPath, "Quests.txt"), new[] { string.Format("{0}\t{1}\t{2}", (int)bountyInfo.Quest, bountyInfo.Quest, bountyInfo.Info.DisplayName.Replace("Bounty: ", string.Empty)) });
@@ -234,6 +227,5 @@
 //            File.AppendAllLines(Path.Combine(DataPath, "FailedWaypoints.txt"), new[] { string.Format("{0}\t{1}\t{2}\t{3}", questData.QuestId, string.Join(", ", questData.LevelAreaSnoIdIds), waypointNumber, AdvDia.CurrentLevelAreaSnoId) });
 //        }
 //    }
-
 
 //}

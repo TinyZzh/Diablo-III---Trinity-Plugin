@@ -21,7 +21,9 @@ namespace Trinity.Coroutines.Town
         public ServiceType ServiceType { get; set; }
         public bool IsGizmo { get; set; }
         public bool IsUnit { get; set; }
+
         public DiaObject GetActor() => ZetaDia.Actors.GetActorsOfType<DiaObject>(true).FirstOrDefault(o => o.ActorSnoId == ActorId);
+
         public override string ToString() => $"{Name} Dist={Distance}";
     }
 }

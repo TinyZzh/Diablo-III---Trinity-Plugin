@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using Trinity.Components.Combat;
 using Trinity.Components.Combat.Resources;
 using Trinity.DbProvider;
 using Trinity.Framework.Objects.Memory.Attributes;
-using Trinity.Items;
 using Zeta.Bot;
 using Zeta.Common;
 
@@ -77,11 +75,10 @@ namespace Trinity.Framework.Helpers
             SnapShot.Record();
         }
 
-
         public static void TrinityOnJoinGame(object src, EventArgs mea)
         {
             TotalGamesJoined++;
-            ResetEverythingNewGame();            
+            ResetEverythingNewGame();
         }
 
         public static void TrinityOnLeaveGame(object src, EventArgs mea)
@@ -96,7 +93,7 @@ namespace Trinity.Framework.Helpers
             {
                 Logger.Log("New Game - resetting everything");
                 DefaultLootProvider.ResetBackPackCheck();
-                SpellHistory.History.Clear();            
+                SpellHistory.History.Clear();
                 GoldInactivity.Instance.ResetCheckGold();
                 Clear();
                 AttributeManager.Reset();

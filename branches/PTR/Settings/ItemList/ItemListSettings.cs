@@ -6,7 +6,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Threading;
-using System.Web.Script.Serialization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -488,7 +487,6 @@ namespace Trinity.Settings.ItemList
             set { SetField(ref _validationMessage, value); }
         }
 
-
         public ModalPage SelectedModalPage
         {
             get { return _selectedModalPage; }
@@ -503,32 +501,46 @@ namespace Trinity.Settings.ItemList
 
         [IgnoreDataMember]
         public ICommand ResetFilterCommand { get; set; }
+
         [IgnoreDataMember]
         public ICommand ExportCommand { get; set; }
+
         [IgnoreDataMember]
         public ICommand ImportCommand { get; set; }
+
         [IgnoreDataMember]
         public ICommand LoadModalCommand { get; set; }
+
         [IgnoreDataMember]
         public ICommand CloseModalCommand { get; set; }
+
         [IgnoreDataMember]
         public ICommand EnableItemListCommand { get; set; }
+
         [IgnoreDataMember]
         public ICommand AdvancedOptionCommand { get; set; }
+
         [IgnoreDataMember]
         public ICommand SelectAllCommand { get; set; }
+
         [IgnoreDataMember]
         public ICommand SelectNoneCommand { get; set; }
+
         [IgnoreDataMember]
         public ICommand ClearRulesCommand { get; set; }
+
         [IgnoreDataMember]
         public ICommand AddAllSetsCommand { get; set; }
+
         [IgnoreDataMember]
         public ICommand AddAllLegendaryAffixCommand { get; set; }
+
         [IgnoreDataMember]
         public ICommand Add24ItemsCommand { get; set; }
+
         [IgnoreDataMember]
         public ICommand LoadEquippedItemsCommand { get; set; }
+
         [IgnoreDataMember]
         public ICommand LoadStashedItemsCommand { get; set; }
 
@@ -556,7 +568,7 @@ namespace Trinity.Settings.ItemList
                     }
                     else
                     {
-                        if(!BotMain.IsRunning)
+                        if (!BotMain.IsRunning)
                             ZetaDia.Actors.Update();
 
                         Logger.Log("Scanning Character for Equipped Items");
@@ -667,7 +679,6 @@ namespace Trinity.Settings.ItemList
                         Logger.Log("Selecting all item types.");
                         ItemTypes.ForEach(i => i.IsSelected = true);
                     }
-
                 }
                 catch (Exception ex)
                 {
@@ -931,7 +942,6 @@ namespace Trinity.Settings.ItemList
             }
         }
 
-
         internal void ChangeFilterPending(string property)
         {
             if (_deferredAction == null)
@@ -1055,6 +1065,5 @@ namespace Trinity.Settings.ItemList
                 });
             }
         }
-
     }
 }

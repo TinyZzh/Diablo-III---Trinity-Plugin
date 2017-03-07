@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Zeta.Game;
 using Zeta.Game.Internals;
-using Zeta.Game.Internals.Actors;
 using Logger = Trinity.Framework.Helpers.Logger;
 
 namespace Trinity.Coroutines.Town
@@ -46,7 +45,7 @@ namespace Trinity.Coroutines.Town
         //            }
 
         //            Logger.Log($"[PutItemsInStash] Adding {item.Name} ({item.ActorSnoId}) to stash. StackSize={item.ItemStackQuantity} AnnId={item.AnnId} InternalName={item.InternalName} Id={item.ActorSnoId} Quality={item.ItemQualityLevel} AncientRank={item.AncientRank}");
-        //            ZetaDia.Me.Inventory.QuickStash(item);                    
+        //            ZetaDia.Me.Inventory.QuickStash(item);
         //        }
         //        catch (Exception ex)
         //        {
@@ -104,6 +103,5 @@ namespace Trinity.Coroutines.Town
             await Coroutine.Sleep(1000);
             return true;
         }
-
     }
 }

@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using log4net;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using log4net;
 using Trinity.Components.Adventurer.Settings;
 using Zeta.Common;
 
@@ -19,15 +18,19 @@ namespace Trinity.Components.Adventurer.Util
                 case LogLevel.Debug:
                     Debug(message, args);
                     break;
+
                 case LogLevel.Error:
                     Error(message, args);
                     break;
+
                 case LogLevel.Info:
                     Info(message, args);
                     break;
+
                 case LogLevel.Verbose:
                     Verbose(message, args);
                     break;
+
                 case LogLevel.Overlay:
                     Info(message, args);
                     Overlay(message, args);
@@ -77,7 +80,7 @@ namespace Trinity.Components.Adventurer.Util
             message = ClassTag + message;
             DbLog.DebugFormat(message, args);
         }
-        
+
         public static void Warn(string message, params object[] args)
         {
             if (!message.StartsWith("["))
@@ -134,6 +137,7 @@ namespace Trinity.Components.Adventurer.Util
                 DbLog.Warn(message);
             }
         }
+
         public static void RawError(string message, params object[] args)
         {
             if (args != null && args.Length > 0)
@@ -165,7 +169,6 @@ namespace Trinity.Components.Adventurer.Util
         }
 
         private static Regex TaskNameRegex { get; } = new Regex(@"d__\d+", RegexOptions.Compiled);
-
     }
 
     public enum LogLevel
@@ -176,5 +179,4 @@ namespace Trinity.Components.Adventurer.Util
         Verbose,
         Overlay
     }
-
 }

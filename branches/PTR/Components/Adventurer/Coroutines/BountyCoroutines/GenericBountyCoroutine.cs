@@ -1,10 +1,10 @@
+using Buddy.Coroutines;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
+using Trinity.Components.Adventurer.Coroutines.CommonSubroutines;
 using Trinity.Components.Adventurer.Game.Quests;
 using Trinity.Components.Adventurer.Util;
-using Trinity.Components.Adventurer.Coroutines.CommonSubroutines;
 
 namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
 {
@@ -19,6 +19,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
         }
 
         private States _state;
+
         public new States State
         {
             get { return _state; }
@@ -34,7 +35,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             }
         }
 
-
         public readonly BountyData Bounty;
         private ISubroutine _currentStep;
         private static ISubroutine _lastGenericBountySubroutine;
@@ -46,7 +46,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             ObjectiveSearchRadius = 1000;
             AutoSetNearbyNodesExplored = true;
             AutoSetNearbyNodesRadius = 30;
-
         }
 
         public override async Task<bool> GetCoroutine()
@@ -58,22 +57,24 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
                 {
                     case States.NotStarted:
                         return NotStarted();
+
                     case States.InProgress:
                         return await InProgress();
+
                     case States.Completed:
                         return Completed();
+
                     case States.Failed:
                         return Failed();
+
                     default:
                         Logger.Error("[GenericBounty] If you see this, it's not good!");
                         await Coroutine.Sleep(TimeSpan.MaxValue);
                         return true;
                 }
-
             }
             return await base.GetCoroutine();
         }
-
 
         private bool NotStarted()
         {
@@ -137,6 +138,5 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             base.State = BountyCoroutine.States.Failed;
             return true;
         }
-
     }
 }

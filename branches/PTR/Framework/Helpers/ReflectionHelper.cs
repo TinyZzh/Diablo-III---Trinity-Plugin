@@ -90,11 +90,6 @@ namespace Trinity.Framework.Helpers
             return (T)Activator.CreateInstance(typeof(T), BindingFlags.NonPublic | BindingFlags.Instance, null, new List<object> { instance }.Concat(parameters).ToArray(), null);
         }
 
-        public static T To<T>(this ActorCommonData instance) where T : ACD
-        {
-            return (T)Activator.CreateInstance(typeof(T), BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] { instance.BaseAddress }, null);
-        }
-
         public static T UnsafeCreate<T>(this ACD instance) where T : ACD
         {
             return (T)Activator.CreateInstance(typeof(T), BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] { instance.BaseAddress }, null);
@@ -160,8 +155,6 @@ namespace Trinity.Framework.Helpers
             }
             return null;
         }
-
-
 
         public static MemberExpression StaticPropertyOrField(Type type, string propertyOrFieldName)
         {
@@ -268,8 +261,6 @@ namespace Trinity.Framework.Helpers
                 return false;
 
             return true;
-
         }
     }
 }
-

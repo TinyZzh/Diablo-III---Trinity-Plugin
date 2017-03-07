@@ -1,23 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Buddy.Coroutines;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Components.Combat.Resources;
-using Trinity.Coroutines.Town;
 using Trinity.DbProvider;
 using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
-using Trinity.Framework.Actors.Attributes;
-using Trinity.Framework.Avoidance;
 using Trinity.Framework.Avoidance.Structures;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
-using Trinity.ProfileTags;
 using Trinity.Reference;
 using Zeta.Bot;
-using Zeta.Bot.Logic;
 using Zeta.Bot.Navigation;
 using Zeta.Common;
 using Zeta.Game;
@@ -29,8 +20,11 @@ namespace Trinity.Components.Combat
     public interface ISpellProvider
     {
         bool CanCast(SNOPower power);
+
         bool CanCast(Skill power);
+
         Task<bool> CastTrinityPower(TrinityPower power, string type = "");
+
         bool CastPower(SNOPower power, Vector3 clickPosition, int targetAcdId);
     }
 
@@ -111,7 +105,7 @@ namespace Trinity.Components.Combat
                 Logger.LogVerbose(LogCategory.Spells, $"Failed to cast {castInfo}");
                 return false;
             }
-            
+
             Logger.Warn(LogCategory.Spells, $"Cast {castInfo}");
 
             if (power.SNOPower == SNOPower.Axe_Operate_Gizmo && Core.StuckHandler.IsStuck)
@@ -171,7 +165,7 @@ namespace Trinity.Components.Combat
 
             if (GameData.ChargeBasedPowers.Contains(skill.SNOPower))
                 return Core.Hotbar.GetSkillCharges(skill.SNOPower) > 0;
-   
+
             return true;
         }
 
@@ -215,8 +209,6 @@ namespace Trinity.Components.Combat
             return false;
         }
 
-
-
         public bool CastPower(SNOPower power, Vector3 clickPosition, int targetAcdId)
         {
             if (power != SNOPower.None && Core.GameIsReady)
@@ -237,8 +229,6 @@ namespace Trinity.Components.Combat
                     SpellHistory.RecordSpell(power, clickPosition, targetAcdId);
                     return true;
                 }
-
-
             }
             return false;
         }
@@ -250,6 +240,5 @@ namespace Trinity.Components.Combat
                 Core.Grids.Avoidance.AdvanceNavigatorPath(40f, RayType.Walk);
             }
         }
-
     }
 }

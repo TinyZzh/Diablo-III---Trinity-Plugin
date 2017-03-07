@@ -7,7 +7,7 @@ using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects.Memory.Misc;
-using Trinity.Framework.Objects.Memory.Symbols.Types;
+using Trinity.Framework.Objects.Memory;
 using Trinity.Reference;
 using Trinity.Settings;
 using Zeta.Bot;

@@ -1,6 +1,6 @@
+using Buddy.Coroutines;
 using System;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Game.Quests;
@@ -12,7 +12,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
 {
     public abstract class BountyCoroutine
     {
-
         private bool _isDone;
         private States _state;
         private BountyData _bountyData;
@@ -26,8 +25,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
         public int AutoSetNearbyNodesRadius { get; set; }
         public bool IsDone { get { return _isDone; } }
         public BountyStatistic Stats { get; private set; }
-
-
 
         public BountyData BountyData
         {
@@ -56,7 +53,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
                     return true;
                 }
                 return false;
-
             }
         }
 
@@ -73,6 +69,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
         }
 
         protected bool _logStateChange;
+
         protected bool LogStateChange
         {
             get
@@ -98,7 +95,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             }
         }
 
-        #endregion
+        #endregion State
 
         protected BountyCoroutine(int questId)
         {
@@ -106,8 +103,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             BoxSize = 30;
             BoxTolerance = 0.05f;
         }
-
-
 
         public virtual async Task<bool> GetCoroutine()
         {
@@ -138,6 +133,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
         }
 
         private WaitTimer _returningToTownWaitTimer;
+
         private async Task<bool> NotStarted()
         {
             if (_returningToTownWaitTimer == null)
@@ -154,7 +150,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             //}
             Stats = BountyStatistic.GetInstance(QuestId);
 
-            LastBountyStats = Stats; 
+            LastBountyStats = Stats;
 
             if (Stats.StartTime == default(DateTime))
                 Stats.StartTime = DateTime.UtcNow;
@@ -197,6 +193,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
 
         public static int currentRandomizedBounty = -1;
         private WaitTimer _completedWaitTimer;
+
         private async Task<bool> Completed()
         {
             if (_completedWaitTimer == null) _completedWaitTimer = QuestId == 359927 ? new WaitTimer(TimeSpan.FromSeconds(15)) : new WaitTimer(TimeSpan.FromSeconds(3));
@@ -224,8 +221,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             return true;
         }
 
-
-
         protected void CheckBountyStatus()
         {
             if (!BountyData.IsAvailable)
@@ -251,9 +246,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
         {
             State = States.NotStarted;
             _bountyData = null;
-
         }
-
-
     }
 }

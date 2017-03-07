@@ -13,8 +13,8 @@ namespace Trinity.Components.Adventurer.Game.Combat
 {
     public class SafeZerg : PulsingObject
     {
-
         private static SafeZerg _instance;
+
         public static SafeZerg Instance
         {
             get { return _instance ?? (_instance = new SafeZerg()); }
@@ -26,7 +26,6 @@ namespace Trinity.Components.Adventurer.Game.Combat
         }
 
         private bool _zergEnabled;
-
 
         public void EnableZerg()
         {

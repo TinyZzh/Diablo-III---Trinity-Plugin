@@ -7,7 +7,6 @@ using Trinity.Components.Adventurer.Game.Events;
 using Trinity.Components.Adventurer.Game.Exploration.Algorithms;
 using Zeta.Common;
 using Zeta.Game;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Components.Adventurer.Game.Exploration
 {
@@ -43,7 +42,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
                 return _currentGrid.Value;
             }
 
-            if (_currentGrid == null || _currentGrid.Value == null || ZetaDia.WorldId != _currentGrid.Value.WorldDynamicId)
+            if (_currentGrid == null || _currentGrid.Value == null || ZetaDia.Globals.WorldId != _currentGrid.Value.WorldDynamicId)
             {
                 _currentGrid = new Lazy<ExplorationGrid>(() => new ExplorationGrid());
             }
@@ -75,11 +74,6 @@ namespace Trinity.Components.Adventurer.Game.Exploration
         public override int GridBounds
         {
             get { return GRID_BOUNDS; }
-        }
-
-        protected bool MarkNodesNearWall
-        {
-            get { return false; }
         }
 
         public override bool CanRayCast(Vector3 from, Vector3 to)
@@ -166,12 +160,14 @@ namespace Trinity.Components.Adventurer.Game.Exploration
                             radius = 30;
                         }
                         break;
+
                     case ProfileType.Bounty:
                         radius = 55;
                         break;
+
                     case ProfileType.Keywarden:
                         radius = 70;
-                        break;                    
+                        break;
                 }
                 foreach (var node in GetExplorationNodesInRadius(nearestNode, radius))
                 {
@@ -194,9 +190,9 @@ namespace Trinity.Components.Adventurer.Game.Exploration
                 if (node == null)
                     continue;
 
-                node.AStarValue = (byte)(node.HasEnoughNavigableCells ? 1 : 2);    
-                
-                if(!node.IsIgnored && node.HasEnoughNavigableCells)
+                node.AStarValue = (byte)(node.HasEnoughNavigableCells ? 1 : 2);
+
+                if (!node.IsIgnored && node.HasEnoughNavigableCells)
                     WalkableNodes.Add(node);
             }
 
@@ -204,5 +200,3 @@ namespace Trinity.Components.Adventurer.Game.Exploration
         }
     }
 }
-
-

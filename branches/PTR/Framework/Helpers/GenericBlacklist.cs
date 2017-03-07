@@ -12,7 +12,9 @@ namespace Trinity.Framework.Helpers
         public object Value { get; set; }
         public DateTime Expires { get; set; }
 
-        public GenericCacheObject() { }
+        public GenericCacheObject()
+        {
+        }
 
         public GenericCacheObject(string key, object value, TimeSpan expirationDuration)
         {
@@ -49,7 +51,7 @@ namespace Trinity.Framework.Helpers
         {
             Logger.Log($@"Blacklisting {objectToBlacklist.InternalName} ActorSnoId: {objectToBlacklist.ActorSnoId} RActorId: {objectToBlacklist.RActorId}
             Because: {reason}
-            Duration: {duration:g}   
+            Duration: {duration:g}
             ");
 
             DateTime expires;
@@ -130,7 +132,7 @@ namespace Trinity.Framework.Helpers
                 return true;
             }
         }
-        
+
         public static bool ContainsKey(string key)
         {
             if (string.IsNullOrWhiteSpace(key))
@@ -235,5 +237,4 @@ namespace Trinity.Framework.Helpers
             }
         }
     }
-
 }

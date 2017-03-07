@@ -52,13 +52,12 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             }
         }
 
-        #endregion
+        #endregion State
 
         public bool IsDone
         {
             get { return _isDone || AdvDia.CurrentWorldId != _worldId && _worldId != -1; }
         }
-
 
         public InteractWithGizmoCoroutine(int questId, int worldId, int actorId, int marker, int interactAttemps = 1, int secondsToSleepAfterInteraction = 1, int secondsToTimeout = 10, bool useAll = false)
         {
@@ -78,14 +77,19 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             {
                 case States.NotStarted:
                     return await NotStarted();
+
                 case States.Searching:
                     return await Searching();
+
                 case States.Moving:
                     return await Moving();
+
                 case States.Interacting:
                     return await Interacting();
+
                 case States.Completed:
                     return await Completed();
+
                 case States.Failed:
                     return await Failed();
             }
@@ -140,7 +144,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             return false;
         }
 
-
         private async Task<bool> Moving()
         {
             if (!await NavigationCoroutine.MoveTo(_objectiveLocation, 10)) return false;
@@ -155,7 +158,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                 State = States.Searching;
                 return false;
             }
-            var actor =  ActorFinder.FindGizmo(_actorId);
+            var actor = ActorFinder.FindGizmo(_actorId);
             if (actor == null)
             {
                 State = States.Searching;
@@ -205,7 +208,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                         Util.Logger.Warn("Found another actor that needs some interaction. Dist={0}", nextGizmo.Distance);
                         State = States.Searching;
                         return false;
-                    }                        
+                    }
                 }
 
                 var actor = ActorFinder.FindGizmo(_actorId);

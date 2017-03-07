@@ -7,7 +7,7 @@ using System.Reflection;
 namespace Trinity.Framework.Helpers
 {
     public class MemoryAnalysis
-    {     
+    {
         [Flags]
         public enum TestFlags : uint
         {
@@ -83,7 +83,7 @@ namespace Trinity.Framework.Helpers
             private T _object;
             private Type _type;
             private readonly Func<T> _objProducer;
-            readonly Dictionary<string, Member> _members = new Dictionary<string, Member>();
+            private readonly Dictionary<string, Member> _members = new Dictionary<string, Member>();
 
             public ObjectComparer(Func<T> objProducer)
             {
@@ -156,6 +156,7 @@ namespace Trinity.Framework.Helpers
                     {
                         case MemberDeclarationType.Property:
                             return ((PropertyInfo)Info).GetValue(instance);
+
                         case MemberDeclarationType.Field:
                             return ((FieldInfo)Info).GetValue(instance);
                     }
@@ -249,9 +250,7 @@ namespace Trinity.Framework.Helpers
                 gainedFlags = (Enum)Enum.ToObject(type, gained);
                 lostFlags = (Enum)Enum.ToObject(type, lost);
             }
-
         }
-
 
         public class FlagComparison
         {
@@ -316,7 +315,6 @@ namespace Trinity.Framework.Helpers
                 gainedFlags = (Enum)Enum.ToObject(flagsA.GetType(), gained);
                 lostFlags = (Enum)Enum.ToObject(flagsB.GetType(), lost);
             }
-
         }
 
         public class FlagComparison<T>
@@ -382,9 +380,6 @@ namespace Trinity.Framework.Helpers
                 gainedFlags = (T)Enum.ToObject(typeof(T), gained);
                 lostFlags = (T)Enum.ToObject(typeof(T), lost);
             }
-
         }
-
-
     }
 }

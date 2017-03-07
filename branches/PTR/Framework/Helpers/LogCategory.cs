@@ -72,6 +72,6 @@ namespace Trinity.Framework.Helpers
         Unused61 = 0x1000000000000000,
         Unused62 = 0x2000000000000000,
         Unused63 = 0x4000000000000000,
-        Unused64 = 0x8000000000000000,        
+        Unused64 = 0x8000000000000000,
     }
 }

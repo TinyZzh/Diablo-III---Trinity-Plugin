@@ -16,18 +16,12 @@ using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Components.Adventurer.UI.UIComponents.RadarViewport
 {
-
     public class RadarViewport : Viewport3D
     {
- 
-
         public RadarViewport()
         {
+            ClipToBounds = true;
 
-
-
-            ClipToBounds = true;            
-            
             //CanvasData.OnCanvasSizeChanged += (before, after) =>
             //{
             //    // Scene drawings are specific to a canvas size.
@@ -35,7 +29,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarViewport
             //    Drawings.Relative.Clear();
             //    Drawings.Static.Clear();
             //    Clip = CanvasData.ClipRegion;
-            //};          
+            //};
 
             //if (_internalTimer == null)
             //{
@@ -50,7 +44,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarViewport
         //{
         //    Application.Current.Dispatcher.Invoke(() =>
         //    {
-
         //    });
         //}
 
@@ -96,33 +89,32 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarViewport
                 typeof(IList),
                 typeof(RadarViewport),
                 new PropertyMetadata(null, OnItemsSourceChanged));
-        
+
         //private System.Windows.Threading.DispatcherTimer dispatcherTimer;
-        
+
         public IList ItemsSource
         {
             set { SetValue(ItemsSourceProperty, value); }
             get { return (IList)GetValue(ItemsSourceProperty); }
         }
 
-        static void OnItemsSourceChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+        private static void OnItemsSourceChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
             var radarCanvas = obj as RadarViewport;
-            if (radarCanvas != null) 
+            if (radarCanvas != null)
                 radarCanvas.OnItemsSourceChanged(args);
         }
 
-        #endregion
+        #endregion ItemSource Property
 
         #region ItemSource Changed Event Handling
 
         /// <summary>
         /// ItemSource binding on control is set
         /// </summary>
-        void OnItemsSourceChanged(DependencyPropertyChangedEventArgs args)
+        private void OnItemsSourceChanged(DependencyPropertyChangedEventArgs args)
         {
             UpdateData();
-
 
             var oldValue = args.OldValue as INotifyCollectionChanged;
             if (oldValue != null)
@@ -136,13 +128,12 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarViewport
         /// <summary>
         /// When objects inside ItemSource collection change
         /// </summary>
-        void OnItemsSourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+        private void OnItemsSourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
-
             UpdateData();
         }
 
-        #endregion
+        #endregion ItemSource Changed Event Handling
 
         #region Canvas Changed Event Handling
 
@@ -158,28 +149,28 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarViewport
             {
                 return Size.Empty;
             }
-            
+
             // Not entirely sure what this does
             return availableSize;
         }
 
-        #endregion
+        #endregion Canvas Changed Event Handling
 
         /// <summary>
         /// Go through the ItemSource collection and calculate their canvas positions
         /// </summary>
-        void UpdateData()
+        private void UpdateData()
         {
             try
             {
                 using (new PerformanceLogger("RadarUI UpdateData"))
                 {
                     Logger.Debug("DataUpdating");
-                    
+
                     if (DesiredSize.Height <= 0 || DesiredSize.Width <= 0)
                         return;
 
-                    if (!IsVisible || ZetaDia.Me == null || ZetaDia.IsLoadingWorld || !ZetaDia.IsInGame)
+                    if (!IsVisible || ZetaDia.Me == null || ZetaDia.Globals.IsLoadingWorld || !ZetaDia.IsInGame)
                         return;
 
                     Objects.Clear();
@@ -213,12 +204,10 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarViewport
                     //UpdateAvoidanceGridData();
 
                     //Logger.Log("Heading={0}",ZetaDia.Me.Movement.RotationDegrees);
-
                 }
 
                 // Trigger Canvas to Render
-                InvalidateVisual();  
-
+                InvalidateVisual();
             }
             catch (Exception ex)
             {
@@ -226,9 +215,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarViewport
             }
         }
 
-
-
-      
         /// <summary>
         /// OnRender is a core part of Canvas, replace it with our render code. Can be manually triggered by InvalidateVisual();
         /// Its very important to minimize work in OnRender, use UpdateData() to cache whatever it is you need.
@@ -245,7 +231,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarViewport
                 if (CenterActor.Point.X == 0 && CenterActor.Point.Y == 0)
                     return;
 
-                if (!ZetaDia.IsInGame || ZetaDia.IsLoadingWorld)
+                if (!ZetaDia.IsInGame || ZetaDia.Globals.IsLoadingWorld)
                     return;
 
                 try
@@ -255,9 +241,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarViewport
                     //DrawScenes(dc, CanvasData);
 
                     //DrawRangeGuide(dc, CanvasData);
-
-                    
-
 
                     //DrawAvoidanceGrid(dc, CanvasData);
 
@@ -271,23 +254,22 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarViewport
 
                     foreach (var actor in Objects)
                     {
-                        var cube = GetCube(mat, 
+                        var cube = GetCube(mat,
                             new Point3D(actor.Point.Y, actor.Point.X, 0),
-                            new Point3D(actor.Point.Y+5, actor.Point.X+5, 5));
+                            new Point3D(actor.Point.Y + 5, actor.Point.X + 5, 5));
 
                         Children.Add(cube);
                         //if (!actor.Morph.IsBeyondCanvas)
                         //{
                         //    DrawActor(dc, CanvasData, actor);
                         //    //DrawActualObjectBounds(dc, CanvasData, actor.Actor);
-                        //}                                                    
+                        //}
                     }
-                   
+
                     //DrawLineToSafeNode(dc, CanvasData);
 
                     //DrawTest(dc, CanvasData);
                     base.OnRender(dc);
-
                 }
                 catch (Exception ex)
                 {
@@ -368,16 +350,5 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarViewport
             var v1 = new Vector3D(p2.X - p1.X, p2.Y - p1.Y, p2.Z - p1.Z);
             return Vector3D.CrossProduct(v0, v1);
         }
-
-
-
-
     }
-
-
-
-
-
-
-
 }

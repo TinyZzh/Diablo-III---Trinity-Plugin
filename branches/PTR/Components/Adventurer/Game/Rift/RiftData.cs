@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Trinity.Components.Adventurer.Cache;
+using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Settings;
 using Trinity.Components.Adventurer.Util;
-using Trinity.Components.Adventurer.Game.Actors;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Components.Adventurer.Game.Rift
 {
@@ -22,10 +21,9 @@ namespace Trinity.Components.Adventurer.Game.Rift
         public const int TownstoneSNO = 135248;
         public const int HolyCowSNO = 209133;
         public const int GreaterRiftKeySNO = 408416;
-        public static HashSet<int> DungeonStoneSNOs = new HashSet<int> {135248, 178684};
+        public static HashSet<int> DungeonStoneSNOs = new HashSet<int> { 135248, 178684 };
         public static Vector3 Act1OrekPosition = new Vector3(391, 591, 24);
         public static Vector3 Act1RiftStonePosition = new Vector3(375, 586, 24);
-
 
         public static UIElement VendorDialog
         {
@@ -56,8 +54,6 @@ namespace Trinity.Components.Adventurer.Game.Rift
         {
             get { return UIElement.FromHash(0xF98A8466DE237BD5); }
         }
-
-
 
         // Cow Rift X1_LR_Level_01 (WorldID: 288454, LevelAreaSnoIdId: 276150)
         // TentacleLord (209133) Distance: 5.491129
@@ -108,8 +104,7 @@ namespace Trinity.Components.Adventurer.Game.Rift
 
         //Id=4 MinimapTextureSnoId=81058 NameHash=-1944927149 IsPointOfInterest=True IsPortalEntrance = False IsPortalExit=False IsWaypoint = False Location=x="1296" y="941" z="6"  Distance=58
         //[QuestTools][TabUi] Id=10 MinimapTextureSnoId=81058 NameHash=-1944927149 IsPointOfInterest=True IsPortalEntrance=False IsPortalExit=False IsWaypoint=False Location=x="980" y="1088" z="6"  Distance=126
-        //ActorId: 353823, Type: Monster, Name: X1_LR_Boss_sniperAngel-33548, Distance2d: 32.87272, CollisionRadius: 0, MinimapActive: 1, MinimapIconOverride: -1, MinimapDisableArrow: 0 
-
+        //ActorId: 353823, Type: Monster, Name: X1_LR_Boss_sniperAngel-33548, Distance2d: 32.87272, CollisionRadius: 0, MinimapActive: 1, MinimapIconOverride: -1, MinimapDisableArrow: 0
 
         public static Dictionary<int, RiftEntryPortal> EntryPortals = new Dictionary<int, RiftEntryPortal>();
 
@@ -122,7 +117,7 @@ namespace Trinity.Components.Adventurer.Game.Rift
                     .OrderBy(g => g.Position.Distance2DSqr(AdvDia.MyPosition))
                     .FirstOrDefault();
             if (portal == null || EntryPortals.ContainsKey(AdvDia.CurrentWorldDynamicId)) return;
-            Util.Logger.Debug("[Rift] Added entry portal {0} ({1})", (SNOActor) portal.ActorSnoId, portal.ActorSnoId);
+            Util.Logger.Debug("[Rift] Added entry portal {0} ({1})", (SNOActor)portal.ActorSnoId, portal.ActorSnoId);
             EntryPortals.Add(AdvDia.CurrentWorldDynamicId,
                 new RiftEntryPortal(portal.ActorSnoId, portal.Position.X, portal.Position.Y));
 
@@ -134,15 +129,13 @@ namespace Trinity.Components.Adventurer.Game.Rift
                     string.Format("{0}\t{1}\t{2}\t{3}", portalMarker.Id, portalMarker.NameHash,
                         portalMarker.IsPortalEntrance, portalMarker.IsPortalExit));
             }
-
-
         }
 
         public static bool IsEntryPortal(DiaGizmo portal)
         {
             var sno = portal.ActorSnoId;
-            var x = (int) portal.Position.X;
-            var y = (int) portal.Position.Y;
+            var x = (int)portal.Position.X;
+            var y = (int)portal.Position.Y;
 
             if (!EntryPortals.ContainsKey(AdvDia.CurrentWorldDynamicId))
             {
@@ -159,22 +152,31 @@ namespace Trinity.Components.Adventurer.Game.Rift
             {
                 case 288454: //X1_LR_Level_01 = 288454,
                     return 1938876094;
+
                 case 288685: //X1_LR_Level_02 = 288685,
                     return 1938876095;
+
                 case 288687: //X1_LR_Level_03 = 288687,
                     return 1938876096;
+
                 case 288798: //X1_LR_Level_04 = 288798,
                     return 1938876097;
+
                 case 288800: //X1_LR_Level_05 = 288800,
                     return 1938876098;
+
                 case 288802: //X1_LR_Level_06 = 288802,
                     return 1938876099;
+
                 case 288804: //X1_LR_Level_07 = 288804,
                     return 1938876100;
+
                 case 288810: //X1_LR_Level_08 = 288810,
                     return 1938876101;
+
                 case 288814: //X1_LR_Level_09 = 288814,
                     return 1938876102;
+
                 case 288816: //X1_LR_Level_10 = 288816,
                     return int.MinValue;
             }
@@ -187,8 +189,8 @@ namespace Trinity.Components.Adventurer.Game.Rift
             if (greaterRiftLevel <= 0)
             {
                 //var maxLevel = PluginSettings.Current.HighestUnlockedRiftLevel;
-                var maxLevel = ZetaDia.Me != null ? 
-                    PropertyReader<int>.SafeReadValue(() => ZetaDia.Me.HighestUnlockedRiftLevel) 
+                var maxLevel = ZetaDia.Me != null ?
+                    PropertyReader<int>.SafeReadValue(() => ZetaDia.Me.HighestUnlockedRiftLevel)
                     : 110;
 
                 greaterRiftLevel = maxLevel + greaterRiftLevel;
@@ -293,7 +295,6 @@ namespace Trinity.Components.Adventurer.Game.Rift
             {93, 10000000000},
             {94, 10000000000},
         };
-
     }
 
     public class RiftEntryPortal
@@ -301,6 +302,7 @@ namespace Trinity.Components.Adventurer.Game.Rift
         public int ActorSNO { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
+
         public RiftEntryPortal(int actorSno, float x, float y)
         {
             ActorSNO = actorSno;
@@ -308,6 +310,4 @@ namespace Trinity.Components.Adventurer.Game.Rift
             Y = (int)y;
         }
     }
-
-
 }

@@ -37,11 +37,10 @@ namespace Trinity.Components.Adventurer.Game.Quests
             questData.InternalName = bountyInfo.Quest.ToString();
             questData.Act = bountyInfo.Act;
             questData.ActName = bountyInfo.Act.ToString();
-            
-            questData.LevelAreaIds = new HashSet<int>(bountyInfo.LevelAreas.Select(la => (int)la));
-            
-            questData.Waypoint = WaypointFactory.GetWaypointByLevelAreaId((int)bountyInfo.StartingLevelArea);
 
+            questData.LevelAreaIds = new HashSet<int>(bountyInfo.LevelAreas.Select(la => (int)la));
+
+            questData.Waypoint = WaypointFactory.GetWaypointByLevelAreaId((int)bountyInfo.StartingLevelArea);
 
             foreach (var step in bountyInfo.Info.QuestRecord.Steps)
             {
@@ -64,7 +63,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
             //Logger.Debug("[QuestData] Saving Quest {0} ({1})", questData.Name, questData.QuestId);
             //questData.Save();
             return questData;
-        }    
+        }
 
         public bool IsObjectiveActive(QuestStepObjectiveType objectiveType)
         {
@@ -83,7 +82,9 @@ namespace Trinity.Components.Adventurer.Game.Quests
         public string Name { get; set; }
         public List<QuestStepObjectiveData> Objectives { get; set; }
 
-        public QuestStepData() { }
+        public QuestStepData()
+        {
+        }
 
         public QuestStepData(QuestData questData, QuestStep questStep)
         {
@@ -97,6 +98,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
         }
 
         private bool _isActive = true;
+
         //[JsonIgnore]
         public bool IsActive
         {
@@ -107,7 +109,6 @@ namespace Trinity.Components.Adventurer.Game.Quests
                 return _isActive;
             }
         }
-
     }
 
     public class QuestStepObjectiveData
@@ -119,7 +120,9 @@ namespace Trinity.Components.Adventurer.Game.Quests
         public string ObjectiveTypeName { get; set; }
         public string Name { get; set; }
 
-        public QuestStepObjectiveData() { }
+        public QuestStepObjectiveData()
+        {
+        }
 
         public QuestStepObjectiveData(QuestData questData, QuestStepData questStepData, QuestStepObjective objective)
         {
@@ -131,6 +134,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
         }
 
         private bool _isActive = true;
+
         //[JsonIgnore]
         public bool IsActive
         {
@@ -169,5 +173,4 @@ namespace Trinity.Components.Adventurer.Game.Quests
             return QuestObjectiveInfo.IsActiveObjective(questId, questStepId, objectiveIndex);
         }
     }
-
 }

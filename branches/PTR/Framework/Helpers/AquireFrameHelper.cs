@@ -11,10 +11,9 @@ namespace Trinity.Framework.Helpers
 
     public class AquireFrameHelper : IDisposable
     {
-        bool _disposed;
+        private bool _disposed;
         private GreyMagic.FrameLockRelease _frameLockRelease;
         private GreyMagic.ExternalReadCache _externalReadCache;
-        
 
         /// <summary>
         /// Enables reading DB data while bot is running or stopped
@@ -34,7 +33,7 @@ namespace Trinity.Framework.Helpers
 
                 _externalReadCache = ZetaDia.Memory.SaveCacheState();
                 ZetaDia.Memory.TemporaryCacheState(false);
-            }            
+            }
         }
 
         public void Dispose()

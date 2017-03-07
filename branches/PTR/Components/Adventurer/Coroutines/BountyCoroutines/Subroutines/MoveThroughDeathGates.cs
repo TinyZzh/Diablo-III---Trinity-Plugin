@@ -7,7 +7,6 @@ using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Game.Combat;
 using Trinity.Components.Adventurer.Game.Exploration.SceneMapping;
 using Trinity.Components.Adventurer.Game.Quests;
-using Zeta.Bot.Navigation;
 using Zeta.Common;
 using Zeta.Game;
 using Logger = Trinity.Components.Adventurer.Util.Logger;
@@ -51,16 +50,22 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             {
                 case States.NotStarted:
                     return await NotStarted();
+
                 case States.Searching:
                     return await Searching();
+
                 case States.MovingToScene:
                     return await MovingToScene();
+
                 case States.MovingToGate:
                     return await MovingToGate();
+
                 case States.Interacting:
                     return await Interacting();
+
                 case States.Completed:
                     return await Completed();
+
                 case States.Failed:
                     return await Failed();
             }
@@ -213,15 +218,15 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                 {
                     //if (NavigationCoroutine.LastResult == CoroutineResult.Failure)
                     //{
-                        _moveAttempts++;
-                        if (_moveAttempts < _maxFailedMoveToGateAttempts)
-                        {
-                            Logger.Debug($"Failed attempt #{_moveAttempts} moving to {TargetGatePosition} Distance={distance}.");
-                            _navigationCoroutine = null;
-                            return false;
-                        }
-                        Logger.Debug($"Failed to move to TargetGatePosition, Max Attempts Reached ({_maxFailedMoveToGateAttempts}), finished.");
-                        State = States.Failed;
+                    _moveAttempts++;
+                    if (_moveAttempts < _maxFailedMoveToGateAttempts)
+                    {
+                        Logger.Debug($"Failed attempt #{_moveAttempts} moving to {TargetGatePosition} Distance={distance}.");
+                        _navigationCoroutine = null;
+                        return false;
+                    }
+                    Logger.Debug($"Failed to move to TargetGatePosition, Max Attempts Reached ({_maxFailedMoveToGateAttempts}), finished.");
+                    State = States.Failed;
                     //}
                     //Logger.Debug($"Failed to move to TargetGatePosition, too far away from gate ({distance}). finished.");
                     //State = States.Failed;
@@ -353,6 +358,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             }
         }
 
-        #endregion
+        #endregion State
     }
 }

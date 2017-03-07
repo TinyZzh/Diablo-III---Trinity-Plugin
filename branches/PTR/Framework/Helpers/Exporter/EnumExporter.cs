@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using System.Text;
 
 namespace Trinity.Framework.Helpers.Exporter
@@ -29,15 +28,15 @@ namespace Trinity.Framework.Helpers.Exporter
             WriteIndentedLoop(input, indent, sb, (i, k, v) =>
             {
                 var value = options.QuoteValue ? $"\"{v}\"" : v.ToString();
-                sb.AppendLine(IndentedLine(i, " {0}{1} = {2}{3},", options.KeyPrefix, k.Replace(" ","_"), options.ValuePrefix, value));
+                sb.AppendLine(IndentedLine(i, " {0}{1} = {2}{3},", options.KeyPrefix, k.Replace(" ", "_"), options.ValuePrefix, value));
             });
 
             sb.AppendLine(CloseBracketLine(indent));
 
-            return sb.ToString();            
+            return sb.ToString();
         }
 
-        private void WriteIndentedLoop(IDictionary<string, string> input, int indent, StringBuilder sb, Action<int, string,string> writer)
+        private void WriteIndentedLoop(IDictionary<string, string> input, int indent, StringBuilder sb, Action<int, string, string> writer)
         {
             indent++;
             foreach (var pair in input)
@@ -48,8 +47,3 @@ namespace Trinity.Framework.Helpers.Exporter
         }
     }
 }
-
-
-
-
-

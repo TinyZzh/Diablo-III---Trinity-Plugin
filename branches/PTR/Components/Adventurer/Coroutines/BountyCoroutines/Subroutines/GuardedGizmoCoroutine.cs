@@ -15,7 +15,6 @@ using Zeta.Common.Helpers;
 using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
 {
@@ -39,8 +38,8 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             Completed
         }
 
-
         private States _state;
+
         public States State
         {
             get { return _state; }
@@ -89,16 +88,22 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             {
                 case States.NotStarted:
                     return NotStarted();
+
                 case States.SearchingForGizmo:
                     return await SearchingForGizmo();
+
                 case States.MovingToGizmo:
                     return await MovingToGizmo();
+
                 case States.PreClearingGizmoArea:
                     return await PreClearingGizmoArea();
+
                 case States.InteractingWithGizmo:
                     return await InteractingWithGizmo();
+
                 case States.ClearingGizmoArea:
                     return await ClearingGizmoArea();
+
                 case States.Completed:
                     return Completed();
             }
@@ -128,7 +133,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             }
             return false;
         }
-
 
         private int _objectSearchRadius;
 
@@ -200,13 +204,12 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             return false;
         }
 
-
         private async Task<bool> InteractingWithGizmo()
         {
             SafeZerg.Instance.DisableZerg();
             EnablePulse();
             PulseChecks();
-            //Refresh actor just in case 
+            //Refresh actor just in case
             if (_currentGizmo.Untargateble)
             {
                 State = States.ClearingGizmoArea;
@@ -295,6 +298,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
         }
 
         #region OnPulse Implementation
+
         private readonly WaitTimer _pulseTimer = new WaitTimer(TimeSpan.FromMilliseconds(250));
         private bool _isPulsing;
 
@@ -328,7 +332,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             }
         }
 
-        #endregion
+        #endregion OnPulse Implementation
 
         public void Dispose()
         {
@@ -341,8 +345,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             public bool HasBeenOperated { get; set; }
             public bool Untargateble { get; set; }
             public int InteractDistance { get; set; }
-
         }
-
     }
 }

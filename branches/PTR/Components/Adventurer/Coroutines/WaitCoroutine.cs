@@ -11,7 +11,6 @@ namespace Trinity.Components.Adventurer.Coroutines
 {
     public class WaitCoroutine : IBountySubroutine
     {
-
         private readonly TimeSpan _waitTime;
         private bool _isDone;
 
@@ -46,7 +45,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                 Logger.Debug("[Wait] Waiting for {0} seconds", _waitTime.TotalSeconds);
             }
 
-            if (ZetaDia.CurrentWorldSnoId != _worldId)
+            if (ZetaDia.Globals.WorldSnoId != _worldId)
             {
                 Logger.Debug("[Wait] Stopped waiting because world id is not correct for {0} seconds");
                 _isDone = true;

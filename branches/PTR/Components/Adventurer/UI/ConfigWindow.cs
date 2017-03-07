@@ -15,13 +15,14 @@ namespace Trinity.Components.Adventurer.UI
         #region Static Stuff
 
         private static ConfigWindow _instance;
+
         public static ConfigWindow Instance
         {
             get
             {
                 //var heroId = ZetaDia.Service?.Hero?.IsValid;
 
-                //if (BotEvents.IsBotRunning || BotMain.IsPausedForStateExecution || BotMain.IsPaused || ZetaDia.IsLoadingWorld)
+                //if (BotEvents.IsBotRunning || BotMain.IsPausedForStateExecution || BotMain.IsPaused || ZetaDia.Globals.IsLoadingWorld)
                 //{
                 //    Logger.Error("SettingsStorage are not accessible while the bot is running, please stop the bot and try again.");
                 //    return null;
@@ -73,7 +74,7 @@ namespace Trinity.Components.Adventurer.UI
             }
         }
 
-        #endregion
+        #endregion Static Stuff
 
         private UserControl _mainControl;
         private Button _saveButton;
@@ -93,7 +94,6 @@ namespace Trinity.Components.Adventurer.UI
         private CheckBox _bountyPrioritizeBonusAct;
 
         public int BattleNetHeroId { get; set; }
-
 
         public ConfigWindow()
         {
@@ -123,7 +123,6 @@ namespace Trinity.Components.Adventurer.UI
             //_cancelButton = LogicalTreeHelper.FindLogicalNode(_mainControl, "CancelButton") as Button;
             //_cancelButton.Click += CancelButton_Click;
 
-
             //_gemPriorityUp = LogicalTreeHelper.FindLogicalNode(_mainControl, "GemPriorityUp") as Button;
             //_gemPriorityUp.Click += GemPriorityUp_Click;
 
@@ -137,7 +136,6 @@ namespace Trinity.Components.Adventurer.UI
 
             _greaterRiftLevel = LogicalTreeHelper.FindLogicalNode(_mainControl, "GreaterRiftLevel") as ComboBox;
             _greaterRiftLevel.SelectionChanged += GreaterRiftLevel_SelectionChanged;
-
 
             _bountyAct1 = LogicalTreeHelper.FindLogicalNode(_mainControl, "BountyAct1") as CheckBox;
             _bountyAct2 = LogicalTreeHelper.FindLogicalNode(_mainControl, "BountyAct2") as CheckBox;
@@ -236,6 +234,5 @@ namespace Trinity.Components.Adventurer.UI
             list[indexA] = list[indexB];
             list[indexB] = tmp;
         }
-
     }
 }

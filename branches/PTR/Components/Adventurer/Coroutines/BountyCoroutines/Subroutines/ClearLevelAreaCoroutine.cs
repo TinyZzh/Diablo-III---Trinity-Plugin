@@ -1,20 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Org.BouncyCastle.Utilities.Collections;
 using Trinity.Components.Adventurer.Game.Combat;
-using Trinity.Components.Adventurer.Game.Events;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Adventurer.Game.Quests;
-using Trinity.Components.Combat.Resources;
-using Zeta.Bot;
 using Zeta.Common;
 using Zeta.Common.Helpers;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
-using Zeta.Game.Internals.SNO;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
 {
@@ -49,7 +42,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             }
         }
 
-
         public bool IsDone
         {
             get { return _isDone; }
@@ -60,12 +52,9 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             get { return _bountyData ?? (_bountyData = BountyDataFactory.GetBountyData(_questId)); }
         }
 
-
         public ClearLevelAreaCoroutine(int questId)
         {
             _questId = questId;
-
-
         }
 
         public async Task<bool> GetCoroutine()
@@ -76,12 +65,16 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             {
                 case States.NotStarted:
                     return await NotStarted();
+
                 case States.Searching:
                     return await Searching();
+
                 case States.KillingHostile:
                     return await KillingHostile();
+
                 case States.Completed:
                     return await Completed();
+
                 case States.Failed:
                     return await Failed();
             }
@@ -94,7 +87,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             State = States.Searching;
             return false;
         }
-
 
         private async Task<bool> Searching()
         {
@@ -109,7 +101,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             }
 
             if (!await ExplorationCoroutine.Explore(BountyData.LevelAreaIds)) return false;
-            ExplorationGrid.Instance.WalkableNodes.ForEach(n=> { n.IsVisited = false; });
+            ExplorationGrid.Instance.WalkableNodes.ForEach(n => { n.IsVisited = false; });
             return false;
         }
 
@@ -148,6 +140,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
         }
 
         private static readonly WaitTimer HostileSearchTimer = new WaitTimer(TimeSpan.FromMilliseconds(500));
+
         public Vector3 FindNearestHostileUnitLocation()
         {
             if (!HostileSearchTimer.IsFinished) return _hostileLocation;

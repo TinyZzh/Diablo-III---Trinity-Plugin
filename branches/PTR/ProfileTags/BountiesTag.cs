@@ -60,7 +60,7 @@ namespace Trinity.ProfileTags
             _currentActBountiesCoroutine = GetNextAct();
             if (_currentActBountiesCoroutine != null)
             {
-                Logger.Info("[Bounties] Picked {0} as new target. (BonusAct: {1})", _currentActBountiesCoroutine.Act, _currentActBountiesCoroutine.Act == ZetaDia.CurrentBonusAct);
+                Logger.Info("[Bounties] Picked {0} as new target.", _currentActBountiesCoroutine.Act);
             }
         }
 
@@ -137,7 +137,7 @@ namespace Trinity.ProfileTags
             _currentActBountiesCoroutine = GetNextAct();
             if (_currentActBountiesCoroutine != null)
             {
-                Logger.Info("[Bounties] Picked {0} as new target. (BonusAct: {1})", _currentActBountiesCoroutine.Act, _currentActBountiesCoroutine.Act == ZetaDia.CurrentBonusAct);
+                Logger.Info("[Bounties] Picked {0} as new target.)", _currentActBountiesCoroutine.Act);
             }
             return true;
         }
@@ -145,25 +145,37 @@ namespace Trinity.ProfileTags
 
         private ActBountiesCoroutine GetNextAct()
         {
-            var bonusAct = ZetaDia.CurrentBonusAct;
+            //var bonusAct = ZetaDia.CurrentBonusAct;
 
-            if (PluginSettings.Current.BountyMode1.HasValue && PluginSettings.Current.BountyMode1.Value)
+            //if (PluginSettings.Current.BountyMode1.HasValue && PluginSettings.Current.BountyMode1.Value)
+            //{
+            //    Logger.Info("[Bounties] Skip Mode activated. Trying to pick the best act.");
+            //    if (BountyHelpers.AreAllActBountiesSupported(bonusAct) && !_completedActs.Contains(bonusAct))
+            //    {
+            //        _currentAct = bonusAct;
+            //        return new ActBountiesCoroutine(_currentAct);
+            //    }
+            //    for (var i = Act.A1; i <= Act.A5; i++)
+            //    {
+            //        if (_completedActs.Contains(i)) continue;
+            //        if (!BountyHelpers.AreAllActBountiesSupported(bonusAct)) continue;
+            //        _currentAct = i;
+            //        return new ActBountiesCoroutine(_currentAct);
+            //    }
+            //}
+
+            if (PluginSettings.Current.BountyMode3.HasValue && PluginSettings.Current.BountyMode3.Value)
             {
-                Logger.Info("[Bounties] Skip Mode activated. Trying to pick the best act.");
-                if (BountyHelpers.AreAllActBountiesSupported(bonusAct) && !_completedActs.Contains(bonusAct))
+                Logger.Info("[Bounties] Act Selection Mode activated. Trying to pick the best act.");
+                if (_acts.Count > 0)
                 {
-                    _currentAct = bonusAct;
-                    return new ActBountiesCoroutine(_currentAct);
-                }
-                for (var i = Act.A1; i <= Act.A5; i++)
-                {
-                    if (_completedActs.Contains(i)) continue;
-                    if (!BountyHelpers.AreAllActBountiesSupported(bonusAct)) continue;
-                    _currentAct = i;
-                    return new ActBountiesCoroutine(_currentAct);
+                    if(_acts.Contains(Act.A4))
+                        return new ActBountiesCoroutine(Act.A4);
+
+                    return new ActBountiesCoroutine(_acts[0]);
                 }
             }
-            else if (PluginSettings.Current.BountyMode2.HasValue && PluginSettings.Current.BountyMode2.Value)
+            else
             {
                 Logger.Info("[Bounties] Balance Mats Mode activated. Trying to pick the best act.");
                 var matCounts = new Dictionary<Act, long>
@@ -211,43 +223,24 @@ namespace Trinity.ProfileTags
                     _isDone = true;
                     return null;
                 }
-                if (eligibleActs.ContainsKey(bonusAct))
-                {
-                    _currentAct = bonusAct;
-                }
-                else
-                {
-                    _currentAct = eligibleActs.OrderBy(kv => kv.Value).First().Key;
-                }
+                _currentAct = eligibleActs.OrderBy(kv => kv.Value).First().Key;
                 return new ActBountiesCoroutine(_currentAct);
 
-            }
-            else if (PluginSettings.Current.BountyMode3.HasValue && PluginSettings.Current.BountyMode3.Value)
-            {
-                Logger.Info("[Bounties] Act Selection Mode activated. Trying to pick the best act.");
-                if (_acts.Count > 0)
-                {
-                    _currentAct = _acts.Contains(bonusAct) ? bonusAct : _acts[0];
-                    return new ActBountiesCoroutine(_currentAct);
-                }
-            }
-            else
-            {
-                Logger.Info("[Bounties] Force Bonus Act Mode activated. Attempting to run {0}.", bonusAct);
-                if (!BountyHelpers.AreAllActBountiesSupported(bonusAct))
-                {
-                    Logger.Info("[Bounties] One or more unsupported bounties are detected in the bonus act, restarting the game.");
-                    _isDone = true;
-                    return null;
-                }
-                if (_completedActs.Contains(bonusAct))
-                {
-                    Logger.Info("[Bounties] It seems like the bonus act is completed or contains an incomplete bounty, restarting the game.");
-                    _isDone = true;
-                    return null;
-                }
-                _currentAct = bonusAct;
-                return new ActBountiesCoroutine(_currentAct);
+                //Logger.Info("[Bounties] Force Bonus Act Mode activated. Attempting to run {0}.", bonusAct);
+                //if (!BountyHelpers.AreAllActBountiesSupported(bonusAct))
+                //{
+                //    Logger.Info("[Bounties] One or more unsupported bounties are detected in the bonus act, restarting the game.");
+                //    _isDone = true;
+                //    return null;
+                //}
+                //if (_completedActs.Contains(bonusAct))
+                //{
+                //    Logger.Info("[Bounties] It seems like the bonus act is completed or contains an incomplete bounty, restarting the game.");
+                //    _isDone = true;
+                //    return null;
+                //}
+                //_currentAct = bonusAct;
+                //return new ActBountiesCoroutine(_currentAct);
             }
             return null;
         }

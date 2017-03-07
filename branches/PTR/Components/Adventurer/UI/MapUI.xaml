@@ -3,7 +3,7 @@
              xmlns:radarCanvas="clr-namespace:Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas"
              xmlns:uiComponents1="clr-namespace:Trinity.Components.Adventurer.UI.UIComponents"
              xmlns:radarCanvas1="clr-namespace:Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas"
-             mc:Ignorable="d" Foreground="{DynamicResource TextBush}" 
+             mc:Ignorable="d" Foreground="{DynamicResource TextBush}"
              Background="#333"
              d:DesignHeight="300" d:DesignWidth="1400">
     <UserControl.Resources>
@@ -25,6 +25,6 @@
         <Style TargetType="ListBox" />
         <Style TargetType="ListBoxItem" />
     </UserControl.Resources>
-    
+
     <radarCanvas1:RadarCanvas Background="Transparent" ItemsSource="{Binding LazyCache}" />
 </UserControl>

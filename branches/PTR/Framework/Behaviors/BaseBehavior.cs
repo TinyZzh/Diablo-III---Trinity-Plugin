@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Buddy.Coroutines;
+using System;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Framework.Behaviors
@@ -60,6 +57,7 @@ namespace Trinity.Framework.Behaviors
         }
 
         protected virtual async Task<bool> OnStopped() => true;
+
         protected virtual async Task<bool> OnStarted() => true;
 
         protected async Task<bool> Stop()

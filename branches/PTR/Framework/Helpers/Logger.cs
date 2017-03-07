@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using log4net;
+﻿using log4net;
 using log4net.Appender;
 using log4net.Layout;
 using log4net.Repository.Hierarchy;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using Zeta.Common;
 
 namespace Trinity.Framework.Helpers
@@ -23,8 +23,6 @@ namespace Trinity.Framework.Helpers
             get { return prefix; }
             set { prefix = value; }
         }
-
-
 
         private static readonly Dictionary<Tuple<LogCategory, TrinityLogLevel>, string> LastLogMessages = new Dictionary<Tuple<LogCategory, TrinityLogLevel>, string>();
 
@@ -48,8 +46,8 @@ namespace Trinity.Framework.Helpers
 
                 try
                 {
-                if (args.Length > 0)
-                    msg = string.Format(msg, args);
+                    if (args.Length > 0)
+                        msg = string.Format(msg, args);
                 }
                 catch
                 {
@@ -60,16 +58,19 @@ namespace Trinity.Framework.Helpers
                     case TrinityLogLevel.Error:
                         _Logger.Error(msg);
                         break;
+
                     case TrinityLogLevel.Info:
                         _Logger.Info(msg);
                         break;
+
                     case TrinityLogLevel.Verbose:
                         _Logger.Debug(msg);
                         break;
+
                     case TrinityLogLevel.Debug:
                         LogToTrinityDebug(msg);
                         break;
-                }               
+                }
             }
         }
 
@@ -146,6 +147,7 @@ namespace Trinity.Framework.Helpers
         {
             Log(TrinityLogLevel.Debug, LogCategory.UserInformation, formatMessage, args);
         }
+
         /// <summary>
         /// Logs a message with Debug/UserInformation
         /// </summary>
@@ -165,6 +167,7 @@ namespace Trinity.Framework.Helpers
         {
             Log(TrinityLogLevel.Error, LogCategory.UserInformation, formatMessage, args);
         }
+
         /// <summary>
         /// Logs a message with Error/UserInformation
         /// </summary>
@@ -186,12 +189,15 @@ namespace Trinity.Framework.Helpers
                 case TrinityLogLevel.Error:
                     logLevel = LogLevel.Error;
                     break;
+
                 case TrinityLogLevel.Info:
                     logLevel = LogLevel.Info;
                     break;
+
                 case TrinityLogLevel.Verbose:
                     logLevel = LogLevel.Verbose;
                     break;
+
                 case TrinityLogLevel.Debug:
                     logLevel = LogLevel.Debug;
                     break;
@@ -275,7 +281,6 @@ namespace Trinity.Framework.Helpers
 
         public static void LogToTrinityDebug(string message, params object[] args)
         {
-
             try
             {
                 SetupLogger();
@@ -307,7 +312,7 @@ namespace Trinity.Framework.Helpers
                     var frame = new StackFrame(2);
                     var method = frame.GetMethod();
 
-                    if (method.DeclaringType != null) 
+                    if (method.DeclaringType != null)
                         result = method.DeclaringType.Name;
                 }
                 catch (Exception ex)

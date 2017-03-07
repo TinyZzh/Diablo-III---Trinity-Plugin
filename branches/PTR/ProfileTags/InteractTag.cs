@@ -92,9 +92,9 @@ namespace Trinity.ProfileTags
 
         public async Task<bool> Routine()
         {
-            if (WorldSnoId != 0 && WorldSnoId != ZetaDia.CurrentWorldSnoId)
+            if (WorldSnoId != 0 && WorldSnoId != ZetaDia.Globals.WorldSnoId)
             {
-                Logger.Log($"World changed! From={WorldSnoId} To={ZetaDia.CurrentWorldSnoId} Assuming Done");
+                Logger.Log($"World changed! From={WorldSnoId} To={ZetaDia.Globals.WorldSnoId} Assuming Done");
                 _isDone = true;
                 return true;
             }

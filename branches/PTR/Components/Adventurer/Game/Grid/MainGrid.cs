@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Trinity.Components.Adventurer.Cache;
 using Zeta.Common;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Components.Adventurer.Game.Grid
 {
@@ -71,7 +70,6 @@ namespace Trinity.Components.Adventurer.Game.Grid
             GridMaxX = InnerGrid.GetLength(0);
             GridMaxY = InnerGrid.GetLength(1);
             BaseSize = (int)Math.Round(BoxSize / 4, MidpointRounding.AwayFromZero);
-
         }
 
         public List<GridNode> GetNeighbors(GridNode node, int distance = 1)
@@ -137,8 +135,5 @@ namespace Trinity.Components.Adventurer.Game.Grid
         {
             return new Vector3(ToWorldDistance(gridPoint.X), ToWorldDistance(gridPoint.Y), 0);
         }
-
-
     }
-
 }

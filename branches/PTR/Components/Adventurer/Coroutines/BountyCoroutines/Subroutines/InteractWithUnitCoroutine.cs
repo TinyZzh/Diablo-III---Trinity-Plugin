@@ -53,13 +53,12 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             }
         }
 
-        #endregion
+        #endregion State
 
         public bool IsDone
         {
             get { return _isDone | AdvDia.CurrentWorldId != _worldId; }
         }
-
 
         public InteractWithUnitCoroutine(int questId, int worldId, int actorId, int marker, int interactAttemps = 1, int secondsToSleepAfterInteraction = 1, int secondsToTimeout = 4)
         {
@@ -72,21 +71,27 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             _secondsToTimeout = secondsToTimeout;
         }
 
-        private WaitTimer _timeout=new WaitTimer(TimeSpan.FromSeconds(30));
+        private WaitTimer _timeout = new WaitTimer(TimeSpan.FromSeconds(30));
+
         public async Task<bool> GetCoroutine()
         {
             switch (State)
             {
                 case States.NotStarted:
                     return await NotStarted();
+
                 case States.Searching:
                     return await Searching();
+
                 case States.Moving:
                     return await Moving();
+
                 case States.Interacting:
                     return await Interacting();
+
                 case States.Completed:
                     return await Completed();
+
                 case States.Failed:
                     return await Failed();
             }
@@ -122,7 +127,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
         {
             if (_timeout.IsFinished)
             {
-                State=States.Failed;
+                State = States.Failed;
                 return false;
             }
             if (_objectiveLocation == Vector3.Zero)

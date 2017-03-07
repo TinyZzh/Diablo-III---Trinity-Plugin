@@ -1,7 +1,7 @@
+using Buddy.Coroutines;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Buddy.Coroutines;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Combat;
 using Trinity.Framework.Actors.ActorTypes;
@@ -61,15 +61,14 @@ namespace Trinity.Framework.Avoidance
         public AvoidanceLayer ObstacleNodeLayer = new AvoidanceLayer();
         public AvoidanceLayer SafeNodeLayer = new AvoidanceLayer();
 
-
-       // public AvoidanceSetting Settings => Core.Settings.Avoidance;
+        // public AvoidanceSetting Settings => Core.Settings.Avoidance;
         public int HighestNodeWeight { get; set; }
+
         public Vector3 MonsterCentroid { get; set; }
         public Vector3 AvoidanceCentroid { get; set; }
         public AvoidanceNode HighestNode { get; set; }
         public AvoidanceGrid Grid => Core.Grids.Avoidance;
         public AvoidanceSettings Settings => Core.Avoidance.Settings;
-
 
         public void UpdateGrid()
         {
@@ -78,10 +77,10 @@ namespace Trinity.Framework.Avoidance
             grid.IsUpdatingNodes = true;
 
             using (new PerformanceLogger("UpdateGrid"))
-            {                
+            {
                 HighestNodeWeight = 0;
 
-                if (grid.NearestNode == null || grid.NearestNode.DynamicWorldId != ZetaDia.WorldId)
+                if (grid.NearestNode == null || grid.NearestNode.DynamicWorldId != ZetaDia.Globals.WorldId)
                 {
                     Logger.LogDebug(LogCategory.Avoidance, $"No Player Nearest Node or WorldId Mismatch");
                     return;
@@ -102,7 +101,7 @@ namespace Trinity.Framework.Avoidance
 
                 try
                 {
-                    if (!ZetaDia.IsInGame || ZetaDia.IsLoadingWorld)
+                    if (!ZetaDia.IsInGame || ZetaDia.Globals.IsLoadingWorld)
                         return;
 
                     if (!nodePool.Any())
@@ -116,8 +115,8 @@ namespace Trinity.Framework.Avoidance
                         UpdateGizmoFlags(obj);
                         UpdateGlobeFlags(obj);
                         UpdateMonsterFlags(obj, monsterNodes);
-                        UpdateKiteFromFlags(obj, kiteFromNodes);      
-                        UpdateProjectileBlockers(obj);                 
+                        UpdateKiteFromFlags(obj, kiteFromNodes);
+                        UpdateProjectileBlockers(obj);
                     }
 
                     foreach (var door in Core.Actors.AllRActors.Where(a => a.Type == TrinityObjectType.Door))
@@ -131,14 +130,13 @@ namespace Trinity.Framework.Avoidance
                     //}
 
                     //UpdateBacktrackFlags();
-                    
+
                     foreach (var avoidance in Core.Avoidance.CurrentAvoidances)
                     {
-
                         try
                         {
                             if (!avoidance.Settings.IsEnabled || avoidance.IsImmune)
-                            continue;
+                                continue;
 
                             var handler = avoidance.Definition.Handler;
                             if (handler == null)
@@ -156,7 +154,7 @@ namespace Trinity.Framework.Avoidance
                                     activeAvoidanceSnoIds.Add(a.ActorSnoId);
                                     Core.DBGridProvider.AddCellWeightingObstacle(a.ActorSnoId, a.CollisionRadius);
                                     //Logger.Warn(LogCategory.Avoidance, $"Avoidance Flagged {a} for {avoidance.Definition.Name}, handler={avoidance.Definition.Handler.GetType().Name}");
-                                });                                                                
+                                });
                             }
                             else
                             {
@@ -209,7 +207,7 @@ namespace Trinity.Framework.Avoidance
 
                         if (!anyAdjacentUnsafe)
                         {
-                            if(weightSettings.HasFlag(WeightingOptions.AdjacentSafe))
+                            if (weightSettings.HasFlag(WeightingOptions.AdjacentSafe))
                                 node.Weight--;
 
                             node.AddNodeFlags(AvoidanceFlags.AdjacentSafe);
@@ -255,7 +253,7 @@ namespace Trinity.Framework.Avoidance
                 return;
 
             var importantGizmo = _importantGizmoTypes.Contains(actor.GizmoType);
-            foreach (var node in Grid.GetNodesInRadius(actor.Position, actor.Radius*GizmoWeightRadiusFactor))
+            foreach (var node in Grid.GetNodesInRadius(actor.Position, actor.Radius * GizmoWeightRadiusFactor))
             {
                 node.AddNodeFlags(AvoidanceFlags.Gizmo);
 
@@ -286,7 +284,7 @@ namespace Trinity.Framework.Avoidance
                 else
                 {
                     node.RemoveNodeFlags(AvoidanceFlags.ClosedDoor);
-                }          
+                }
             }
         }
 
@@ -348,7 +346,7 @@ namespace Trinity.Framework.Avoidance
             if (actor.Type != TrinityObjectType.HealthGlobe)
                 return;
 
-            foreach (var node in Grid.GetNodesInRadius(actor.Position, actor.Radius*GlobeWeightRadiusFactor))
+            foreach (var node in Grid.GetNodesInRadius(actor.Position, actor.Radius * GlobeWeightRadiusFactor))
             {
                 if (Settings.WeightingOptions.HasFlag(WeightingOptions.Globes))
                     node.Weight -= 6;

@@ -4,7 +4,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
 {
     /// <summary>
     /// Add Proxy <ut:BindingProxy x:Key="Proxy" Data="{Binding}" /> to Resources
-    /// Bind like <Element Property="{Binding Data.MyValue, Source={StaticResource Proxy}}" />   
+    /// Bind like <Element Property="{Binding Data.MyValue, Source={StaticResource Proxy}}" />
     /// </summary>
     public class BindingProxy : Freezable
     {
@@ -15,7 +15,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             return new BindingProxy();
         }
 
-        #endregion
+        #endregion Overrides of Freezable
 
         public object Data
         {

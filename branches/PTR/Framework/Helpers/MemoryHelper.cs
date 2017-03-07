@@ -56,7 +56,6 @@ namespace Trinity.Framework.Helpers
             return result;
         }
 
-
         /// <summary>
         /// Strip zero value byte off byte array
         /// </summary>
@@ -96,24 +95,25 @@ namespace Trinity.Framework.Helpers
         /// </summary>
         public static class Reader
         {
-            abstract class GenericRead<T>
+            private abstract class GenericRead<T>
             {
                 public abstract T DoStuff(IntPtr ptr);
             }
 
-            class ValueTypeReadHelper<T> : GenericRead<T> where T : struct
+            private class ValueTypeReadHelper<T> : GenericRead<T> where T : struct
             {
                 public override T DoStuff(IntPtr ptr)
                 {
                     return ValueRead<T>(ptr);
                 }
             }
-            static T ValueRead<T>(IntPtr ptr) where T : struct
+
+            private static T ValueRead<T>(IntPtr ptr) where T : struct
             {
                 return ZetaDia.Memory.Read<T>(ptr);
             }
 
-            class RefTypeReadHelper<T> : GenericRead<T> where T : class
+            private class RefTypeReadHelper<T> : GenericRead<T> where T : class
             {
                 public override T DoStuff(IntPtr ptr)
                 {
@@ -121,7 +121,7 @@ namespace Trinity.Framework.Helpers
                 }
             }
 
-            static T RefRead<T>(IntPtr ptr)
+            private static T RefRead<T>(IntPtr ptr)
             {
                 return default(T);
             }
@@ -135,7 +135,7 @@ namespace Trinity.Framework.Helpers
             }
         }
 
-        static readonly Dictionary<Type, Func<int, IntPtr>> GetRecordPtrMethods = new Dictionary<Type, Func<int, IntPtr>>();
+        private static readonly Dictionary<Type, Func<int, IntPtr>> GetRecordPtrMethods = new Dictionary<Type, Func<int, IntPtr>>();
 
         /// <summary>
         /// Call private method GetRecordPtr on SNOTable instance
@@ -175,7 +175,7 @@ namespace Trinity.Framework.Helpers
             return expr != null ? expr(id) : new IntPtr(-1);
         }
 
-        static readonly Dictionary<Type, Action<IntPtr>> PurgeSNORecordPtrMethods = new Dictionary<Type, Action<IntPtr>>();
+        private static readonly Dictionary<Type, Action<IntPtr>> PurgeSNORecordPtrMethods = new Dictionary<Type, Action<IntPtr>>();
 
         /// <summary>
         /// Call private method GetRecordPtr on SNOTable instance.
@@ -214,8 +214,5 @@ namespace Trinity.Framework.Helpers
             if (expr != null)
                 expr(ptr);
         }
-
-
     }
 }
-

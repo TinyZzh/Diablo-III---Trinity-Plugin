@@ -15,10 +15,10 @@ namespace Trinity.Framework.Helpers
         {
             get
             {
-                if (ZetaDia.CurrentRift == null || ZetaDia.IsLoadingWorld)
+                if (ZetaDia.CurrentRift == null || ZetaDia.Globals.IsLoadingWorld)
                     return false;
 
-                return ZetaDia.CurrentRift.IsStarted && GameData.RiftWorldIds.Contains(ZetaDia.CurrentWorldSnoId);
+                return ZetaDia.CurrentRift.IsStarted && GameData.RiftWorldIds.Contains(ZetaDia.Globals.WorldSnoId);
             }
         }
 
@@ -94,7 +94,7 @@ namespace Trinity.Framework.Helpers
         }
 
         public static Dictionary<int, double> Values = new Dictionary<int, double>()
-        {            
+        {
             { 297708, 0.395064 },
             { 3847, 0.3029622 },
             { 6043, 0.4436438 },
@@ -301,8 +301,6 @@ namespace Trinity.Framework.Helpers
             { 327403, 0.1774855 },
             { 279052, 0.0266584 },
             { 334324, 0.1331258 },
-
         };
-
     }
 }

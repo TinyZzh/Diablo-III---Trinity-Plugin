@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Framework.Actors.ActorTypes;
 using Zeta.Game;
 using Zeta.Game.Internals;
@@ -62,7 +62,7 @@ namespace Trinity.Coroutines.Town
                     if (!item.IsValid || item.IsDisposed)
                         continue;
 
-                    var stackSize = Math.Max(1,item.ItemStackQuantity);
+                    var stackSize = Math.Max(1, item.ItemStackQuantity);
                     var numTakenAlready = amountWithdrawn[item.ActorSnoId];
 
                     // We have enough of this material already
@@ -107,8 +107,6 @@ namespace Trinity.Coroutines.Town
                         await Coroutine.Sleep(25);
                         await Coroutine.Yield();
                     }
-
-
                 }
                 catch (Exception ex)
                 {

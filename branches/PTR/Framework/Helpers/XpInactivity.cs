@@ -55,7 +55,7 @@ namespace Trinity.Framework.Helpers
                     ResetCheckXp(); //If not in game, reset the timer
                     return false;
                 }
-                if (ZetaDia.IsLoadingWorld)
+                if (ZetaDia.Globals.IsLoadingWorld)
                 {
                     Logger.Log("Loading world, XP inactivity reset");
                     return false;
@@ -66,7 +66,7 @@ namespace Trinity.Framework.Helpers
                     return false;
                 }
                 _lastCheckBag = DateTime.UtcNow;
-         
+
                 var inBossFight = ZetaDia.Me.IsInBossEncounter;
                 if (inBossFight != _inBossFight)
                 {
@@ -120,6 +120,5 @@ namespace Trinity.Framework.Helpers
         {
             return new Decorator(ret => Instance.XpInactive(), CommonBehaviors.LeaveGame(ret => "Experience Inactivity Tripped"));
         }
-
     }
 }

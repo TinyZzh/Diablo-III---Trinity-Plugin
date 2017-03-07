@@ -216,7 +216,7 @@ namespace Trinity.UI.UIComponents
                         try
                         {
                             UILoader.CloseWindow();
-                            DebugUtil.GenerateGameData();
+                            //DebugUtil.GenerateGameData();
                         }
                         catch (Exception ex)
                         {

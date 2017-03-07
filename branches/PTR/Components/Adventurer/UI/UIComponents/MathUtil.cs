@@ -11,7 +11,7 @@ using Point = System.Windows.Point;
 
 namespace Trinity.Components.Adventurer.UI.UIComponents
 {
-    class MathUtil
+    internal class MathUtil
     {
         /* Stare at this for a while:
          * http://upload.wikimedia.org/wikipedia/commons/9/9a/Degree-Radian_Conversion.svg
@@ -40,24 +40,20 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             return rect;
         }
 
-      
-
-
-
-        //Normalizes any number to an arbitrary range 
-        //by assuming the range wraps around when going below min or above max 
-        public static double Normalise(double value, double start, double end) 
+        //Normalizes any number to an arbitrary range
+        //by assuming the range wraps around when going below min or above max
+        public static double Normalise(double value, double start, double end)
         {
-          var width = end - start; 
-          var offsetValue = value - start ;   // value relative to 0
-          return offsetValue - ( Math.Floor(( offsetValue / width ) * width ) ) + start;
+            var width = end - start;
+            var offsetValue = value - start;   // value relative to 0
+            return offsetValue - (Math.Floor((offsetValue / width) * width)) + start;
         }
 
         //public static PathGeometry GetRotatedGeometry(Rect rect, float rotationDegrees, Vector3 rotationCenter)
         //{
         //    var positions = new List<Vector3>
         //    {
-        //        new Vector3((float)rect.BottomRight.X,(float)rect.BottomRight.Y,0),                
+        //        new Vector3((float)rect.BottomRight.X,(float)rect.BottomRight.Y,0),
         //        new Vector3((float)rect.BottomLeft.X,(float)rect.BottomLeft.Y,0),
         //        new Vector3((float)rect.TopLeft.X,(float)rect.TopLeft.Y,0),
         //        new Vector3((float)rect.TopRight.X,(float)rect.TopRight.Y,0),
@@ -85,7 +81,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
         //    segments.RemoveAt(0);
         //    figures.Add(new PathFigure(firstSegment.Point, segments, true));
         //    var geo = new PathGeometry(figures, FillRule.Nonzero, null);
-        //    geo.GetOutlinedPathGeometry();                        
+        //    geo.GetOutlinedPathGeometry();
         //    return geo;
         //}
 
@@ -205,17 +201,17 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             return new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation));
         }
 
-
         #region Angle Finding
+
         /// <summary>
         /// Find the angle between two vectors. This will not only give the angle difference, but the direction.
-        /// For example, it may give you -1 radian, or 1 radian, depending on the direction. Angle given will be the 
+        /// For example, it may give you -1 radian, or 1 radian, depending on the direction. Angle given will be the
         /// angle from the FromVector to the DestVector, in radians.
         /// </summary>
         /// <param name="FromVector">Vector to start at.</param>
         /// <param name="DestVector">Destination vector.</param>
         /// <param name="DestVectorsRight">Right vector of the destination vector</param>
-        /// <returns>Signed angle, in radians</returns>        
+        /// <returns>Signed angle, in radians</returns>
         /// <remarks>All three vectors must lie along the same plane.</remarks>
         public static double GetSignedAngleBetween2DVectors(Vector3 FromVector, Vector3 DestVector, Vector3 DestVectorsRight)
         {
@@ -240,6 +236,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
 
             return angleBetween;
         }
+
         public float UnsignedAngleBetweenTwoV3(Vector3 v1, Vector3 v2)
         {
             v1.Z = 0;
@@ -249,6 +246,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             double Angle = (float)Math.Acos(Vector3.Dot(v1, v2));
             return (float)Angle;
         }
+
         /// <summary>
         /// Returns the Degree angle of a target location
         /// </summary>
@@ -259,6 +257,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
         {
             return (float)RadianToDegree(NormalizeRadian((float)Math.Atan2(vTargetLocation.Y - vStartLocation.Y, vTargetLocation.X - vStartLocation.X)));
         }
+
         public static double FindDirectionRadian(Vector3 start, Vector3 end)
         {
             double radian = Math.Atan2(end.Y - start.Y, end.X - start.X);
@@ -272,15 +271,15 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             }
             return (radian % (Math.PI * 2d));
         }
+
         public Vector3 GetDirection(Vector3 origin, Vector3 destination)
         {
             Vector3 direction = destination - origin;
             direction.Normalize();
             return direction;
         }
-        #endregion
 
-
+        #endregion Angle Finding
 
         public static bool IntersectsPath(Vector3 obstacle, float radius, Vector3 start, Vector3 destination)
         {
@@ -308,8 +307,8 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             // Halve/Double required angle every 20yd; 60* @ 15yd, 11.25* @ 80yd
             var angularVarianceThreshold = Math.Min(angularVarianceBase / (toDestination / 20), 90);
 
-            //Logger.Log("DistToObj={0} DistToDest={1} relativeAV={2} AVThreshold={3} Result={4}", 
-            //    toObstacle, toDestination, relativeAngularVariance, angularVarianceThreshold, 
+            //Logger.Log("DistToObj={0} DistToDest={1} relativeAV={2} AVThreshold={3} Result={4}",
+            //    toObstacle, toDestination, relativeAngularVariance, angularVarianceThreshold,
             //    toObstacle < toDestination && relativeAngularVariance <= angularVarianceThreshold);
 
             if (toObstacle < toDestination)
@@ -319,7 +318,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
                 if (relativeAngularVariance <= angularVarianceThreshold)
                 {
                     return true;
-                }                
+                }
             }
             return false;
         }
@@ -330,6 +329,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
         }
 
         #region Angular Measure Unit Conversion
+
         public static double Normalize180(double angleA, double angleB)
         {
             //Returns an angle in the range -180 to 180
@@ -338,6 +338,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             diffangle = ((diffangle - Math.Floor(diffangle)) * 360.0d) - 180d;
             return diffangle;
         }
+
         public static float NormalizeRadian(float radian)
         {
             if (radian < 0)
@@ -355,21 +356,20 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             return angle * (180.0 / Math.PI);
         }
 
+        #endregion Angular Measure Unit Conversion
 
-        #endregion
         public static double GetRelativeAngularVariance(Vector3 origin, Vector3 destA, Vector3 destB)
         {
             float fDirectionToTarget = NormalizeRadian((float)Math.Atan2(destA.Y - origin.Y, destA.X - origin.X));
             float fDirectionToObstacle = NormalizeRadian((float)Math.Atan2(destB.Y - origin.Y, destB.X - origin.X));
             return AbsAngularDiffernce(RadianToDegree(fDirectionToTarget), RadianToDegree(fDirectionToObstacle));
         }
+
         public static double AbsAngularDiffernce(double angleA, double angleB)
         {
             return 180d - Math.Abs(180d - Math.Abs(angleA - angleB));
         }
 
-
-        
         /// <summary>
         /// Gets string heading NE,S,NE etc
         /// </summary>
@@ -386,8 +386,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             return directions[index].ToUpper();
         }
 
-
-
         public static float FixAngleTo360(float angleDegrees)
         {
             //if (angleDegrees > 360)
@@ -398,16 +396,11 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
 
             //return angleDegrees;
 
-
             var x = Math.IEEERemainder(angleDegrees, 360);
             if (x < 0)
                 x += 360;
             return (float)x;
-
         }
-
-
-
 
         /// <summary>
         /// Gets the center of a given Navigation Zone
@@ -461,7 +454,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             return new Vector3(x, y, z);
         }
 
-        
         public static Vector3 GetEstimatedPosition(Vector3 startPosition, double headingRadians, double time, double targetVelocity)
         {
             double x = startPosition.X + targetVelocity * time * Math.Sin(headingRadians);
@@ -470,11 +462,10 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
         }
 
         /// <summary>
-        /// Utility for Predictive Firing 
+        /// Utility for Predictive Firing
         /// </summary>
         public class Intercept
         {
-
             /*
                 Intercept intercept = new Intercept();
 
@@ -489,26 +480,26 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
                         0 // Angular velocity
                 );
 
-                // Helper function that converts any angle into  
+                // Helper function that converts any angle into
                 // an angle between +180 and -180 degrees.
                     double turnAngle = normalRelativeAngle(intercept.bulletHeading_deg - robot.getGunHeading());
 
                 // Move gun to target angle
                     robot.setTurnGunRight (turnAngle);
 
-                    if (Math.abs (turnAngle) 
+                    if (Math.abs (turnAngle)
                         <= intercept.angleThreshold) {
                   // Ensure that the gun is pointing at the correct angle
                   if ((intercept.impactPoint.x > 0)
                                 && (intercept.impactPoint.x < getBattleFieldWidth())
                                 && (intercept.impactPoint.y > 0)
                                 && (intercept.impactPoint.y < getBattleFieldHeight())) {
-                    // Ensure that the predicted impact point is within 
+                    // Ensure that the predicted impact point is within
                             // the battlefield
                             fire(bulletPower);
                         }
                     }
-                }                          
+                }
              */
 
             public Vector2 impactPoint = new Vector2(0, 0);
@@ -526,30 +517,30 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             protected double angularVelocity_rad_per_sec;
 
             public void Calculate(
-                // Initial bullet position x coordinate 
+                    // Initial bullet position x coordinate
                     double xb,
-                // Initial bullet position y coordinate
+                    // Initial bullet position y coordinate
                     double yb,
-                // Initial target position x coordinate
+                    // Initial target position x coordinate
                     double xt,
-                // Initial target position y coordinate
+                    // Initial target position y coordinate
                     double yt,
-                // Target heading
+                    // Target heading
                     double tHeading,
-                // Target velocity
+                    // Target velocity
                     double vt,
-                // Power of the bullet that we will be firing
+                    // Power of the bullet that we will be firing
                     double bPower,
-                // Angular velocity of the target
+                    // Angular velocity of the target
                     double angularVelocityDegPerSec,
-                // target object's radius
+                    // target object's radius
                     double targetsRadius
             )
             {
                 angularVelocity_rad_per_sec = DegreeToRadian(angularVelocityDegPerSec);
 
-                bulletStartingPoint = new Vector2((float) xb, (float) yb);
-                targetStartingPoint = new Vector2((float) xt, (float) yt);
+                bulletStartingPoint = new Vector2((float)xb, (float)yb);
+                targetStartingPoint = new Vector2((float)xt, (float)yt);
 
                 targetHeading = tHeading;
                 targetVelocity = vt;
@@ -573,12 +564,11 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             {
                 double x = targetStartingPoint.X + targetVelocity * time * Math.Sin(DegreeToRadian(targetHeading));
                 double y = targetStartingPoint.Y + targetVelocity * time * Math.Cos(DegreeToRadian(targetHeading));
-                return new Vector2((float) x, (float) y);
+                return new Vector2((float)x, (float)y);
             }
 
             private double F(double time)
             {
-
                 double vb = 20 - 3 * bulletPower;
 
                 Vector2 targetPosition = GetEstimatedPosition(time);
@@ -591,7 +581,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             private double GetImpactTime(double t0,
                     double t1, double accuracy)
             {
-
                 double X = t1;
                 double lastX = t0;
                 int iterationCount = 0;
@@ -600,7 +589,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
                 while ((Math.Abs(X - lastX) >= accuracy)
                         && (iterationCount < 15))
                 {
-
                     iterationCount++;
                     double fX = F(X);
 
@@ -617,12 +605,12 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
 
                 return X;
             }
-
         }
 
-        public class CircularIntercept : Intercept {
-
-            protected new Vector2 GetEstimatedPosition(double time) {
+        public class CircularIntercept : Intercept
+        {
+            protected new Vector2 GetEstimatedPosition(double time)
+            {
                 if (Math.Abs(angularVelocity_rad_per_sec)
                         <= DegreeToRadian(0.1))
                 {
@@ -640,9 +628,8 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
                         * (Math.Sin(initialTargetHeading)
                         - Math.Sin(finalTargetHeading));
 
-                return new Vector2((float) x, (float) y);
+                return new Vector2((float)x, (float)y);
             }
-
         }
 
         public static float SnapAngle(float rotationToSnap)
@@ -667,10 +654,8 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             return (float)Math.Round(finalRot, 3);
         }
 
-
         public const double PiOver8 = (double)(Math.PI / 8.0);
         public static double RoundedPiOver8 = Math.Round(PiOver8, 6, MidpointRounding.AwayFromZero);
-       
 
         public static double Barycentric(double value1, double value2, double value3, double amount1, double amount2)
         {
@@ -686,7 +671,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             return (double)(0.5 * (2.0 * value2 +
                 (value3 - value1) * amount +
                 (2.0 * value1 - 5.0 * value2 + 4.0 * value3 - value4) * amountSquared +
-                (3.0 * value2 - value1 - 3.0 * value3 + value4) * amountCubed));            
+                (3.0 * value2 - value1 - 3.0 * value3 + value4) * amountCubed));
         }
 
         public static double Clamp(double value, double min, double max)
@@ -718,10 +703,10 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             }
             else
             {
-            if (angle > 3.14159274f)
-            {
-                angle -= 6.28318548f;
-            }
+                if (angle > 3.14159274f)
+                {
+                    angle -= 6.28318548f;
+                }
             }
             return angle;
         }
@@ -730,7 +715,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
         {
             return (value > 0) && ((value & (value - 1)) == 0);
         }
-
 
         public const float E = 2.718282f;
         public const float Log2E = 1.442695f;
@@ -804,7 +788,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
 
         public static float Flip(float value, float origin)
         {
-            return origin - (value - origin);     
+            return origin - (value - origin);
         }
 
         public static Vector2 GetNextLinePoint(int x, int y, int x2, int y2)
@@ -842,7 +826,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
 
             return new Vector2(x, y);
         }
-
     }
 
     public static class VectorExt
@@ -878,7 +861,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
             var theta = degrees * DegToRad;
             var x = Math.Cos(theta) * (p.X - origin.X) - Math.Sin(theta) * (p.Y - origin.Y) + origin.X;
             var y = Math.Sin(theta) * (p.X - origin.X) + Math.Cos(theta) * (p.Y - origin.Y) + origin.Y;
-            return new Point(x,y);
+            return new Point(x, y);
         }
 
         public static Point RotateRadians(this Point v, double radians)
@@ -890,9 +873,9 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
 
         public static Point FlipX(this Point p, Point origin)
         {
-            return new Point(origin.X - (p.X - origin.X),p.Y);
+            return new Point(origin.X - (p.X - origin.X), p.Y);
         }
-        
+
         public static Point FlipY(this Point p, Point origin)
         {
             return new Point(p.X, origin.Y - (p.Y - origin.Y));
@@ -902,10 +885,5 @@ namespace Trinity.Components.Adventurer.UI.UIComponents
         {
             return new Point(origin.X - (p.X - origin.X), origin.Y - (p.Y - origin.Y));
         }
-
-
-
-
     }
-
 }

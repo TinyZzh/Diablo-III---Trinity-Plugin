@@ -2,7 +2,7 @@
 
 namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
 {
-    class RadarOverlayControl : OverlayControl
+    internal class RadarOverlayControl : OverlayControl
     {
         //override onr
     }

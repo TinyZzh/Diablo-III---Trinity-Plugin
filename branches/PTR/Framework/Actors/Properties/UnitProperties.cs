@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Actors.Attributes;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects.Enums;
-using Trinity.Framework.Objects.Memory.Misc;
 using Trinity.Reference;
 using Trinity.Settings;
 using Zeta.Common;
 using Zeta.Game.Internals.Actors;
 using Zeta.Game.Internals.SNO;
-using Logger = Trinity.Framework.Helpers.Logger;
 
 namespace Trinity.Framework.Actors.Properties
 {
@@ -51,7 +48,7 @@ namespace Trinity.Framework.Actors.Properties
             actor.IsTrashMob = actor.IsUnit && !(actor.IsElite || actor.IsBoss || actor.IsTreasureGoblin || actor.IsMinion);
             actor.IsCorruptGrowth = GameData.CorruptGrowthIds.Contains(actor.ActorSnoId);
 
-            if(actor.IsBoss)
+            if (actor.IsBoss)
             {
                 actor.IsUsingBossbar = attributes.IsUsingBossbar;
             }
@@ -59,7 +56,7 @@ namespace Trinity.Framework.Actors.Properties
             UpdateDeath(actor);
             UpdateStatus(actor, attributes);
 
-            actor.EliteType = GetEliteType(actor);     
+            actor.EliteType = GetEliteType(actor);
             actor.PetType = attributes.PetType;
 
             UpdateTeam(actor, attributes);
@@ -131,7 +128,7 @@ namespace Trinity.Framework.Actors.Properties
         {
             var teamOverride = attributes.TeamOverride;
             actor.TeamId = teamOverride > 0 ? teamOverride : attributes.TeamId;
-            actor.Team = (TeamType) actor.TeamId;
+            actor.Team = (TeamType)actor.TeamId;
             actor.IsFriendly = actor.TeamId == 1 || actor.TeamId == 2 || actor.TeamId == 17;
             actor.IsHostile = actor.TeamId == 10 || actor.Attributes.LastDamageAnnId == Core.Player.MyDynamicID;
             actor.IsSameTeam = actor.IsFriendly || actor.TeamId == Core.Player.TeamId || GameData.AllyMonsterTypes.Contains(actor.MonsterType);
@@ -210,7 +207,7 @@ namespace Trinity.Framework.Actors.Properties
                 }
 
                 ////if (CurrentCacheObject.CommonData.GetAttribute<int>(ActorAttributeType.DeletedOnServer) > 0)
-                //if (CurrentCacheObject.CommonData.DeletedOnServer > 0)                    
+                //if (CurrentCacheObject.CommonData.DeletedOnServer > 0)
                 //{
                 //    c_IgnoreSubStep = "DeletedOnServer";
                 //    return false;
@@ -407,12 +404,5 @@ namespace Trinity.Framework.Actors.Properties
             }
             return EliteTypes.None;
         }
-
-
     }
-
-
 }
-
-
-

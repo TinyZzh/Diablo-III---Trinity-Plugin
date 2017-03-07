@@ -8,7 +8,6 @@ namespace Trinity.Components.Adventurer.Game.Actors
 {
     public static class EntryPortals
     {
-
         private static HashSet<int> _entryPortalWhiteList = new HashSet<int> { 705396550, 1825723588, 1037011047 };
         public static Dictionary<int, int> EntryPortalHashNames = new Dictionary<int, int>();
 
@@ -20,7 +19,7 @@ namespace Trinity.Components.Adventurer.Game.Actors
                 return;
             }
 
-            if (ZetaDia.IsLoadingWorld)
+            if (ZetaDia.Globals.IsLoadingWorld)
                 return;
 
             var entryPortal = ZetaDia.Minimap.Markers.CurrentWorldMarkers.FirstOrDefault(m => (m.IsPortalEntrance || m.IsPortalExit) && m.Position.Distance(ZetaDia.Me.Position) < 12);
@@ -39,7 +38,5 @@ namespace Trinity.Components.Adventurer.Game.Actors
         {
             return EntryPortalHashNames.ContainsKey(currentWorldId) && EntryPortalHashNames[currentWorldId] == markerNameHash;
         }
-
     }
-
 }

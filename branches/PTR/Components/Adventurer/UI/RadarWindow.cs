@@ -23,6 +23,5 @@ namespace Trinity.Components.Adventurer.UI
             }
             Title = "MapUI Powered by Trinity";
         }
-        
     }
 }

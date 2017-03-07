@@ -78,18 +78,21 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             {
                 case States.NotStarted:
                     return await NotStarted();
+
                 case States.Clearing:
                     return await Clearing();
+
                 case States.MovingBack:
                     return await MovingBack();
+
                 case States.Completed:
                     return await Completed();
+
                 case States.Failed:
                     return await Failed();
             }
             return false;
         }
-
 
         private async Task<bool> NotStarted()
         {
@@ -147,7 +150,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             return false;
         }
 
-
         private async Task<bool> Completed()
         {
             _isDone = true;
@@ -176,7 +178,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
 
         private void ScanForObjective()
         {
-
             if (_marker != 0)
             {
                 _center = BountyHelpers.ScanForMarkerLocation(_marker, OBJECTIVE_SCAN_RANGE);

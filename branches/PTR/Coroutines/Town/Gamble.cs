@@ -1,16 +1,13 @@
 ﻿#region
 
+using Buddy.Coroutines;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Components.Combat;
-using Trinity.Coroutines.Resources;
-using Trinity.DbProvider;
 using Trinity.Framework;
 using Trinity.Framework.Helpers;
-using Trinity.Items;
 using Trinity.Reference;
 using Trinity.Settings;
 using Zeta.Bot.Logic;
@@ -40,7 +37,7 @@ namespace Trinity.Coroutines.Town
             get
             {
                 try
-                {                                  
+                {
                     if (!ZetaDia.IsInTown || ZetaDia.WorldType != Act.OpenWorld || Core.Player.IsCastingOrLoading)
                         return false;
 
@@ -65,9 +62,8 @@ namespace Trinity.Coroutines.Town
                         LogVerbose("Not enough shards!");
                         return false;
                     }
-
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Logger.LogError("Exception in Gamble.Execute, {0}", ex);
 
@@ -84,14 +80,14 @@ namespace Trinity.Coroutines.Town
 
         public static async Task<bool> Execute()
         {
-			if (!ZetaDia.IsInTown)
+            if (!ZetaDia.IsInTown)
                 IsDumpingShards = false;
-				
+
             try
             {
                 while (CanRun() && (!StillSavingShards || IsDumpingShards))
                 {
-					IsDumpingShards = true;
+                    IsDumpingShards = true;
                     if ((TownInfo.Kadala.Distance > 8f || !UIElements.VendorWindow.IsVisible) && !await MoveToAndInteract.Execute(TownInfo.Kadala))
                     {
                         Logger.Log("[Gamble] Failed to move to Kadala, quite unfortunate.");
@@ -116,7 +112,7 @@ namespace Trinity.Coroutines.Town
                     await Coroutine.Yield();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logger.LogError("Exception in Gamble.Execute, {0}", ex);
 
@@ -126,17 +122,16 @@ namespace Trinity.Coroutines.Town
 
             GameUI.CloseVendorWindow();
 
-            return true;           
+            return true;
         }
 
         private static int GambleMinimumShards => Core.Settings.Items.GamblingMode == SettingMode.Enabled ? 0 : Core.Settings.Items.GamblingMinShards;
-		private static int GambleMinimumSpendingShards => Core.Settings.Items.GamblingMode == SettingMode.Enabled ? 0 : Core.Settings.Items.GamblingMinSpendingShards;
+        private static int GambleMinimumSpendingShards => Core.Settings.Items.GamblingMode == SettingMode.Enabled ? 0 : Core.Settings.Items.GamblingMinSpendingShards;
 
         private static async Task<bool> BuyItem()
         {
             try
             {
-
                 if (!PurchaseDelayPassed)
                     return false;
 
@@ -166,9 +161,8 @@ namespace Trinity.Coroutines.Town
                 ZetaDia.Me.Inventory.BuyItem(item.AnnId);
                 Logger.Log("[Gamble] Buying: {0}", slot);
                 _lastGambleTime = DateTime.UtcNow;
-
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logger.LogError("Exception in Gamble.BuyItems, {0}", ex);
 
@@ -179,11 +173,11 @@ namespace Trinity.Coroutines.Town
             return false;
         }
 
-        public static IEnumerable<GambleSlotTypes> Types 
+        public static IEnumerable<GambleSlotTypes> Types
             => Core.Settings.Items.GamblingTypes.ToList<GambleSlotTypes>();
-       
-        public static List<GambleSlotTypes> NewGambleRotation() 
-            => Core.Settings.Items.GamblingMode != SettingMode.Enabled 
+
+        public static List<GambleSlotTypes> NewGambleRotation()
+            => Core.Settings.Items.GamblingMode != SettingMode.Enabled
             ? Types.Where(t => Core.Settings.Items.GamblingTypes.HasFlag(t)).ToList()
             : Types.ToList();
 
@@ -219,20 +213,20 @@ namespace Trinity.Coroutines.Town
 
                 if (BelowMinimumShards)
                 {
-					if(IsDumpingShards)
-					{
-						IsDumpingShards = false;
-					}
+                    if (IsDumpingShards)
+                    {
+                        IsDumpingShards = false;
+                    }
                     LogVerbose("Not enough shards!");
                     return false;
                 }
 
                 if (!CanAffordMostExpensiveItem)
                 {
-					if(IsDumpingShards)
-					{
-						IsDumpingShards = false;
-					}
+                    if (IsDumpingShards)
+                    {
+                        IsDumpingShards = false;
+                    }
                     LogVerbose("Can't afford desired items!");
                     return false;
                 }
@@ -242,10 +236,8 @@ namespace Trinity.Coroutines.Town
                     LogVerbose("No Backpack space!");
                     return false;
                 }
-
-
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logger.LogError("Exception in Gamble.BuyItems, {0}", ex);
 
@@ -253,7 +245,7 @@ namespace Trinity.Coroutines.Town
                     throw;
 
                 return false;
-            } 
+            }
 
             LogVerbose("Should Gamble!");
             return true;
@@ -287,7 +279,7 @@ namespace Trinity.Coroutines.Town
         }
 
         private static bool BelowMinimumShards => ZetaDia.PlayerData.BloodshardCount < GambleMinimumShards;
-		private static bool StillSavingShards => ZetaDia.PlayerData.BloodshardCount < GambleMinimumSpendingShards;
-		private static bool IsDumpingShards { get; set;}
+        private static bool StillSavingShards => ZetaDia.PlayerData.BloodshardCount < GambleMinimumSpendingShards;
+        private static bool IsDumpingShards { get; set; }
     }
 }

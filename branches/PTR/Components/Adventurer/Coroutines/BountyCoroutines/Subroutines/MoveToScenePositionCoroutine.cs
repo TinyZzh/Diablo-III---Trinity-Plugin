@@ -23,7 +23,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
         private readonly Vector3 _position;
         private WorldScene _worldScene;
 
-
         private bool _isDone;
         private States _state;
 
@@ -54,16 +53,14 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             }
         }
 
-        #endregion
+        #endregion State
 
         public bool IsDone
         {
             get { return _isDone || AdvDia.CurrentWorldId != _worldId; }
         }
 
-
-
-        public MoveToScenePositionCoroutine(int questId, int worldId, string sceneName, Vector3 position, bool straightLinePath  = false)
+        public MoveToScenePositionCoroutine(int questId, int worldId, string sceneName, Vector3 position, bool straightLinePath = false)
         {
             _questId = questId;
             _worldId = worldId;
@@ -90,12 +87,16 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             {
                 case States.NotStarted:
                     return await NotStarted();
+
                 case States.Searching:
                     return await Searching();
+
                 case States.Moving:
                     return await Moving();
+
                 case States.Completed:
                     return await Completed();
+
                 case States.Failed:
                     return await Failed();
             }
@@ -144,7 +145,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
 
         private async Task<bool> Searching()
         {
-
             if (_objectiveLocation == Vector3.Zero)
             {
                 ScanForObjective();
@@ -233,9 +233,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                         _worldScene = scene;
                         _objectiveLocation = _worldScene.GetWorldPosition(_position);
                         Logger.Debug($"Scan found target scene by SnoId {_worldScene.Name} ({_worldScene.SnoId}). Pos={_objectiveLocation} Dist={_objectiveLocation.Distance(AdvDia.MyPosition)} Relative={_position}");
-
                     }
-
                 }
                 else if (!string.IsNullOrEmpty(_sceneName))
                 {

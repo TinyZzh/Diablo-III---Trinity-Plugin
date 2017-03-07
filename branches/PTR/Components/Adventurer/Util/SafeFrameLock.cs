@@ -1,6 +1,6 @@
-﻿using System;
+﻿using GreyMagic;
+using System;
 using System.Threading;
-using GreyMagic;
 using Trinity.Components.Adventurer.Game.Events;
 using Zeta.Bot;
 using Zeta.Game;
@@ -23,7 +23,7 @@ namespace Trinity.Components.Adventurer.Util
                 return result;
             }
 
-            // If UI thread (settings window) or others try to read memory while bot is running 
+            // If UI thread (settings window) or others try to read memory while bot is running
             if (!BotEvents.IsBotRunning)
             {
                 //Util.Logger.Debug($"[AdvDia] AcquireFrame ExecuteWithinFrameLock");
@@ -51,14 +51,11 @@ namespace Trinity.Components.Adventurer.Util
             }
             return result;
         }
-
-
     }
 
     public class SafeFrameLockExecutionResult
     {
         public bool Success { get; set; }
         public Exception Exception { get; set; }
-
     }
 }

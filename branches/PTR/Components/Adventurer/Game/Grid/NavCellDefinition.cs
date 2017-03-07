@@ -9,12 +9,16 @@ namespace Trinity.Components.Adventurer.Game.Grid
     {
         [DataMember]
         public Vector3 Min { get; set; }
+
         [DataMember]
         public Vector3 Max { get; set; }
+
         [DataMember]
         public NavCellFlags Flags { get; set; }
 
-        private NavCellDefinition() { }
+        private NavCellDefinition()
+        {
+        }
 
         public static NavCellDefinition Create(NavCell navCell)
         {
@@ -31,7 +35,5 @@ namespace Trinity.Components.Adventurer.Game.Grid
         {
             return x >= Min.X && x <= Max.X && y >= Min.Y && y <= Max.Y;
         }
-
-
     }
 }

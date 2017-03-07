@@ -2,7 +2,6 @@
 
 namespace Trinity.Coroutines.Resources
 {
-
     public class RiftQuest
     {
         private const int RIFT_QUEST_ID = 337492;
@@ -22,17 +21,20 @@ namespace Trinity.Coroutines.Resources
                 var step = quest.QuestStep;
                 switch (step)
                 {
-                    case 1: // Normal rift 
+                    case 1: // Normal rift
                     case 13: // Greater rift
                         Step = RiftStep.KillingMobs;
                         break;
-                    case 3: // Normal rift 
-                    case 16: // Greater rift 
+
+                    case 3: // Normal rift
+                    case 16: // Greater rift
                         Step = RiftStep.BossSpawned;
                         break;
+
                     case 34:
                         Step = RiftStep.UrshiSpawned;
                         break;
+
                     case 10:
                         Step = RiftStep.Cleared;
                         break;
@@ -44,7 +46,6 @@ namespace Trinity.Coroutines.Resources
                 Step = RiftStep.Completed;
             }
         }
-
     }
 
     public enum RiftStep
@@ -55,7 +56,5 @@ namespace Trinity.Coroutines.Resources
         UrshiSpawned,
         Cleared,
         Completed
-
     }
-
 }

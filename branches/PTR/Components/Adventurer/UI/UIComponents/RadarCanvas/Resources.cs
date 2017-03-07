@@ -20,7 +20,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
         private static SolidColorBrush _node1;
         private static SolidColorBrush _node0;
 
-
         public class ResourceSet
         {
             public SolidColorBrush Brush;
@@ -29,11 +28,8 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
 
         static RadarResources()
         {
-
-
             CurrentPathPen = new Pen(Brushes.Yellow, 3);
             NewPathPen = new Pen(Brushes.Orange, 3);
-
 
             RangeGuidePen = new Pen(Brushes.LightYellow, 0.1);
             WalkableTerrainBorder = new Pen(Brushes.NavajoWhite, 0.3);
@@ -54,7 +50,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
 
             SafeBrush = new SolidColorBrush(Colors.DarkSeaGreen);
             SafeBrushLightPen = new Pen(new SolidColorBrush(ControlPaint.Light(SafeBrush.Color.ToDrawingColor(), 50).ToMediaColor()), 1);
-
 
             EliteBrush = new SolidColorBrush(Colors.Blue);
             EliteLightPen = new Pen(new SolidColorBrush(ControlPaint.Light(EliteBrush.Color.ToDrawingColor(), 50).ToMediaColor()), 1);
@@ -81,14 +76,12 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
 
             LineOfSightPen = new Pen(new SolidColorBrush(Colors.Yellow), 1);
 
-
             LineOfSightLightBrush = new SolidColorBrush(ControlPaint.Light(Colors.Yellow.ToDrawingColor(), 50).ToMediaColor())
             {
                 Opacity = 0.5
             };
 
             LineOfSightLightPen = new Pen(LineOfSightLightBrush, 1);
-
 
             UsedGizmoBrush = new SolidColorBrush(Colors.Yellow)
             {
@@ -100,8 +93,7 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
                 DashStyle = DashStyles.DashDotDot
             };
 
-            WalkableTerrain = new SolidColorBrush(Colors.NavajoWhite){Opacity = 0.2};
-
+            WalkableTerrain = new SolidColorBrush(Colors.NavajoWhite) { Opacity = 0.2 };
 
             _Node9 = new SolidColorBrush(Color.FromRgb(104, 0, 0))
             {
@@ -133,7 +125,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
                 Opacity = 1
             };
 
-
             _node3 = new SolidColorBrush(Color.FromRgb(228, 0, 0))
             {
                 Opacity = 1
@@ -157,7 +148,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
 
         public static Brush GetWeightedBrush(float max, float current)
         {
-
             /*
              * 	maroon	#800000	(128,0,0)
                 dark red	#8B0000	(139,0,0)
@@ -222,8 +212,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
             return _node0;
         }
 
-
-
         /// <summary>
         /// Returns a base color for actor based on type and stuff
         /// </summary>
@@ -231,7 +219,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
         {
             var res = new ResourceSet();
             res.Brush = ActorDefaultBrush;
-
 
             res.Brush = TransparentBrush;
             res.Pen = TransparentPen;

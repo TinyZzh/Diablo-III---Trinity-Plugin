@@ -5,5 +5,3 @@ namespace Trinity.Framework.Avoidance.Handlers
         void UpdateNodes(AvoidanceGrid grid, Structures.Avoidance avoidance);
     }
 }
-
-

@@ -4,7 +4,6 @@ using System.Windows;
 using Trinity.Components.Adventurer.Game.Actors;
 using Zeta.Common;
 using Zeta.Game.Internals.Actors;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
 {
@@ -61,9 +60,6 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
                 Morph.Update(CachedActorPosition);
 
                 // Try to make sure OnRender() doesnt call into DB memory.
-
-
-
             }
             catch (Exception ex)
             {
@@ -91,15 +87,13 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-
-
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs args)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, args);
         }
 
-        #endregion
+        #endregion PropertyChanged Handling
 
         public override int GetHashCode()
         {
@@ -111,6 +105,5 @@ namespace Trinity.Components.Adventurer.UI.UIComponents.RadarCanvas
         public float CachedActorRadius { get; set; }
 
         public Vector3 CachedActorPosition { get; set; }
-
     }
 }

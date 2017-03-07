@@ -5,7 +5,6 @@ using Trinity.Components.Combat;
 using Trinity.Components.Combat.Resources;
 using Trinity.Framework;
 using Trinity.Framework.Helpers;
-using Trinity.Reference;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
 
@@ -42,7 +41,6 @@ namespace Trinity.Coroutines
 
         public static bool DrinkPotion()
         {
-
             var legendaryPotions = Core.Inventory.Backpack.Where(i => i.InternalName.ToLower().Contains("healthpotion_legendary_")).ToList();
             if (legendaryPotions.Any())
             {
@@ -67,6 +65,5 @@ namespace Trinity.Coroutines
             Logger.Log(TrinityLogLevel.Verbose, LogCategory.UserInformation, "No Available potions!", 0);
             return false;
         }
-
     }
 }

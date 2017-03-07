@@ -41,7 +41,7 @@
 //                Logger.Debug("[PluginCommunicator][" + pluginCommunicationResponse.Plugin.Name + "] Response: " + pluginCommunicationResponse.Result);
 //            }
 //        }
-        
+
 //        public static void AddToBlacklist(int actorId)
 //        {
 //            var result = Me.SendToAll("ADDBLACKLIST", actorId);
@@ -61,13 +61,13 @@
 //        }
 
 //        public static PluginCommunicationResponse Receive(IPlugin sender, string command, params object[] args)
-//        {           
+//        {
 //            switch (command)
 //            {
 //                case "PING":
 //                    return Respond("PONG");
 //                case "UPGRADEGEMS":
-//                    var riftOptions = 
+//                    var riftOptions =
 //                    CoroutineQueue.Enqueue(GemUpgradeCoroutine);
 //                    return Respond();
 

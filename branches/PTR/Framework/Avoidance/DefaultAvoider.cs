@@ -8,12 +8,10 @@ using Trinity.Framework.Avoidance.Settings;
 using Trinity.Framework.Avoidance.Structures;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
-using Trinity.Routines;
 using Trinity.Settings;
 using Zeta.Bot.Navigation;
 using Zeta.Common;
 using Zeta.Game;
-using Zeta.Game.Internals;
 using Zeta.Game.Internals.SNO;
 using Logger = Trinity.Framework.Helpers.Logger;
 
@@ -39,7 +37,7 @@ namespace Trinity.Framework.Avoidance
     ///     Avoider is responsible for detecting if player should avoid
     /// </summary>
     public class DefaultAvoider : IAvoider
-    {       
+    {
         private Vector3 _safeSpot;
 
         public static HashSet<TrinityObjectType> GizmoProximityTypes = new HashSet<TrinityObjectType>
@@ -269,7 +267,7 @@ namespace Trinity.Framework.Avoidance
                 return false;
             }
 
-            var playerHealthPct = Core.Player.CurrentHealthPct*100;
+            var playerHealthPct = Core.Player.CurrentHealthPct * 100;
             if (playerHealthPct > 50)
             {
                 // Restrict kiting when the current target is on the edge of line of sight
@@ -309,7 +307,7 @@ namespace Trinity.Framework.Avoidance
                         LastAvoidTime = DateTime.UtcNow;
                         return true;
                     }
-                } 
+                }
             }
             return false;
         }

@@ -1,6 +1,6 @@
 ﻿namespace Trinity.Components.Adventurer.UI
 {
-    class AdventurerProxy
+    internal class AdventurerProxy
     {
     }
 }

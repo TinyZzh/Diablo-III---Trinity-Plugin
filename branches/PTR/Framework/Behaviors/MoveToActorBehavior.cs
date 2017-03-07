@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Trinity.Components.Combat;
-using Trinity.Coroutines;
 using Trinity.DbProvider;
 using Trinity.Framework.Actors.ActorTypes;
-using Trinity.Framework.Objects.Enums;
-using Zeta.Bot;
-using Zeta.Bot.Coroutines;
 using Zeta.Bot.Navigation;
 using Zeta.Common;
 using Logger = Trinity.Framework.Helpers.Logger;
@@ -55,7 +49,7 @@ namespace Trinity.Framework.Behaviors
             Logger.LogVerbose($"Moving to Actor: {Actor} {Actor.Position}");
             PlayerMover.MoveTo(Actor.Position);
             return true;
-        }        
+        }
 
         protected override async Task<bool> OnStarted()
         {
@@ -65,7 +59,7 @@ namespace Trinity.Framework.Behaviors
 
         protected override async Task<bool> OnStopped()
         {
-            Logger.Warn($"Arrived at Actor: {Actor}");         
+            Logger.Warn($"Arrived at Actor: {Actor}");
             VisitedActorPositions.Add(Actor.Position);
             Actor = null;
             return true;

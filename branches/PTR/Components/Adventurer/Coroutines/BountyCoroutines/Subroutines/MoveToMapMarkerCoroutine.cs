@@ -50,14 +50,12 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             }
         }
 
-        #endregion
+        #endregion State
 
         public bool IsDone
         {
             get { return _isDone || AdvDia.CurrentWorldId != _worldId; }
         }
-
-
 
         public MoveToMapMarkerCoroutine(int questId, int worldId, int marker, int actorId = 0, bool zergAllowSafe = true)
         {
@@ -68,7 +66,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             _allowSafeZerg = zergAllowSafe;
         }
 
-
         public async Task<bool> GetCoroutine()
         {
             if (_allowSafeZerg && PluginSettings.Current.BountyZerg && BountyData != null &&
@@ -77,7 +74,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                 Util.Logger.Verbose("Enabling SafeZerg for Kill Monster bounty");
                 SafeZerg.Instance.EnableZerg();
             }
-            else if(!_allowSafeZerg)
+            else if (!_allowSafeZerg)
             {
                 SafeZerg.Instance.DisableZerg();
             }
@@ -86,12 +83,16 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             {
                 case States.NotStarted:
                     return await NotStarted();
+
                 case States.Searching:
                     return await Searching();
+
                 case States.Moving:
                     return await Moving();
+
                 case States.Completed:
                     return await Completed();
+
                 case States.Failed:
                     return await Failed();
             }
@@ -138,7 +139,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             State = States.Failed;
             return false;
 
-
             var levelAreas = BountyData != null && BountyData.LevelAreaIds != null && BountyData.LevelAreaIds.Any()
                 ? BountyData.LevelAreaIds
                 : new HashSet<int> { AdvDia.CurrentLevelAreaId };
@@ -151,6 +151,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
         private int _partialMovesCount;
         private Vector3 _partialMoveLocation;
         private bool _isPartialMove;
+
         private async Task<bool> Moving()
         {
             if (_isPartialMove)
@@ -240,7 +241,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                     else
                     {
                         _objectiveLocation = BountyHelpers.ScanForMarkerLocation(_marker, _objectiveScanRange);
-
                     }
                 }
                 //if (_objectiveLocation == Vector3.Zero && _actorId != 0)
@@ -263,7 +263,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                         //    _objectiveLocation = Vector3.Zero;
                         //}
                     }
-
                 }
             }
         }

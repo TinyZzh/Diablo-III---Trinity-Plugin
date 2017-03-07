@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines;
+using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Game.Combat;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Adventurer.Settings;
-using Trinity.Components.Adventurer.Game.Actors;
 using Zeta.Bot;
 using Zeta.Bot.Navigation;
 using Zeta.Common;
@@ -39,6 +39,7 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
         }
 
         private States _state;
+
         private States State
         {
             get { return _state; }
@@ -50,6 +51,7 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
                 {
                     case States.NotStarted:
                         break;
+
                     default:
                         Util.Logger.Debug("[Keywarden] " + value);
                         break;
@@ -70,16 +72,22 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
             {
                 case States.NotStarted:
                     return NotStarted();
+
                 case States.TakingWaypoint:
                     return await TakingWaypoint();
+
                 case States.Searching:
                     return await Searching();
+
                 case States.Moving:
                     return await Moving();
+
                 case States.Waiting:
                     return await Waiting();
+
                 case States.Completed:
                     return await Completed();
+
                 case States.Failed:
                     return await Failed();
             }
@@ -125,13 +133,13 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
                 Util.Logger.Info("[Keywarden] It's clobberin time!");
                 return false;
             }
-            
+
             if (!await MoveToMarker())
                 return false;
 
             if (!await ExplorationCoroutine.Explore(_levelAreaIds, null, CanMoveToMarker))
                 return false;
-            
+
             Util.Logger.Error("[Keywarden] Oh shit, that guy is nowhere to be found.");
             ScenesStorage.ResetVisited();
             State = States.Searching;
@@ -247,7 +255,6 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
             return false;
         }
 
-
         private async Task<bool> Completed()
         {
             DisablePulse();
@@ -271,6 +278,7 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
         }
 
         private DateTime _lastPulseCheck = DateTime.MinValue;
+
         private void PulseCheck()
         {
             if (DateTime.UtcNow.Subtract(_lastPulseCheck).TotalSeconds < 5)
@@ -283,11 +291,11 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
 
         private Vector3 GetKeywardenLocation()
         {
-            if(_keywardenLocation!=Vector3.Zero) return _keywardenLocation;
+            if (_keywardenLocation != Vector3.Zero) return _keywardenLocation;
             var keywarden = ZetaDia.Actors.GetActorsOfType<DiaUnit>(true).FirstOrDefault(a => a.IsFullyValid() && a.ActorSnoId == _keywardenData.KeywardenSNO);
             return (keywarden != null) ? keywarden.Position : Vector3.Zero;
         }
-        
+
         public MinimapMarker GetKeywardenMarker()
         {
             var marker = ZetaDia.Minimap.Markers.CurrentWorldMarkers.FirstOrDefault(m => m.MinimapTextureSnoId == 81058 && m.IsPointOfInterest && _keyardenMarkerHashes.Contains(m.NameHash));
@@ -352,7 +360,6 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
             //    }
             //}
 
-
             //if (!combatState && ZetaDia.Actors.GetActorsOfType<DiaUnit>(true).Any(u => u.IsFullyValid() && u.IsAlive && KeywardenDataFactory.GoblinSNOs.Contains(u.ActorSnoId)))
             //{
             //    combatState = true;
@@ -374,11 +381,11 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
         }
 
         #region OnPulse Implementation
+
         private readonly WaitTimer _pulseTimer = new WaitTimer(TimeSpan.FromMilliseconds(250));
         private bool _isPulsing;
         private MinimapMarker _minimapMarker;
         private int _markerMoveFailures;
-
 
         private void EnablePulse()
         {
@@ -415,7 +422,7 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
             }
         }
 
-        #endregion
+        #endregion OnPulse Implementation
 
         public void Dispose()
         {

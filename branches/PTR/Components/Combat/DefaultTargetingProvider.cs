@@ -1,36 +1,19 @@
 ﻿#region
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Web.UI.WebControls;
-using Buddy.Coroutines;
 using Trinity.Components.Combat.Resources;
-using Trinity.Coroutines;
-using Trinity.Coroutines.Town;
 using Trinity.DbProvider;
 using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
-using Trinity.Framework.Avoidance;
-using Trinity.Framework.Avoidance.Structures;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
-using Trinity.Framework.Objects.Enums;
-using Trinity.Items;
 using Trinity.Reference;
 using Trinity.Routines;
 using Trinity.Settings;
-using Zeta.Bot;
-using Zeta.Bot.Coroutines;
-using Zeta.Bot.Navigation;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
-using Zeta.Game.Internals.SNO;
-using Zeta.TreeSharp;
 using Logger = Trinity.Framework.Helpers.Logger;
 
 #endregion
@@ -40,8 +23,11 @@ namespace Trinity.Components.Combat
     public interface ITargetingProvider
     {
         Task<bool> HandleTarget(TrinityActor target);
+
         bool IsInRange(TrinityActor target, TrinityPower power);
+
         bool IsInRange(Vector3 position, TrinityPower power);
+
         TrinityActor CurrentTarget { get; }
         TrinityPower CurrentPower { get; }
         TrinityActor LastTarget { get; }
@@ -75,7 +61,7 @@ namespace Trinity.Components.Combat
             {
                 Logger.Log(LogCategory.Targetting, $"Clearing Target. Was: {CurrentTarget}");
             }
-         
+
             if (CurrentTarget != null)
             {
                 CurrentTarget.Targeting.IsTargetted = false;
@@ -88,7 +74,7 @@ namespace Trinity.Components.Combat
                 Logger.Log(LogCategory.Targetting, $"New Target: {target.Name} {target.Targeting} WeightInfo={target.WeightInfo} Targeting={target.Targeting}");
             }
 
-            CurrentTarget = target;                 
+            CurrentTarget = target;
         }
 
         private void SetCurrentPower(TrinityPower power)
@@ -134,7 +120,7 @@ namespace Trinity.Components.Combat
             {
                 if (!Core.Player.IsPowerUseDisabled)
                 {
-                    Logger.Log(LogCategory.Targetting, $"No valid power was selected for target: {CurrentTarget}");                    
+                    Logger.Log(LogCategory.Targetting, $"No valid power was selected for target: {CurrentTarget}");
                 }
                 return false;
             }
@@ -154,7 +140,7 @@ namespace Trinity.Components.Combat
                         return false;
                 }
             }
-            
+
             return true;
         }
 
@@ -241,7 +227,7 @@ namespace Trinity.Components.Combat
 
             if (duration > TimeSpan.FromMinutes(2))
             {
-               GenericBlacklist.Blacklist(target, TimeSpan.FromSeconds(60), $"Targetted for too long ({duration})");
+                GenericBlacklist.Blacklist(target, TimeSpan.FromSeconds(60), $"Targetted for too long ({duration})");
                 return true;
             }
 
@@ -261,7 +247,7 @@ namespace Trinity.Components.Combat
                 return null;
 
             switch (target.Type)
-            {              
+            {
                 case TrinityObjectType.BloodShard:
                 case TrinityObjectType.Gold:
                 case TrinityObjectType.HealthGlobe:
@@ -279,12 +265,12 @@ namespace Trinity.Components.Combat
                 case TrinityObjectType.CursedChest:
                 case TrinityObjectType.Container:
                     return InteractPower(target, 100, 1200);
-                
+
                 case TrinityObjectType.Item:
                     return InteractPower(target, 15, 15, 6f);
 
                 case TrinityObjectType.Destructible:
-                case TrinityObjectType.Barricade:    
+                case TrinityObjectType.Barricade:
                     return routine.GetDestructiblePower();
             }
 
@@ -321,16 +307,15 @@ namespace Trinity.Components.Combat
                     routinePower.SetTarget(target);
                     kamaKaziPower = routinePower;
                 }
-               
+
                 power = kamaKaziPower;
-                return true;              
+                return true;
             }
             return false;
         }
 
         public TrinityPower InteractPower(TrinityActor actor, int waitBefore, int waitAfter, float addedRange = 0)
             => new TrinityPower(actor.IsUnit ? SNOPower.Axe_Operate_NPC : SNOPower.Axe_Operate_Gizmo, actor.AxialRadius + addedRange, actor.Position, actor.AcdId, waitBefore, waitAfter);
-
 
         public async Task<bool> CastDefensiveSpells()
         {
@@ -402,7 +387,7 @@ namespace Trinity.Components.Combat
                 Logger.Log(LogCategory.Avoidance, $"Avoiding");
                 await CastDefensiveSpells();
                 PlayerMover.MoveTo(Core.Avoidance.Avoider.SafeSpot);
-                return true;                           
+                return true;
             }
             return false;
         }
@@ -462,7 +447,7 @@ namespace Trinity.Components.Combat
         }
 
         private bool IsInLineOfSight(TrinityActor currentTarget)
-        {            
+        {
             if (GameData.LineOfSightWhitelist.Contains(currentTarget.ActorSnoId))
                 return true;
 
@@ -483,7 +468,5 @@ namespace Trinity.Components.Combat
 
             return Core.Grids.Avoidance.CanRayCast(Core.Player.Position, position);
         }
-
-
     }
 }

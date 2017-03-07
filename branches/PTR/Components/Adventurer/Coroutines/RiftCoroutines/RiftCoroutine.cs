@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
 using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Coroutines.CommonSubroutines;
 using Trinity.Components.Adventurer.Game.Actors;
@@ -18,7 +18,6 @@ using Zeta.Bot.Coroutines;
 using Zeta.Bot.Logic;
 using Zeta.Common;
 using Zeta.Common.Helpers;
-using Zeta.Common.Plugins;
 using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
@@ -27,8 +26,6 @@ using Logger = Trinity.Components.Adventurer.Util.Logger;
 
 namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
 {
-    using Framework;
-
     public class RiftCoroutine : IDisposable, ICoroutine
     {
         public class RiftOptions
@@ -71,6 +68,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
         private readonly InteractionCoroutine _talkToHolyCowCoroutine = new InteractionCoroutine(RiftData.HolyCowSNO, TimeSpan.FromSeconds(2), TimeSpan.FromMilliseconds(1000), 3);
 
         #region State
+
         public enum States
         {
             NotStarted,
@@ -122,7 +120,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             }
         }
 
-        #endregion
+        #endregion State
 
         public RiftCoroutine(RiftType RiftType, RiftOptions options = null)
         {
@@ -142,6 +140,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
         }
 
         private readonly Guid _id;
+
         public Guid Id
         {
             get { return _id; }
@@ -169,90 +168,121 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
 
             switch (State)
             {
-
                 case States.NotStarted:
                     return NotStarted();
+
                 case States.GoingToAct1Hub:
                     return await GoingToAct1Hub();
+
                 case States.ReturningToTown:
                     return await ReturningToTown();
+
                 case States.InTown:
                     return InTown();
+
                 case States.MoveToOrek:
                     return await MoveToOrek();
+
                 case States.TalkToOrek:
                     return await TalkToOrek();
+
                 case States.TownRun:
                     return TownRun();
+
                 case States.WaitForRiftCountdown:
                     return WaitForRiftCountdown();
+
                 case States.MoveToRiftStone:
                     return await MoveToRiftStone();
+
                 case States.OpeningRift:
                     return await OpeningRift();
+
                 case States.EnteringRift:
                     return await EnteringRift();
+
                 case States.EnteringGreaterRift:
                     return EnteringGreaterRift();
+
                 case States.SearchingForExitPortal:
                     return await SearchingForExitPortal();
+
                 case States.MovingToExitPortal:
                     return await MovingToExitPortal();
+
                 case States.EnteringExitPortal:
                     return await EnteringExitPortal();
+
                 case States.OnNewRiftLevel:
                     return OnNewRiftLevel();
+
                 case States.BossSpawned:
                     return BossSpawned();
+
                 case States.SearchingForBoss:
                     return await SearchingForBoss();
+
                 case States.MovingToBoss:
                     return await MovingToBoss();
+
                 case States.KillingBoss:
                     return KillingBoss();
+
                 case States.UrshiSpawned:
                     return UrshiSpawned();
+
                 case States.SearchingForUrshi:
                     return await SearchingForUrshi();
+
                 case States.MovingToUrshi:
                     return await MovingToUrshi();
+
                 case States.InteractingWithUrshi:
                     return await InteractingWithUrshi();
+
                 case States.UpgradingGems:
                     return await UpgradingGems();
+
                 case States.SearchingForTownstoneOrExitPortal:
                     return await SearchingForTownstoneOrExitPortal();
+
                 case States.TownstoneFound:
                     return TownstoneFound();
+
                 case States.SearchingForHolyCow:
                     return await SearchingForHolyCow();
+
                 case States.MovingToHolyCow:
                     return await MovingToHolyCow();
+
                 case States.InteractingWithHolyCow:
                     return await InteractingWithHolyCow();
+
                 case States.Completed:
                     return Completed();
+
                 case States.Failed:
                     return Failed();
+
                 case States.Finished:
                     return Finished();
             }
             return false;
         }
-		
+
         private long CurrentRiftKeyCount
         {
             get
             {
-				long keyCount = AdvDia.StashAndBackpackItems.Where(i => i.IsValid && i.ActorSnoId == RiftData.GreaterRiftKeySNO).Sum(c => c.ItemStackQuantity);
-				Logger.Info("I have {0} rift keys.", keyCount);
+                long keyCount = AdvDia.StashAndBackpackItems.Where(i => i.IsValid && i.ActorSnoId == RiftData.GreaterRiftKeySNO).Sum(c => c.ItemStackQuantity);
+                Logger.Info("I have {0} rift keys.", keyCount);
                 return keyCount;
             }
         }
 
         private bool NotStarted()
         {
-            if(!_experienceTracker.IsStarted) _experienceTracker.Start();
+            if (!_experienceTracker.IsStarted) _experienceTracker.Start();
             SafeZerg.Instance.DisableZerg();
 
             if (_RiftType == RiftType.Greater)
@@ -305,6 +335,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
         }
 
         private WaitTimer _goingToAct1HubWaitTimer;
+
         private async Task<bool> GoingToAct1Hub()
         {
             DisablePulse();
@@ -321,6 +352,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
         }
 
         private WaitTimer _returningToTownbWaitTimer;
+
         private async Task<bool> ReturningToTown()
         {
             DisablePulse();
@@ -355,23 +387,28 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                     Util.Logger.Info("[Rift] I think I should go and brag to Orek about my success.");
                     State = States.MoveToOrek;
                     return false;
+
                 case RiftStep.BossSpawned:
                     Util.Logger.Info("[Rift] I wonder why am I in town while the boss is spawned in the rift, I'm taking my chances with this portal.");
                     State = States.MoveToRiftStone;
                     return false;
+
                 case RiftStep.UrshiSpawned:
                     Util.Logger.Info("[Rift] I wonder why am I in town while Urshi spawned in the rift, I'm taking my chances with this portal.");
                     State = States.MoveToRiftStone;
                     return false;
+
                 case RiftStep.KillingMobs:
                     Util.Logger.Info("[Rift] I wonder why am I in town while there are many mobs to kill in the rift, I'm taking my chances with this portal.");
                     State = States.MoveToRiftStone;
                     return false;
+
                 case RiftStep.NotStarted:
                     State = States.MoveToRiftStone;
                     _moveToRiftStoneCoroutine.Reset();
                     Util.Logger.Info("[Rift] Time to kill some scary monsters. Chop chop!");
                     return false;
+
                 default:
                     Util.Logger.Info("[Rift] I really don't know what to do now.");
                     State = States.Failed;
@@ -518,7 +555,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
 
             long empoweredCost = 0;
             bool shouldEmpower = _options.IsEmpowered;
-			bool haveMoneyForEmpower = RiftData.EmpoweredRiftCost.TryGetValue(_level, out empoweredCost) && ZetaDia.PlayerData.Coinage >= (empoweredCost + PluginSettings.Current.MinimumGold);
+            bool haveMoneyForEmpower = RiftData.EmpoweredRiftCost.TryGetValue(_level, out empoweredCost) && ZetaDia.PlayerData.Coinage >= (empoweredCost + PluginSettings.Current.MinimumGold);
             bool canEmpower = (_RiftType == RiftType.Greater && haveMoneyForEmpower);
             var settings = PluginSettings.Current;
 
@@ -580,7 +617,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                     {
                         for (_level = minLevel; _level < maxLevel; _level++)
                         {
-                            //Logger.Debug($"Starting Auto-Gem test for level: {_level}");        
+                            //Logger.Debug($"Starting Auto-Gem test for level: {_level}");
                             canEmpower = (RiftData.EmpoweredRiftCost.TryGetValue(_level, out empoweredCost) && ZetaDia.PlayerData.Coinage >= empoweredCost);
                             var upgradeAttempts = (canEmpower && (shouldEmpower || _level <= settings.EmpoweredRiftLevelLimit) ? 4 : 3);
                             var possibleUpgrades = gems.Gems.Sum(g => g.GetUpgrades(_level, upgradeAttempts, 100));
@@ -601,7 +638,6 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                                 var upgradeAttempts = (couldEmpower && (shouldEmpower || _level - 1 <= settings.EmpoweredRiftLevelLimit) ? 4 : 3);
                                 var possibleUpgrades = gems.Gems.Sum(g => g.GetUpgrades(_level - 1, upgradeAttempts, 60));
 
-
                                 if (possibleUpgrades < upgradeAttempts)
                                     break;
                                 else
@@ -613,7 +649,6 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                     if (_level <= settings.EmpoweredRiftLevelLimit)
                         shouldEmpower = true;
                 }
-
 
                 if (_RiftType == RiftType.Greater && shouldEmpower && canEmpower && PluginSettings.Current.UseEmpoweredRifts)
                 {
@@ -638,7 +673,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             }
             else
             {
-                await Coroutine.Wait(30000, () => ZetaDia.CurrentRift.IsStarted && RiftData.RiftWorldIds.Contains(AdvDia.CurrentWorldId) && !ZetaDia.IsLoadingWorld);
+                await Coroutine.Wait(30000, () => ZetaDia.CurrentRift.IsStarted && RiftData.RiftWorldIds.Contains(AdvDia.CurrentWorldId) && !ZetaDia.Globals.IsLoadingWorld);
                 DisablePulse();
                 State = States.EnteringGreaterRift;
             }
@@ -675,7 +710,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             {
                 var inTown = ZetaDia.IsInTown;
                 Util.Logger.Debug("Expecting to find a portal here but didnt find one. InTown={0}", inTown);
-                if(inTown)
+                if (inTown)
                     State = States.InTown;
                 else
                     State = States.Failed;
@@ -689,7 +724,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
 
         private bool EnteringGreaterRift()
         {
-            if (ZetaDia.IsLoadingWorld || AdvDia.CurrentWorldId == ExplorationData.ActHubWorldIds[Act.A1])
+            if (ZetaDia.Globals.IsLoadingWorld || AdvDia.CurrentWorldId == ExplorationData.ActHubWorldIds[Act.A1])
             {
                 if (!_lastEnteringGreaterRiftTime.HasValue)
                 {
@@ -743,6 +778,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
         }
 
         private string lastError = null;
+
         private async Task<bool> SearchingForExitPortal()
         {
             if (_RiftType == RiftType.Nephalem && PluginSettings.Current.NephalemRiftFullExplore && AdvDia.RiftQuest.Step == RiftStep.Cleared)
@@ -800,7 +836,6 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             return false;
         }
 
-
         private async Task<bool> SearchingForTownstoneOrExitPortal()
         {
             EnablePulse();
@@ -853,14 +888,12 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             return false;
         }
 
-
         private bool TownstoneFound()
         {
             Logger.Info("[Rift] That's it folks, returning to town.");
             State = States.ReturningToTown;
             return false;
         }
-
 
         private async Task<bool> MovingToExitPortal()
         {
@@ -939,7 +972,6 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             }
             return false;
         }
-
 
         private bool BossSpawned()
         {
@@ -1070,9 +1102,9 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
 
         private int _gemUpgradesLeft;
         private bool _enableGemUpgradeLogs;
+
         private async Task<bool> UpgradingGems()
         {
-
             if (RiftData.VendorDialog.IsVisible && RiftData.ContinueButton.IsVisible && RiftData.ContinueButton.IsEnabled)
             {
                 Logger.Debug("[Rift] Clicking to Continue button.");
@@ -1088,7 +1120,6 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                 Logger.Info("[Rift] I couldn't find any gems to upgrade, failing.");
                 State = States.Failed;
                 return false;
-
             }
             _enableGemUpgradeLogs = false;
             if (AdvDia.RiftQuest.Step == RiftStep.Cleared)
@@ -1116,7 +1147,6 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                 State = States.Completed;
                 return false;
             }
-
 
             return false;
         }
@@ -1187,7 +1217,6 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             return false;
         }
 
-
         private bool Completed()
         {
             State = States.ReturningToTown;
@@ -1223,15 +1252,19 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                     }
                     ScanForExitPortal();
                     return;
+
                 case States.SearchingForBoss:
                     ScanForBoss();
                     return;
+
                 case States.SearchingForHolyCow:
                     ScanForHolyCow();
                     return;
+
                 case States.SearchingForUrshi:
                     ScanForUrshi();
                     return;
+
                 case States.SearchingForTownstoneOrExitPortal:
                     if (_possiblyCowLevel)
                     {
@@ -1240,14 +1273,12 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                     ScanForExitPortal();
                     ScanForTownstone();
                     return;
-
             }
         }
 
-
         private void PulseChecks()
         {
-            if (BrainBehavior.IsVendoring || !ZetaDia.IsInGame || ZetaDia.IsLoadingWorld || ZetaDia.IsPlayingCutscene)
+            if (BrainBehavior.IsVendoring || !ZetaDia.IsInGame || ZetaDia.Globals.IsLoadingWorld || ZetaDia.Globals.IsPlayingCutscene)
             {
                 DisablePulse();
                 return;
@@ -1277,7 +1308,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                 RiftData.AddEntryPortal();
                 _previusWorldDynamicId = _currentWorldDynamicId;
                 _currentWorldDynamicId = AdvDia.CurrentWorldDynamicId;
-            }  
+            }
 
             switch (AdvDia.RiftQuest.Step)
             {
@@ -1288,6 +1319,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                         State = States.BossSpawned;
                     }
                     break;
+
                 case RiftStep.UrshiSpawned:
                     if (!UrshiSpawnedStates.Contains(State))
                     {
@@ -1306,6 +1338,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                         State = States.UrshiSpawned;
                     }
                     break;
+
                 case RiftStep.Cleared:
                     if (_RiftType == RiftType.Nephalem && PluginSettings.Current.NephalemRiftFullExplore && State != States.TownstoneFound)
                     {
@@ -1327,7 +1360,6 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                     }
                     break;
             }
-
         }
 
         private void ScanForUrshi()
@@ -1390,9 +1422,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                         break;
                 }
             }
-
         }
-
 
         private void ScanForExitPortal()
         {
@@ -1439,13 +1469,12 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             {
                 State = States.TownstoneFound;
             }
-
         }
-        #endregion
 
-
+        #endregion Pulse Checks & Scans
 
         #region OnPulse Implementation
+
         private readonly WaitTimer _pulseTimer = new WaitTimer(TimeSpan.FromMilliseconds(250));
         private bool _isPulsing;
         private States _startingState;
@@ -1483,12 +1512,11 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             }
         }
 
-        #endregion
+        #endregion OnPulse Implementation
 
         public void Dispose()
         {
             DisablePulse();
         }
-
     }
 }

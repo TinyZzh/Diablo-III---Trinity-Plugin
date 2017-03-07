@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Buddy.Coroutines;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Buddy.Coroutines;
-using Trinity.Coroutines.Resources;
 using Trinity.Framework;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
@@ -19,8 +18,6 @@ namespace Trinity.Coroutines
 {
     public class MoveToAndInteract
     {
-
-
         /// <summary>
         /// Moves to something and interacts with it
         /// </summary>
@@ -128,15 +125,15 @@ namespace Trinity.Coroutines
 
             var actorName = actor.Name;
             var realRadius = Math.Max(actor.ActorInfo.Sphere.Radius, 1) * 0.35;
-            var playerRealRadius = ZetaDia.Me.ActorInfo.Sphere.Radius*0.35;
+            var playerRealRadius = ZetaDia.Me.ActorInfo.Sphere.Radius * 0.35;
             var distance = position.Distance(ZetaDia.Me.Position);
             var radiusDistance = distance - realRadius - playerRealRadius;
             var distanceToGo = radiusDistance - radiusDistanceRequired;
 
-            Logger.LogVerbose("Actor found '{0}' ({1}) at {2} distance: {3} realRadius={4} rDistance={5} distanceTo: {6} reqRDistance={7}", 
+            Logger.LogVerbose("Actor found '{0}' ({1}) at {2} distance: {3} realRadius={4} rDistance={5} distanceTo: {6} reqRDistance={7}",
                 actor.Name, actor.ActorSnoId, actor.Position, actor.Distance, realRadius, radiusDistance, distanceToGo, radiusDistanceRequired);
 
-            // Now make sure we're close enough to interact.            
+            // Now make sure we're close enough to interact.
             if (distanceToGo > 0)
             {
                 if (!await MoveTo.Execute(position, position.ToString(), (float)(distance - distanceToGo)))
@@ -147,20 +144,19 @@ namespace Trinity.Coroutines
             }
 
             // Do the interaction
-            var startingWorldId = ZetaDia.CurrentWorldSnoId;
+            var startingWorldId = ZetaDia.Globals.WorldSnoId;
             if (distance <= Math.Max(actor.CollisionSphere.Radius, 10f))
             {
                 Navigator.PlayerMover.MoveStop();
 
                 for (int i = 1; i <= interactLimit; i++)
                 {
-                    if (ZetaDia.CurrentWorldSnoId != startingWorldId)
+                    if (ZetaDia.Globals.WorldSnoId != startingWorldId)
                         return true;
 
                     Logger.Log("Interacting with {0} ({1}) Attempt={2}", actorName, actorId, i);
                     if (actor.Interact() && i > 1)
                         break;
-
 
                     await Coroutine.Sleep(100);
                     await Coroutine.Yield();
@@ -219,11 +215,13 @@ namespace Trinity.Coroutines
                         case GizmoType.ReturnPortal:
                             retVal = ZetaDia.Me.UsePower(SNOPower.GizmoOperatePortalWithAnimation, actor.Position);
                             break;
+
                         default:
                             retVal = ZetaDia.Me.UsePower(SNOPower.Axe_Operate_Gizmo, actor.Position);
                             break;
                     }
                     break;
+
                 case ActorType.Monster:
                     retVal = ZetaDia.Me.UsePower(SNOPower.Axe_Operate_NPC, actor.Position);
                     break;
@@ -234,6 +232,5 @@ namespace Trinity.Coroutines
             await Coroutine.Sleep(100);
             return retVal;
         }
-
     }
 }

@@ -14,17 +14,16 @@ namespace Trinity.Components.Adventurer.Game.Quests
 
         static BountyScripts()
         {
-
             // 433017 - The Putrid Waters
             // - Move to objective
-            // - Interact with gizmo 175603 
-            // - Interact with gizmo 175603 
-            // - Use portal at MarkerHash 913850831 
-            // - Somehow avoid nodes behind a2dun_Aqd_GodHead_Door_LargePuzzle-9058 ActorSnoId: 207615 
-            // - Interact with gizmo 219880 
+            // - Interact with gizmo 175603
+            // - Interact with gizmo 175603
+            // - Use portal at MarkerHash 913850831
+            // - Somehow avoid nodes behind a2dun_Aqd_GodHead_Door_LargePuzzle-9058 ActorSnoId: 207615
+            // - Interact with gizmo 219880
             // - Move to main objective
             // - Interact with door 207615
-            // - Interact with gizmo 190524 
+            // - Interact with gizmo 190524
             // - Kill mobs
 
             // 346184 - Blaze of Glory
@@ -32,7 +31,6 @@ namespace Trinity.Components.Adventurer.Game.Quests
             // - Interact with npc 152145
             // - Kill mobs for 40 seconds
             // - Interact with npc 152145
-
 
             // 368564 - Magic Misfire
             // - Move to objective and enter zone
@@ -49,8 +47,8 @@ namespace Trinity.Components.Adventurer.Game.Quests
             // 347591 - Sardar's Treasure
             // - Move to objective
             // - Interact with gizmo 175603
-            // - Use portal at MarkerHash 922565181 
-            // - Somehow avoid nodes behind ActorId: 153836, Type: Gizmo, Name: a2dun_Aqd_GodHead_Door-2289, Distance2d: 92.15494, CollisionRadius: 25.22241, MinimapActive: 0, MinimapIconOverride: -1, MinimapDisableArrow: 0 
+            // - Use portal at MarkerHash 922565181
+            // - Somehow avoid nodes behind ActorId: 153836, Type: Gizmo, Name: a2dun_Aqd_GodHead_Door-2289, Distance2d: 92.15494, CollisionRadius: 25.22241, MinimapActive: 0, MinimapIconOverride: -1, MinimapDisableArrow: 0
             // - Interact with gizmo 219879
             // - Interact with door 153836
             // - Interact with gizmo 190708
@@ -98,17 +96,14 @@ namespace Trinity.Components.Adventurer.Game.Quests
             // - Kill questmobs
             // - Interact with unit monster type 433181
 
-
-
-
             Items.Add(350562, new BountyScript
-                              {
-                                  ScriptItems = new List<BountyScriptItem>
+            {
+                ScriptItems = new List<BountyScriptItem>
                                                 {
                                                     new BountyScriptItem {ActorId = 4798, Type = BountyScriptItemType.InteractWithMonster},
                                                     new BountyScriptItem {ActorId = 3707, Type = BountyScriptItemType.InteractWithGizmo},
                                                 }
-                              });
+            });
 
             Items.Add(347591, new BountyScript
             {
@@ -153,9 +148,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
                                                     new BountyScriptItem {ActorId = 205468, Type = BountyScriptItemType.InteractWithMonster, WorldId = 95804},
                                                 }
             });
-
         }
-
 
         public IEnumerator<KeyValuePair<int, BountyScript>> GetEnumerator()
         {
@@ -210,7 +203,6 @@ namespace Trinity.Components.Adventurer.Game.Quests
         public TimeSpan WaitTime { get; set; }
         public int WorldId { get; set; }
 
-
         public DiaObject FindMatchingActor()
         {
             return
@@ -232,6 +224,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
                             return gizmo.IsFullyValid() && ActorFinder.IsGizmoInteractable(gizmo);
                         }
                         return false;
+
                     case BountyScriptItemType.InteractWithMonster:
                         if (actor is DiaUnit)
                         {
@@ -239,6 +232,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
                             return ActorFinder.IsUnitInteractable(unit);
                         }
                         return false;
+
                     default:
                         return false;
                 }

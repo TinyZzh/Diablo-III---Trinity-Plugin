@@ -175,6 +175,7 @@ namespace Trinity.Framework.Helpers
             var param2 = response.GetType().GetProperty("ResponseData").GetValue(response);
             return new PluginCommunicationResponse(plugin, param1.ToString(), param2);
         }
-        #endregion
+
+        #endregion Using Reflection
     }
 }

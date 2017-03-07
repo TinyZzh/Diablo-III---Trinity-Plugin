@@ -7,6 +7,7 @@ namespace Trinity.Framework.Helpers
     public class SystemInformation
     {
         private static string _resolution;
+
         public static string Resolution
         {
             get
@@ -19,6 +20,7 @@ namespace Trinity.Framework.Helpers
         }
 
         private static string _operatingSystem;
+
         public static string OperatingSystem
         {
             get
@@ -31,6 +33,7 @@ namespace Trinity.Framework.Helpers
         }
 
         private static string _videoCard;
+
         public static string VideoCard
         {
             get
@@ -43,6 +46,7 @@ namespace Trinity.Framework.Helpers
         }
 
         private static string _processor;
+
         public static string Processor
         {
             get
@@ -55,6 +59,7 @@ namespace Trinity.Framework.Helpers
         }
 
         private static string _actualProcessorSpeed;
+
         public static string ActualProcessorSpeed
         {
             get
@@ -67,6 +72,7 @@ namespace Trinity.Framework.Helpers
         }
 
         private static string _hardDisk;
+
         public static string HardDisk
         {
             get
@@ -79,6 +85,7 @@ namespace Trinity.Framework.Helpers
         }
 
         private static string _freeMemory;
+
         public static string FreeMemory
         {
             get
@@ -91,6 +98,7 @@ namespace Trinity.Framework.Helpers
         }
 
         private static string _systemType;
+
         public static string SystemType
         {
             get
@@ -103,6 +111,7 @@ namespace Trinity.Framework.Helpers
         }
 
         private static string _motherBoard;
+
         public static string MotherBoard
         {
             get
@@ -139,7 +148,7 @@ namespace Trinity.Framework.Helpers
                 {
                     _videoCard = queryObj["Caption"].ToString();
                     _resolution = queryObj["CurrentHorizontalResolution"].ToString() + " x " + queryObj["CurrentVerticalResolution"].ToString();
-                    queryObj.Dispose();                    
+                    queryObj.Dispose();
                 }
 
                 foreach (var queryObj in win32ComputerSystem.Get().Cast<ManagementObject>())
@@ -167,7 +176,6 @@ namespace Trinity.Framework.Helpers
             }
             catch (Exception)
             {
-
             }
             finally
             {
@@ -177,8 +185,6 @@ namespace Trinity.Framework.Helpers
                 win32DiskDrive.Dispose();
                 win32Processor.Dispose();
             }
-
         }
-
     }
 }
