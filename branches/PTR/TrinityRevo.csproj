@@ -33,7 +33,8 @@
     <RootNamespace>Trinity</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Demonbuddy">
+    <Reference Include="Demonbuddy, Version=1.1.3121.173, Culture=neutral, PublicKeyToken=eff32ccf253d66d4, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DB-PTR\Demonbuddy.exe</HintPath>
     </Reference>
     <Reference Include="GreyMagic, Version=1.1.3111.159, Culture=neutral, PublicKeyToken=260525fa2b0e778a, processorArchitecture=x86">

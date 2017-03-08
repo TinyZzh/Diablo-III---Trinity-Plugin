@@ -133,7 +133,7 @@ namespace Trinity.Components.Combat
                 //    QuestStepObjectiveType.KillMonsterFromGroup,
                 //};
 
-                //var inKillQuest = ZetaDia.ActInfo.ActiveQuests.FirstOrDefault(
+                //var inKillQuest = ZetaDia.Storage.Quests.ActiveQuests.FirstOrDefault(
                 //    q => q.QuestRecord.Steps.Any(
                 //        s => s.QuestStepObjectiveSet.QuestStepObjectives.Any(
                 //            o => killQuestStepTypes.Contains(o.ObjectiveType)))) != null;

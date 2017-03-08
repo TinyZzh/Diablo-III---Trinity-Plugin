@@ -20,7 +20,7 @@ namespace Trinity.Framework.Actors.Properties
             actor.ActorClass = GetActorClass(actor.ActorSnoId);
             actor.IsMe = actor.RActorId == Core.Actors.ActivePlayerRActorId;
 
-            var cPlayer = ZetaDia.PlayerData;
+            var cPlayer = ZetaDia.Storage.PlayerDataManager.ActivePlayerData;
             if (cPlayer != null && cPlayer.IsValid)
             {
                 actor.HeroId = cPlayer.HeroId;
@@ -31,14 +31,14 @@ namespace Trinity.Framework.Actors.Properties
         public static int GetAcdIdByHeroId(int heroId)
         {
             // Only works if player is in the same area.
-            var player = ZetaDia.Players.FirstOrDefault(p => p.HeroId == heroId);
+            var player = ZetaDia.Storage.PlayerDataManager.Players.FirstOrDefault(p => p.HeroId == heroId);
             return player?.ACDId ?? -1;
         }
 
         public static int GetHeroIdByAcdId(int acdId)
         {
             // Only works if player is in the same area.
-            var player = ZetaDia.Players.FirstOrDefault(p => p.ACDId == acdId);
+            var player = ZetaDia.Storage.PlayerDataManager.Players.FirstOrDefault(p => p.ACDId == acdId);
             return player?.HeroId ?? -1;
         }
 

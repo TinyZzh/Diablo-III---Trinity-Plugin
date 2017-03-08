@@ -41,7 +41,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
 
         public bool IsAvailable
         {
-            get { return ZetaDia.ActInfo.AllQuests.Any(q => q.QuestSNO == QuestId && q.State != QuestState.Completed); }
+            get { return ZetaDia.Storage.Quests.AllQuests.Any(q => q.QuestSNO == QuestId && q.State != QuestState.Completed); }
         }
 
         private int _waypointNumber;

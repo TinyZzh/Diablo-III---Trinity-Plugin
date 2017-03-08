@@ -35,7 +35,7 @@ namespace QuestTools.ProfileTags.Beta
 
         protected override Composite CreateBehavior()
         {
-            var quest = ZetaDia.ActInfo.AllQuests.FirstOrDefault(q => q.QuestSNO == QuestId);
+            var quest = ZetaDia.Storage.Quests.AllQuests.FirstOrDefault(q => q.QuestSNO == QuestId);
 
             return new Sequence(
                 new Action(ret => TimeTracker.Start(new Timing

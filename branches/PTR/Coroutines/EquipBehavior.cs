@@ -239,7 +239,7 @@ namespace Trinity.Coroutines
 
             await Coroutine.Sleep(500);
 
-            return true;// ZetaDia.PlayerData.GetActiveSkillBySlot((HotbarSlot)slot).Power == skill.Key.SNOPower;
+            return true;// ZetaDia.Storage.PlayerDataManager.ActivePlayerData.GetActiveSkillBySlot((HotbarSlot)slot).Power == skill.Key.SNOPower;
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Trinity.Reference
         {
             get
             {
-                if (ZetaDia.PlayerData.IsValid && ZetaDia.IsInGame && (!_active.Any() || DateTime.UtcNow.Subtract(_lastUpdatedActivePassives) > TimeSpan.FromSeconds(3)))
+                if (ZetaDia.ActivePlayerData.IsValid && ZetaDia.IsInGame && (!_active.Any() || DateTime.UtcNow.Subtract(_lastUpdatedActivePassives) > TimeSpan.FromSeconds(3)))
                 {
                     _lastUpdatedActivePassives = DateTime.UtcNow;
                     _active.Clear();

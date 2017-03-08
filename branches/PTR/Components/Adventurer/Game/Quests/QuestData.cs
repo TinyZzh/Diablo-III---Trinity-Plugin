@@ -72,7 +72,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
 
         private static BountyInfo GetBountyInfo(int questId)
         {
-            return ZetaDia.ActInfo.Bounties.FirstOrDefault(b => (int)b.Quest == questId);
+            return ZetaDia.Storage.Quests.Bounties.FirstOrDefault(b => (int)b.Quest == questId);
         }
     }
 
@@ -105,7 +105,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
             get
             {
                 if (!_isActive) return false;
-                _isActive = ZetaDia.ActInfo.AllQuests.Any(q => q.QuestStep == StepId);
+                _isActive = ZetaDia.Storage.Quests.AllQuests.Any(q => q.QuestStep == StepId);
                 return _isActive;
             }
         }

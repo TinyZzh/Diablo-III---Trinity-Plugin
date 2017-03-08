@@ -43,10 +43,10 @@ namespace Trinity.Modules
             {
                 //Clear();
 
-                if (!ZetaDia.IsInGame || ZetaDia.PlayerData == null)
+                if (!ZetaDia.IsInGame || ZetaDia.Storage.PlayerDataManager.ActivePlayerData == null)
                     return;
 
-                var kanaisCubeIds = new HashSet<int>(ZetaDia.PlayerData.KanaisPowersAssignedActorSnoIds);
+                var kanaisCubeIds = new HashSet<int>(ZetaDia.Storage.PlayerDataManager.ActivePlayerData.KanaisPowersAssignedActorSnoIds);
                 var equipped = new List<TrinityItem>();
                 var equippedIds = new HashSet<int>();
                 var playerEquippedIds = new HashSet<int>();

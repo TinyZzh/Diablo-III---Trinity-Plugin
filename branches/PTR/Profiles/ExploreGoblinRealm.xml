@@ -5,7 +5,7 @@
   <GameParams act="OpenWorld" resumeFromSave="False" isPrivate="True" numGames="-1" />
   <Order>
 
-    <If condition="ZetaDia.WorldType != Act.OpenWorld">
+    <If condition="ZetaDia.Storage.CurrentWorldType != Act.OpenWorld">
       <LeaveGame questId="1" reason="Profile must be in adventure mode!" stayInParty="False" />
     </If>
 

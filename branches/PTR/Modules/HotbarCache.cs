@@ -74,7 +74,7 @@ namespace Trinity.Modules
             if (!ZetaDia.IsInGame || ZetaDia.Me == null || !ZetaDia.Me.IsValid)
                 return;
 
-            var cPlayer = ZetaDia.PlayerData;
+            var cPlayer = ZetaDia.Storage.PlayerDataManager.ActivePlayerData;
             if (cPlayer == null || !cPlayer.IsValid)
                 return;
 

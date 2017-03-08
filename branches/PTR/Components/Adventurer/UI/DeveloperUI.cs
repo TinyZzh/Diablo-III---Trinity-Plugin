@@ -457,8 +457,7 @@ namespace Trinity.Components.Adventurer.UI
                                                         {Act.A5,SNOQuest.x1_AdventureMode_BountyTurnin_A5},
                                                     };
 
-                    var quests =
-                        ZetaDia.ActInfo.AllQuests.Where(q => actBountyFinishingQuests.ContainsValue(q.Quest)).ToList();
+                    var quests = ZetaDia.Storage.Quests.AllQuests.Where(q => actBountyFinishingQuests.ContainsValue(q.Quest)).ToList();
                     foreach (var quest in quests)
                     {
                         ObjectDumper.Write(quest, 1);
@@ -603,72 +602,72 @@ namespace Trinity.Components.Adventurer.UI
 
         private static void DumpParty_Click(object sender, RoutedEventArgs e)
         {
-            if (BotEvents.IsBotRunning)
-            {
-                BotMain.Stop();
-                Thread.Sleep(500);
-            }
-            try
-            {
-                if (!ZetaDia.IsInGame)
-                    return;
-                using (ZetaDia.Memory.AcquireFrame(true))
-                {
-                    if (ZetaDia.Me == null)
-                        return;
-                    if (!ZetaDia.Me.IsValid)
-                        return;
+            //if (BotEvents.IsBotRunning)
+            //{
+            //    BotMain.Stop();
+            //    Thread.Sleep(500);
+            //}
+            //try
+            //{
+            //    if (!ZetaDia.IsInGame)
+            //        return;
+            //    using (ZetaDia.Memory.AcquireFrame(true))
+            //    {
+            //        if (ZetaDia.Me == null)
+            //            return;
+            //        if (!ZetaDia.Me.IsValid)
+            //            return;
 
-                    ZetaDia.Actors.Update();
-                    //AdvDia.Update();
+            //        ZetaDia.Actors.Update();
+            //        //AdvDia.Update();
 
-                    Logger.Raw("Hooks:");
-                    foreach (var hook in TreeHooks.Instance.Hooks)
-                    {
-                        Logger.Raw("{0}: {1}", hook.Key, string.Join(", ", hook.Value));
-                    }
+            //        Logger.Raw("Hooks:");
+            //        foreach (var hook in TreeHooks.Instance.Hooks)
+            //        {
+            //            Logger.Raw("{0}: {1}", hook.Key, string.Join(", ", hook.Value));
+            //        }
 
-                    var party = ZetaDia.Players.ToList();
+            //        var party = ZetaDia.Storage.PlayerDataManager.Players.ToList();
 
-                    Logger.Raw(" ");
-                    Logger.Raw("Party Members (Count: {0})", party.Count);
+            //        Logger.Raw(" ");
+            //        Logger.Raw("Party Members (Count: {0})", party.Count);
 
-                    foreach (var actor in party)
-                    {
-                        Logger.Raw("=======================================================");
-                        ObjectDumper.Write(actor, 1);
-                    }
-                    for (var i = 0; i <= 40000; i = i + 4)
-                    {
-                        if (isFirstHit)
-                        {
-                            _partyMembersFirstHit.Add(i, ZetaDia.Memory.Read<int>(ZetaDia.Service.Party.BaseAddress + i));
-                        }
-                        else
-                        {
-                            _partyMembersSecondtHit.Add(i, ZetaDia.Memory.Read<int>(ZetaDia.Service.Party.BaseAddress + i));
-                        }
-                    }
-                    Logger.Raw("IsFirstHit: {0}", isFirstHit);
-                    if (!isFirstHit)
-                    {
-                        for (var i = 0; i <= 40000; i = i + 4)
-                        {
-                            if (_partyMembersFirstHit[i] != _partyMembersSecondtHit[i])
-                            {
-                                Logger.Raw("{0}: {1} - {2}", i, _partyMembersFirstHit[i], _partyMembersSecondtHit[i]);
-                            }
-                        }
-                        _partyMembersFirstHit = new Dictionary<int, int>();
-                        _partyMembersSecondtHit = new Dictionary<int, int>();
-                    }
-                    isFirstHit = !isFirstHit;
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex.ToString());
-            }
+            //        foreach (var actor in party)
+            //        {
+            //            Logger.Raw("=======================================================");
+            //            ObjectDumper.Write(actor, 1);
+            //        }
+            //        for (var i = 0; i <= 40000; i = i + 4)
+            //        {
+            //            if (isFirstHit)
+            //            {
+            //                _partyMembersFirstHit.Add(i, ZetaDia.Memory.Read<int>(ZetaDia.Service.Party.BaseAddress + i));
+            //            }
+            //            else
+            //            {
+            //                _partyMembersSecondtHit.Add(i, ZetaDia.Memory.Read<int>(ZetaDia.Service.Party.BaseAddress + i));
+            //            }
+            //        }
+            //        Logger.Raw("IsFirstHit: {0}", isFirstHit);
+            //        if (!isFirstHit)
+            //        {
+            //            for (var i = 0; i <= 40000; i = i + 4)
+            //            {
+            //                if (_partyMembersFirstHit[i] != _partyMembersSecondtHit[i])
+            //                {
+            //                    Logger.Raw("{0}: {1} - {2}", i, _partyMembersFirstHit[i], _partyMembersSecondtHit[i]);
+            //                }
+            //            }
+            //            _partyMembersFirstHit = new Dictionary<int, int>();
+            //            _partyMembersSecondtHit = new Dictionary<int, int>();
+            //        }
+            //        isFirstHit = !isFirstHit;
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Logger.Error(ex.ToString());
+            //}
         }
 
         private static void DumpMapMarkers_Click(object sender, RoutedEventArgs e)
@@ -748,7 +747,7 @@ namespace Trinity.Components.Adventurer.UI
                     Logger.Raw(" ");
 
                     var bounties =
-                        ZetaDia.ActInfo.Bounties.Where(
+                        ZetaDia.Storage.Quests.Bounties.Where(
                             b =>
                                 BountyDataFactory.GetBountyData((int)b.Quest) == null &&
                                 b.State != QuestState.Completed)
@@ -854,7 +853,7 @@ namespace Trinity.Components.Adventurer.UI
 
         public static void CheckForDynamicBounties()
         {
-            var bounties = ZetaDia.ActInfo.Bounties
+            var bounties = ZetaDia.Storage.Quests.Bounties
                 .Where(b => GetDynamicBountyTypeFromName(b.Info.DisplayName) != BountyDataFactory.DynamicBountyType.None &&
                             !BountyDataFactory.DynamicBountyDirectory.ContainsKey((int)b.Info.Quest));
 
@@ -937,8 +936,8 @@ namespace Trinity.Components.Adventurer.UI
                     if (!ZetaDia.Me.IsValid)
                         return;
 
-                    var activeBounty = ZetaDia.ActInfo.ActiveBounty != null
-                        ? (int)ZetaDia.ActInfo.ActiveBounty.Quest
+                    var activeBounty = ZetaDia.Storage.Quests.ActiveBounty != null
+                        ? (int)ZetaDia.Storage.Quests.ActiveBounty.Quest
                         : 0;
                     //AdvDia.Update();
                     Logger.Raw(" ");
@@ -976,8 +975,8 @@ namespace Trinity.Components.Adventurer.UI
                     AdvDia.MyPosition = ZetaDia.Me.Position;
                     ScenesStorage.Update();
 
-                    var activeBounty = ZetaDia.ActInfo.ActiveBounty != null
-                        ? (int)ZetaDia.ActInfo.ActiveBounty.Quest
+                    var activeBounty = ZetaDia.Storage.Quests.ActiveBounty != null
+                        ? (int)ZetaDia.Storage.Quests.ActiveBounty.Quest
                         : 0;
 
                     var currentScenePosition = AdvDia.CurrentWorldScene.GetRelativePosition(ZetaDia.Me.Position);
@@ -1017,8 +1016,8 @@ namespace Trinity.Components.Adventurer.UI
                     //AdvDia.Update();
                     var objectiveMarkers = AdvDia.CurrentWorldMarkers.Where(m => m.Id >= 0 && m.Id <= 200);
 
-                    var activeBounty = ZetaDia.ActInfo.ActiveBounty != null
-                        ? (int)ZetaDia.ActInfo.ActiveBounty.Quest
+                    var activeBounty = ZetaDia.Storage.Quests.ActiveBounty != null
+                        ? (int)ZetaDia.Storage.Quests.ActiveBounty.Quest
                         : 0;
 
                     Logger.Raw(" ");
@@ -1055,8 +1054,8 @@ namespace Trinity.Components.Adventurer.UI
                         return;
 
                     ZetaDia.Actors.Update();
-                    var activeBounty = ZetaDia.ActInfo.ActiveBounty != null
-                        ? (int)ZetaDia.ActInfo.ActiveBounty.Quest
+                    var activeBounty = ZetaDia.Storage.Quests.ActiveBounty != null
+                        ? (int)ZetaDia.Storage.Quests.ActiveBounty.Quest
                         : 0;
                     var actors =
                         ZetaDia.Actors.GetActorsOfType<DiaObject>(true)
@@ -1109,8 +1108,8 @@ namespace Trinity.Components.Adventurer.UI
                     ZetaDia.Actors.Update();
                     //AdvDia.Update();
 
-                    var activeBounty = ZetaDia.ActInfo.ActiveBounty != null
-                        ? (int)ZetaDia.ActInfo.ActiveBounty.Quest
+                    var activeBounty = ZetaDia.Storage.Quests.ActiveBounty != null
+                        ? (int)ZetaDia.Storage.Quests.ActiveBounty.Quest
                         : 0;
 
                     var objectiveMarkers = AdvDia.CurrentWorldMarkers.Where(m => m.Id >= 0 && m.Id <= 200).ToList();
@@ -1168,8 +1167,8 @@ namespace Trinity.Components.Adventurer.UI
                     ZetaDia.Actors.Update();
                     //AdvDia.Update();
 
-                    var activeBounty = ZetaDia.ActInfo.ActiveBounty != null
-                        ? (int)ZetaDia.ActInfo.ActiveBounty.Quest
+                    var activeBounty = ZetaDia.Storage.Quests.ActiveBounty != null
+                        ? (int)ZetaDia.Storage.Quests.ActiveBounty.Quest
                         : 0;
 
                     Logger.Raw("new ClearLevelAreaCoroutine({0}),", activeBounty);
@@ -1223,8 +1222,8 @@ namespace Trinity.Components.Adventurer.UI
                     ZetaDia.Actors.Update();
                     //AdvDia.Update();
 
-                    var activeBounty = ZetaDia.ActInfo.ActiveBounty != null
-                        ? (int)ZetaDia.ActInfo.ActiveBounty.Quest
+                    var activeBounty = ZetaDia.Storage.Quests.ActiveBounty != null
+                        ? (int)ZetaDia.Storage.Quests.ActiveBounty.Quest
                         : 0;
 
                     //ClearAreaForNSecondsCoroutine(int questId, int seconds, int actorId, int marker, int radius = 30, bool increaseRadius = true)
@@ -1436,8 +1435,8 @@ namespace Trinity.Components.Adventurer.UI
                     //AdvDia.Update();
                     var objectiveMarkers = AdvDia.CurrentWorldMarkers.Where(m => m.Id >= 0 && m.Id <= 200);
 
-                    var activeBounty = ZetaDia.ActInfo.ActiveBounty != null
-                        ? (int)ZetaDia.ActInfo.ActiveBounty.Quest
+                    var activeBounty = ZetaDia.Storage.Quests.ActiveBounty != null
+                        ? (int)ZetaDia.Storage.Quests.ActiveBounty.Quest
                         : 0;
 
                     Logger.Raw(" ");
@@ -1474,8 +1473,8 @@ namespace Trinity.Components.Adventurer.UI
                         return;
 
                     ZetaDia.Actors.Update();
-                    var activeBounty = ZetaDia.ActInfo.ActiveBounty != null
-                        ? (int)ZetaDia.ActInfo.ActiveBounty.Quest
+                    var activeBounty = ZetaDia.Storage.Quests.ActiveBounty != null
+                        ? (int)ZetaDia.Storage.Quests.ActiveBounty.Quest
                         : 0;
                     var actors =
                         ZetaDia.Actors.GetActorsOfType<DiaObject>(true)
@@ -1528,8 +1527,8 @@ namespace Trinity.Components.Adventurer.UI
                     ZetaDia.Actors.Update();
                     //AdvDia.Update();
 
-                    var activeBounty = ZetaDia.ActInfo.ActiveBounty != null
-                        ? (int)ZetaDia.ActInfo.ActiveBounty.Quest
+                    var activeBounty = ZetaDia.Storage.Quests.ActiveBounty != null
+                        ? (int)ZetaDia.Storage.Quests.ActiveBounty.Quest
                         : 0;
 
                     var objectiveMarkers = AdvDia.CurrentWorldMarkers.Where(m => m.Id >= 0 && m.Id <= 200).ToList();
@@ -1587,8 +1586,8 @@ namespace Trinity.Components.Adventurer.UI
                     ZetaDia.Actors.Update();
                     //AdvDia.Update();
 
-                    var activeBounty = ZetaDia.ActInfo.ActiveBounty != null
-                        ? (int)ZetaDia.ActInfo.ActiveBounty.Quest
+                    var activeBounty = ZetaDia.Storage.Quests.ActiveBounty != null
+                        ? (int)ZetaDia.Storage.Quests.ActiveBounty.Quest
                         : 0;
 
                     Logger.Raw("new ClearLevelAreaCoroutine({0}),", activeBounty);
@@ -1642,8 +1641,8 @@ namespace Trinity.Components.Adventurer.UI
                     ZetaDia.Actors.Update();
                     //AdvDia.Update();
 
-                    var activeBounty = ZetaDia.ActInfo.ActiveBounty != null
-                        ? (int)ZetaDia.ActInfo.ActiveBounty.Quest
+                    var activeBounty = ZetaDia.Storage.Quests.ActiveBounty != null
+                        ? (int)ZetaDia.Storage.Quests.ActiveBounty.Quest
                         : 0;
 
                     //ClearAreaForNSecondsCoroutine(int questId, int seconds, int actorId, int marker, int radius = 30, bool increaseRadius = true)
@@ -1725,8 +1724,8 @@ namespace Trinity.Components.Adventurer.UI
 
                     ZetaDia.Actors.Update();
                     //AdvDia.Update();
-                    var activeBounty = ZetaDia.ActInfo.ActiveBounty != null
-                        ? (int)ZetaDia.ActInfo.ActiveBounty.Quest
+                    var activeBounty = ZetaDia.Storage.Quests.ActiveBounty != null
+                        ? (int)ZetaDia.Storage.Quests.ActiveBounty.Quest
                         : 0;
                     var actors =
                         ZetaDia.Actors.GetActorsOfType<DiaUnit>(true)
@@ -1782,8 +1781,8 @@ namespace Trinity.Components.Adventurer.UI
 
                     ZetaDia.Actors.Update();
                     //AdvDia.Update();
-                    var activeBounty = ZetaDia.ActInfo.ActiveBounty != null
-                        ? (int)ZetaDia.ActInfo.ActiveBounty.Quest
+                    var activeBounty = ZetaDia.Storage.Quests.ActiveBounty != null
+                        ? (int)ZetaDia.Storage.Quests.ActiveBounty.Quest
                         : 0;
                     var actors =
                         ZetaDia.Actors.GetActorsOfType<DiaGizmo>(true)

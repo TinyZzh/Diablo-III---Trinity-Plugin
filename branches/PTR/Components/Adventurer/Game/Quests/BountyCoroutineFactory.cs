@@ -14,11 +14,11 @@ namespace Trinity.Components.Adventurer.Game.Quests
             IEnumerable<BountyInfo> gameActBounties;
             if (act == Act.OpenWorld)
             {
-                gameActBounties = ZetaDia.ActInfo.Bounties.Where(b => b.State != QuestState.Completed).OrderBy(b => b.Act);
+                gameActBounties = ZetaDia.Storage.Quests.Bounties.Where(b => b.State != QuestState.Completed).OrderBy(b => b.Act);
             }
             else
             {
-                gameActBounties = ZetaDia.ActInfo.Bounties.Where(b => b.Act == act && b.State != QuestState.Completed);
+                gameActBounties = ZetaDia.Storage.Quests.Bounties.Where(b => b.Act == act && b.State != QuestState.Completed);
             }
 
             var actBounties = new List<BountyCoroutine>();

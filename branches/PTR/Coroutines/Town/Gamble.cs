@@ -38,7 +38,7 @@ namespace Trinity.Coroutines.Town
             {
                 try
                 {
-                    if (!ZetaDia.IsInTown || ZetaDia.WorldType != Act.OpenWorld || Core.Player.IsCastingOrLoading)
+                    if (!ZetaDia.IsInTown || ZetaDia.Storage.CurrentWorldType != Act.OpenWorld || Core.Player.IsCastingOrLoading)
                         return false;
 
                     if (Core.Settings.Items.GamblingMode == SettingMode.Disabled)
@@ -57,7 +57,7 @@ namespace Trinity.Coroutines.Town
                         return false;
                     }
 
-                    if (ZetaDia.PlayerData.BloodshardCount < GambleMinimumShards || !CanAffordMostExpensiveItem)
+                    if (ZetaDia.Storage.PlayerDataManager.ActivePlayerData.BloodshardCount < GambleMinimumShards || !CanAffordMostExpensiveItem)
                     {
                         LogVerbose("Not enough shards!");
                         return false;
@@ -188,7 +188,7 @@ namespace Trinity.Coroutines.Town
 
             try
             {
-                if (ZetaDia.WorldType != Act.OpenWorld || Core.Player.IsCastingOrLoading)
+                if (ZetaDia.Storage.CurrentWorldType != Act.OpenWorld || Core.Player.IsCastingOrLoading)
                 {
                     return false;
                 }
@@ -253,7 +253,7 @@ namespace Trinity.Coroutines.Town
 
         private static void LogVerbose(string msg, params object[] args)
         {
-            var debugInfo = $" Shards={ZetaDia.PlayerData.BloodshardCount} GambleMode={Core.Settings.Items.GamblingMode} ShardMinimum={Core.Settings.Items.GamblingMinShards}";
+            var debugInfo = $" Shards={ZetaDia.Storage.PlayerDataManager.ActivePlayerData.BloodshardCount} GambleMode={Core.Settings.Items.GamblingMode} ShardMinimum={Core.Settings.Items.GamblingMinShards}";
             Logger.LogVerbose("[Gamble]" + msg + debugInfo, args);
         }
 
@@ -271,15 +271,15 @@ namespace Trinity.Coroutines.Town
             get
             {
                 if (Core.Settings.Items.GamblingMode == SettingMode.Enabled)
-                    return TownInfo.MysterySlotTypeAndPrice.Max(pair => pair.Value) <= ZetaDia.PlayerData.BloodshardCount;
+                    return TownInfo.MysterySlotTypeAndPrice.Max(pair => pair.Value) <= ZetaDia.Storage.PlayerDataManager.ActivePlayerData.BloodshardCount;
 
                 var slotAndPrice = TownInfo.MysterySlotTypeAndPrice.Where(pair => Core.Settings.Items.GamblingTypes.HasFlag(pair.Key)).ToList();
-                return slotAndPrice.Any() && slotAndPrice.Max(pair => pair.Value) <= ZetaDia.PlayerData.BloodshardCount;
+                return slotAndPrice.Any() && slotAndPrice.Max(pair => pair.Value) <= ZetaDia.Storage.PlayerDataManager.ActivePlayerData.BloodshardCount;
             }
         }
 
-        private static bool BelowMinimumShards => ZetaDia.PlayerData.BloodshardCount < GambleMinimumShards;
-        private static bool StillSavingShards => ZetaDia.PlayerData.BloodshardCount < GambleMinimumSpendingShards;
+        private static bool BelowMinimumShards => ZetaDia.Storage.PlayerDataManager.ActivePlayerData.BloodshardCount < GambleMinimumShards;
+        private static bool StillSavingShards => ZetaDia.Storage.PlayerDataManager.ActivePlayerData.BloodshardCount < GambleMinimumSpendingShards;
         private static bool IsDumpingShards { get; set; }
     }
 }

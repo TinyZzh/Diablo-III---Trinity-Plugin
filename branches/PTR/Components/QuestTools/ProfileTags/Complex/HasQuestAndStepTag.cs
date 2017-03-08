@@ -22,7 +22,7 @@ namespace QuestTools.ProfileTags
 
         public override bool GetConditionExec()
         {
-            return ZetaDia.ActInfo.AllQuests
+            return ZetaDia.Storage.Quests.AllQuests
                 .Where(quest => quest.QuestSNO == QuestId && quest.State != QuestState.Completed && quest.QuestStep == StepId).FirstOrDefault() != null;
         }
 

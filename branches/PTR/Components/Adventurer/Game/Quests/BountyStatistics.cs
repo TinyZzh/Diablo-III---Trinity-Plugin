@@ -171,7 +171,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
             {
                 return stat;
             }
-            var quest = ZetaDia.ActInfo.AllQuests.FirstOrDefault(q => q.QuestSNO == questId);
+            var quest = ZetaDia.Storage.Quests.AllQuests.FirstOrDefault(q => q.QuestSNO == questId);
 
             var steps = quest?.QuestRecord?.Steps.Aggregate(string.Empty,
                 (str, cur) => str + cur.QuestStepObjectiveSet.QuestStepObjectives.Aggregate(string.Empty,

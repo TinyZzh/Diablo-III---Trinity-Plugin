@@ -212,7 +212,7 @@ namespace Trinity.ProfileTags
 
         public static bool IsBountyLevelArea(int questId)
         {
-            var result = ZetaDia.ActInfo.Bounties.FirstOrDefault(q => q.Quest == (SNOQuest)questId && q.LevelAreas.Contains((SNOLevelArea)ZetaDia.CurrentLevelAreaSnoId) || q.StartingLevelArea == (SNOLevelArea)ZetaDia.CurrentLevelAreaSnoId);
+            var result = ZetaDia.Storage.Quests.Bounties.FirstOrDefault(q => q.Quest == (SNOQuest)questId && q.LevelAreas.Contains((SNOLevelArea)ZetaDia.CurrentLevelAreaSnoId) || q.StartingLevelArea == (SNOLevelArea)ZetaDia.CurrentLevelAreaSnoId);
 
             return result != null;
         }
@@ -224,7 +224,7 @@ namespace Trinity.ProfileTags
 
         public static bool QuestComplete(int questId)
         {
-            return ZetaDia.ActInfo.AllQuests.Any(q => q.QuestSNO == questId && q.State == QuestState.Completed);
+            return ZetaDia.Storage.Quests.AllQuests.Any(q => q.QuestSNO == questId && q.State == QuestState.Completed);
         }
 
 

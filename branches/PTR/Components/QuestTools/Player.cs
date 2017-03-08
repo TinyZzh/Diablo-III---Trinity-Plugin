@@ -27,7 +27,7 @@ namespace QuestTools
             {
                 if (_cachedCoinage != -1 && DateTime.UtcNow.Subtract(_lastUpdatedCoinage).TotalSeconds < 2)
                     return _cachedCoinage;
-                _cachedCoinage = ZetaDia.PlayerData.Coinage;
+                _cachedCoinage = ZetaDia.Storage.PlayerDataManager.ActivePlayerData.Coinage;
                 _lastUpdatedCoinage = DateTime.UtcNow;
                 return _cachedCoinage;
             }

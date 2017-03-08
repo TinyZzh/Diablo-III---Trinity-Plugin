@@ -22,11 +22,11 @@ namespace QuestTools.ProfileTags
 
         public override bool GetConditionExec()
         {
-            var b = ZetaDia.ActInfo.Bounties.Where(bounty => bounty.Act.ToString().Equals(Act) && bounty.Info.State == QuestState.Completed);
+            var b = ZetaDia.Storage.Quests.Bounties.Where(bounty => bounty.Act.ToString().Equals(Act) && bounty.Info.State == QuestState.Completed);
             if (b.FirstOrDefault() != null) Logger.Log("Bounties Complete count:" + b.Count());
             else Logger.Log("Bounties complete returned null.");
 
-            foreach (var c in ZetaDia.ActInfo.Bounties.Where(bounty => bounty.Act.ToString().Equals(Act) && bounty.Info.State != QuestState.Completed))
+            foreach (var c in ZetaDia.Storage.Quests.Bounties.Where(bounty => bounty.Act.ToString().Equals(Act) && bounty.Info.State != QuestState.Completed))
             {
                 Logger.Log("Bounty " + c.Info.Quest.ToString() + " (" + c.Info.QuestSNO + ") unsupported or invalid.");
             }

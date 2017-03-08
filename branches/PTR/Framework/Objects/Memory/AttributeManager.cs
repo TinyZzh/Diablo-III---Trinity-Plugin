@@ -48,7 +48,7 @@ namespace Trinity.Framework.Objects.Memory.Attributes
             {
                 if (!IsValid)
                 {
-                    _attributeGroups = Create<ExpandoContainer<AttributeGroup>>(ZetaDia.FastAttribGroups.BaseAddress);
+                    _attributeGroups = Create<ExpandoContainer<AttributeGroup>>(ZetaDia.Storage.FastAttribGroups.BaseAddress);
                 }
                 if (!IsValid)
                 {

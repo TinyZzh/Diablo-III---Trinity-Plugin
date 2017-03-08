@@ -15,7 +15,7 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
 
         public bool IsAlive
         {
-            get { return !ZetaDia.IsBossEncounterCompleted(BossEncounter); }
+            get { return !ZetaDia.Storage.Quests.IsBossEncounterCompleted(BossEncounter); }
         }
 
         public long MachinesCount

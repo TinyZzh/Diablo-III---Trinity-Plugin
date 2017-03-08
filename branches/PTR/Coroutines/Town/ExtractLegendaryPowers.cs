@@ -60,7 +60,7 @@ namespace Trinity.Coroutines.Town
 
         public static bool CanRun()
         {
-            if (!ZetaDia.IsInGame || !ZetaDia.IsInTown || ZetaDia.WorldType != Act.OpenWorld)
+            if (!ZetaDia.IsInGame || !ZetaDia.IsInTown || ZetaDia.Storage.CurrentWorldType != Act.OpenWorld)
                 return false;
 
             if (Core.Settings.KanaisCube.ExtractLegendaryPowers == CubeExtractOption.None)
@@ -124,7 +124,7 @@ namespace Trinity.Coroutines.Town
 
             // var source = ZetaDia.Actors.ACDList.OfType<ACDItem>().Where(i => i.InventorySlot == slot);
             var source = Inventory.AllItems.Where(i => i.InventorySlot == slot);
-            var alreadyCubedIds = new HashSet<int>(ZetaDia.PlayerData.KanaisPowersExtractedActorSnoIds);
+            var alreadyCubedIds = new HashSet<int>(ZetaDia.Storage.PlayerDataManager.ActivePlayerData.KanaisPowersExtractedActorSnoIds);
 
             foreach (var item in source)
             {
@@ -304,7 +304,7 @@ namespace Trinity.Coroutines.Town
             await Coroutine.Sleep(1500);
 
             var shouldBeDestroyedItem = ZetaDia.Me.Inventory.Backpack.FirstOrDefault(i => i.AnnId == itemDynamicId);
-            if (shouldBeDestroyedItem == null && ZetaDia.PlayerData.KanaisPowersExtractedActorSnoIds.Contains(itemSnoId))
+            if (shouldBeDestroyedItem == null && ZetaDia.Storage.PlayerDataManager.ActivePlayerData.KanaisPowersExtractedActorSnoIds.Contains(itemSnoId))
             {
                 Logger.Log("[ExtractLegendaryPowers] Item Power Extracted! '{0}' ({1})",
                     itemName, itemSnoId);

@@ -91,9 +91,9 @@ namespace Trinity.DbProvider
             var corpseButtonReady = reviveAtCorpseButton.IsVisible && reviveAtCorpseButton.IsEnabled;
             var townButtonReady = reviveInTownButton.IsVisible && reviveInTownButton.IsEnabled;
             var isInRift = GameData.RiftWorldIds.Contains(ZetaDia.Globals.WorldSnoId);
-            var isInGreaterRift = isInRift && ZetaDia.CurrentRift != null && ZetaDia.CurrentRift.Type == RiftType.Greater;
+            var isInGreaterRift = isInRift && ZetaDia.Storage.CurrentRiftType == RiftType.Greater;
             var noMoreCorpseRevives = !isInGreaterRift && ZetaDia.Me.CommonData.CorpseResurrectionCharges == 0;
-            var waitingForCorpseResurrect = ZetaDia.CurrentTime < ZetaDia.Me.CommonData.CorpseResurrectionAllowedGameTime;
+            var waitingForCorpseResurrect = ZetaDia.Globals.GameTick < ZetaDia.Me.CommonData.CorpseResurrectionAllowedGameTime;
             var deathCount = ZetaDia.Me.CommonData.DeathCount;
             var corpseResurrectDisabled = ZetaDia.Me.CommonData.CorpseResurrectionDisabled > 0;
 

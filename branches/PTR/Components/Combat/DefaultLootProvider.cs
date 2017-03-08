@@ -145,7 +145,7 @@ namespace Trinity.Components.Combat
             if (item.TrinityItemType == TrinityItemType.UberReagent)
                 return true;
 
-            if (item.TrinityItemType == TrinityItemType.HoradricRelic && ZetaDia.PlayerData.BloodshardCount < Core.Player.MaxBloodShards)
+            if (item.TrinityItemType == TrinityItemType.HoradricRelic && Core.Player.BloodShards < Core.Player.MaxBloodShards)
                 return Core.Settings.Items.SpecialItems.HasFlag(SpecialItemTypes.BloodShards);
 
             if (item.TrinityItemType == TrinityItemType.ProgressionGlobe)

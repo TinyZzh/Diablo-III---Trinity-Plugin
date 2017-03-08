@@ -246,7 +246,7 @@ namespace Trinity.Coroutines.Town
             }
 
             // Close Normal rift before doing a town run.
-            if (ZetaDia.IsInTown && !StartedOutOfTown && ZetaDia.CurrentRift != null && ZetaDia.CurrentRift.IsCompleted && ZetaDia.CurrentRift.IsStarted)
+            if (ZetaDia.IsInTown && !StartedOutOfTown && ZetaDia.Storage.RiftCompleted && ZetaDia.Storage.RiftStarted)
             {
                 var orek = TownInfo.Orek?.GetActor() as DiaUnit;
                 if (orek != null && orek.IsQuestGiver)

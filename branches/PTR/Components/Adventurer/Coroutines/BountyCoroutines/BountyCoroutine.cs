@@ -48,7 +48,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
                 {
                     return true;
                 }
-                if (ZetaDia.ActInfo.ActiveBounty != null && (int)ZetaDia.ActInfo.ActiveBounty.Quest == QuestId)
+                if (ZetaDia.Storage.Quests.ActiveBounty != null && (int)ZetaDia.Storage.Quests.ActiveBounty.Quest == QuestId)
                 {
                     return true;
                 }

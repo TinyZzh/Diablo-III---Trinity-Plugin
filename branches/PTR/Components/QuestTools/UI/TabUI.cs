@@ -274,9 +274,9 @@ namespace QuestTools.UI
 
                     ZetaDia.Actors.Update();
 
-                    Logger.Log("Dumping {0} Bounties", ZetaDia.ActInfo.Bounties.Count());
+                    Logger.Log("Dumping {0} Bounties", ZetaDia.Storage.Quests.Bounties.Count());
                     
-                    foreach (var bountyInfo in ZetaDia.ActInfo.Bounties)
+                    foreach (var bountyInfo in ZetaDia.Storage.Quests.Bounties)
                     {
                         string levelAreas = bountyInfo.LevelAreas.Aggregate("", (current, area) => current + (area + ", "));
 
@@ -458,12 +458,12 @@ namespace QuestTools.UI
             string actorText = actor != null ? string.Format(" Actor: {0} ({1}) {2} ", actor.Name, actor.ActorSnoId, actor.ActorType) : string.Empty;
             string sceneText = scene != null ? string.Format(" Scene: {0} ({1}) ", scene.Name, scene.SceneInfo.SNOId) : string.Empty;
 
-            if (ZetaDia.CurrentAct == Act.OpenWorld && ZetaDia.ActInfo.ActiveBounty != null)
+            if (ZetaDia.CurrentAct == Act.OpenWorld && ZetaDia.Storage.Quests.ActiveBounty != null)
             {
-                questInfo = string.Format("questId=\"{0}\"", ZetaDia.ActInfo.ActiveBounty.Info.QuestSNO);
+                questInfo = string.Format("questId=\"{0}\"", ZetaDia.Storage.Quests.ActiveBounty.Info.QuestSNO);
                 questHeader = string.Format("\n<!-- Quest: {0} ({1}) World: {2} ({3}) LevelArea: {4} ({5}){6}{7} -->",
-                    ZetaDia.ActInfo.ActiveBounty.Info.DisplayName + " " + ZetaDia.ActInfo.ActiveBounty.Info.Quest,
-                    ZetaDia.ActInfo.ActiveBounty.Info.QuestSNO,
+                    ZetaDia.Storage.Quests.ActiveBounty.Info.DisplayName + " " + ZetaDia.Storage.Quests.ActiveBounty.Info.Quest,
+                    ZetaDia.Storage.Quests.ActiveBounty.Info.QuestSNO,
                     worldName,
                     ZetaDia.Globals.WorldSnoId,
                     levelAreaName,
@@ -561,16 +561,16 @@ namespace QuestTools.UI
 
                     GetQuestInfoText(out questInfo, out questHeader);
 
-                    if (ZetaDia.CurrentAct == Act.OpenWorld && ZetaDia.ActInfo.ActiveBounty != null)
+                    if (ZetaDia.CurrentAct == Act.OpenWorld && ZetaDia.Storage.Quests.ActiveBounty != null)
                     {
                         tagText = string.Format(questHeader + "\n<If condition=\"HasQuest({5}) and CurrentWorldSnoId=={6} and CurrentLevelAreaSnoId=={7}\">\n\n</If>",
-                            ZetaDia.ActInfo.ActiveBounty.Info.Quest, worldName, ZetaDia.Globals.WorldSnoId, levelAreaName, ZetaDia.CurrentLevelAreaSnoId, ZetaDia.ActInfo.ActiveBounty.Info.QuestSNO, ZetaDia.Globals.WorldSnoId, Player.LevelAreaId);
+                            ZetaDia.Storage.Quests.ActiveBounty.Info.Quest, worldName, ZetaDia.Globals.WorldSnoId, levelAreaName, ZetaDia.CurrentLevelAreaSnoId, ZetaDia.Storage.Quests.ActiveBounty.Info.QuestSNO, ZetaDia.Globals.WorldSnoId, Player.LevelAreaId);
                     }
                     else if (ZetaDia.CurrentAct == Act.OpenWorld && ZetaDia.IsInTown)
                     {
-                        if (ZetaDia.ActInfo.ActiveBounty != null)
+                        if (ZetaDia.Storage.Quests.ActiveBounty != null)
                             tagText = string.Format(questHeader + "\n<If condition=\"HasQuest(0) and CurrentWorldSnoId=={6} and CurrentLevelAreaSnoId=={7}\">\n\n</If>",
-                                ZetaDia.ActInfo.ActiveBounty.Info.Quest, worldName, ZetaDia.Globals.WorldSnoId, levelAreaName, ZetaDia.CurrentLevelAreaSnoId, ZetaDia.ActInfo.ActiveBounty.Info.QuestSNO, ZetaDia.Globals.WorldSnoId, Player.LevelAreaId);
+                                ZetaDia.Storage.Quests.ActiveBounty.Info.Quest, worldName, ZetaDia.Globals.WorldSnoId, levelAreaName, ZetaDia.CurrentLevelAreaSnoId, ZetaDia.Storage.Quests.ActiveBounty.Info.QuestSNO, ZetaDia.Globals.WorldSnoId, Player.LevelAreaId);
                     }
                     else
                     {
@@ -692,7 +692,7 @@ namespace QuestTools.UI
                         }
 
                         var tagText = string.Format(questHeader + "\n<If condition=\"ActorExistsAt({8},{9:0},{10:0},{11:0},50) and CurrentLevelAreaSnoId=={7}\">\n",
-                            ZetaDia.ActInfo.ActiveBounty.Info.Quest, worldName, ZetaDia.Globals.WorldSnoId, levelAreaName, ZetaDia.CurrentLevelAreaSnoId, ZetaDia.ActInfo.ActiveBounty.Info.QuestSNO, ZetaDia.Globals.WorldSnoId, Player.LevelAreaId, obj.ActorSnoId, obj.Position.X, obj.Position.Y, obj.Position.Z);
+                            ZetaDia.Storage.Quests.ActiveBounty.Info.Quest, worldName, ZetaDia.Globals.WorldSnoId, levelAreaName, ZetaDia.CurrentLevelAreaSnoId, ZetaDia.Storage.Quests.ActiveBounty.Info.QuestSNO, ZetaDia.Globals.WorldSnoId, Player.LevelAreaId, obj.ActorSnoId, obj.Position.X, obj.Position.Y, obj.Position.Z);
 
                         var logText = string.Format("<LogMessage questId=\"{0}\" output=\"Actor Found {1} ({2}) at {3}\" />\n",
                             ZetaDia.CurrentQuest.QuestSnoId, obj.Name, obj.ActorSnoId, locationInfo);
@@ -945,10 +945,10 @@ namespace QuestTools.UI
 
                     foreach (var slot in Enum.GetValues(typeof(HotbarSlot)).Cast<HotbarSlot>())
                     {
-                        DiaActiveSkill skill = ZetaDia.PlayerData.GetActiveSkillBySlot(slot);
+                        DiaActiveSkill skill = ZetaDia.Storage.PlayerDataManager.ActivePlayerData.GetActiveSkillBySlot(slot);
                         Logger.Raw("{0} Active Skill: {1} RuneIndex: {2}", slot, skill.Power, skill.RuneIndex);
                     }
-                    foreach (var power in ZetaDia.PlayerData.PassiveSkills)
+                    foreach (var power in ZetaDia.Storage.PlayerDataManager.ActivePlayerData.PassiveSkills)
                     {
                         Logger.Raw("Passive Skill: {0}", power);
                     }
@@ -1309,7 +1309,7 @@ namespace QuestTools.UI
 
         private static void DumpCPlayer()
         {
-            string propertiesFound = ReadProperties(ZetaDia.PlayerData, null);
+            string propertiesFound = ReadProperties(ZetaDia.Storage.PlayerDataManager.ActivePlayerData, null);
             try
             {
                 Logger.Log("\n\nCPlayer: " + propertiesFound);

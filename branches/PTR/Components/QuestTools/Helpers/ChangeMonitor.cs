@@ -36,7 +36,7 @@ namespace QuestTools.Helpers
                 return;
 
             Act newAct = ZetaDia.CurrentAct;
-            if (ZetaDia.ActInfo.IsValid && newAct != _currentAct)
+            if (ZetaDia.ActRecord.IsValid && newAct != _currentAct)
             {
                 Logger.Verbose("Act changed from {0} to {1} ({2}) SnoId={3}", _currentAct.ToString(), newAct, (int)newAct, ZetaDia.CurrentActSnoId);
                 _currentAct = newAct;

@@ -27,7 +27,7 @@ namespace Trinity.ProfileTags
 
         public override void OnStart()
         {
-            var bountyInfo = ZetaDia.ActInfo.Bounties.FirstOrDefault(b => (int)b.Quest == QuestId);
+            var bountyInfo = ZetaDia.Storage.Quests.Bounties.FirstOrDefault(b => (int)b.Quest == QuestId);
 
             _bounty = BountyCoroutineFactory.GetBounty(bountyInfo);
             if (_bounty == null)

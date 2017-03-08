@@ -9,36 +9,33 @@ namespace Trinity.Framework.Helpers
 {
     public static class RiftProgression
     {
-        public static float CurrentProgressionPct => Core.MemoryModel.Globals.RiftProgressionPct;
+        public static float CurrentProgressionPct => ZetaDia.Globals.RiftProgressionPercent;
 
         public static bool IsInRift
         {
             get
             {
-                if (ZetaDia.CurrentRift == null || ZetaDia.Globals.IsLoadingWorld)
+                if (ZetaDia.Globals.IsLoadingWorld)
                     return false;
 
-                return ZetaDia.CurrentRift.IsStarted && GameData.RiftWorldIds.Contains(ZetaDia.Globals.WorldSnoId);
+                return ZetaDia.Storage.RiftStarted && GameData.RiftWorldIds.Contains(ZetaDia.Globals.WorldSnoId);
             }
         }
 
-        public static bool IsGreaterRift => ZetaDia.CurrentRift?.Type == RiftType.Greater;
-        public static bool IsNephalemRift => ZetaDia.CurrentRift?.Type == RiftType.Nephalem;
+        public static bool IsGreaterRift => ZetaDia.Storage.CurrentRiftType == RiftType.Greater;
+        public static bool IsNephalemRift => ZetaDia.Storage.CurrentRiftType == RiftType.Nephalem;
         public static RiftQuest Quest => new RiftQuest();
 
         public static bool IsGaurdianSpawned
         {
-            get { return IsInRift && ZetaDia.CurrentRift.HasGuardianSpawned; }
+            get { return IsInRift && ZetaDia.Storage.RiftGuardianSpawned; }
         }
 
         public static bool RiftComplete
         {
             get
             {
-                if (ZetaDia.CurrentRift == null)
-                    return false;
-
-                return ZetaDia.CurrentRift.IsCompleted;
+                return ZetaDia.Storage.RiftCompleted;
             }
         }
 

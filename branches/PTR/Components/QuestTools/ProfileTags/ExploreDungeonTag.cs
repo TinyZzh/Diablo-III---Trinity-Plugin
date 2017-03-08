@@ -935,7 +935,7 @@ namespace QuestTools.ProfileTags
             new PrioritySelector(
                 TimeoutCheck(),
 
-                new Decorator(ret => EndType == ExploreEndType.BossEncounterCompleted && ZetaDia.IsBossEncounterCompleted(BossEncounter),
+                new Decorator(ret => EndType == ExploreEndType.BossEncounterCompleted && ZetaDia.Storage.Quests.IsBossEncounterCompleted(BossEncounter),
                     new Sequence(
                             new Action(ret => Logger.Log("BossEncounter: {0} completed. Tag Finished.", BossEncounter)),
                             new Action(ret => _isDone = true)
@@ -1712,8 +1712,8 @@ namespace QuestTools.ProfileTags
                 return false;
 
             // X1_LR_DungeonFinder
-            if (ZetaDia.WorldType == Act.OpenWorld && DataDictionary.RiftWorldIds.Contains(ZetaDia.Globals.WorldSnoId) &&
-                ZetaDia.ActInfo.AllQuests.Any(q => q.QuestSNO == 337492 && q.QuestStep == 10))
+            if (ZetaDia.Storage.CurrentWorldType == Act.OpenWorld && DataDictionary.RiftWorldIds.Contains(ZetaDia.Globals.WorldSnoId) &&
+                ZetaDia.Storage.Quests.AllQuests.Any(q => q.QuestSNO == 337492 && q.QuestStep == 10))
             {
                 Logger.Log("Rift Quest Complete!");
                 return true;
@@ -1746,11 +1746,11 @@ namespace QuestTools.ProfileTags
                 _lastCheckBountyDone = DateTime.UtcNow;
 
                 // Only valid for Adventure mode
-                if (ZetaDia.WorldType != Act.OpenWorld)
+                if (ZetaDia.Storage.CurrentWorldType != Act.OpenWorld)
                     return false;
 
                 // We're in a rift, not a bounty!
-                if (ZetaDia.WorldType == Act.OpenWorld && DataDictionary.RiftWorldIds.Contains(ZetaDia.Globals.WorldSnoId))
+                if (ZetaDia.Storage.CurrentWorldType == Act.OpenWorld && DataDictionary.RiftWorldIds.Contains(ZetaDia.Globals.WorldSnoId))
                     return false;
 
                 if (ZetaDia.IsInTown)
@@ -1763,20 +1763,20 @@ namespace QuestTools.ProfileTags
                     return false;
 
                 // Bounty Turn-in
-                if (ZetaDia.ActInfo.AllQuests.Any(q => DataDictionary.BountyTurnInQuests.Contains(q.QuestSNO) && q.State == QuestState.InProgress))
+                if (ZetaDia.Storage.Quests.AllQuests.Any(q => DataDictionary.BountyTurnInQuests.Contains(q.QuestSNO) && q.State == QuestState.InProgress))
                 {
                     Logger.Log("Bounty Turn-In available, Assuming done.");
                     return true;
                 }
 
-                var b = ZetaDia.ActInfo.Bounties.FirstOrDefault(q => q.State == QuestState.InProgress && (q.LevelAreas.Contains((SNOLevelArea)ZetaDia.CurrentLevelAreaSnoId) || q.StartingLevelArea == (SNOLevelArea)ZetaDia.CurrentLevelAreaSnoId));
-                if (b == null && ZetaDia.ActInfo.ActiveBounty == null)
+                var b = ZetaDia.Storage.Quests.Bounties.FirstOrDefault(q => q.State == QuestState.InProgress && (q.LevelAreas.Contains((SNOLevelArea)ZetaDia.CurrentLevelAreaSnoId) || q.StartingLevelArea == (SNOLevelArea)ZetaDia.CurrentLevelAreaSnoId));
+                if (b == null && ZetaDia.Storage.Quests.ActiveBounty == null)
                 {
                     Logger.Log("No Active bounty, Assuming done.");
                     return true;
                 }
 
-                if (ZetaDia.ActInfo.ActiveQuests.Any(q => q.Quest.ToString().ToLower().StartsWith("x1_AdventureMode_BountyTurnin") && q.State == QuestState.InProgress))
+                if (ZetaDia.Storage.Quests.ActiveQuests.Any(q => q.Quest.ToString().ToLower().StartsWith("x1_AdventureMode_BountyTurnin") && q.State == QuestState.InProgress))
                 {
                     Logger.Log("Bounty Turn-in quest is In-Progress, Assuming done.");
                     return true;

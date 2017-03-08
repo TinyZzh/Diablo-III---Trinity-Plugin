@@ -288,7 +288,7 @@ namespace QuestTools.Helpers
                 }
 
                 Logger.Debug("Failed to find current act CurrentLevelAreaSnoId={0} ZetaDia.CurrentAct={1} WorldType={2}", 
-                    ZetaDia.CurrentActSnoId, ZetaDia.CurrentAct, ZetaDia.WorldType);
+                    ZetaDia.CurrentActSnoId, ZetaDia.CurrentAct, ZetaDia.Storage.CurrentWorldType);
 
                 return Vector3.Zero;
             }

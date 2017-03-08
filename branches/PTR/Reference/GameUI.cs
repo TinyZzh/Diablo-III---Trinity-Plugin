@@ -410,7 +410,7 @@ namespace Trinity.Reference
 
             if (IsElementVisible(PartyFollowerBossDecline))
             {
-                var declineInBounty = Core.Settings.Combat.FollowerBossFightDialogMode == FollowerBossFightMode.DeclineInBounty && ZetaDia.ActInfo.ActiveBounty != null;
+                var declineInBounty = Core.Settings.Combat.FollowerBossFightDialogMode == FollowerBossFightMode.DeclineInBounty && ZetaDia.Storage.Quests.ActiveBounty != null;
                 var alwaysDecline = Core.Settings.Combat.FollowerBossFightDialogMode == FollowerBossFightMode.AlwaysDecline;
 
                 if (declineInBounty || alwaysDecline)

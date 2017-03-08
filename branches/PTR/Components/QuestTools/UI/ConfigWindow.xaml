@@ -1,0 +1,139 @@
+﻿<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:nav="clr-namespace:QuestTools.Navigation"
+             xmlns:ui="clr-namespace:QuestTools.UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="600" Foreground="{DynamicResource TextBrush}">
+    <UserControl.Resources>
+        <ui:PercentConverter x:Key="PercentConverter" />
+        <ui:BoolInverterConverter x:Key="BoolInverterConverter" />
+        <Style TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+        <Style TargetType="WrapPanel">
+            <Setter Property="Margin" Value="0,5" />
+        </Style>
+        <ObjectDataProvider x:Key="RouteModes"
+                    MethodName="GetValues" 
+                    ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="nav:RouteMode" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <!-- Checkbox used as a label for its ability to be clicked -->
+        <Style x:Key="TextBlockCheckBox" TargetType="CheckBox">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <ContentPresenter />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <DockPanel Background="#333">
+        <UniformGrid HorizontalAlignment="Center" DockPanel.Dock="Bottom">
+            <Button Content="Reset All Settings" Command="{Binding ResetAllSettingsCommand}" />
+        </UniformGrid>
+        <UniformGrid Columns="2">
+            <StackPanel>
+                <GroupBox Header="Rift Priority">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="4*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <ListBox Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" ItemsSource="{Binding Path=Settings.RiftKeyPriority}" SelectionMode="Single" Name="RiftKeyPriorityListBox"></ListBox>
+                        <Button Grid.Row="0" Grid.Column="1" Height="25" Content="Up" Command="{Binding RiftKeyOrderUp}" CommandParameter="{Binding ElementName=RiftKeyPriorityListBox,Path=SelectedItem}" />
+                        <Button Grid.Row="1" Grid.Column="1" Height="25" Content="Down" Command="{Binding RiftKeyOrderDown}" CommandParameter="{Binding ElementName=RiftKeyPriorityListBox,Path=SelectedItem}" />
+                    </Grid>
+                </GroupBox>
+                <GroupBox Header="Greater Rifts">
+                    <StackPanel Orientation="Vertical" Margin="10, 7, 10, 10">
+                        <WrapPanel Orientation="Horizontal">
+                            <Label Content="Open Greater Rifts at Level: "  Background="#333333"></Label>
+                            <TextBox Width="45" HorizontalAlignment="Right" Text="{Binding Path=Settings.LimitRiftLevel}" />
+                        </WrapPanel>
+                        <StackPanel Margin="0,2,0,0">
+                            <Label Content="Minimum % Chance for Gem Upgrade:" Background="#333333"></Label>
+                        <Border Margin="0,2,0,0" BorderBrush="Gray" BorderThickness="1"  >
+                            <ComboBox SelectedValue="{Binding Path=Settings.MinimumGemChance, Converter={StaticResource PercentConverter}}" SelectedValuePath="Tag" >
+                                <ComboBoxItem Content="100%" Tag="100" />
+                                <ComboBoxItem Content="90%" Tag="90" />
+                                <ComboBoxItem Content="80%" Tag="80" />
+                                <ComboBoxItem Content="70%" Tag="70" />
+                                <ComboBoxItem Content="60%" Tag="60" />
+                                <ComboBoxItem Content="50%" Tag="50" />
+                                <ComboBoxItem Content="40%" Tag="40" />
+                                <ComboBoxItem Content="30%" Tag="30" />
+                                <ComboBoxItem Content="20%" Tag="20" />
+                                <ComboBoxItem Content="10%" Tag="10" />
+                                <ComboBoxItem Content="1%" Tag="1" />
+                            </ComboBox></Border>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+ 
+                <GroupBox Header="General Settings">
+                    <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10, 7, 10, 10">
+                        <StackPanel >
+                            <WrapPanel>
+                                <CheckBox x:Name="ForceRouteMode" IsChecked="{Binding Settings.ForceRouteMode}" Margin="0,0,6,0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <CheckBox Content="Force Route Mode" Style="{DynamicResource TextBlockCheckBox}" Foreground="WhiteSmoke" FontWeight="Regular" IsChecked="{Binding Settings.ForceRouteMode}" Margin="0,0,0,0" />
+                                <Border Margin="0,5,0,0" BorderBrush="Gray" BorderThickness="1"  >
+                                    <ComboBox Margin="18,0,0,0" ItemsSource="{Binding Source={StaticResource RouteModes}}" 
+                                      SelectedItem="{Binding Path=Settings.RouteMode}" 
+                                      IsEnabled="{Binding Path=Settings.ForceRouteMode}"
+                                      Width="240"/>
+                                </Border>
+                            </WrapPanel>
+                            <WrapPanel>
+                                <CheckBox x:Name="SkipCutScenes" IsChecked="{Binding Settings.SkipCutScenes}" Margin="0,0,6,0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <CheckBox Content="Skip Cut Scenes" Style="{DynamicResource TextBlockCheckBox}" Foreground="WhiteSmoke" FontWeight="Regular" IsChecked="{Binding Settings.SkipCutScenes}" Margin="0,0,0,0" />
+                            </WrapPanel>                            
+                            <WrapPanel>
+                                <CheckBox x:Name="DebugEnabled" IsChecked="{Binding Settings.DebugEnabled}" Margin="0,0,6,0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <CheckBox Content="Use Debug Logging" Style="{DynamicResource TextBlockCheckBox}" Foreground="WhiteSmoke" FontWeight="Regular" IsChecked="{Binding Settings.DebugEnabled}" Margin="0,0,0,0" />
+                            </WrapPanel>
+                            <WrapPanel>
+                                <CheckBox x:Name="AllowProfileReloading" IsChecked="{Binding Settings.AllowProfileReloading}" Margin="0,0,6,0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <CheckBox Content="Allow Profile Reloading" Style="{DynamicResource TextBlockCheckBox}" Foreground="WhiteSmoke" FontWeight="Regular" IsChecked="{Binding Settings.AllowProfileReloading}" Margin="0,0,0,0" />
+                            </WrapPanel>
+                            <WrapPanel>
+                                <CheckBox x:Name="AllowProfileRestarts" IsChecked="{Binding Settings.AllowProfileRestarts}" Margin="0,0,6,0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <CheckBox Content="Allow Profile Restarts" Style="{DynamicResource TextBlockCheckBox}" Foreground="WhiteSmoke" FontWeight="Regular" IsChecked="{Binding Settings.AllowProfileRestarts}" Margin="0,0,0,0" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>                
+            </StackPanel>
+            <StackPanel>
+                <GroupBox Header="Gem Upgrade Priority">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="4*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <ListBox ItemsSource="{Binding Path=Settings.GemPriority}" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Name="GemPriorityListBox" />
+                        <Button Grid.Row="0" Grid.Column="1" Content="Up" Height="25" VerticalAlignment="Bottom" Command="{Binding GemOrderUp}" CommandParameter="{Binding ElementName=GemPriorityListBox,Path=SelectedItem}" />
+                        <Button Grid.Row="1" Grid.Column="1" Content="Down" Height="25" VerticalAlignment="Top" Command="{Binding GemOrderDown}" CommandParameter="{Binding ElementName=GemPriorityListBox,Path=SelectedItem}" />
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+        </UniformGrid>
+
+    </DockPanel>
+</UserControl>

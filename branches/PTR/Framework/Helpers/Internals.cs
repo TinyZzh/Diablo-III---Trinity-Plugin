@@ -24,7 +24,7 @@ namespace Trinity.Framework.Helpers
             private static readonly StaticRouter<IntPtr> _storageAddr = new StaticRouter<IntPtr>(typeof(ZetaDia), 0);
 
             public static IntPtr PlayerDataAddr => _playerData.Value.Value;
-            private static readonly StaticRouter<DynamicPointer<CPlayer>> _playerData = new StaticRouter<DynamicPointer<CPlayer>>(typeof(ZetaDia), 0);
+            private static readonly StaticRouter<DynamicPointer<ActivePlayerData>> _playerData = new StaticRouter<DynamicPointer<ActivePlayerData>>(typeof(ZetaDia), 0);
         }
 
         public static class Addresses

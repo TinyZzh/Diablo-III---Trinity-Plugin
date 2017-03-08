@@ -519,7 +519,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             if (!await _moveToRiftStoneCoroutine.GetCoroutine()) return false;
             _moveToRiftStoneCoroutine.Reset();
 
-            if (AdvDia.IsInTown && ZetaDia.CurrentRift != null && !ZetaDia.CurrentRift.IsCompleted)
+            if (AdvDia.IsInTown && !ZetaDia.Storage.RiftCompleted)
             {
                 State = States.MoveToOrek;
             }
@@ -555,7 +555,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
 
             long empoweredCost = 0;
             bool shouldEmpower = _options.IsEmpowered;
-            bool haveMoneyForEmpower = RiftData.EmpoweredRiftCost.TryGetValue(_level, out empoweredCost) && ZetaDia.PlayerData.Coinage >= (empoweredCost + PluginSettings.Current.MinimumGold);
+            bool haveMoneyForEmpower = RiftData.EmpoweredRiftCost.TryGetValue(_level, out empoweredCost) && ZetaDia.Storage.PlayerDataManager.ActivePlayerData.Coinage >= (empoweredCost + PluginSettings.Current.MinimumGold);
             bool canEmpower = (_RiftType == RiftType.Greater && haveMoneyForEmpower);
             var settings = PluginSettings.Current;
 
@@ -618,7 +618,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                         for (_level = minLevel; _level < maxLevel; _level++)
                         {
                             //Logger.Debug($"Starting Auto-Gem test for level: {_level}");
-                            canEmpower = (RiftData.EmpoweredRiftCost.TryGetValue(_level, out empoweredCost) && ZetaDia.PlayerData.Coinage >= empoweredCost);
+                            canEmpower = (RiftData.EmpoweredRiftCost.TryGetValue(_level, out empoweredCost) && ZetaDia.Storage.PlayerDataManager.ActivePlayerData.Coinage >= empoweredCost);
                             var upgradeAttempts = (canEmpower && (shouldEmpower || _level <= settings.EmpoweredRiftLevelLimit) ? 4 : 3);
                             var possibleUpgrades = gems.Gems.Sum(g => g.GetUpgrades(_level, upgradeAttempts, 100));
                             if (possibleUpgrades >= upgradeAttempts)
@@ -634,7 +634,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                             Util.Logger.Info("Update chance at max level is 60%, checking if we can take a few levels off still!");
                             for (; _level > minLevel; _level--)
                             {
-                                var couldEmpower = (RiftData.EmpoweredRiftCost.TryGetValue(_level - 1, out empoweredCost) && ZetaDia.PlayerData.Coinage >= (empoweredCost + PluginSettings.Current.MinimumGold));
+                                var couldEmpower = (RiftData.EmpoweredRiftCost.TryGetValue(_level - 1, out empoweredCost) && ZetaDia.Storage.PlayerDataManager.ActivePlayerData.Coinage >= (empoweredCost + PluginSettings.Current.MinimumGold));
                                 var upgradeAttempts = (couldEmpower && (shouldEmpower || _level - 1 <= settings.EmpoweredRiftLevelLimit) ? 4 : 3);
                                 var possibleUpgrades = gems.Gems.Sum(g => g.GetUpgrades(_level - 1, upgradeAttempts, 60));
 
@@ -673,7 +673,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             }
             else
             {
-                await Coroutine.Wait(30000, () => ZetaDia.CurrentRift.IsStarted && RiftData.RiftWorldIds.Contains(AdvDia.CurrentWorldId) && !ZetaDia.Globals.IsLoadingWorld);
+                await Coroutine.Wait(30000, () => ZetaDia.Storage.RiftStarted && RiftData.RiftWorldIds.Contains(AdvDia.CurrentWorldId) && !ZetaDia.Globals.IsLoadingWorld);
                 DisablePulse();
                 State = States.EnteringGreaterRift;
             }

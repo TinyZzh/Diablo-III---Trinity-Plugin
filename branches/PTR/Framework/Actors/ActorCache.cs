@@ -82,7 +82,7 @@ namespace Trinity.Framework.Actors
             _annToAcdIndex.Clear();
 
             var oldAcds = new List<int>(_commonData.Keys);
-            foreach (var acd in ZetaDia.ActorCommonData)
+            foreach (var acd in ZetaDia.Storage.ActorCommonData)
             {
                 var acdId = acd.ACDId;
                 _commonData.AddOrUpdate(acdId,
@@ -258,7 +258,7 @@ namespace Trinity.Framework.Actors
 
         public ACD GetCommonDataByAnnId(int annId)
         {
-            var acd = ZetaDia.ActorCommonData[(short)annId];
+            var acd = ZetaDia.Storage.ActorCommonData[(short)annId];
             if (acd != null && acd.IsValid)
             {
                 return acd;
@@ -271,7 +271,7 @@ namespace Trinity.Framework.Actors
             if (acdId == -1)
                 return null;
 
-            var acd = ZetaDia.ActorCommonData[(short)acdId];
+            var acd = ZetaDia.Storage.ActorCommonData[(short)acdId];
             if (acd != null && acd.IsValid)
             {
                 return acd;
@@ -301,7 +301,7 @@ namespace Trinity.Framework.Actors
             if (!_annToAcdIndex.TryGetValue(annId, out index))
                 return null;
 
-            var acd = ZetaDia.ActorCommonData[index];
+            var acd = ZetaDia.Storage.ActorCommonData[index];
             if (acd != null && acd.IsValid)
             {
                 var bones = ActorFactory.GetActorSeed(acd);
@@ -312,7 +312,7 @@ namespace Trinity.Framework.Actors
 
         public ACDItem GetAcdItemByAcdId(int acdId)
         {
-            var acd = ZetaDia.ActorCommonData[(short)acdId];
+            var acd = ZetaDia.Storage.ActorCommonData[(short)acdId];
             if (acd != null && acd.IsValid)
             {
                 return acd.BaseAddress.UnsafeCreate<ACDItem>();
@@ -336,7 +336,7 @@ namespace Trinity.Framework.Actors
             if (!_annToAcdIndex.TryGetValue(annId, out index))
                 return false;
 
-            var acd = ZetaDia.ActorCommonData[index];
+            var acd = ZetaDia.Storage.ActorCommonData[index];
             return acd != null && acd.IsValid;
         }
 

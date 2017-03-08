@@ -62,7 +62,7 @@ namespace Trinity.Components.Adventurer.Game.Actors
         {
             get
             {
-                if (ZetaDia.WorldType == Act.OpenWorld)
+                if (ZetaDia.Storage.CurrentWorldType == Act.OpenWorld)
                     return OpenWorldWaypoints;
 
                 return CampaignWaypoints;

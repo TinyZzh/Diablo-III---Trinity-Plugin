@@ -239,7 +239,7 @@ namespace Trinity.Modules
             IsCasting = _me.LoopingAnimationEndTime > 0;
             IsInteractingWithGizmo = commonData.GetAttribute<bool>(ActorAttributeType.PowerBuff0VisualEffectNone, (int)SNOPower.Axe_Operate_Gizmo);
             CurrentAnimation = commonData.CurrentAnimation;
-            IsInventoryLockedForGreaterRift = ZetaDia.CurrentRift.IsStarted && ZetaDia.CurrentRift.Type == RiftType.Greater && !ZetaDia.CurrentRift.IsCompleted;
+            IsInventoryLockedForGreaterRift = ZetaDia.Storage.RiftStarted && ZetaDia.Storage.CurrentRiftType == RiftType.Greater && !ZetaDia.Storage.RiftCompleted;
             ShieldHitpoints = commonData.GetAttribute<float>(ActorAttributeType.DamageShieldAmount);
 
             Summons = GetPlayerSummonCounts();
@@ -333,13 +333,15 @@ namespace Trinity.Modules
 
         internal void UpdateSlowChangingData()
         {
-            BloodShards = ZetaDia.PlayerData.BloodshardCount;
+            var player = ZetaDia.Storage.PlayerDataManager.ActivePlayerData;
+            
+            BloodShards = player.BloodshardCount;
             MyDynamicID = _me.CommonData.AnnId;
             CurrentSceneSnoId = ZetaDia.Me.CurrentScene.SceneInfo.SNOId;
 
             //Zeta.Game.ZetaDia.Me.CommonData.GetAttribute<int>(Zeta.Game.Internals.Actors.ActorAttributeType.TieredLootRunRewardChoiceState) > 0;
 
-            Coinage = ZetaDia.PlayerData.Coinage;
+            Coinage = player.Coinage;
             CurrentExperience = ZetaDia.Me.CurrentExperience;
 
             IsInPandemoniumFortress = GameData.PandemoniumFortressWorlds.Contains(WorldSnoId) ||
@@ -358,12 +360,12 @@ namespace Trinity.Modules
             // Step 1 is event in progress, kill stuff
             // Step 2 is event completed
             // Step -1 is not started
-            InActiveEvent = ZetaDia.ActInfo.ActiveQuests.Any(q => GameData.EventQuests.Contains(q.QuestSNO) && q.QuestStep != 13);
-            HasEventInspectionTask = ZetaDia.ActInfo.ActiveQuests.Any(q => GameData.EventQuests.Contains(q.QuestSNO) && q.QuestStep == 13);
+            InActiveEvent = ZetaDia.Storage.Quests.ActiveQuests.Any(q => GameData.EventQuests.Contains(q.QuestSNO) && q.QuestStep != 13);
+            HasEventInspectionTask = ZetaDia.Storage.Quests.ActiveQuests.Any(q => GameData.EventQuests.Contains(q.QuestSNO) && q.QuestStep == 13);
 
             FreeBackpackSlots = _me.Inventory.NumFreeBackpackSlots;
 
-            WorldType = ZetaDia.WorldType;
+            WorldType = ZetaDia.Storage.CurrentWorldType;
             if (WorldType != Act.OpenWorld)
             {
                 // Update these only with campaign
@@ -371,6 +373,7 @@ namespace Trinity.Modules
                 CurrentQuestStep = ZetaDia.CurrentQuest.StepId;
             }
 
+            Name = player.HeroName;
             LastSlowUpdate = DateTime.UtcNow;
         }
 

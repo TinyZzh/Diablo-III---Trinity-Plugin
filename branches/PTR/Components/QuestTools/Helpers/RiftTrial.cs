@@ -37,7 +37,7 @@ namespace QuestTools.Helpers
 
         private static void UpdateQuest()
         {
-            Quest = ZetaDia.ActInfo.ActiveQuests.FirstOrDefault(q => q.QuestSNO == 405695);
+            Quest = ZetaDia.Storage.Quests.ActiveQuests.FirstOrDefault(q => q.QuestSNO == 405695);
         }
 
         static readonly List<ProfileBehavior> EndTrialSequence = new List<ProfileBehavior>

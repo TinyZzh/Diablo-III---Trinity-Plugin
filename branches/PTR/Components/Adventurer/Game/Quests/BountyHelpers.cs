@@ -123,7 +123,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
 
         public static bool AreAllActBountiesCompleted(Act act)
         {
-            return !ZetaDia.ActInfo.Bounties.Any(b => b.Act == act && b.Info.State != QuestState.Completed);
+            return !ZetaDia.Storage.Quests.Bounties.Any(b => b.Act == act && b.Info.State != QuestState.Completed);
         }
 
         public static DiaGizmo GetPortalNearMarkerPosition(Vector3 position)
@@ -157,7 +157,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
         public static bool AreAllActBountiesSupported(Act act)
         {
             var result =
-                ZetaDia.ActInfo.Bounties.Count(
+                ZetaDia.Storage.Quests.Bounties.Count(
                     b => b.Act == act && BountyDataFactory.GetBountyData((int)b.Quest) != null) == 5;
             if (!result)
             {
@@ -213,21 +213,21 @@ namespace Trinity.Components.Adventurer.Game.Quests
         public static bool IsActTurninInProgress(Act act)
         {
             return
-                ZetaDia.ActInfo.AllQuests.Any(
+                ZetaDia.Storage.Quests.AllQuests.Any(
                     q => q.Quest == ActBountyFinishingQuests[act] && q.State == QuestState.InProgress);
         }
 
         public static bool IsAnyActTurninInProgress()
         {
             return
-                ZetaDia.ActInfo.AllQuests.Any(
+                ZetaDia.Storage.Quests.AllQuests.Any(
                     q => ActBountyFinishingQuests.Values.Contains(q.Quest) && q.State == QuestState.InProgress);
         }
 
         public static bool IsActTurninCompleted(Act act)
         {
             return
-                ZetaDia.ActInfo.AllQuests.Any(
+                ZetaDia.Storage.Quests.AllQuests.Any(
                     q => q.Quest == ActBountyFinishingQuests[act] && q.State == QuestState.Completed);
         }
     }

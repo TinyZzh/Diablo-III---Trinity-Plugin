@@ -263,7 +263,7 @@ namespace Trinity.UI
         {
             try
             {
-                Logger.Log("Bot {0} has been running for {1} hours {2} minutes and {3} seconds", ZetaDia.PlayerData.HeroName, GameStats.Instance.RunTime.Hours, GameStats.Instance.RunTime.Minutes, GameStats.Instance.RunTime.Seconds);
+                Logger.Log("Bot {0} has been running for {1} hours {2} minutes and {3} seconds", Core.Player.Name, GameStats.Instance.RunTime.Hours, GameStats.Instance.RunTime.Minutes, GameStats.Instance.RunTime.Seconds);
             }
             catch (Exception ex)
             {
@@ -814,7 +814,7 @@ namespace Trinity.UI
                 ActorId = {nearestActor.ActorSnoId},
                 InteractPosition = new Vector3({ZetaDia.Me.Position.X}f,{ZetaDia.Me.Position.Y}f,{ZetaDia.Me.Position.Z}f),
                 Position = new Vector3({nearestActor.Position.X}f,{nearestActor.Position.Y}f,{nearestActor.Position.Z}f),
-                IsAdventurerMode = {(ZetaDia.WorldType == Act.OpenWorld).ToString().ToLower()},
+                IsAdventurerMode = {(ZetaDia.Storage.CurrentWorldType == Act.OpenWorld).ToString().ToLower()},
                 ServiceType = ServiceType.{GetMerchantType(nearestActor)},
                 IsGizmo = {(nearestActor is DiaGizmo).ToString().ToLower()},
                 IsUnit = {(nearestActor is DiaUnit).ToString().ToLower()},

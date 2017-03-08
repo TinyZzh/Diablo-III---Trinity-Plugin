@@ -21,7 +21,7 @@ namespace QuestTools.ProfileTags
 
         public override bool GetConditionExec()
         {
-            return ZetaDia.ActInfo.Bounties.Where(bounty => bounty.Info.QuestSNO == QuestId && bounty.Info.State != QuestState.Completed).FirstOrDefault() != null;
+            return ZetaDia.Storage.Quests.Bounties.Where(bounty => bounty.Info.QuestSNO == QuestId && bounty.Info.State != QuestState.Completed).FirstOrDefault() != null;
         }
 
         private bool CheckNotAlreadyDone(object obj)

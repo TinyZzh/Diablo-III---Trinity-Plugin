@@ -77,7 +77,7 @@ namespace Trinity.Components.Combat
                 return true;
 
             // Priority movement for progression globes. ** Temporary solution!
-            if (ZetaDia.CurrentRift != null && target != null)
+            if (target != null)
             {
                 if (await Behaviors.MoveToActor.While(
                     a => a.Type == TrinityObjectType.ProgressionGlobe && !Weighting.ShouldIgnore(a) && !a.IsAvoidanceOnPath))
@@ -85,7 +85,7 @@ namespace Trinity.Components.Combat
             }
 
             // Priority interaction for doors. increases door opening reliability for some edge cases ** Temporary solution!
-            if (ZetaDia.CurrentRift != null && ZetaDia.CurrentRift.IsStarted && await Behaviors.MoveToInteract.While(
+            if (ZetaDia.Storage.RiftStarted && await Behaviors.MoveToInteract.While(
                 a => a.Type == TrinityObjectType.Door && !a.IsUsed && a.Distance < 15f))
                 return true;
 

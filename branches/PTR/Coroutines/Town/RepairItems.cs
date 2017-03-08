@@ -25,7 +25,7 @@ namespace Trinity.Coroutines.Town
             if (!EquipmentNeedsRepair())
                 return false;
 
-            var coinage = ZetaDia.PlayerData.Coinage;
+            var coinage = ZetaDia.Storage.PlayerDataManager.ActivePlayerData.Coinage;
             var shouldRepairAll = coinage > ZetaDia.Me.Inventory.GetRepairCost(true);
             if (!shouldRepairAll)
             {
