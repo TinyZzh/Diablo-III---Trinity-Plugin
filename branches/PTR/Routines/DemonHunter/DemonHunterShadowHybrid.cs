@@ -193,9 +193,9 @@ namespace Trinity.Routines.DemonHunter
         public override float KiteDistance => 5f;
 
         IDynamicSetting IRoutine.RoutineSettings => Settings;
-        public DemonHunterMarauderSettings Settings { get; } = new DemonHunterMarauderSettings();
+        public DemonHunterShadowHybridSettings Settings { get; } = new DemonHunterShadowHybridSettings();
 
-        public sealed class DemonHunterMarauderSettings : NotifyBase, IDynamicSetting
+        public sealed class DemonHunterShadowHybridSettings : NotifyBase, IDynamicSetting
         {
             private int _clusterSize;
             private float _emergencyHealthPct;

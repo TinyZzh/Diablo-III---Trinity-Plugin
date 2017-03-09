@@ -31,16 +31,16 @@ namespace Trinity.Settings
 
         public static IEnumerable<IDynamicSetting> GetDynamicSettings()
         {
-            if (_settings != null)
+            if (_settings.Any())
                 return _settings.Values;
-            
+
             var result = new List<IDynamicSetting>();
             result.AddRange(RoutineManager.Instance.DynamicSettings);
             result.AddRange(ModuleManager.DynamicSettings);
             result.AddRange(TrinitySettings.Settings.DynamicSettings);
             _settings = result.ToDictionary(k => k.GetName(), v => v);
             return result;
-            
+
         }
 
         public static string SaveDirectory => Path.Combine(FileManager.SettingsPath, "Saved");
@@ -76,7 +76,7 @@ namespace Trinity.Settings
 
                     UpdateSections("Exporting", exportSettings, selectionViewModel);
                     exportSettings.SaveToFile(filePath);
-                }                
+                }
             }
             catch (Exception ex)
             {
@@ -255,7 +255,7 @@ namespace Trinity.Settings
                     result.Add(new SettingsSelectionItem(SettingsSection.Dynamic, item.Name));
                 }
             }
-                
+
             Logger.Log($"File contains {result.Count} sections: {string.Join(", ", result)}");
             return result;
         }
@@ -280,7 +280,7 @@ namespace Trinity.Settings
             {
                 if (sectionEntry.IsSelected)
                 {
-                    if(!string.IsNullOrEmpty(actionDescripter))
+                    if (!string.IsNullOrEmpty(actionDescripter))
                         Logger.Log($"{actionDescripter} Section: {sectionEntry}");
 
                     continue;
