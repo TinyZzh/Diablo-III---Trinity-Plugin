@@ -14,7 +14,7 @@ namespace Trinity.Components.Adventurer.Util
     public class CoroutineQueue
     {
         private static readonly Composite BotBehaviorHook = new ActionRunCoroutine(ret => BotBehaviorTask());
-        private static readonly Queue<ICoroutine> _queue = new Queue<ICoroutine>();
+        private static readonly Queue<ICoroutine> Queue = new Queue<ICoroutine>();
         private static bool HooksInserted { get; set; }
 
         public static ICoroutine CurrentTask { get; set; }
@@ -60,15 +60,15 @@ namespace Trinity.Components.Adventurer.Util
             if (IsQueued(coroutine))
                 return false;
 
-            _queue.Enqueue(coroutine);
+            Queue.Enqueue(coroutine);
             return true;
         }
 
         private static async Task<bool> BotBehaviorTask()
         {
-            while (_queue.Any())
+            while (Queue.Any())
             {
-                var coroutine = _queue.Dequeue();
+                var coroutine = Queue.Dequeue();
                 CurrentTask = coroutine;
                 bool result = false;
                 coroutine.Reset();
@@ -89,7 +89,7 @@ namespace Trinity.Components.Adventurer.Util
 
         public static bool IsQueued(ICoroutine task)
         {
-            return CurrentTask != null && CurrentTask.Id == task.Id || _queue.Any(i => i.Id == task.Id);
+            return CurrentTask != null && CurrentTask.Id == task.Id || Queue.Any(i => i.Id == task.Id);
         }
     }
 }

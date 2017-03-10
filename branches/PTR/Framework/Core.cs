@@ -1,7 +1,5 @@
 ﻿using QuestTools;
 using System;
-
-//using Trinity.Components.AutoFollow;
 using Trinity.Components.Adventurer;
 using Trinity.DbProvider;
 using Trinity.Framework.Actors;
@@ -13,23 +11,22 @@ using Trinity.Settings;
 using Zeta.Bot;
 using Zeta.Bot.Navigation;
 using Zeta.Game;
+using Logger = Trinity.Framework.Helpers.Logger;
 
 namespace Trinity.Framework
 {
     public static class Core
     {
+        public static void Init()
+        {
+            Logger.LogNormal("Framework Core Initialized");
+        }
+
         public static bool IsEnabled { get; private set; }
-        public static MemoryModel MemoryModel { get; } = new MemoryModel();
         public static RoutineManager Routines => RoutineManager.Instance;
-
-        // Components
         public static Adventurer Adventurer { get; } = Adventurer.Instance;
-
         public static Plugin QuestTools { get; } = new Plugin();
-
-        // Modules
         public static InventoryCache Inventory { get; } = new InventoryCache();
-
         public static ActorCache Actors { get; } = new ActorCache();
         public static HotbarCache Hotbar { get; } = new HotbarCache();
         public static PlayerCache Player { get; } = new PlayerCache();
@@ -50,80 +47,22 @@ namespace Trinity.Framework
         public static ItemLogger ItemLogger { get; } = new ItemLogger();
         public static HeroDataCache HeroData { get; } = new HeroDataCache();
         public static QuestCache Quests { get; } = new QuestCache();
-
-        // Misc
         public static GridHelper Grids { get; } = new GridHelper();
-
         public static PlayerMover PlayerMover { get; } = new PlayerMover();
         public static StuckHandler StuckHandler { get; } = new StuckHandler();
         public static BlockedCheck BlockedCheck { get; } = new BlockedCheck();
         public static ChangeMonitor ChangeMonitor { get; } = new ChangeMonitor();
+        public static InactivityMonitor InactivityMonitor { get; } = new InactivityMonitor();
         public static ProfileSettings ProfileSettings { get; } = new ProfileSettings();
-
         public static SettingsModel Settings => TrinitySettings.Settings;
         public static TrinityStorage Storage => TrinitySettings.Storage;
-
-        internal static MainGridProvider DBGridProvider => (MainGridProvider)Navigator.SearchGridProvider;
-        internal static DefaultNavigationProvider DBNavProvider => (DefaultNavigationProvider)Navigator.NavigationProvider;
-
-        private static void OnGameJoined(object sender, EventArgs e)
-        {
-            InGameAndStarted = true;
-
-            //ModuleManager.FireEvent(ModuleEvent.GameJoined);
-        }
-
-        private static void OnGameLeft(object sender, EventArgs e)
-        {
-            InGameAndStarted = false;
-        }
-
-        public static bool InGameAndStarted { get; set; }
-
-        private static void OnWorldChanged(object sender, EventArgs eventArgs)
-        {
-            //ModuleManager.FireEvent(ModuleEvent.WorldChanged);
-        }
-
+        public static MainGridProvider DBGridProvider => (MainGridProvider)Navigator.SearchGridProvider;
+        public static DefaultNavigationProvider DBNavProvider => (DefaultNavigationProvider)Navigator.NavigationProvider;
         public static bool GameIsReady => ZetaDia.IsInGame && ZetaDia.Me.IsValid && !ZetaDia.Globals.IsLoadingWorld && !ZetaDia.Globals.IsPlayingCutscene;
 
-        private static void Pulse(object sender, EventArgs eventArgs)
+        internal static void Update()
         {
-            if (InGameAndStarted && GameIsReady)
-            {
-                Update();
-            }
-        }
-
-        public static void Disable()
-        {
-            IsEnabled = false;
-            Pulsator.OnPulse -= Pulse;
-            GameEvents.OnWorldChanged -= OnWorldChanged;
-            GameEvents.OnGameJoined -= OnGameJoined;
-            ModuleManager.DisableAll();
-        }
-
-        public static void Update(bool force = false)
-        {
-            ModuleManager.FireEvent(force ? ModuleEvent.ForcedPulse : ModuleEvent.Pulse);
-        }
-
-        public static void Init()
-        {
-        }
-
-        public static void Enable()
-        {
-            if (!IsEnabled)
-            {
-                Pulsator.OnPulse += Pulse;
-                GameEvents.OnWorldChanged += OnWorldChanged;
-                GameEvents.OnGameJoined += OnGameJoined;
-                GameEvents.OnGameLeft += OnGameLeft;
-                ModuleManager.EnableAll();
-                IsEnabled = true;
-            }
+            ModuleManager.Pulse();
         }
     }
 }

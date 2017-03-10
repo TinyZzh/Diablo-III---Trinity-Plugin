@@ -35,7 +35,6 @@ namespace Trinity.Modules
             {
                 try
                 {
-                    //Logger.LogDebug($"Updating Detector: {detector.Name} BotMain.BotThread.ThreadState={BotMain.BotThread?.ThreadState} BotMain.BotThread.IsAlive={BotMain.BotThread?.IsAlive} BotMain.IsRunning={BotMain.IsRunning} BotEvents.IsBotRunning={BotEvents.IsBotRunning}");
                     detector.CheckForChanges();
                 }
                 catch (Exception ex)

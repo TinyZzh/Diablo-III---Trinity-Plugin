@@ -15,7 +15,7 @@ namespace Trinity.Framework.Helpers
         bool CheckForChanges();
     }
 
-    public class ChangeDetectorEventArgs<T> : EventArgs
+    public class ChangeEventArgs<T> : EventArgs
     {
         public T OldValue { get; set; }
         public T NewValue { get; set; }
@@ -24,7 +24,7 @@ namespace Trinity.Framework.Helpers
 
     public class ChangeDetector<T> : IChangeDetector
     {
-        public delegate void ChangeEvent(ChangeDetectorEventArgs<T> args);
+        public delegate void ChangeEvent(ChangeEventArgs<T> args);
 
         public ChangeDetector(Func<T> valueProducer, TimeSpan interval, string name = "")
         {
@@ -90,7 +90,7 @@ namespace Trinity.Framework.Helpers
         {
             LastChanged = DateTime.UtcNow;
             Value = newVal;
-            Changed?.Invoke(new ChangeDetectorEventArgs<T>
+            Changed?.Invoke(new ChangeEventArgs<T>
             {
                 Name = Name,
                 OldValue = oldVal,
@@ -118,28 +118,6 @@ namespace Trinity.Framework.Helpers
     }
 
     public delegate Task<bool> ChangeTask(Func<List<IChangeDetector>> detectors);
-
-    public class ChangeDetectorMonitor : ChangeDetectorStore
-    {
-        private readonly ChangeTask _task;
-
-        public ChangeDetectorMonitor(ChangeTask task)
-        {
-            _task = task;
-        }
-
-        public Task Worker { get; set; }
-
-        public override void Add(IChangeDetector detector)
-        {
-            base.Add(detector);
-
-            if (Worker == null)
-            {
-                Worker = Task.Run(async () => await _task(GetDetectors));
-            }
-        }
-    }
 
     public class ChangeDetectorStore
     {

@@ -25,7 +25,7 @@ namespace Trinity.Framework.Actors.Properties
             ChangeEvents.WorldId.Changed += WorldId_Changed;
         }
 
-        private static void WorldId_Changed(ChangeDetectorEventArgs<int> args)
+        private static void WorldId_Changed(ChangeEventArgs<int> args)
         {
             if (!GameData.TownLevelAreaIds.Contains(args.OldValue) && !ZetaDia.IsInTown)
             {
@@ -143,11 +143,12 @@ namespace Trinity.Framework.Actors.Properties
             var commonData = actor.CommonData;
             actor.AcdId = commonData.ACDId;
 
-            //actor.AcdItemTemp = actor.ToAcdItem();
+            if (actor.InventorySlot == InventorySlot.SharedStash && !Core.Player.IsInTown)
+                return;
 
-            var slot = ZetaDia.Memory.Read<InventorySlot>(commonData.BaseAddress + 0x114); //actor.AcdItemTemp.InventorySlot;
-            var col = ZetaDia.Memory.Read<int>(commonData.BaseAddress + 0x118);  //actor.AcdItemTemp.InventoryColumn;
-            var row = ZetaDia.Memory.Read<int>(commonData.BaseAddress + 0x11c);  //actor.AcdItemTemp.InventoryRow;
+            var slot = ZetaDia.Memory.Read<InventorySlot>(commonData.BaseAddress + 0x114);
+            var col = ZetaDia.Memory.Read<int>(commonData.BaseAddress + 0x118);
+            var row = ZetaDia.Memory.Read<int>(commonData.BaseAddress + 0x11c);
 
             var columnChanged = col != actor.InventoryColumn;
             var rowChanged = row != actor.InventoryRow;
@@ -161,7 +162,7 @@ namespace Trinity.Framework.Actors.Properties
             actor.InventoryRow = row;
             actor.InventoryColumn = col;
 
-            if (!actor.IsEquipment)
+            if (!actor.IsEquipment && Core.Player.IsInTown)
             {
                 actor.ItemStackQuantity = actor.Attributes.ItemStackQuantity;
             }
@@ -254,7 +255,7 @@ namespace Trinity.Framework.Actors.Properties
 
             if (actor.ItemQualityLevel >= ItemQuality.Legendary || actor.IsCraftingReagent)
             {
-                return !actor.Attributes.IsTradeable || actor.Attributes.ItemTradePlayerLow.Contains(Core.MemoryModel.Hero.PlayerTradeId);
+                return !actor.Attributes.IsTradeable || actor.Attributes.ItemTradePlayerLow.Contains(ZetaDia.Storage.PlayerDataManager.ActivePlayerData.TradingPlayerACDId);
             }
 
             if (actor.IsEquipment && actor.ItemQualityLevel <= ItemQuality.Rare6)

@@ -44,6 +44,9 @@ namespace Trinity.DbProvider
 
         public static async Task<bool> Execute()
         {
+            if (ZetaDia.Globals.IsLoadingWorld || !ZetaDia.Me.IsValid || !ZetaDia.Me.CommonData.IsValid)
+                return false;
+
             var isDead = ZetaDia.Me.IsDead;
             if (_isDead != isDead)
             {

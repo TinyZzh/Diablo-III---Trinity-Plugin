@@ -52,7 +52,7 @@ namespace Trinity
 
             UILoader.Preload();
 
-            PluginCheck.CheckAndInstallTrinityRoutine();
+            //PluginCheck.CheckAndInstallTrinityRoutine();
 
             if (CharacterSettings.Instance.EnabledPlugins == null)
                 CharacterSettings.Instance.EnabledPlugins = new List<string>();
@@ -102,15 +102,15 @@ namespace Trinity
                     // Turn off DB's inactivity detection.
                     GlobalSettings.Instance.LogoutInactivityTime = 0;
 
-                    if (GoldInactivity.Instance.GoldInactive())
-                    {
-                        LeaveGame("Gold Inactivity Tripped");
-                    }
+                    //if (GoldInactivity.Instance.GoldInactive())
+                    //{
+                    //    LeaveGame("Gold Inactivity Tripped");
+                    //}
 
-                    if (XpInactivity.Instance.XpInactive())
-                    {
-                        LeaveGame("XP Inactivity Tripped");
-                    }
+                    //if (XpInactivity.Instance.XpInactive())
+                    //{
+                    //    LeaveGame("XP Inactivity Tripped");
+                    //}
 
                     if (!_hasLoggedCurrentBuild && BotMain.IsRunning && Core.Inventory.PlayerEquippedIds.Any())
                     {
@@ -142,12 +142,12 @@ namespace Trinity
                 Core.Init();
                 TrinitySettings.InitializeSettings();
                 SkillUtils.UpdateActiveSkills();
-                Core.Enable();
-                Core.PlayerMover.MoveTowards(Core.Player.Position);
-                Logger.Log("OnEnable start");
-                var dateOnEnabledStart = DateTime.UtcNow;
-                BotMain.OnStart += TrinityEventHandlers.TrinityBotStart;
-                BotMain.OnStop += TrinityEventHandlers.TrinityBotStop;
+                //Core.Enable();
+                //Core.PlayerMover.MoveTowards(Core.Player.Position);
+                //Logger.Log("OnEnable start");
+                //var dateOnEnabledStart = DateTime.UtcNow;
+                //BotMain.OnStart += TrinityEventHandlers.TrinityBotStart;
+                //BotMain.OnStop += TrinityEventHandlers.TrinityBotStop;
                 SetWindowTitle();
                 TabUi.InstallTab();
 
@@ -162,33 +162,27 @@ namespace Trinity
                     
                     Navigator.PlayerMover = Core.PlayerMover;
                     Navigator.StuckHandler = Core.StuckHandler;
-                    GameEvents.OnPlayerDied += TrinityEventHandlers.TrinityOnDeath;
-                    GameEvents.OnGameJoined += TrinityEventHandlers.TrinityOnJoinGame;
-                    GameEvents.OnGameLeft += TrinityEventHandlers.TrinityOnLeaveGame;
-                    GameEvents.OnGameChanged += TrinityEventHandlers.GameEvents_OnGameChanged;
-                    GameEvents.OnWorldChanged += TrinityEventHandlers.GameEvents_OnWorldChanged;
-
                     ItemManager.Current = new BlankItemManager();
                     CombatTargeting.Instance.Provider = new TrinityCombatProvider();
                     LootTargeting.Instance.Provider = new BlankLootProvider();
                     ObstacleTargeting.Instance.Provider = new BlankObstacleProvider();
 
-                    if (BotMain.IsRunning)
-                    {
-                        TrinityEventHandlers.TrinityBotStart(null);
+                    //if (BotMain.IsRunning)
+                    //{
+                    //    TrinityEventHandlers.TrinityBotStart(null);
 
-                        if (ZetaDia.IsInGame)
-                        {
-                            TrinityEventHandlers.TrinityOnJoinGame(null, null);
-                        }
-                    }
+                    //    if (ZetaDia.IsInGame)
+                    //    {
+                    //        TrinityEventHandlers.TrinityOnJoinGame(null, null);
+                    //    }
+                    //}
 
                     SetBotTicksPerSecond();
                     UILoader.PreLoadWindowContent();
                     Logger.Log(TrinityLogLevel.Info, LogCategory.UserInformation, "ENABLED: {0} now in action!", Description);
                 }
 
-                Logger.LogDebug("OnEnable took {0}ms", DateTime.UtcNow.Subtract(dateOnEnabledStart).TotalMilliseconds);
+                //Logger.LogDebug("OnEnable took {0}ms", DateTime.UtcNow.Subtract(dateOnEnabledStart).TotalMilliseconds);
             }
             catch (Exception ex)
             {
@@ -196,7 +190,7 @@ namespace Trinity
             }
 
             IsEnabled = true;
-            ModuleManager.FireEvent(ModuleEvent.PluginEnabled);
+            ModuleManager.Enable();
         }
 
         public void OnDisabled()
@@ -209,25 +203,13 @@ namespace Trinity
             CombatTargeting.Instance.Provider = new DefaultCombatTargetingProvider();
             LootTargeting.Instance.Provider = new DefaultLootTargetingProvider();
             ObstacleTargeting.Instance.Provider = new DefaultObstacleTargetingProvider();
-            GameEvents.OnPlayerDied -= TrinityEventHandlers.TrinityOnDeath;
-            BotMain.OnStop -= TrinityEventHandlers.TrinityBotStop;
-            GameEvents.OnPlayerDied -= TrinityEventHandlers.TrinityOnDeath;
-            GameEvents.OnGameJoined -= TrinityEventHandlers.TrinityOnJoinGame;
-            GameEvents.OnGameLeft -= TrinityEventHandlers.TrinityOnLeaveGame;
-            GameEvents.OnGameChanged -= TrinityEventHandlers.GameEvents_OnGameChanged;
-            GameEvents.OnWorldChanged -= TrinityEventHandlers.GameEvents_OnWorldChanged;
-            ItemManager.Current = new LootRuleItemManager();
-            GenericBlacklist.Shutdown();
-            Core.Disable();
-            ModuleManager.FireEvent(ModuleEvent.PluginDisabled);
-            Logger.Log(TrinityLogLevel.Info, LogCategory.UserInformation, "DISABLED: TrinityPlugin is now shut down...");
+            ItemManager.Current = new BlankItemManager();
+            ModuleManager.Disable();
         }
 
         public void OnShutdown()
         {
-            ModuleManager.FireEvent(ModuleEvent.Shutdown);
-            GenericBlacklist.Shutdown();
-            PluginCheck.Shutdown();
+            //PluginCheck.Shutdown();
         }
 
         public void OnInitialize()
@@ -251,16 +233,10 @@ namespace Trinity
         {
             var result = (Control.MouseButtons & MouseButtons.Left) == MouseButtons.Left;
             if (result)
+            {
                 Logger.Log("Mouse Left Down LazyRaider Pause");
+            }
             return result;
-        }
-
-        private static void LeaveGame(string reason)
-        {
-            Logger.Log(reason);
-            GameEvents.FireWorldTransferStart();
-            ZetaDia.Service.Party.LeaveGame();
-            BotMain.PauseWhile(() => ZetaDia.IsInGame);
         }
 
         internal static void SetWindowTitle(string profileName = "")
@@ -320,7 +296,7 @@ namespace Trinity
                 windowTitle += " - " + profileName;
             }
 
-            BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 try
                 {
@@ -335,15 +311,7 @@ namespace Trinity
             });
         }
 
-        internal static void BeginInvoke(Action action)
-        {
-            Application.Current.Dispatcher.BeginInvoke(action);
-        }
 
-        internal static void Invoke(Action action)
-        {
-            Application.Current.Dispatcher.Invoke(action);
-        }
 
         internal static void SetBotTicksPerSecond()
         {
@@ -354,8 +322,8 @@ namespace Trinity
             }
             else
             {
-                BotMain.TicksPerSecond = 30;
-                Logger.Log(TrinityLogLevel.Verbose, LogCategory.UserInformation, "Reset bot TPS to default: {0}", 30);
+                BotMain.TicksPerSecond = 20;
+                Logger.Log(TrinityLogLevel.Verbose, LogCategory.UserInformation, "Reset bot TPS to default: {0}", BotMain.TicksPerSecond);
             }
         }
 

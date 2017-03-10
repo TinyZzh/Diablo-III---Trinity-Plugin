@@ -37,7 +37,7 @@ namespace Trinity.Settings
             ChangeEvents.HeroId.Changed += HeroIdOnChanged;
         }
 
-        private static void HeroIdOnChanged(ChangeDetectorEventArgs<int> args)
+        private static void HeroIdOnChanged(ChangeEventArgs<int> args)
         {
             if (args.OldValue == 0) return;
             Logger.Log("Hero changed, reloading settings.");

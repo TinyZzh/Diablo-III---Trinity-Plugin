@@ -9,6 +9,7 @@ using Trinity.Framework.Helpers.AutoFollow.Resources;
 using Trinity.Framework.Objects;
 using Trinity.Reference;
 using Trinity.Routines;
+using Trinity.Routines.Wizard;
 using Trinity.Settings;
 using Trinity.UI;
 using Trinity.UI.UIComponents;
@@ -48,7 +49,7 @@ namespace Trinity.Framework
             }
         }
 
-        private void SkillsOnChanged(ChangeDetectorEventArgs<HashSet<SNOPower>> args)
+        private void SkillsOnChanged(ChangeEventArgs<HashSet<SNOPower>> args)
         {
             if (ChangeEvents.IsInGame.Value && ZetaDia.Me != null && !ZetaDia.Me.SkillOverrideActive)
             {
@@ -56,7 +57,7 @@ namespace Trinity.Framework
             }
         }
 
-        private void EquippedItemsOnChanged(ChangeDetectorEventArgs<HashSet<int>> args)
+        private void EquippedItemsOnChanged(ChangeEventArgs<HashSet<int>> args)
         {
             if (ChangeEvents.IsInGame.Value)
             {
@@ -64,7 +65,7 @@ namespace Trinity.Framework
             }
         }
 
-        private void IsInGameOnChanged(ChangeDetectorEventArgs<bool> item)
+        private void IsInGameOnChanged(ChangeEventArgs<bool> item)
         {
             if (item.NewValue)
             {
@@ -99,7 +100,7 @@ namespace Trinity.Framework
         public IEnumerable<IRoutine> AllRoutines => _routineLoader.Items.Values;
 
         //public IEnumerable<IRoutine> CurrentClassRoutines => AllRoutines.Where(r => r.Class == ZetaDia.Service.Hero?.Class);
-        public IEnumerable<IRoutine> CurrentClassRoutines => AllRoutines.Where(r => r.Class == Core.Actors.Me.ActorClass);
+        public IEnumerable<IRoutine> CurrentClassRoutines => AllRoutines.Where(r => r.Class == ZetaDia.Storage.PlayerDataManager.ActivePlayerData.HeroClass);
         
         public IEnumerable<IDynamicSetting> DynamicSettings => _routineLoader.Items.Values.Select(r => r.RoutineSettings);
 
@@ -107,6 +108,10 @@ namespace Trinity.Framework
         public void SelectRoutine()
         {
             if (Core.Settings.Routine == null)
+                return;
+
+            // Ignore wizards going into archon mode.
+            if (Core.Player.ActorClass == ActorClass.Wizard && Core.Hotbar.ActivePowers.Any(p => GameData.ArchonSkillIds.Contains((int)p)))
                 return;
 
             var genericRoutines = new List<IRoutine>();
@@ -135,7 +140,6 @@ namespace Trinity.Framework
                 }
                 if (routine.BuildRequirements.IsEquipped())
                 {
-                    Logger.Log($"Auto-Selecting special routine: {routine.Class} (Build Requirements Matched)");
                     CurrentRoutine = routine;
                     return;
                 }

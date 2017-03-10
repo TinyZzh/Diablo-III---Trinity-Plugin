@@ -71,7 +71,6 @@ namespace Trinity.Framework.Actors.ActorTypes
         public bool IsBountyObjective { get; set; }
         public bool IsMinimapActive { get; set; }
         public DateTime LastSeenTime { get; set; }
-        public int AnnId { get; set; }
         public bool IsInLineOfSight { get; set; }
         public bool IsWalkable { get; set; }
         public bool HasBeenWalkable { get; set; }

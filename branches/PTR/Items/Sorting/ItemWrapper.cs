@@ -136,21 +136,23 @@ namespace Trinity.Items.Sorting
 
         public static bool operator ==(ItemWrapper a, ItemWrapper b)
         {
-            if (ReferenceEquals(a, b))
-            {
-                return true;
-            }
-            // If one is null, but not both, return false.
-            if (((object)a == null) || ((object)b == null))
+            return a.Equals(b);
+        }
+
+        public override bool Equals(object obj)
+        {
+            var b = obj as ItemWrapper;
+            if (b == null)
             {
                 return false;
             }
-
-            // Return true if the fields match:
-            return a.ItemType == b.ItemType &&
-                a.ItemBaseType == b.ItemBaseType &&
-                a.Item.ItemQualityLevel == b.Item.ItemQualityLevel &&
-                a.Item.Name == b.Name;
+            if (ReferenceEquals(this, b))
+            {
+                return true;
+            }
+            return ItemType == b.ItemType && ItemBaseType == b.ItemBaseType &&
+                Item.ItemQualityLevel == b.Item.ItemQualityLevel &&
+                Item.Name == b.Name;
         }
 
         public static bool operator !=(ItemWrapper item, ItemWrapper other)

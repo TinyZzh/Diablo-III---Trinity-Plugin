@@ -16,7 +16,6 @@ namespace Trinity.Framework.Actors.ActorTypes
 {
     public class TrinityItem : TrinityActor
     {
-        public SpecialTypes SpecialType { get; set; }
         public bool IsCosmeticItem { get; set; }
         public bool IsLowQuality { get; set; }
         public new ItemAttributes Attributes { get; set; }

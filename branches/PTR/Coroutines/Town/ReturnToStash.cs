@@ -33,7 +33,7 @@ namespace Trinity.Coroutines.Town
 
                 if (TownInfo.Stash.Distance > 10f)
                 {
-                    if (!await MoveToAndInteract.Execute(TownInfo.Stash.GetActor())) ;
+                    if (!await MoveToAndInteract.Execute(TownInfo.Stash.GetActor()))
                     {
                         return true;
                     }

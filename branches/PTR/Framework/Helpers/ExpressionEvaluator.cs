@@ -926,8 +926,6 @@ namespace Trinity.Framework.Helpers
                 success = true;
             else if (value == null)
                 success = !to.IsValueType;
-            else if (false)
-                ;
             else if (@from.IsArray && to.IsArray)
             {
                 var sameRank = (@from.GetArrayRank() == to.GetArrayRank());

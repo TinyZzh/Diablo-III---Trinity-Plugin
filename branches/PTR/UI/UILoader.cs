@@ -30,32 +30,20 @@ namespace Trinity.UI
 {
     public class UILoader
     {
-        public static void Preload()
-        {
-            //PreLoadResources();
-
-            //Parallel.ForEach(_paths, path =>
-            //{
-            //    Application.Current.Dispatcher.Invoke(() => CreateXamlUserControl(path.Value));
-            //});
-        }
-
         private static Dictionary<string, string> _paths;
         private static Dictionary<string, byte[]> _xaml;
 
         static UILoader()
         {
-            var sw = Stopwatch.StartNew();
             _xaml = new Dictionary<string, byte[]>();
             var paths = Directory.GetFiles(FileManager.PluginPath, "*.xaml", SearchOption.AllDirectories);
             _paths = paths.DistinctBy(Path.GetFileName).ToDictionary(k => Path.GetFileName(k)?.ToLower(), v => v);
+        }
+
+        public static void Preload()
+        {
             var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
-            //Parallel.ForEach(_paths, item => MyTask(item.Value, assemblyName));
-
             Task task = Task.Run(() => Parallel.ForEach(_paths, item => MyTask(item.Value, assemblyName)));
-
-            sw.Stop();
-            Logger.Log($"Mapped and pre-loaded xaml files in {sw.Elapsed.TotalMilliseconds}ms");
         }
 
         private static void MyTask(string path, string assm)
@@ -86,7 +74,7 @@ namespace Trinity.UI
         {
             //try
             //{
-            TrinityPlugin.BeginInvoke(() => LoadWindowContent(Path.Combine(FileManager.PluginPath, "UI")));
+            Application.Current.Dispatcher.BeginInvoke((Action)(() => LoadWindowContent(Path.Combine(FileManager.PluginPath, "UI"))));
             //}
             //catch (Exception ex)
             //{
@@ -225,7 +213,7 @@ namespace Trinity.UI
         {
             try
             {
-                TrinityPlugin.BeginInvoke(() => LoadWindowContent(Path.Combine(FileManager.PluginPath, "UI")));
+                Application.Current.Dispatcher.BeginInvoke((Action)(() => LoadWindowContent(Path.Combine(FileManager.PluginPath, "UI"))));
             }
             catch (Exception ex)
             {

@@ -59,7 +59,7 @@ namespace Trinity.Framework.Objects.Memory.Attributes
             }
         }
 
-        private static bool IsValid => _attributeGroups != null && !_attributeGroups.IsDisposed && _attributeGroups.Count > 0 && _attributeGroups.Bits < 1000 && _attributeGroups.ItemSize > 0;
+        private static new bool IsValid => _attributeGroups != null && !_attributeGroups.IsDisposed && _attributeGroups.Count > 0 && _attributeGroups.Bits < 1000 && _attributeGroups.ItemSize > 0;
 
         private static List<AttributeGroup> Groups => _attributeGroups?.Where(g => g.Id > 0).ToList();
 

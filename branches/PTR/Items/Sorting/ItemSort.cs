@@ -246,8 +246,8 @@ namespace Trinity.Items.Sorting
 
             try
             {
-                GoldInactivity.Instance.ResetCheckGold();
-                XpInactivity.Instance.ResetCheckXp();
+                //GoldInactivity.Instance.ResetCheckGold();
+                //XpInactivity.Instance.ResetCheckXp();
 
                 if (!_hookInserted)
                 {
@@ -275,9 +275,6 @@ namespace Trinity.Items.Sorting
 
             try
             {
-                GoldInactivity.Instance.ResetCheckGold();
-                XpInactivity.Instance.ResetCheckXp();
-
                 if (!_hookInserted)
                 {
                     _sortBehavior = CreateSortBehavior(inventorySlot: InventorySlot.SharedStash);

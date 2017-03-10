@@ -389,7 +389,7 @@
     <Compile Include="DbProvider\StuckHandler.cs" />
     <Compile Include="DbProvider\TrinityCombatProvider.cs" />
     <Compile Include="DbProvider\TrinityRoutine.cs" />
-    <Compile Include="Framework\ActorExtensions.cs" />
+    <Compile Include="Framework\Actors\ActorExtensions.cs" />
     <Compile Include="Framework\Actors\ActorCache.cs" />
     <Compile Include="Framework\Actors\ActorFactory.cs" />
     <Compile Include="Framework\Actors\ActorTypes\ActorBase.cs" />
@@ -439,7 +439,7 @@
     <Compile Include="Framework\Behaviors\MoveToInteractBehavior.cs" />
     <Compile Include="Framework\Behaviors\MoveToMarkerBehavior.cs" />
     <Compile Include="Framework\Behaviors\WaitAfterUnitDeathBehavior.cs" />
-    <Compile Include="Framework\ChangeEvents.cs" />
+    <Compile Include="Framework\Events\ChangeEvents.cs" />
     <Compile Include="Framework\Core.cs" />
     <Compile Include="Framework\Events\ActorEvents.cs" />
     <Compile Include="Framework\Events\ItemEvents.cs" />
@@ -474,7 +474,6 @@
     <Compile Include="Framework\Helpers\GameBalanceTable.cs" />
     <Compile Include="Framework\Helpers\GameEvents.cs" />
     <Compile Include="Framework\Helpers\GenericBlacklist.cs" />
-    <Compile Include="Framework\Helpers\GoldInactivity.cs" />
     <Compile Include="Framework\Helpers\GridHelper.cs" />
     <Compile Include="Framework\Helpers\HashGenerator.cs" />
     <Compile Include="Framework\Helpers\InterfaceLoader.cs" />
@@ -506,16 +505,14 @@
     <Compile Include="Framework\Helpers\TaskDispatcher.cs" />
     <Compile Include="Framework\Helpers\ToStringReflector.cs" />
     <Compile Include="Framework\Helpers\TrinitiyLogLevel.cs" />
-    <Compile Include="Framework\Helpers\TrinityChangeDetector.cs" />
+    <Compile Include="Framework\Helpers\ChangeDetector.cs" />
     <Compile Include="Framework\Helpers\TypeConversions.cs" />
     <Compile Include="Framework\Helpers\TypeUtil.cs" />
     <Compile Include="Framework\Helpers\UIElementExtensions.cs" />
     <Compile Include="Framework\Helpers\UpdateStats.cs" />
     <Compile Include="Framework\Helpers\VectorExt.cs" />
     <Compile Include="Framework\Helpers\Worker.cs" />
-    <Compile Include="Framework\Helpers\XpInactivity.cs" />
     <Compile Include="Framework\HookManager.cs" />
-    <Compile Include="Framework\MemoryModel.cs" />
     <Compile Include="Framework\ModuleManager.cs" />
     <Compile Include="Framework\Objects\Attributes\UIAttributes.cs" />
     <Compile Include="Framework\Objects\BaseObject.cs" />
@@ -592,6 +589,8 @@
     <Compile Include="Modules\BuffsCache.cs" />
     <Compile Include="Modules\CastStatus.cs" />
     <Compile Include="Modules\ChangeMonitor.cs" />
+    <Compile Include="Modules\InactivityMonitor.cs" />
+    <Compile Include="Modules\ResetGameState.cs" />
     <Compile Include="Modules\Clusters.cs" />
     <Compile Include="Modules\Cooldowns.cs" />
     <Compile Include="Modules\GameStopper.cs" />
@@ -691,6 +690,7 @@
     <Compile Include="Routines\Wizard\WizardParalysisArchon.cs" />
     <Compile Include="Routines\Wizard\WizardParalysisQvazmirArchon.cs" />
     <Compile Include="Routines\Wizard\WizardVyRashaManaldArchon.cs" />
+    <Compile Include="Routines\Wizard\WohExplosiveBlast.cs" />
     <Compile Include="Settings\AdvancedSettings.cs" />
     <Compile Include="Settings\CombatSettings.cs" />
     <Compile Include="Settings\ExplorationSettings.cs" />
@@ -839,12 +839,6 @@
     <Content Include="Profiles\AutoFollow\LeaderManual.xml" />
     <Content Include="Profiles\Bounties.xml" />
     <Content Include="Profiles\BrutalWhiteFarm.xml" />
-    <Content Include="Profiles\cosmic\Bounties.xml" />
-    <Content Include="Profiles\cosmic\goblin.xml" />
-    <Content Include="Profiles\cosmic\Pennant.xml" />
-    <Content Include="Profiles\cosmic\Que%27Hegan%27s.xml" />
-    <Content Include="Profiles\cosmic\Shire.xml" />
-    <Content Include="Profiles\cosmic\TheVault.xml" />
     <Content Include="Profiles\Debug\A2 345954 A Miner%27s Gold.xml" />
     <Content Include="Profiles\Debug\A2 347598 Clear the Mysterious Cave.xml" />
     <Content Include="Profiles\Debug\A2 350564 Rygnar Idol.xml" />
@@ -1058,6 +1052,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Routines\Wizard\WizardVyRashaManaldArchonSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Routines\Wizard\WohExplosiveBlastSettings.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

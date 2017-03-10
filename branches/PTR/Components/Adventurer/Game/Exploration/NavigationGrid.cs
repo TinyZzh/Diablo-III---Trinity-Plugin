@@ -45,7 +45,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
             get { return GRID_BOUNDS; }
         }
 
-        protected bool MarkNodesNearWall
+        public bool MarkNodesNearWall
         {
             get { return true; }
         }

@@ -523,7 +523,7 @@ namespace Trinity.Reference
         /// <summary>
         /// Dictionary of all gems
         /// </summary>
-        public static Dictionary<int, Item> Items
+        public static new Dictionary<int, Item> Items
         {
             get { return _items ?? (_items = ToList().Where(i => i.Id != 0).DistinctBy(i => i.Id).ToDictionary(k => k.Id, v => v)); }
         }

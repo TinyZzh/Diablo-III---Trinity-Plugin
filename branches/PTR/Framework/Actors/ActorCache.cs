@@ -41,7 +41,7 @@ namespace Trinity.Framework.Actors
 
         protected override void OnPulse() => Update();
 
-        protected override void OnWorldChanged() => Clear();
+        protected override void OnWorldChanged(ChangeEventArgs<int> args) => Clear();
 
         protected override void OnGameJoined() => Clear();
 

@@ -179,15 +179,10 @@ namespace Trinity.UI.Visualizer
                 LastRefresh = DateTime.UtcNow;
 
                 var objects = Core.Targets.ToList();
-
-
                 foreach (var obj in objects)
                 {
-                    obj.Position = obj.IsAcdBased ? obj.CommonData.Position : obj.RActor.Position;
+                    obj.Position = obj.Position;
                 }
-
-                //objects = ApplyFilter(objects);
-
                 var queryableObjects = ApplySort(objects.AsQueryable());
 
                 Objects = new ObservableCollection<TrinityActor>(queryableObjects);
@@ -1135,14 +1130,12 @@ namespace Trinity.UI.Visualizer
         public static bool IsWindowOpen { get; set; }
         public static Vector3 DebugPosition { get; set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public new event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-        public virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public new virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            var handler = PropertyChanged;
-            if (handler != null)
-                handler(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         protected string GetLastMethodFullName(int frame = 1)

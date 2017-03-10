@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Zeta.Game;
+﻿using Zeta.Game;
 using Zeta.Game.Internals.Actors;
 
-namespace Trinity.Framework
+namespace Trinity.Framework.Actors
 {
     public static class ActorExtensions
     {

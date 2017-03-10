@@ -296,7 +296,7 @@ namespace Trinity.UI
                     ZetaDia.Actors.Update();
                     Core.Player.Update();
                     ScenesStorage.Update();
-                    Core.Update(true);
+                    Core.Update();
                     DebugUtil.ItemListTest();
                 }
             }
@@ -864,7 +864,7 @@ namespace Trinity.UI
                     //var el = UIElement.FromHash(0xE062F8B5040F3076);
                     //el.Click();
 
-                    Logger.Warn($"CurrentDifficulty={Core.MemoryModel.Storage.CurrentDifficulty}");
+                    //Logger.Warn($"CurrentDifficulty={Core.MemoryModel.Storage.CurrentDifficulty}");
 
                     //var elName = "Root.NormalLayer.gamemenu_dialog.gamemenu_bkgrnd.GameParams.GameParams.RightButtonStackContainer.Difficulty";
                     //var el = UIElement.FromName(elName);

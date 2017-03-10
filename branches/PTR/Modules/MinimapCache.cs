@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Objects;
+using Trinity.Framework.Objects.Memory.UX;
 using Zeta.Common;
 using Zeta.Game;
 using Vector2 = Zeta.Common.Vector2;
@@ -25,7 +26,7 @@ namespace Trinity.Modules
             if (ZetaDia.Me == null)
                 return;
 
-            var minimap = Core.MemoryModel.Minimap;
+            var minimap = UXHelper.GetControl<UXMinimap>(10917491887468455961);
             var minimapIcons = new List<TrinityMinimapIcon>();
             var minimapIconAcdIds = new HashSet<int>();
             var playerScreenPosition = minimap.Bounds.Center;

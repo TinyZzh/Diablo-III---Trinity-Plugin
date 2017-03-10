@@ -224,105 +224,72 @@ namespace Trinity.Framework.Helpers
         {
             try
             {
-                using (new AquireFrameHelper())
+                Action<Item, TrinityLogLevel> logItem = (i, l) =>
                 {
-                    Action<Item, TrinityLogLevel> logItem = (i, l) =>
-                    {
-                        Logger.Log(l, LogCategory.UserInformation, string.Format("Item: {0}: {1} ({2}) is Equipped",
-                            i.ItemType, i.Name, i.Id));
-                    };
+                    Logger.Log(l, LogCategory.UserInformation, string.Format("Item: {0}: {1} ({2}) is Equipped",
+                        i.ItemType, i.Name, i.Id));
+                };
 
-                    Action<ACDItem, TrinityLogLevel> logACDItem = (i, l) =>
-                    {
-                        Logger.Log(l, LogCategory.UserInformation, string.Format("Item: {0}: {1} ({2}) is Equipped",
-                            i.ItemType, i.Name, i.ActorSnoId));
-                    };
+                Action<ACDItem, TrinityLogLevel> logACDItem = (i, l) =>
+                {
+                    Logger.Log(l, LogCategory.UserInformation, string.Format("Item: {0}: {1} ({2}) is Equipped",
+                        i.ItemType, i.Name, i.ActorSnoId));
+                };
 
-                    if (ZetaDia.Me == null || !ZetaDia.Me.IsValid)
-                    {
-                        Logger.Log("Error: Not in game");
-                        return;
-                    }
-
-                    var equipped = ZetaDia.Me.Inventory.Equipped;
-                    if (!equipped.Any())
-                    {
-                        Logger.Log("Error: No equipped items detected");
-                        return;
-                    }
-
-                    LogNewItems();
-
-                    var equippedItems = Legendary.Equipped.Where(c => (!c.IsSetItem || !c.Set.IsEquipped) && !c.IsEquippedInCube).ToList();
-                    Logger.Log(level, LogCategory.UserInformation, "------ Equipped Non-Set Legendaries: Items={0}, Sets={1} ------", equippedItems.Count, Sets.Equipped.Count);
-                    equippedItems.ForEach(i => logItem(i, level));
-
-                    var cubeItems = Legendary.Equipped.Where(c => c.IsEquippedInCube).ToList();
-                    Logger.Log(level, LogCategory.UserInformation, "------ Equipped in Kanai's Cube: Items={0} ------", cubeItems.Count, Sets.Equipped.Count);
-                    cubeItems.ForEach(i => logItem(i, level));
-
-                    Sets.Equipped.ForEach(s =>
-                    {
-                        Logger.Log(level, LogCategory.UserInformation, "------ Set: {0} {1}: {2}/{3} Equipped. ActiveBonuses={4}/{5} ------",
-                            s.Name,
-                            s.IsClassRestricted ? "(" + s.ClassRestriction + ")" : string.Empty,
-                            s.EquippedItems.Count,
-                            s.Items.Count,
-                            s.CurrentBonuses,
-                            s.MaxBonuses);
-
-                        s.Items.Where(i => i.IsEquipped).ForEach(i => logItem(i, level));
-                    });
-
-                    //Logger.Log(level, LogCategory.UserInformation, "------ Gems ------", SkillUtils.Active.Count, SkillUtils.Active.Count);
-
-                    //var gems = ZetaDia.Actors.ACDList.OfType<ACDItem>().Where(i => i.InventorySlot == InventorySlot.Socket && i.ItemType == ItemType.LegendaryGem);
-
-                    //foreach (var gem in gems)
-                    //{
-                    //    logACDItem(gem, level);                    }
-
-                    //var backpackRing = ZetaDia.Me.Inventory.Backpack.FirstOrDefault(i => i.ItemType == ItemType.Ring && i.ActorSnoId == Legendary.AshnagarrsBloodRing.Id);
-                    //var backpackRingNative = ZetaDia.Memory.Read<ItemRecord>(SNORecordGameBalance.GetGameBalanceRecord(backpackRing.GameBalanceId, backpackRing.GameBalanceType));
-
-                    //var backpackGem = ZetaDia.Actors.ACDList.OfType<ACDItem>().FirstOrDefault(i => i.InventorySlot == InventorySlot.Socket && i.ItemType == ItemType.LegendaryGem && i.ActorSnoId == Gems.Taeguk.Id);
-                    //var backpackGemNative= ZetaDia.Memory.Read<ItemRecord>(SNORecordGameBalance.GetGameBalanceRecord(backpackGem.GameBalanceId, backpackGem.GameBalanceType));
-
-                    //var equippedRing = ZetaDia.Me.Inventory.Equipped.FirstOrDefault(i => i.ItemType == ItemType.Ring && i.ActorSnoId == Legendary.AshnagarrsBloodRing.Id);
-                    //var equippedRingNative = ZetaDia.Memory.Read<ItemRecord>(SNORecordGameBalance.GetGameBalanceRecord(equippedRing.GameBalanceId, equippedRing.GameBalanceType));
-
-                    //var equippedGem = ZetaDia.Actors.ACDList.OfType<ACDItem>().LastOrDefault(i => i.ItemType == ItemType.LegendaryGem && i.ActorSnoId == Gems.Taeguk.Id);
-                    //var equippedGemNative = ZetaDia.Memory.Read<ItemRecord>(SNORecordGameBalance.GetGameBalanceRecord(equippedGem.GameBalanceId, equippedGem.GameBalanceType));
-
-                    //var ringDiff = backpackRing.DetailedCompare(equippedRing);
-                    //var gemDiff = backpackGem.DetailedCompare(equippedGem);
-                    //var ringNativeDiff = backpackRingNative.DetailedCompare(equippedRingNative);
-                    //var gemNativeDiff = backpackGemNative.DetailedCompare(equippedGemNative);
-
-                    //Logger.Log("\n\r ringDiff \n\r {0}", ringDiff);
-                    //Logger.Log("\n\r gemDiff \n\r {0}", gemDiff);
-                    //Logger.Log("\n\r ringNativeDiff \n\r {0}", ringNativeDiff);
-                    //Logger.Log("\n\r gemNativeDiff \n\r {0}", gemNativeDiff);
-
-                    Logger.Log(level, LogCategory.UserInformation, "------ Active Skills / Runes ------", SkillUtils.Active.Count, SkillUtils.Active.Count);
-
-                    Action<Skill> logSkill = s =>
-                    {
-                        Logger.Log(level, LogCategory.UserInformation, "Skill: {0} Rune={1} Type={2}",
-                            s.Name,
-                            s.CurrentRune.Name,
-                            (s.IsAttackSpender) ? "Spender" : (s.IsGeneratorOrPrimary) ? "Generator" : "Other"
-                            );
-                    };
-
-                    SkillUtils.Active.ForEach(logSkill);
-
-                    Logger.Log(level, LogCategory.UserInformation, "------ Passives ------", SkillUtils.Active.Count, SkillUtils.Active.Count);
-
-                    Action<Passive> logPassive = p => Logger.Log(level, LogCategory.UserInformation, "Passive: {0}", p.Name);
-
-                    PassiveUtils.Active.ForEach(logPassive);
+                if (ZetaDia.Me == null || !ZetaDia.Me.IsValid)
+                {
+                    Logger.Log("Error: Not in game");
+                    return;
                 }
+
+                var equipped = ZetaDia.Me.Inventory.Equipped;
+                if (!equipped.Any())
+                {
+                    Logger.Log("Error: No equipped items detected");
+                    return;
+                }
+
+                LogNewItems();
+
+                var equippedItems = Legendary.Equipped.Where(c => (!c.IsSetItem || !c.Set.IsEquipped) && !c.IsEquippedInCube).ToList();
+                Logger.Log(level, LogCategory.UserInformation, "------ Equipped Non-Set Legendaries: Items={0}, Sets={1} ------", equippedItems.Count, Sets.Equipped.Count);
+                equippedItems.ForEach(i => logItem(i, level));
+
+                var cubeItems = Legendary.Equipped.Where(c => c.IsEquippedInCube).ToList();
+                Logger.Log(level, LogCategory.UserInformation, "------ Equipped in Kanai's Cube: Items={0} ------", cubeItems.Count, Sets.Equipped.Count);
+                cubeItems.ForEach(i => logItem(i, level));
+
+                Sets.Equipped.ForEach(s =>
+                {
+                    Logger.Log(level, LogCategory.UserInformation, "------ Set: {0} {1}: {2}/{3} Equipped. ActiveBonuses={4}/{5} ------",
+                        s.Name,
+                        s.IsClassRestricted ? "(" + s.ClassRestriction + ")" : string.Empty,
+                        s.EquippedItems.Count,
+                        s.Items.Count,
+                        s.CurrentBonuses,
+                        s.MaxBonuses);
+
+                    s.Items.Where(i => i.IsEquipped).ForEach(i => logItem(i, level));
+                });
+
+                Logger.Log(level, LogCategory.UserInformation, "------ Active Skills / Runes ------", SkillUtils.Active.Count, SkillUtils.Active.Count);
+
+                Action<Skill> logSkill = s =>
+                {
+                    Logger.Log(level, LogCategory.UserInformation, "Skill: {0} Rune={1} Type={2}",
+                        s.Name,
+                        s.CurrentRune.Name,
+                        (s.IsAttackSpender) ? "Spender" : (s.IsGeneratorOrPrimary) ? "Generator" : "Other"
+                        );
+                };
+
+                SkillUtils.Active.ForEach(logSkill);
+
+                Logger.Log(level, LogCategory.UserInformation, "------ Passives ------", SkillUtils.Active.Count, SkillUtils.Active.Count);
+
+                Action<Passive> logPassive = p => Logger.Log(level, LogCategory.UserInformation, "Passive: {0}", p.Name);
+
+                PassiveUtils.Active.ForEach(logPassive);
             }
             catch (Exception ex)
             {

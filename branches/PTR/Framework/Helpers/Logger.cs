@@ -236,7 +236,6 @@ namespace Trinity.Framework.Helpers
                 {
                     lock (_loglock)
                     {
-                        _Logger.Info("Setting up TrinityPlugin Logging");
                         int myPid = Process.GetCurrentProcess().Id;
                         DateTime startTime = Process.GetCurrentProcess().StartTime;
 

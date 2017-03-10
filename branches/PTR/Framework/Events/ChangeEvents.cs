@@ -19,6 +19,9 @@ namespace Trinity.Framework
         public static TrinityChangeDetector<bool> IsInGame { get; } = new TrinityChangeDetector<bool>(()
             => ZetaDia.IsInGame);
 
+        public static TrinityChangeDetector<bool> IsInBossEncounter { get; } = new TrinityChangeDetector<bool>(()
+            => ZetaDia.Me.IsInBossEncounter);
+
         public static TrinityChangeDetector<HashSet<int>> EquippedItems { get; } = new TrinityChangeDetector<HashSet<int>>(()
             => Core.Inventory.EquippedIds, SlowUpdateInterval);
 

@@ -54,7 +54,7 @@ namespace Trinity.Modules
             }
         }
         
-        protected override void OnWorldChanged()
+        protected override void OnWorldChanged(ChangeEventArgs<int> args)
         {
             RecentPositions.Clear();
             _centroid.Clear();

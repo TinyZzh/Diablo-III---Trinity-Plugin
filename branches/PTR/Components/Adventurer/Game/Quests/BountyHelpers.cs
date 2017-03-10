@@ -22,40 +22,29 @@ namespace Trinity.Components.Adventurer.Game.Quests
         //ActorId: 364305, Type: Item, Name: Corrupted Angel Flesh //A4
         //ActorId: 364975, Type: Item, Name: Westmarch Holy Water //A5
 
-        public static readonly int Act1BountyMatSNO = 365020;
-        public static readonly int Act2BountyMatSNO = 364281;
-        public static readonly int Act3BountyMatSNO = 364290;
-        public static readonly int Act4BountyMatSNO = 364305;
-        public static readonly int Act5BountyMatSNO = 364975;
+        //public static readonly int Act1BountyMatSNO = 365020;
+        //public static readonly int Act2BountyMatSNO = 364281;
+        //public static readonly int Act3BountyMatSNO = 364290;
+        //public static readonly int Act4BountyMatSNO = 364305;
+        //public static readonly int Act5BountyMatSNO = 364975;
 
         public static long GetActMatsCount(Act act)
         {
-            var matSno = 0;
+            var playerData = ZetaDia.Storage.PlayerDataManager.ActivePlayerData;
             switch (act)
             {
                 case Act.A1:
-                    matSno = Act1BountyMatSNO;
-                    break;
-
+                    return playerData.GetCurrencyAmount(CurrencyType.KhanduranRune);
                 case Act.A2:
-                    matSno = Act2BountyMatSNO;
-                    break;
-
+                    return playerData.GetCurrencyAmount(CurrencyType.CaldeumNightshade);
                 case Act.A3:
-                    matSno = Act3BountyMatSNO;
-                    break;
-
+                    return playerData.GetCurrencyAmount(CurrencyType.ArreatWarTapestry);
                 case Act.A4:
-                    matSno = Act4BountyMatSNO;
-                    break;
-
+                    return playerData.GetCurrencyAmount(CurrencyType.CorruptedAngelFlesh);
                 case Act.A5:
-                    matSno = Act5BountyMatSNO;
-                    break;
+                    return playerData.GetCurrencyAmount(CurrencyType.WestmarchHolyWater);
             }
-            var stashCount = ZetaDia.Me.Inventory.StashItems.Where(i => i.IsValid && i.ActorSnoId == matSno).Sum(i => i.ItemStackQuantity);
-            var backpackCount = ZetaDia.Me.Inventory.Backpack.Where(i => i.IsValid && i.ActorSnoId == matSno).Sum(i => i.ItemStackQuantity);
-            return stashCount + backpackCount;
+            return 0;
         }
 
         public class ObjectiveActor

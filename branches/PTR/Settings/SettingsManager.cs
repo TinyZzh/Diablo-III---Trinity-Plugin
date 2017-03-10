@@ -22,25 +22,26 @@ namespace Trinity.Settings
 {
     public class SettingsManager
     {
-        private static Dictionary<string, IDynamicSetting> _settings = new Dictionary<string, IDynamicSetting>();
+        private static List<IDynamicSetting> _settings = new List<IDynamicSetting>();
 
-        public static IDynamicSetting GetSettingByName(string name)
+        public static void Add(IDynamicSetting dynamicSettings)
         {
-            return _settings.ContainsKey(name) ? _settings[name] : null;
+            _settings.Add(dynamicSettings);
+        }
+
+        public static void AddRange(IEnumerable<IDynamicSetting> dynamicSettings)
+        {
+            _settings.AddRange(dynamicSettings);
         }
 
         public static IEnumerable<IDynamicSetting> GetDynamicSettings()
         {
-            if (_settings.Any())
-                return _settings.Values;
-
             var result = new List<IDynamicSetting>();
             result.AddRange(RoutineManager.Instance.DynamicSettings);
             result.AddRange(ModuleManager.DynamicSettings);
             result.AddRange(TrinitySettings.Settings.DynamicSettings);
-            _settings = result.ToDictionary(k => k.GetName(), v => v);
+            result.AddRange(_settings);
             return result;
-
         }
 
         public static string SaveDirectory => Path.Combine(FileManager.SettingsPath, "Saved");
@@ -76,7 +77,7 @@ namespace Trinity.Settings
 
                     UpdateSections("Exporting", exportSettings, selectionViewModel);
                     exportSettings.SaveToFile(filePath);
-                }
+                }                
             }
             catch (Exception ex)
             {
@@ -255,7 +256,7 @@ namespace Trinity.Settings
                     result.Add(new SettingsSelectionItem(SettingsSection.Dynamic, item.Name));
                 }
             }
-
+                
             Logger.Log($"File contains {result.Count} sections: {string.Join(", ", result)}");
             return result;
         }
@@ -280,7 +281,7 @@ namespace Trinity.Settings
             {
                 if (sectionEntry.IsSelected)
                 {
-                    if (!string.IsNullOrEmpty(actionDescripter))
+                    if(!string.IsNullOrEmpty(actionDescripter))
                         Logger.Log($"{actionDescripter} Section: {sectionEntry}");
 
                     continue;

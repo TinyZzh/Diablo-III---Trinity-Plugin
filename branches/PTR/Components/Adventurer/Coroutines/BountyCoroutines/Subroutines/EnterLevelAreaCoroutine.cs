@@ -29,7 +29,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
         private HashSet<int> _portalMarkers;
         private int _portalActorId;
         private int _discoveredPortalActorId;
-        private bool _prioritizeExitScene;
         private bool _exitSceneUnreachable;
         private int _prePortalWorldDynamicId;
         private bool _isDone;
@@ -420,6 +419,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
         private TimeSpan _timeoutDuration;
         private DateTime _timeoutStartTime = DateTime.MinValue;
         private DateTime _timeoutEndTime = DateTime.MaxValue;
+        private bool _prioritizeExitScene;
 
         private void ScanForObjective()
         {

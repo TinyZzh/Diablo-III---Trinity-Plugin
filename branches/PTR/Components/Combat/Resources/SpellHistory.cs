@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trinity.Framework;
 using Trinity.Framework.Helpers;
+using Zeta.Bot;
 using Zeta.Common;
 using Zeta.Game.Internals.Actors;
 using Logger = Trinity.Framework.Helpers.Logger;
@@ -11,6 +12,16 @@ namespace Trinity.Components.Combat.Resources
 {
     public static class SpellHistory
     {
+        static SpellHistory()
+        {
+            GameEvents.OnPlayerDied += GameEvents_OnPlayerDied;
+        }
+
+        private static void GameEvents_OnPlayerDied(object sender, EventArgs e)
+        {
+            _history.Clear();
+        }
+
         public class SpellHistoryItem
         {
             public TrinityPower Power { get; set; }

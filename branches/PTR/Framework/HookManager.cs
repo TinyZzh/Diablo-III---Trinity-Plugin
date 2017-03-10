@@ -32,7 +32,7 @@ namespace Trinity
                 ReplaceCombatHook();
                 ReplaceVendorRunHook();
                 ReplaceDeathHook();
-                InsertOutOfGameHooks();
+                //InsertOutOfGameHooks();
                 HooksAttached = true;
             }
             else
@@ -65,22 +65,22 @@ namespace Trinity
             StoreAndReplaceHook("Death", new ActionRunCoroutine(ret => DeathHandler.Execute()));
         }
 
-        private static void InsertOutOfGameHooks()
-        {
-            const string hookName = "TreeStart";
+        //private static void InsertOutOfGameHooks()
+        //{
+        //    const string hookName = "TreeStart";
 
-            if (_goldInactiveComposite == null)
-                _goldInactiveComposite = GoldInactivity.CreateGoldInactiveLeaveGame();
+        //    if (_goldInactiveComposite == null)
+        //        _goldInactiveComposite = GoldInactivity.CreateGoldInactiveLeaveGame();
 
-            if (_xpInactiveComposite == null)
-                _xpInactiveComposite = XpInactivity.CreateXpInactiveLeaveGame();
+        //    if (_xpInactiveComposite == null)
+        //        _xpInactiveComposite = XpInactivity.CreateXpInactiveLeaveGame();
 
-            Logger.Log("Inserting GoldInactivity into " + hookName);
-            TreeHooks.Instance.InsertHook(hookName, 0, _goldInactiveComposite);
+        //    Logger.Log("Inserting GoldInactivity into " + hookName);
+        //    TreeHooks.Instance.InsertHook(hookName, 0, _goldInactiveComposite);
 
-            Logger.Log("Inserting XPInactivity into " + hookName);
-            TreeHooks.Instance.InsertHook(hookName, 0, _xpInactiveComposite);
-        }
+        //    Logger.Log("Inserting XPInactivity into " + hookName);
+        //    TreeHooks.Instance.InsertHook(hookName, 0, _xpInactiveComposite);
+        //}
 
         internal static void InstanceOnOnHooksCleared(object sender, EventArgs eventArgs)
         {

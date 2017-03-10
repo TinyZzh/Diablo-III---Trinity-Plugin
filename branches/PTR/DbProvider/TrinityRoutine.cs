@@ -29,11 +29,8 @@ namespace Trinity.DbProvider
             }
         }
 
-        public override void Dispose()
-        {
-        }
-
-        public override string Name { get { return "Trinity"; } }
+        public override void Dispose() { }
+        public override string Name => "Trinity";
 
         public override Window ConfigWindow
         {
@@ -51,13 +48,8 @@ namespace Trinity.DbProvider
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("[Trinity] Error Opening Plugin Config window!");
-                    Log.Error("[Trinity] {0}", ex);
-                    Log.Error("[TrinityPlugin] Error Opening Plugin Config window!");
-                    Log.Error("[TrinityPlugin] {0}", ex);
+                    Log.Error($"[Trinity] Error Opening Plugin Config window! {ex}");
                 }
-                Log.Error("[Trinity] Unable to open Plugin Config window!");
-                Log.Error("[TrinityPlugin] Unable to open Plugin Config window!");
                 return null;
             }
         }
@@ -76,17 +68,11 @@ namespace Trinity.DbProvider
             }
         }
 
-        public override SNOPower DestroyObjectPower
-        {
-            get
-            {
-                return SNOPower.None;
-            }
-        }
+        public override SNOPower DestroyObjectPower => SNOPower.None;
+        public override float DestroyObjectDistance => 0;
+        public override Composite Combat => NoAction;
+        public override Composite Buff => NoAction;
 
-        public override float DestroyObjectDistance { get { return 0; } }
-
-        public override Composite Combat { get { return new Action(); } }
-        public override Composite Buff { get { return new Action(); } }
+        private Action NoAction = new Action();
     }
 }

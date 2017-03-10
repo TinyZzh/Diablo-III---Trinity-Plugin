@@ -16,22 +16,6 @@ namespace Trinity.Components.Adventurer.Game.Exploration
 
         private static readonly ConcurrentDictionary<int, List<Vector3>> KnownPositions = new ConcurrentDictionary<int, List<Vector3>>();
 
-        //private static readonly ConcurrentDictionary<int, Lazy<ExplorationGrid>> WorldGrids = new ConcurrentDictionary<int, Lazy<ExplorationGrid>>();
-
-        //public static ExplorationGrid GetWorldGrid(int worldDynamicId)
-        //{
-        //    return WorldGrids.GetOrAdd(worldDynamicId, new Lazy<ExplorationGrid>(() => new ExplorationGrid())).Value;
-        //}
-
-        //public static ExplorationGrid Instance
-        //{
-        //    get { return GetWorldGrid(AdvDia.CurrentWorldDynamicId); }
-        //}
-
-        //public ExplorationGrid()
-        //{
-        //}
-
         private static Lazy<ExplorationGrid> _currentGrid;
 
         public static ExplorationGrid GetWorldGrid(int worldDynamicId)
@@ -47,11 +31,6 @@ namespace Trinity.Components.Adventurer.Game.Exploration
                 _currentGrid = new Lazy<ExplorationGrid>(() => new ExplorationGrid());
             }
 
-            //if (DateTime.UtcNow.Subtract(_currentGrid.Value.Created).TotalSeconds > 5 && _currentGrid.Value.NearestNode == null)
-            //{
-            //    _currentGrid = new Lazy<ExplorationGrid>(() => new ExplorationGrid());
-            //}
-
             return _currentGrid.Value;
         }
 
@@ -62,14 +41,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
 
         public List<ExplorationNode> WalkableNodes = new List<ExplorationNode>();
 
-        public override float BoxSize
-        {
-            get
-            {
-                return 20;
-                // return ExplorationData.ExplorationNodeBoxSize; // perf - hit millions of times
-            }
-        }
+        public override float BoxSize { get; } = 20;
 
         public override int GridBounds
         {
@@ -98,13 +70,6 @@ namespace Trinity.Components.Adventurer.Game.Exploration
             return lastNode;
         }
 
-        private IEnumerable<GridPoint> GetRayLine(Vector3 from, Vector3 to)
-        {
-            var gridFrom = ToGridPoint(from);
-            var gridTo = ToGridPoint(to);
-            return Bresenham.GetPointsOnLine(gridFrom, gridTo);
-        }
-
         private IEnumerable<ExplorationNode> GetRayLineAsNodes(Vector3 from, Vector3 to)
         {
             var rayLine = GetRayLine(from, to);
@@ -117,22 +82,6 @@ namespace Trinity.Components.Adventurer.Game.Exploration
             var neighbors = centerNode.GetNeighbors(gridDistance, true);
             return neighbors.Where(n => n.Center.DistanceSqr(centerNode.NavigableCenter2D) < radius * radius).ToList();
         }
-
-        //public static void SetNodesVisited()
-        //{
-        //    using (new PerformanceLogger("[NodesStorage] SetNodesVisited", true))
-        //    {
-        //        //var counter = 0;
-        //        Parallel.ForEach(ExplorationGrid.Instance.WalkableNodes.Where(n => n.IsKnown), n =>
-        //        {
-        //            n.IsVisited = true;
-        //            foreach (var node in n.GetNeighbors(1))
-        //            {
-        //                node.IsVisited = true;
-        //            }
-        //        });
-        //    }
-        //}
 
         public static void ResetKnownPositions()
         {
@@ -174,9 +123,6 @@ namespace Trinity.Components.Adventurer.Game.Exploration
                     node.IsVisited = true;
                 }
             }
-            //if (!PulseSetVisitedTimer.IsFinished) return;
-            //if (!PluginEvents.IsValidForPulse) return;
-            //PulseSetVisitedTimer.Reset();
         }
 
         protected override void OnUpdated(SceneData newNodes)

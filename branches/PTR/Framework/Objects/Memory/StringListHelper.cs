@@ -102,8 +102,6 @@ namespace Trinity.Framework.Objects.Memory.Sno.Helpers
 
     public class SnoStringList : SnoTableEntry
     {
-        public SnoHeader Header => ReadObject<SnoHeader>(0x00);
-
         public const int SizeOf = 0x28; // 40
         public List<StringTableEntry> StringTableEntries => ReadSerializedObjects<StringTableEntry>(0x10, StringTableSerializeInfo);
         public NativeSerializeData StringTableSerializeInfo => ReadObject<NativeSerializeData>(0x18);

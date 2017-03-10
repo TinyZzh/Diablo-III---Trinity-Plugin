@@ -40,7 +40,6 @@ namespace Trinity.Framework.Helpers
         private void OnSecondChanged()
         {
             if (Math.Abs(_totalTimeMs) < double.Epsilon) return;
-
             UpdateCount = _updateCount;
             TotalTimeMilliseconds = _totalTimeMs;
             AverageUpdateTimeMilliseconds = _totalTimeMs / _updateCount;
