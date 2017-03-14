@@ -131,8 +131,8 @@ namespace Trinity.ProfileTags
 
         public static long ItemCount(int actorId)
         {
-            var items = ZetaDia.Me.Inventory.StashItems.Where(item => actorId == item.ActorSnoId)
-                .Concat(ZetaDia.Me.Inventory.Backpack.Where(item => actorId == item.ActorSnoId)).ToList();
+            var items = InventoryManager.StashItems.Where(item => actorId == item.ActorSnoId)
+                .Concat(InventoryManager.Backpack.Where(item => actorId == item.ActorSnoId)).ToList();
 
             if (!items.Any())
                 return 0;
@@ -145,7 +145,7 @@ namespace Trinity.ProfileTags
 
         public static long BackpackCount(int actorId)
         {
-            var items = ZetaDia.Me.Inventory.Backpack.Where(item => actorId == item.ActorSnoId).ToList();
+            var items = InventoryManager.Backpack.Where(item => actorId == item.ActorSnoId).ToList();
 
             if (!items.Any())
                 return 0;
@@ -158,7 +158,7 @@ namespace Trinity.ProfileTags
 
         public static long StashCount(int actorId)
         {
-            var items = ZetaDia.Me.Inventory.StashItems.Where(item => actorId == item.ActorSnoId).ToList();
+            var items = InventoryManager.StashItems.Where(item => actorId == item.ActorSnoId).ToList();
 
             if (!items.Any())
                 return 0;

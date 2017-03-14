@@ -19,14 +19,14 @@ namespace Trinity.DbProvider
 
         public override void Initialize()
         {
-            foreach (PluginContainer plugin in PluginManager.Plugins)
-            {
-                if (plugin.Plugin.Name == "Trinity" && !plugin.Enabled)
-                    if (plugin.Plugin.Name == "TrinityPlugin" && !plugin.Enabled)
-                    {
-                        plugin.Enabled = true;
-                    }
-            }
+            //foreach (PluginContainer plugin in PluginManager.Plugins)
+            //{
+            //    if (plugin.Plugin.Name == "Trinity" && !plugin.Enabled)
+            //        if (plugin.Plugin.Name == "TrinityPlugin" && !plugin.Enabled)
+            //        {
+            //            plugin.Enabled = true;
+            //        }
+            //}
         }
 
         public override void Dispose() { }

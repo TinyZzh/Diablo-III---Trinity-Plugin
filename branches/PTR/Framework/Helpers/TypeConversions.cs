@@ -1248,6 +1248,19 @@ namespace Trinity.Framework.Helpers
             ItemType.CrusaderShield,
         };
 
+        internal static HashSet<ItemBaseType> EquipmentTypes = new HashSet<ItemBaseType>
+        {
+            ItemBaseType.Armor,
+            ItemBaseType.Jewelry,
+            ItemBaseType.Weapon,
+        };
+
+        internal static HashSet<ItemBaseType> TwoSquareTypes = new HashSet<ItemBaseType>
+        {
+            ItemBaseType.Armor,
+            ItemBaseType.Weapon,
+        };
+
         internal static HashSet<ItemType> WeaponTypes = new HashSet<ItemType>
         {
             ItemType.Axe,

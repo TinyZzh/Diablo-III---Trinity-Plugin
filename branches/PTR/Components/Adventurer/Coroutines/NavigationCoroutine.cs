@@ -10,6 +10,7 @@ using Trinity.Components.Adventurer.Game.Events;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Adventurer.Game.Exploration.SceneMapping;
 using Trinity.Components.Adventurer.Util;
+using Trinity.Framework;
 using Trinity.Framework.Helpers;
 using Zeta.Bot.Navigation;
 using Zeta.Common;
@@ -159,7 +160,7 @@ namespace Trinity.Components.Adventurer.Coroutines
 
             if (PluginEvents.CurrentProfileType == ProfileType.Rift &&
                 distanceToDestination < 50f && zDiff < 3 &&
-                NavigationGrid.Instance.CanRayWalk(AdvDia.MyPosition, Destination))
+                Core.Grids.CanRayWalk(AdvDia.MyPosition, Destination))
             {
                 _mover = Mover.StraightLine;
                 _lastRaywalkCheck = PluginTime.CurrentMillisecond;
@@ -210,7 +211,7 @@ namespace Trinity.Components.Adventurer.Coroutines
             if (_timeout == DateTime.MaxValue)
                 _timeout = DateTime.UtcNow + TimeSpan.FromSeconds(240);
 
-            if (_mover == Mover.StraightLine && (!NavigationGrid.Instance.CanRayWalk(AdvDia.MyPosition, Destination) || !await AdvDia.DefaultNavigationProvider.CanFullyClientPathTo(Destination)))
+            if (_mover == Mover.StraightLine && (!Core.Grids.CanRayWalk(AdvDia.MyPosition, Destination) || !await AdvDia.DefaultNavigationProvider.CanFullyClientPathTo(Destination)))
             {
                 Logger.DebugSetting("Unable to straight line path, switching to navigator pathing");
                 _mover = Mover.Navigator;
@@ -227,7 +228,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                 {
                     if (_mover == Mover.StraightLine && PluginTime.ReadyToUse(_lastRaywalkCheck, 200))
                     {
-                        if (!NavigationGrid.Instance.CanRayWalk(AdvDia.MyPosition, Destination))
+                        if (!Core.Grids.CanRayWalk(AdvDia.MyPosition, Destination))
                         {
                             _mover = Mover.Navigator;
                         }
@@ -268,7 +269,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                         else
                         {
                             // DB Navigator will report ReachedDestination when failing to navigate to positions that require a death gate to reach. Redirect to gate position.
-                            if (RiftProgression.IsInRift && ActorFinder.FindNearestDeathGate() != null)
+                            if (Core.Rift.IsInRift && ActorFinder.FindNearestDeathGate() != null)
                             {
                                 Logger.DebugSetting($"Starting Death Gate Sequence.");
                                 State = States.MovingToDeathGate;
@@ -287,7 +288,7 @@ namespace Trinity.Components.Adventurer.Coroutines
 
                     case MoveResult.PathGenerationFailed:
                         Logger.Debug("[Navigation] Path generation failed.");
-                        if (distanceToDestination < 100 && NavigationGrid.Instance.CanRayWalk(AdvDia.MyPosition, Destination))
+                        if (distanceToDestination < 100 && Core.Grids.CanRayWalk(AdvDia.MyPosition, Destination))
                         {
                             _mover = Mover.StraightLine;
                             return false;
@@ -528,7 +529,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                 if (FailCount > 5)
                 {
                     var distance = AdvDia.MyPosition.Distance2D(Destination);
-                    var canWalkTo = NavigationGrid.Instance.CanRayWalk(AdvDia.MyPosition, Destination);
+                    var canWalkTo = Core.Grids.CanRayWalk(AdvDia.MyPosition, Destination);
                     var canStandAt = AdvDia.MainGridProvider.CanStandAt(Destination);
                     var portalNearby = ZetaDia.Actors.GetActorsOfType<GizmoPortal>().Any(g => g.Position.Distance(Destination) < 30f);
                     if (distance < 25f && !portalNearby && (!canStandAt && !canWalkTo))

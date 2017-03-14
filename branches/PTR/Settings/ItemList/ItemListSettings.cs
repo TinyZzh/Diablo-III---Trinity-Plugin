@@ -562,7 +562,7 @@ namespace Trinity.Settings.ItemList
                             {
                                 ZetaDia.Actors.Update();
                                 Logger.Log("Scanning Character for Equipped Items");
-                                SelectItems(ZetaDia.Me.Inventory.Equipped);
+                                SelectItems(InventoryManager.Equipped);
                             }
                         }
                     }
@@ -572,7 +572,7 @@ namespace Trinity.Settings.ItemList
                             ZetaDia.Actors.Update();
 
                         Logger.Log("Scanning Character for Equipped Items");
-                        SelectItems(ZetaDia.Me.Inventory.Equipped);
+                        SelectItems(InventoryManager.Equipped);
                     }
                 }
                 catch (Exception ex)
@@ -597,7 +597,7 @@ namespace Trinity.Settings.ItemList
                             {
                                 ZetaDia.Actors.Update();
                                 Logger.Log("Scanning Character for Stashed Items");
-                                SelectItems(ZetaDia.Me.Inventory.StashItems);
+                                SelectItems(InventoryManager.StashItems);
                             }
                         }
                     }
@@ -605,7 +605,7 @@ namespace Trinity.Settings.ItemList
                     {
                         ZetaDia.Actors.Update();
                         Logger.Log("Scanning Character for Stashed Items");
-                        SelectItems(ZetaDia.Me.Inventory.StashItems);
+                        SelectItems(InventoryManager.StashItems);
                     }
                 }
                 catch (Exception ex)

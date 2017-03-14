@@ -45,7 +45,7 @@ namespace Trinity.Routines.Crusader
 
         public override bool SetWeight(TrinityActor cacheObject)
         {
-            if (Settings.IgnoreTrash && cacheObject.IsTrashMob && RiftProgression.IsInRift && !cacheObject.IsTreasureGoblin && !cacheObject.IsMinimapActive && !cacheObject.IsBountyObjective && !cacheObject.IsQuestMonster && (RiftProgression.IsGreaterRift || !TrinityTownRun.IsTryingToTownPortal()))
+            if (Settings.IgnoreTrash && cacheObject.IsTrashMob && Core.Rift.IsInRift && !cacheObject.IsTreasureGoblin && !cacheObject.IsMinimapActive && !cacheObject.IsBountyObjective && !cacheObject.IsQuestMonster && (Core.Rift.IsGreaterRift || !TrinityTownRun.IsTryingToTownPortal()))
             {
                 cacheObject.WeightInfo += $"Routine(IgnoreTrash)";
                 cacheObject.Weight = 0;
@@ -176,13 +176,13 @@ namespace Trinity.Routines.Crusader
         {
             get
             {
-                if (Settings.Bombardment.WaitForConvention == ConventionMode.GreaterRift && RiftProgression.IsGreaterRift)
+                if (Settings.Bombardment.WaitForConvention == ConventionMode.GreaterRift && Core.Rift.IsGreaterRift)
                     return false;
 
                 if (Settings.Bombardment.WaitForConvention == ConventionMode.Always)
                     return false;
 
-                if (Settings.Bombardment.WaitForConvention == ConventionMode.RiftBoss && RiftProgression.IsInRift && HostileMonsters.Any(u => u.IsBoss))
+                if (Settings.Bombardment.WaitForConvention == ConventionMode.RiftBoss && Core.Rift.IsInRift && HostileMonsters.Any(u => u.IsBoss))
                     return false;
 
                 return true;

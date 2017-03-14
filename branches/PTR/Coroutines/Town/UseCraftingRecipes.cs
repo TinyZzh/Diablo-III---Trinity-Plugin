@@ -52,7 +52,7 @@ namespace Trinity.Coroutines.Town
                 {
                     Logger.LogVerbose("[UseCraftingRecipes] Using Blacksmith Plans");
 
-                    ZetaDia.Me.Inventory.UseItem(Inventory.Backpack.OfType(InventoryItemType.BlackSmithPlan).First().AnnId);
+                    InventoryManager.UseItem(Inventory.Backpack.OfType(InventoryItemType.BlackSmithPlan).First().AnnId);
                     await Coroutine.Sleep(25);
                 }
 
@@ -75,7 +75,7 @@ namespace Trinity.Coroutines.Town
                 {
                     Logger.LogVerbose("[UseCraftingRecipes] Using Jeweler Plans");
 
-                    ZetaDia.Me.Inventory.UseItem(Inventory.Backpack.OfType(InventoryItemType.JewelerPlan).First().AnnId);
+                    InventoryManager.UseItem(Inventory.Backpack.OfType(InventoryItemType.JewelerPlan).First().AnnId);
                     await Coroutine.Sleep(25);
                 }
 
@@ -99,7 +99,7 @@ namespace Trinity.Coroutines.Town
                     Logger.LogVerbose("[UseCraftingRecipes] Getting Plans from Stash");
 
                     var plans = Inventory.OfType(InventoryItemType.BlackSmithPlan, InventoryItemType.JewelerPlan);
-                    var amount = Math.Min(ZetaDia.Me.Inventory.NumFreeBackpackSlots, plans.Count);
+                    var amount = Math.Min(InventoryManager.NumFreeBackpackSlots, plans.Count);
                     var planIds = plans.Select(i => i.ActorSnoId).Distinct();
                     if (!await TakeItemsFromStash.Execute(planIds, amount))
                     {

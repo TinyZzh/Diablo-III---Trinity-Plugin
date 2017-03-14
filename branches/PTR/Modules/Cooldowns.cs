@@ -10,10 +10,6 @@ using Zeta.Game.Internals.Actors;
 
 namespace Trinity.Modules
 {
-    /// <summary>
-    /// Keep track of cooldowns for buffs and skills
-    /// todo refactor now that i have the proper game tick @ Core.MemoryModel.Storage.GameTick, which matches the EndTick.    
-    /// </summary>
     public sealed class Cooldowns : Module
     {
         public class CooldownData

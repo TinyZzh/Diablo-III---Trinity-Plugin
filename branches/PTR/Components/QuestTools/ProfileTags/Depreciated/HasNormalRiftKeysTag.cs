@@ -31,8 +31,8 @@ namespace QuestTools.ProfileTags.Complex
 
         public override bool GetConditionExec()
         {
-            bool backpack = ZetaDia.Me.Inventory.Backpack.Any(IsNormalRiftKeyFunc);
-            bool stash = ZetaDia.Me.Inventory.StashItems.Any(IsNormalRiftKeyFunc);
+            bool backpack = InventoryManager.Backpack.Any(IsNormalRiftKeyFunc);
+            bool stash = InventoryManager.StashItems.Any(IsNormalRiftKeyFunc);
 
             return backpack || stash;
         }

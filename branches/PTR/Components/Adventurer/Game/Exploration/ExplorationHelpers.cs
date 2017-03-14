@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Util;
+using Trinity.Framework;
 using Zeta.Common;
 using Zeta.Game;
 using Logger = Trinity.Components.Adventurer.Util.Logger;
@@ -35,7 +36,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
                     var closestUnvisitedNode = ExplorationGrid.Instance.GetNeighbors(nearestNode, i).Cast<ExplorationNode>()
                         .Where(n => !n.IsIgnored && !n.IsVisited && !n.IsBlacklisted && n.HasEnoughNavigableCells &&
                         n.DynamicWorldId == dynamicWorldId && levelAreaIds.Contains(n.LevelAreaId) &&
-                        NavigationGrid.Instance.CanRayWalk(myPosition, n.NavigableCenter))
+                        Core.Grids.CanRayWalk(myPosition, n.NavigableCenter))
                         .OrderBy(n => n.Distance)
                         .FirstOrDefault();
                     if (closestUnvisitedNode != null)

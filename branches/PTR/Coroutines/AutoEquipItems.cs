@@ -60,7 +60,7 @@ namespace Trinity.Coroutines
 
             _equippedItems = new Dictionary<InventorySlot, CachedACDItem>();
 
-            foreach (var item in ZetaDia.Me.Inventory.Equipped)
+            foreach (var item in InventoryManager.Equipped)
             {
                 // DB's Inventory Equipped collection sometimes gets messed up and has duplicate items.
                 if (_equippedItems.ContainsKey(item.InventorySlot))
@@ -137,7 +137,7 @@ namespace Trinity.Coroutines
                 return;
 
             Logger.Log("Unequipping Item {0} ({1}) from slot {2}", item.RealName, item.ActorSnoId, item.InventorySlot);
-            ZetaDia.Me.Inventory.MoveItem(item.DynamicId, ZetaDia.Me.CommonData.AnnId, InventorySlot.BackpackItems, (int)location.X, (int)location.Y);
+            InventoryManager.MoveItem(item.DynamicId, ZetaDia.Me.CommonData.AnnId, InventorySlot.BackpackItems, (int)location.X, (int)location.Y);
         }
 
         /// <summary>
@@ -147,12 +147,12 @@ namespace Trinity.Coroutines
         {
             Navigator.PlayerMover.MoveStop();
             await Coroutine.Sleep(500);
-            var newLegendary = ZetaDia.Me.Inventory.Backpack.FirstOrDefault(i => i.ItemQualityLevel >= ItemQuality.Legendary && i.Unidentified > 0 && i.IsValid && !i.IsDisposed);
+            var newLegendary = InventoryManager.Backpack.FirstOrDefault(i => i.ItemQualityLevel >= ItemQuality.Legendary && i.Unidentified > 0 && i.IsValid && !i.IsDisposed);
             if (newLegendary != null)
             {
                 Logger.Log("Identifying Legendary");
                 var dynamicId = newLegendary.AnnId;
-                ZetaDia.Me.Inventory.IdentifyItem(dynamicId);
+                InventoryManager.IdentifyItem(dynamicId);
                 await Coroutine.Sleep(750);
                 while (ZetaDia.Me.LoopingAnimationEndTime > 0)
                 {
@@ -172,7 +172,7 @@ namespace Trinity.Coroutines
             if (gem == null)
                 return false;
 
-            var socketableWeapon = ZetaDia.Me.Inventory.Equipped.FirstOrDefault(i => i.InventorySlot == InventorySlot.LeftHand && i.NumSockets > 0 && i.NumSocketsFilled < i.NumSockets);
+            var socketableWeapon = InventoryManager.Equipped.FirstOrDefault(i => i.InventorySlot == InventorySlot.LeftHand && i.NumSockets > 0 && i.NumSocketsFilled < i.NumSockets);
             if (socketableWeapon != null)
             {
                 Logger.Log("Socketing {0} ({1}) into equipped weapon {2}", gem.InternalName, gem.GemQuality, socketableWeapon.Name);
@@ -210,7 +210,7 @@ namespace Trinity.Coroutines
             if (gem == null)
                 return false;
 
-            var socketableArmor = ZetaDia.Me.Inventory.Equipped.FirstOrDefault(i => (i.ItemBaseType == ItemBaseType.Armor || i.ItemBaseType == ItemBaseType.Jewelry) && i.NumSockets > 0 && i.NumSocketsFilled < i.NumSockets);
+            var socketableArmor = InventoryManager.Equipped.FirstOrDefault(i => (i.ItemBaseType == ItemBaseType.Armor || i.ItemBaseType == ItemBaseType.Jewelry) && i.NumSockets > 0 && i.NumSocketsFilled < i.NumSockets);
             if (socketableArmor != null)
             {
                 Logger.Log("Socketing {0} ({1}) into equipped armor {2}", gem.InternalName, gem.GemQuality, socketableArmor.Name);
@@ -264,7 +264,7 @@ namespace Trinity.Coroutines
 
         private ACDItem GetGemForAttributeType(PlayerAttributeType attributeType)
         {
-            var gems = ZetaDia.Me.Inventory.Backpack.Where(i => i.IsGem).OrderByDescending(i => i.GemQuality);
+            var gems = InventoryManager.Backpack.Where(i => i.IsGem).OrderByDescending(i => i.GemQuality);
 
             switch (attributeType)
             {
@@ -344,7 +344,7 @@ namespace Trinity.Coroutines
         {
             get
             {
-                return _backpackEquipment ?? (_backpackEquipment = ZetaDia.Me.Inventory.Backpack
+                return _backpackEquipment ?? (_backpackEquipment = InventoryManager.Backpack
                   .Select(CachedACDItem.GetTrinityItem)
                   .Where(i => i.AcdItem.IsValid && i.IsEquipment && i.IsUsableByClass(Core.Player.ActorClass) && !i.IsUnidentified));
             }
@@ -510,11 +510,11 @@ namespace Trinity.Coroutines
                 item.IsValid,
                 item.IsDisposed);
 
-            ZetaDia.Me.Inventory.EquipItem(item.AnnId, slot);
+            InventoryManager.EquipItem(item.AnnId, slot);
 
             await Coroutine.Sleep(500);
 
-            if (ZetaDia.Me.Inventory.Equipped.Any(i => i.AnnId == item.AnnId))
+            if (InventoryManager.Equipped.Any(i => i.AnnId == item.AnnId))
             {
                 Logger.LogVerbose("Item: {0} ({1}) was equipped", item.Name, item.ActorSnoId);
             }

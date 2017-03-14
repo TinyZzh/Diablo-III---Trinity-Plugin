@@ -60,6 +60,8 @@ namespace Trinity.Framework.Avoidance
             return _currentGrid;
         }
 
+        public static AvoidanceGrid GetUnsafeGrid() => _currentGrid;
+
         public bool IsValidGridWorldPosition(Vector3 position)
         {
             return position.X > 0 && position.Y > 0 && position != Vector3.Zero && position.X < (MaxX * BoxSize) && position.Y < (MaxY * BoxSize);
@@ -82,6 +84,13 @@ namespace Trinity.Framework.Avoidance
             return false;
         }
 
+
+        public bool UnsafeCanRayCast(Vector3 @from, Vector3 to)
+        {
+            if (@from == Vector3.Zero || to == Vector3.Zero) return false;
+            return GetRayLine(from, to).Select(point => InnerGrid[point.X, point.Y]).All(node => node != null && node.NodeFlags.HasFlag(NodeFlags.AllowProjectile));
+        }
+
         public bool CanRayWalk(TrinityActor targetActor)
         {
             if (!IsPopulated) return false;
@@ -90,6 +99,12 @@ namespace Trinity.Framework.Avoidance
 
             if (!IsValidGridWorldPosition(playerPosition) || !IsValidGridWorldPosition(targetPosition)) return false;
             return GetRayLine(playerPosition, targetPosition).Select(point => InnerGrid[point.X, point.Y]).All(node => node != null && node.NodeFlags.HasFlag(NodeFlags.AllowWalk));
+        }
+
+        public bool UnsafeCanRayWalk(TrinityActor targetActor)
+        {
+            if (targetActor.Position == Vector3.Zero) return false;
+            return GetRayLine(Core.Player.Position, targetActor.Position).Select(point => InnerGrid[point.X, point.Y]).All(node => node != null && node.NodeFlags.HasFlag(NodeFlags.AllowWalk));
         }
 
         public override bool CanRayWalk(Vector3 @from, Vector3 to)

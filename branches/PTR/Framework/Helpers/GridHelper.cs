@@ -6,15 +6,13 @@ namespace Trinity.Framework.Helpers
 {
     public class GridHelper
     {
-        protected NavigationGrid Navigation => NavigationGrid.Instance;
-
         public ExplorationGrid Exploration => ExplorationGrid.Instance;
 
         public AvoidanceGrid Avoidance => AvoidanceGrid.Instance;
 
         public bool CanRayCast(Vector3 @from, Vector3 to)
         {
-            return Navigation.CanRayCast(@from, to);
+            return Avoidance.CanRayCast(@from, to);
         }
 
         public bool CanRayCast(Vector3 to)
@@ -22,12 +20,12 @@ namespace Trinity.Framework.Helpers
             if (!Avoidance.IsPopulated)
                 return false;
 
-            return Navigation.CanRayCast(Core.Player.Position, to);
+            return Avoidance.CanRayCast(Core.Player.Position, to);
         }
 
         public bool CanRayWalk(Vector3 @from, Vector3 to)
         {
-            return Navigation.CanRayCast(@from, to);
+            return Avoidance.CanRayCast(@from, to);
         }
     }
 }

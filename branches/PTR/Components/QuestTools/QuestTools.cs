@@ -52,8 +52,7 @@ namespace QuestTools
             {
                 if (!Player.IsValid)
                     return;
-         
-                ChangeMonitor.CheckForChanges();
+                         
                 ActorHistory.UpdateActors();
                 PositionCache.RecordPosition();
 

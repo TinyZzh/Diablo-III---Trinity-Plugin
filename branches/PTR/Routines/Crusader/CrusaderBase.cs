@@ -1,6 +1,7 @@
 ﻿using System;
 using Trinity.Components.Combat;
 using Trinity.Components.Combat.Resources;
+using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Helpers;
 using Trinity.Reference;
@@ -584,7 +585,7 @@ namespace Trinity.Routines.Crusader
             if (Skills.Crusader.FistOfTheHeavens.CanCast())
                 return FistOfTheHeavens(CurrentTarget);
 
-            if ((Navigator.StuckHandler.IsStuck || !RiftProgression.IsInRift) && Skills.Crusader.Bombardment.CanCast())
+            if ((Navigator.StuckHandler.IsStuck || !Core.Rift.IsInRift) && Skills.Crusader.Bombardment.CanCast())
                 return Bombardment(CurrentTarget);
 
             return DefaultPower;

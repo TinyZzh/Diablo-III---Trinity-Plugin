@@ -66,7 +66,7 @@ namespace QuestTools.ProfileTags
             if (MinFreeBagSlots == 0)
                 return maxFreeSlots;
 
-            foreach (var item in ZetaDia.Me.Inventory.Backpack)
+            foreach (var item in InventoryManager.Backpack)
             {
                 slotsTaken++;
                 if (item.IsTwoSquareItem)
@@ -92,7 +92,7 @@ namespace QuestTools.ProfileTags
 
         public float GetMinDurability()
         {
-            return ZetaDia.Me.Inventory.Equipped.Min(i => i.DurabilityPercent) * 100;
+            return InventoryManager.Equipped.Min(i => i.DurabilityPercent) * 100;
         }
 
         public override void OnStart()

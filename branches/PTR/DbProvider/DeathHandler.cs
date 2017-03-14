@@ -134,7 +134,7 @@ namespace Trinity.DbProvider
             {
                 Logger.Log("[Death] Waiting while being resurrected");
             }
-            else if (ZetaDia.Me.IsInBossEncounter && !RiftProgression.IsInRift && IsAlivePlayerNearby)
+            else if (ZetaDia.Me.IsInBossEncounter && !Core.Rift.IsInRift && IsAlivePlayerNearby)
             {
                 Logger.Log("[Death] Waiting because of boss fight");
             }
@@ -193,7 +193,7 @@ namespace Trinity.DbProvider
 
         public static bool EquipmentNeedsEmergencyRepair(int durabilityPct)
         {
-            var equippedItems = ZetaDia.Me.Inventory.Equipped.Where(i => i.DurabilityCurrent < i.DurabilityMax).ToList();
+            var equippedItems = InventoryManager.Equipped.Where(i => i.DurabilityCurrent < i.DurabilityMax).ToList();
             if (!equippedItems.Any())
                 return false;
 

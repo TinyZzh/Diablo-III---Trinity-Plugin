@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Adventurer.Game.Quests;
+using Trinity.Framework;
 using Zeta.Bot.Navigation;
 using Zeta.Common;
 
@@ -109,7 +110,7 @@ namespace Trinity.Components.Adventurer.Coroutines.CommonSubroutines
                 Util.Logger.DebugSetting("[MoveToPosition] CoroutineResult.Failure");
 
                 var canFullyPath = await AdvDia.DefaultNavigationProvider.CanFullyClientPathTo(_position);
-                var closeRayCastFail = AdvDia.MyPosition.Distance(_position) < 15f && !NavigationGrid.Instance.CanRayWalk(AdvDia.MyPosition, _position);
+                var closeRayCastFail = AdvDia.MyPosition.Distance(_position) < 15f && !Core.Grids.CanRayWalk(AdvDia.MyPosition, _position);//!NavigationGrid.Instance.CanRayWalk(AdvDia.MyPosition, _position);
                 var failedMoveResult = NavigationCoroutine.LastMoveResult == MoveResult.Failed || NavigationCoroutine.LastMoveResult == MoveResult.PathGenerationFailed;
                 if (!canFullyPath || closeRayCastFail || failedMoveResult)
                 {

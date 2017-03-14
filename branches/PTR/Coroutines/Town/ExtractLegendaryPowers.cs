@@ -87,7 +87,7 @@ namespace Trinity.Coroutines.Town
 
             Inventory.Materials.Update();
 
-            if (!BackpackHasMaterials && ZetaDia.Me.Inventory.NumFreeBackpackSlots < ExtractLegendaryPowerRecipe.Count)
+            if (!BackpackHasMaterials && InventoryManager.NumFreeBackpackSlots < ExtractLegendaryPowerRecipe.Count)
             {
                 Logger.LogVerbose("[ExtractLegendaryPowers] Not enough bag space");
                 return false;
@@ -303,7 +303,7 @@ namespace Trinity.Coroutines.Town
             await Transmute.Execute(transmuteGroup);
             await Coroutine.Sleep(1500);
 
-            var shouldBeDestroyedItem = ZetaDia.Me.Inventory.Backpack.FirstOrDefault(i => i.AnnId == itemDynamicId);
+            var shouldBeDestroyedItem = InventoryManager.Backpack.FirstOrDefault(i => i.AnnId == itemDynamicId);
             if (shouldBeDestroyedItem == null && ZetaDia.Storage.PlayerDataManager.ActivePlayerData.KanaisPowersExtractedActorSnoIds.Contains(itemSnoId))
             {
                 Logger.Log("[ExtractLegendaryPowers] Item Power Extracted! '{0}' ({1})",

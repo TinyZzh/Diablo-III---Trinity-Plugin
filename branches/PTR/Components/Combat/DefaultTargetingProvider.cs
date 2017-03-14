@@ -152,7 +152,7 @@ namespace Trinity.Components.Combat
 
         private async Task<bool> WaitForRiftBossSpawn()
         {
-            if (RiftProgression.IsInRift && CurrentTarget.IsBoss)
+            if (Core.Rift.IsInRift && CurrentTarget.IsBoss)
             {
                 if (CurrentTarget.IsSpawningBoss)
                 {

@@ -46,17 +46,17 @@ namespace Trinity.Coroutines
             {
                 Logger.Log(TrinityLogLevel.Verbose, LogCategory.UserInformation, "Using Potion", 0);
                 var dynamicId = legendaryPotions.First().AnnId;
-                ZetaDia.Me.Inventory.UseItem(dynamicId);
+                InventoryManager.UseItem(dynamicId);
                 SpellHistory.RecordSpell(new TrinityPower(SNOPower.DrinkHealthPotion));
                 SnapShot.Record();
                 return true;
             }
 
-            var potion = ZetaDia.Me.Inventory.BaseHealthPotion;
+            var potion = InventoryManager.BaseHealthPotion;
             if (potion != null)
             {
                 Logger.Log(TrinityLogLevel.Verbose, LogCategory.UserInformation, "Using Potion", 0);
-                ZetaDia.Me.Inventory.UseItem(potion.AnnId);
+                InventoryManager.UseItem(potion.AnnId);
                 SpellHistory.RecordSpell(new TrinityPower(SNOPower.DrinkHealthPotion));
                 SnapShot.Record();
                 return true;

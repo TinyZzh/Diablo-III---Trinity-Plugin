@@ -242,7 +242,7 @@ namespace Trinity.Framework.Helpers
                     return;
                 }
 
-                var equipped = ZetaDia.Me.Inventory.Equipped;
+                var equipped = InventoryManager.Equipped;
                 if (!equipped.Any())
                 {
                     Logger.Log("Error: No equipped items detected");
@@ -387,9 +387,9 @@ namespace Trinity.Framework.Helpers
                 }
 
                 var allItems = new List<ACDItem>();
-                allItems.AddRange(ZetaDia.Me.Inventory.StashItems);
-                allItems.AddRange(ZetaDia.Me.Inventory.Equipped);
-                allItems.AddRange(ZetaDia.Me.Inventory.Backpack);
+                allItems.AddRange(InventoryManager.StashItems);
+                allItems.AddRange(InventoryManager.Equipped);
+                allItems.AddRange(InventoryManager.Backpack);
 
                 if (!allItems.Any())
                     return;
@@ -537,11 +537,11 @@ namespace Trinity.Framework.Helpers
                         break;
 
                     case DumpItemLocation.Backpack:
-                        itemList = ZetaDia.Me.Inventory.Backpack.Select(i => new ItemWrapper(i)).ToList();
+                        itemList = InventoryManager.Backpack.Select(i => new ItemWrapper(i)).ToList();
                         break;
 
                     case DumpItemLocation.Merchant:
-                        itemList = ZetaDia.Me.Inventory.MerchantItems.Select(i => new ItemWrapper(i)).ToList();
+                        itemList = InventoryManager.MerchantItems.Select(i => new ItemWrapper(i)).ToList();
                         break;
 
                     case DumpItemLocation.Ground:
@@ -549,13 +549,13 @@ namespace Trinity.Framework.Helpers
                         break;
 
                     case DumpItemLocation.Equipped:
-                        itemList = ZetaDia.Me.Inventory.Equipped.Select(i => new ItemWrapper(i)).ToList();
+                        itemList = InventoryManager.Equipped.Select(i => new ItemWrapper(i)).ToList();
                         break;
 
                     case DumpItemLocation.Stash:
                         if (UIElements.StashWindow.IsVisible)
                         {
-                            itemList = ZetaDia.Me.Inventory.StashItems.Select(i => new ItemWrapper(i)).ToList();
+                            itemList = InventoryManager.StashItems.Select(i => new ItemWrapper(i)).ToList();
                         }
                         else
                         {

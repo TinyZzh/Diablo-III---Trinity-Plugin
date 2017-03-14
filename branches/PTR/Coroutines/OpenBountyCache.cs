@@ -24,7 +24,7 @@ namespace Trinity.Coroutines
                     if (item.RawItemType == RawItemType.TreasureBag)
                     {
                         Logger.Log($"Opening Treasure Bag {bagsOpened + 1}, Id={item.AnnId}");
-                        ZetaDia.Me.Inventory.UseItem(item.AnnId);
+                        InventoryManager.UseItem(item.AnnId);
                         bagsOpened++;
                         await Coroutine.Sleep(500);
                     }

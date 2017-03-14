@@ -13,7 +13,7 @@ namespace Trinity.Components.Adventurer.Game.Combat
         {
             get
             {
-                var lhItem = ZetaDia.Me.Inventory.Equipped.FirstOrDefault(i => i.InventorySlot == InventorySlot.LeftHand);
+                var lhItem = InventoryManager.Equipped.FirstOrDefault(i => i.InventorySlot == InventorySlot.LeftHand);
 
                 if (lhItem == null)
                     return SNOPower.None;

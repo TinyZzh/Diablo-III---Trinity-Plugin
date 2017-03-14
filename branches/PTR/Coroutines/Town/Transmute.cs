@@ -62,7 +62,7 @@ namespace Trinity.Coroutines.Town
             }
 
             Logger.Log("Zip Zap!");
-            ZetaDia.Me.Inventory.TransmuteItems(transmuteGroup);
+            InventoryManager.TransmuteItems(transmuteGroup);
             return true;
         }
     }

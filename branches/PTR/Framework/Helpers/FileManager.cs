@@ -184,6 +184,14 @@ namespace Trinity.Framework.Helpers
             }
         }
 
+        public static string RoutinesDirectory
+        {
+            get
+            {
+                return Path.Combine(DemonBuddyPath, "Routines");
+            }
+        }
+
         /// <summary>
         /// The string name of TrinityPlugin
         /// </summary>

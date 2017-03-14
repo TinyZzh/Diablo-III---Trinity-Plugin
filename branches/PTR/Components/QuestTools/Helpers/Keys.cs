@@ -110,7 +110,7 @@ namespace QuestTools.Helpers
             KeyCounts[2] = 0;
             KeyCounts[3] = 0;
 
-            var keys = ZetaDia.Me.Inventory.StashItems.Where(IsKeyId).Concat(ZetaDia.Me.Inventory.Backpack.Where(IsKeyId)).ToList();
+            var keys = InventoryManager.StashItems.Where(IsKeyId).Concat(InventoryManager.Backpack.Where(IsKeyId)).ToList();
             keys.ForEach(key => { KeyCounts[Array.IndexOf(KeyIds, key.ActorSnoId)] += key.ItemStackQuantity; });
             _lastCheckedKeys = DateTime.UtcNow;
 

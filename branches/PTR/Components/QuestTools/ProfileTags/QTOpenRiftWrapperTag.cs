@@ -259,8 +259,8 @@ namespace QuestTools.ProfileTags
         {
             get
             {
-                var backPackCount = ZetaDia.Me.Inventory.Backpack.Where(ItemMatcherFunc).Sum(i => i.ItemStackQuantity);
-                var stashCount = ZetaDia.Me.Inventory.StashItems.Where(ItemMatcherFunc).Sum(i => i.ItemStackQuantity);
+                var backPackCount = InventoryManager.Backpack.Where(ItemMatcherFunc).Sum(i => i.ItemStackQuantity);
+                var stashCount = InventoryManager.StashItems.Where(ItemMatcherFunc).Sum(i => i.ItemStackQuantity);
                 return stashCount + backPackCount > 0;
             }
         }

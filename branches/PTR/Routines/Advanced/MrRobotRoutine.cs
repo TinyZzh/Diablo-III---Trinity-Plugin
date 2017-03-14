@@ -472,7 +472,7 @@ namespace Trinity.Routines.Advanced
                 // But we still need to persist settings for all skills used to-date.
                 // Also need to populate with reference skill info for the pretty UI Icons etc.
 
-                if (!Player.IsInGame && !Core.IsEnabled || !ZetaDia.IsInGame)
+                if (!Player.IsInGame && !ModuleManager.IsEnabled || !ZetaDia.IsInGame)
                     return;
 
                 var activeSettings = SkillUtils.Active.Select(s => new SkillSettings(s)).ToList();
@@ -492,7 +492,7 @@ namespace Trinity.Routines.Advanced
 
             private void UpdateWeights(bool reset = false)
             {
-                if (!Player.IsInGame && !Core.IsEnabled || !ZetaDia.IsInGame)
+                if (!Player.IsInGame && !ModuleManager.IsEnabled || !ZetaDia.IsInGame)
                     return;
 
                 if (Weights == null || !Weights.Any() || reset)

@@ -37,7 +37,7 @@ namespace Trinity.Framework.Actors.Properties
             var monsterQuality = commonData.MonsterQualityLevel;
             actor.MonsterQuality = monsterQuality;
             actor.IsBoss = monsterQuality == MonsterQuality.Boss;
-            actor.RiftValuePct = RiftProgression.GetRiftValue(actor);
+            actor.RiftValuePct = Core.Rift.GetRiftValue(actor);
             actor.IsTreasureGoblin = actor.MonsterRace == MonsterRace.TreasureGoblin;
             actor.IsIllusion = monsterAffixes.HasFlag(MonsterAffixes.Illusionist) && attributes.IsIllusion;
             actor.IsRare = monsterQuality == MonsterQuality.Rare;
@@ -182,7 +182,9 @@ namespace Trinity.Framework.Actors.Properties
                     return true;
                 }
 
-                if (monster.Attributes.Hitpoints <= 0.01)
+                var hpA = monster.Attributes.Hitpoints <= 0.01;
+                var hpB = monster.CommonData.GetAttribute<float>(ActorAttributeType.HitpointsCur) <= 0.01;
+                if (hpA)
                 {
                     return true;
                 }

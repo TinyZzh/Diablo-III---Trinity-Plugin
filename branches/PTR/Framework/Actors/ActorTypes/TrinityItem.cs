@@ -11,6 +11,7 @@ using Trinity.Settings;
 using Zeta.Bot;
 using Zeta.Bot.Settings;
 using Zeta.Game.Internals.Actors;
+using Zeta.Game;
 
 namespace Trinity.Framework.Actors.ActorTypes
 {
@@ -85,6 +86,9 @@ namespace Trinity.Framework.Actors.ActorTypes
 
         public override void OnUpdated()
         {
+            if (InventorySlot == InventorySlot.SharedStash && !Core.Player.IsInTown)
+                return;
+
             ItemProperties.Update(this);
             CommonProperties.Update(this);
         }

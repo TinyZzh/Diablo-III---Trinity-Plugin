@@ -8,7 +8,7 @@ namespace Trinity.Coroutines
     {
         public async static Task<bool> Execute()
         {
-            var equippedItems = ZetaDia.Me.Inventory.Equipped.Where(i => i.IsValid);
+            var equippedItems = InventoryManager.Equipped.Where(i => i.IsValid);
             bool needEmergencyRepair = false;
 
             foreach (var item in equippedItems)

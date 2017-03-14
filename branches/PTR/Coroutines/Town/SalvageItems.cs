@@ -121,7 +121,7 @@ namespace Trinity.Coroutines.Town
                     if (normals.Count > 0)
                     {
                         Logger.LogVerbose($"[SalvageItems] Bulk Salvaging {normals.Count} Normal");
-                        if (ZetaDia.Me.Inventory.SalvageItemsOfRarity(SalvageRarity.Normal))
+                        if (InventoryManager.SalvageItemsOfRarity(SalvageRarity.Normal))
                         {
                             normals.ForEach(ItemEvents.FireItemSalvaged);
                         }
@@ -131,7 +131,7 @@ namespace Trinity.Coroutines.Town
                     if (magic.Count > 0)
                     {
                         Logger.LogVerbose($"[SalvageItems] Bulk Salvaging {magic.Count} Magic");
-                        if (ZetaDia.Me.Inventory.SalvageItemsOfRarity(SalvageRarity.Magic))
+                        if (InventoryManager.SalvageItemsOfRarity(SalvageRarity.Magic))
                         {
                             magic.ForEach(ItemEvents.FireItemSalvaged);
                         }
@@ -141,7 +141,7 @@ namespace Trinity.Coroutines.Town
                     if (rares.Count > 0)
                     {
                         Logger.LogVerbose($"[SalvageItems] Bulk Salvaging {rares.Count} Rare");
-                        if (ZetaDia.Me.Inventory.SalvageItemsOfRarity(SalvageRarity.Rare))
+                        if (InventoryManager.SalvageItemsOfRarity(SalvageRarity.Rare))
                         {
                             rares.ForEach(ItemEvents.FireItemSalvaged);
                         }
@@ -181,7 +181,7 @@ namespace Trinity.Coroutines.Town
                     }
 
                     Logger.Log($"Salvaging: {item.Name} ({item.ActorSnoId}) Ancient={item.IsAncient}");
-                    ZetaDia.Me.Inventory.SalvageItem(item.AnnId);
+                    InventoryManager.SalvageItem(item.AnnId);
                     Inventory.InvalidItemDynamicIds.Add(item.AnnId);
                     ItemEvents.FireItemSalvaged(item);
                 }

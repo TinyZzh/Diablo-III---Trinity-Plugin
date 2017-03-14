@@ -351,7 +351,7 @@ namespace Trinity.Items.Sorting
             // Setup grid
             if (inventorySlot == InventorySlot.BackpackItems)
             {
-                wrappedItems = ZetaDia.Me.Inventory.Backpack.Where(i => i.IsValid).Select(i => new ItemWrapper(i)).ToList();
+                wrappedItems = InventoryManager.Backpack.Where(i => i.IsValid).Select(i => new ItemWrapper(i)).ToList();
 
                 _usedGrid = new bool[10, 6];
                 // Block off the entire of any "protected bag slots"
@@ -363,9 +363,9 @@ namespace Trinity.Items.Sorting
             }
             else if (inventorySlot == InventorySlot.SharedStash)
             {
-                wrappedItems = ZetaDia.Me.Inventory.StashItems.Where(i => i.IsValid).Select(i => new ItemWrapper(i)).ToList();
+                wrappedItems = InventoryManager.StashItems.Where(i => i.IsValid).Select(i => new ItemWrapper(i)).ToList();
 
-                int maxStashRow = ZetaDia.Me.Inventory.NumSharedStashSlots / 7;
+                int maxStashRow = InventoryManager.NumSharedStashSlots / 7;
                 // 7 columns, 10 rows x 5 pages
                 _usedGrid = new bool[7, maxStashRow];
             }
@@ -461,7 +461,7 @@ namespace Trinity.Items.Sorting
                         break;
                     case InventorySlot.SharedStash:
                         maxCol = 6;
-                        maxRow = (ZetaDia.Me.Inventory.NumSharedStashSlots / 7) - 1;
+                        maxRow = (InventoryManager.NumSharedStashSlots / 7) - 1;
                         break;
                 }
 
@@ -510,7 +510,7 @@ namespace Trinity.Items.Sorting
                     string msg = String.Format("Moving item {0} from {1},{2} to {3},{4}", i.Name, i.Item.InventoryColumn, i.Item.InventoryRow, currentCol, currentRow);
                     BotMain.StatusText = msg;
                     Logger.LogVerbose(msg);
-                    ZetaDia.Me.Inventory.MoveItem(i.DynamicId, myDynamicId, inventorySlot, currentCol, currentRow);
+                    InventoryManager.MoveItem(i.DynamicId, myDynamicId, inventorySlot, currentCol, currentRow);
 
                     MarkCellAsUsed(currentRow, currentCol, i);
                     currentCol++;
@@ -545,7 +545,7 @@ namespace Trinity.Items.Sorting
                         break;
                     case InventorySlot.SharedStash:
                         currentCol = maxCol = 6;
-                        currentRow = maxRow = (ZetaDia.Me.Inventory.NumSharedStashSlots / 7) - 1;
+                        currentRow = maxRow = (InventoryManager.NumSharedStashSlots / 7) - 1;
                         break;
                 }
 
@@ -587,16 +587,16 @@ namespace Trinity.Items.Sorting
 
                     int desiredStashPage = await SetStashpage(currentRow);
 
-                    if (i.Item.MaxStackCount > 1 && ZetaDia.Me.Inventory.CanStackItemInStashPage(i.Item, desiredStashPage) && GetNumberOfStacks(i.Item, inventorySlot) > 1)
+                    if (i.Item.MaxStackCount > 1 && InventoryManager.CanStackItemInStashPage(i.Item, desiredStashPage) && GetNumberOfStacks(i.Item, inventorySlot) > 1)
                     {
-                        ZetaDia.Me.Inventory.QuickWithdraw(i.Item);
+                        InventoryManager.QuickWithdraw(i.Item);
                         await Coroutine.Sleep(100);
                         await Coroutine.Yield();
 
-                        var sameItem = ZetaDia.Me.Inventory.Backpack.FirstOrDefault(item => item.ActorSnoId == i.ActorSnoId && item.Name.StartsWith(i.Name.Substring(0, 4)));
+                        var sameItem = InventoryManager.Backpack.FirstOrDefault(item => item.ActorSnoId == i.ActorSnoId && item.Name.StartsWith(i.Name.Substring(0, 4)));
                         if (sameItem != null)
                         {
-                            ZetaDia.Me.Inventory.QuickStash(sameItem);
+                            InventoryManager.QuickStash(sameItem);
                             await Coroutine.Sleep(100);
                         }
                         continue;
@@ -607,7 +607,7 @@ namespace Trinity.Items.Sorting
                     string msg = String.Format("Moving item {0} from {1},{2} to {3},{4}", i.Name, i.Item.InventoryColumn, i.Item.InventoryRow, currentCol, currentRow);
                     BotMain.StatusText = msg;
                     Logger.LogVerbose(msg);
-                    ZetaDia.Me.Inventory.MoveItem(i.DynamicId, myDynamicId, inventorySlot, currentCol, currentRow);
+                    InventoryManager.MoveItem(i.DynamicId, myDynamicId, inventorySlot, currentCol, currentRow);
 
                     MarkCellAsUsed(currentRow, currentCol, i);
                     currentCol--;
@@ -631,10 +631,10 @@ namespace Trinity.Items.Sorting
             switch (inventorySlot)
             {
                 case InventorySlot.BackpackItems:
-                    items = ZetaDia.Me.Inventory.Backpack.Where(i => i.IsValid && i.ActorSnoId == item.ActorSnoId && i.ItemType == item.ItemType).ToList();
+                    items = InventoryManager.Backpack.Where(i => i.IsValid && i.ActorSnoId == item.ActorSnoId && i.ItemType == item.ItemType).ToList();
                     break;
                 case InventorySlot.SharedStash:
-                    items = ZetaDia.Me.Inventory.StashItems.Where(i => i.IsValid && i.ActorSnoId == item.ActorSnoId && i.ItemType == item.ItemType).ToList();
+                    items = InventoryManager.StashItems.Where(i => i.IsValid && i.ActorSnoId == item.ActorSnoId && i.ItemType == item.ItemType).ToList();
                     break;
                 default:
                     return 0;
@@ -645,9 +645,9 @@ namespace Trinity.Items.Sorting
         private static async Task<int> SetStashpage(int currentRow)
         {
             int desiredStashPage = (int)Math.Floor((double)currentRow / 10);
-            if (ZetaDia.Me.Inventory.CurrentStashPage != desiredStashPage)
+            if (InventoryManager.CurrentStashPage != desiredStashPage)
             {
-                ZetaDia.Me.Inventory.SwitchStashPage(desiredStashPage);
+                InventoryManager.SwitchStashPage(desiredStashPage);
                 await Coroutine.Sleep(100);
                 await Coroutine.Yield();
             }
@@ -672,7 +672,7 @@ namespace Trinity.Items.Sorting
 
             for (; row <= lastRow; row++)
             {
-                if (ZetaDia.Me.Inventory.ItemInLocation(location, col, row))
+                if (InventoryManager.ItemInLocation(location, col, row))
                 {
                     var item = GetItemInLocation(location, col, row);
 
@@ -685,7 +685,7 @@ namespace Trinity.Items.Sorting
                             string msg = $"Clearing location {col},{row} - Moving item {item.Name} to {newSpot.Item1},{newSpot.Item2}";
                             BotMain.StatusText = msg;
                             Logger.LogVerbose(msg);
-                            ZetaDia.Me.Inventory.MoveItem(item.AnnId, myDynamicId, location, newSpot.Item1, newSpot.Item2);
+                            InventoryManager.MoveItem(item.AnnId, myDynamicId, location, newSpot.Item1, newSpot.Item2);
 
                             await Coroutine.Sleep(ItemMovementDelay);
                             await Coroutine.Yield();
@@ -734,7 +734,7 @@ namespace Trinity.Items.Sorting
         {
             try
             {
-                int stashRows = ZetaDia.Me.Inventory.NumSharedStashSlots / 7;
+                int stashRows = InventoryManager.NumSharedStashSlots / 7;
                 bool[,] stashSlotBlocked = new bool[7, stashRows];
 
                 if (targetCol >= 0 && targetRow >= 0)
@@ -744,7 +744,7 @@ namespace Trinity.Items.Sorting
                         stashSlotBlocked[targetCol, targetRow + 1] = true;
                 }
                 // Map out all the items already in the backpack
-                foreach (ACDItem item in ZetaDia.Me.Inventory.StashItems)
+                foreach (ACDItem item in InventoryManager.StashItems)
                 {
                     if (!item.IsValid)
                     {
@@ -771,7 +771,7 @@ namespace Trinity.Items.Sorting
                         // 7 columns
                         for (int col = 0; col <= 6; col++)
                         {
-                            if (ZetaDia.Me.Inventory.ItemInLocation(InventorySlot.SharedStash, col, row))
+                            if (InventoryManager.ItemInLocation(InventorySlot.SharedStash, col, row))
                                 continue;
 
                             // Slot is blocked, skip
@@ -808,7 +808,7 @@ namespace Trinity.Items.Sorting
                         // 6 rows
                         for (int row = stashRows - 1; row >= 0; row--)
                         {
-                            if (ZetaDia.Me.Inventory.ItemInLocation(InventorySlot.SharedStash, col, row))
+                            if (InventoryManager.ItemInLocation(InventorySlot.SharedStash, col, row))
                                 continue;
 
                             // Slot is blocked, skip
@@ -880,7 +880,7 @@ namespace Trinity.Items.Sorting
                 }
 
                 // Map out all the items already in the backpack
-                foreach (ACDItem item in ZetaDia.Me.Inventory.Backpack)
+                foreach (ACDItem item in InventoryManager.Backpack)
                 {
                     if (!item.IsValid)
                     {
@@ -921,7 +921,7 @@ namespace Trinity.Items.Sorting
                         // 6 rows
                         for (int row = 0; row <= 5; row++)
                         {
-                            if (ZetaDia.Me.Inventory.ItemInLocation(InventorySlot.BackpackItems, col, row))
+                            if (InventoryManager.ItemInLocation(InventorySlot.BackpackItems, col, row))
                                 continue;
 
                             // Slot is blocked, skip
@@ -959,7 +959,7 @@ namespace Trinity.Items.Sorting
                         // 6 rows
                         for (int row = 5; row >= 0; row--)
                         {
-                            if (ZetaDia.Me.Inventory.ItemInLocation(InventorySlot.BackpackItems, col, row))
+                            if (InventoryManager.ItemInLocation(InventorySlot.BackpackItems, col, row))
                                 continue;
 
                             // Slot is blocked, skip
@@ -1003,5 +1003,205 @@ namespace Trinity.Items.Sorting
             }
         }
 
+    }
+
+    public class ItemWrapper : IComparable<ItemWrapper>, IEquatable<ItemWrapper>
+    {
+        public class ItemStatsData
+        {
+            public float WeaponMinDamage { get; set; }
+            public float WeaponMaxDamage { get; set; }
+            public float WeaponDamagePerSecond { get; set; }
+            public float MinDamage { get; set; }
+            public float MaxDamage { get; set; }
+            public int Sockets { get; set; }
+        }
+
+        public class ItemStatsDataFactory
+        {
+            internal static ItemStatsData GetItemStatsDataFromStats(ItemStats stats)
+            {
+                if (!stats.Item.IsValid)
+                    return default(ItemStatsData);
+
+                ItemStatsData itemStatsData = new ItemStatsData()
+                {
+                    Sockets = stats.Sockets,
+                    WeaponMinDamage = stats.WeaponMinDamage,
+                    WeaponMaxDamage = stats.WeaponMaxDamage,
+                    WeaponDamagePerSecond = stats.WeaponDamagePerSecond,
+                };
+                return itemStatsData;
+            }
+        }
+
+        public int ActorSnoId { get; set; }
+        public int GameBalanceId { get; set; }
+        public int DynamicId { get; set; }
+        public int AcdId { get; set; }
+        public int RequiredLevel { get; set; }
+        public InventorySlot InventorySlot { get; set; }
+        public InventorySlot[] ValidInventorySlots { get; set; }
+        public bool IsUnidentified { get; set; }
+        public bool IsTwoHand { get; set; }
+        public bool IsOneHand { get; set; }
+        public string Name { get; set; }
+        public string InternalName { get; set; }
+        public ItemType ItemType { get; set; }
+        public ItemBaseType ItemBaseType { get; set; }
+        public bool HasSingleUseSlot { get; set; }
+        public bool IsShield { get; set; }
+        public bool IsOffHand { get; set; }
+        public bool IsWeapon { get; set; }
+        public bool IsJewelry { get; set; }
+        public bool IsArmor { get; set; }
+        public bool IsEquipment { get; set; }
+        public bool IsMisc { get; set; }
+        public bool IsGem { get; set; }
+        public bool IsTwoSquareItem { get; set; }
+        public bool IsPotion { get; set; }
+        public ItemQuality ItemQualityLevel { get; set; }
+        public GemQuality GemQuality { get; set; }
+        public int TieredLootRunKeyLevel { get; set; }
+        public long ItemStackQuantity { get; set; }
+        public bool IsSetItem { get; set; }
+        public string ItemSetName { get; set; }
+
+        public ACDItem Item { get; private set; }
+        public ItemStats Stats { get; private set; }
+        public ItemStatsData StatsData { get; private set; }
+
+        public ItemWrapper(ACDItem item)
+        {
+            try
+            {
+                ActorSnoId = item.ActorSnoId;
+                GameBalanceId = item.GameBalanceId;
+                DynamicId = item.AnnId;
+                AcdId = item.ACDId;
+                InventorySlot = item.InventorySlot;
+                ValidInventorySlots = item.ValidInventorySlots;
+                RequiredLevel = item.RequiredLevel;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Error wrapping non-attribute properties on item {0}: " + ex);
+            }
+            try
+            {
+                Name = item.Name;
+                IsUnidentified = item.IsUnidentified;
+                IsTwoHand = item.IsTwoHand;
+                IsOneHand = item.IsOneHand;
+                InternalName = item.InternalName;
+                ItemType = item.ItemType;
+                ItemBaseType = item.ItemBaseType;
+                IsShield = TypeConversions.ShieldTypes.Contains(ItemType);
+                IsOffHand = TypeConversions.OffHandTypes.Contains(ItemType);
+                IsArmor = TypeConversions.ArmorTypes.Contains(ItemType);
+                IsJewelry = TypeConversions.JewleryTypes.Contains(ItemType);
+                IsWeapon = TypeConversions.WeaponTypes.Contains(ItemType);
+                IsEquipment = TypeConversions.EquipmentTypes.Contains(item.ItemBaseType);
+                IsTwoSquareItem = TypeConversions.TwoSquareTypes.Contains(item.ItemBaseType);
+                IsMisc = TypeConversions.MiscTypes.Contains(ItemType);
+                IsGem = item.ItemBaseType == ItemBaseType.Gem;
+                IsPotion = item.IsPotion;
+                ItemQualityLevel = item.ItemQualityLevel;
+                GemQuality = item.GemQuality;
+                TieredLootRunKeyLevel = item.TieredLootRunKeyLevel;
+                ItemStackQuantity = item.ItemStackQuantity;
+                IsSetItem = item.IsSetItem();
+                ItemSetName = item.ItemSetName();
+                HasSingleUseSlot = IsSingleSlotItem();
+                Item = item;
+                Stats = item.Stats;
+                StatsData = ItemStatsDataFactory.GetItemStatsDataFromStats(Stats);
+
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Error wrapping item {0}: " + ex);
+            }
+        }
+
+        public bool IsSingleSlotItem()
+        {
+            if (IsOneHand)
+                return false;
+
+            if (ItemType == ItemType.Ring)
+                return false;
+
+            return true;
+        }
+
+        public int CompareTo(ItemWrapper other)
+        {
+            return this.Compare(other);
+        }
+
+        public bool Equals(ItemWrapper other)
+        {
+            if (other == null)
+                return false;
+
+            if (DynamicId == other.DynamicId)
+                return true;
+
+            return ItemType == other.ItemType &&
+                ItemBaseType == other.ItemBaseType &&
+                Item.ItemQualityLevel == other.Item.ItemQualityLevel &&
+                Item.Name == other.Name;
+        }
+
+        public override int GetHashCode()
+        {
+            return Item.GetHashCode();
+        }
+
+        public static bool operator ==(ItemWrapper a, ItemWrapper b)
+        {
+            return a.Equals(b);
+        }
+
+        public override bool Equals(object obj)
+        {
+            var b = obj as ItemWrapper;
+            if (b == null)
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, b))
+            {
+                return true;
+            }
+            return ItemType == b.ItemType && ItemBaseType == b.ItemBaseType &&
+                Item.ItemQualityLevel == b.Item.ItemQualityLevel &&
+                Item.Name == b.Name;
+        }
+
+        public static bool operator !=(ItemWrapper item, ItemWrapper other)
+        {
+            return !(item == other);
+        }
+
+        public static bool operator <(ItemWrapper item, ItemWrapper other)
+        {
+            return item.Compare(other) < 0;
+        }
+
+        public static bool operator >(ItemWrapper item, ItemWrapper other)
+        {
+            return item.CompareTo(other) > 0;
+        }
+        public static bool operator >=(ItemWrapper item, ItemWrapper other)
+        {
+            return item.CompareTo(other) >= 0;
+        }
+
+        public static bool operator <=(ItemWrapper item, ItemWrapper other)
+        {
+            return item.CompareTo(other) <= 0;
+        }
     }
 }

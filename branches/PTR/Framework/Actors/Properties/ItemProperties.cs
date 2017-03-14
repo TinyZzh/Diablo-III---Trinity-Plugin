@@ -41,7 +41,7 @@ namespace Trinity.Framework.Actors.Properties
             if (actor.ActorType != ActorType.Item)
                 return;
 
-            if (!actor.IsAcdBased || !actor.IsAcdValid)
+            if (!actor.IsAcdBased) // || !actor.IsAcdValid)
                 return;
 
             var commonData = actor.CommonData;
@@ -137,14 +137,11 @@ namespace Trinity.Framework.Actors.Properties
             if (actor.ActorType != ActorType.Item)
                 return;
 
-            if (!actor.IsAcdBased || !actor.IsAcdValid)
+            if (!actor.IsAcdBased) // || !actor.IsAcdValid)
                 return;
 
             var commonData = actor.CommonData;
             actor.AcdId = commonData.ACDId;
-
-            if (actor.InventorySlot == InventorySlot.SharedStash && !Core.Player.IsInTown)
-                return;
 
             var slot = ZetaDia.Memory.Read<InventorySlot>(commonData.BaseAddress + 0x114);
             var col = ZetaDia.Memory.Read<int>(commonData.BaseAddress + 0x118);

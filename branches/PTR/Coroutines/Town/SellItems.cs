@@ -86,7 +86,7 @@ namespace Trinity.Coroutines.Town
                 var freshItems = Inventory.Backpack.Items.Where(ShouldSell);
                 foreach (var item in freshItems)
                 {
-                    if (ZetaDia.Me.Inventory.CanSellItem(item.ToAcdItem()))
+                    if (InventoryManager.CanSellItem(item.ToAcdItem()))
                     {
                         if (!item.IsValid || item.IsUnidentified)
                         {
@@ -96,7 +96,7 @@ namespace Trinity.Coroutines.Town
 
                         await Coroutine.Sleep(Randomizer.Fudge(100));
                         Logger.LogVerbose($"[SellItems] Selling: {item.Name} ({item.ActorSnoId}) Quality={item.ItemQualityLevel} IsAncient={item.IsAncient} Name={item.InternalName}");
-                        ZetaDia.Me.Inventory.SellItem(item.ToAcdItem());
+                        InventoryManager.SellItem(item.ToAcdItem());
                         ItemEvents.FireItemSold(item);
                         Inventory.InvalidItemDynamicIds.Add(item.AnnId);
                     }

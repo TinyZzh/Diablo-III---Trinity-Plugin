@@ -454,44 +454,44 @@ namespace Trinity.Coroutines.Resources
             return i.Name == i.ItemType.ToString() || isCraftingReagent && stackQuantity == 0 || !isCraftingReagent && !i.IsGem && i.ItemBaseType != ItemBaseType.Misc && stackQuantity > 0;
         }
 
-        public static void LogBadData(ACDItem i, string prefix)
-        {
-            var stackQuantity = i.ItemStackQuantity;
-            var isCraftingReagent = i.IsCraftingReagent;
+        //public static void LogBadData(ACDItem i, string prefix)
+        //{
+        //    var stackQuantity = i.ItemStackQuantity;
+        //    var isCraftingReagent = i.IsCraftingReagent;
 
-            if (!i.IsValid)
-            {
-                Logger.LogVerbose($"{prefix} Bad Data Found: {i.Name} ({i.ActorSnoId}), is memory address not valid");
-                return;
-            }
+        //    if (!i.IsValid)
+        //    {
+        //        Logger.LogVerbose($"{prefix} Bad Data Found: {i.Name} ({i.ActorSnoId}), is memory address not valid");
+        //        return;
+        //    }
 
-            if (i.IsDisposed)
-            {
-                Logger.LogVerbose($"{prefix} Bad Data Found: {i.Name} ({i.ActorSnoId}), is disposed");
-                return;
-            }
+        //    if (i.IsDisposed)
+        //    {
+        //        Logger.LogVerbose($"{prefix} Bad Data Found: {i.Name} ({i.ActorSnoId}), is disposed");
+        //        return;
+        //    }
 
-            if (i.IsUnidentified)
-                return;
+        //    if (i.IsUnidentified)
+        //        return;
 
-            if (i.Name == i.ItemType.ToString())
-            {
-                Logger.LogVerbose($"{prefix} Bad Data Found: {i.Name} ({i.ActorSnoId}), name matches the item type {i.ItemType}");
-                return;
-            }
+        //    if (i.Name == i.ItemType.ToString())
+        //    {
+        //        Logger.LogVerbose($"{prefix} Bad Data Found: {i.Name} ({i.ActorSnoId}), name matches the item type {i.ItemType}");
+        //        return;
+        //    }
 
-            if (stackQuantity == 0 && i.MaxStackCount > 0 || stackQuantity > 0 && i.MaxStackCount == 0)
-            {
-                Logger.LogVerbose($"{prefix} Bad Data Found: {i.Name} ({i.ActorSnoId}), stack count mismatch current={stackQuantity}  max={i.MaxStackCount}");
-                return;
-            }
+        //    if (stackQuantity == 0 && i.MaxStackCount > 0 || stackQuantity > 0 && i.MaxStackCount == 0)
+        //    {
+        //        Logger.LogVerbose($"{prefix} Bad Data Found: {i.Name} ({i.ActorSnoId}), stack count mismatch current={stackQuantity}  max={i.MaxStackCount}");
+        //        return;
+        //    }
 
-            if (i.ItemQualityLevel == ItemQuality.Invalid)
-            {
-                Logger.LogVerbose($"{prefix} Bad Data Found: {i.Name} ({i.ActorSnoId}), item quality level is 'Invalid' LinkColorQuality={i.GetItemQuality()}");
-                return;
-            }
-        }
+        //    if (i.ItemQualityLevel == ItemQuality.Invalid)
+        //    {
+        //        Logger.LogVerbose($"{prefix} Bad Data Found: {i.Name} ({i.ActorSnoId}), item quality level is 'Invalid' LinkColorQuality={i.GetItemQuality()}");
+        //        return;
+        //    }
+        //}
 
         public static class Backpack
         {

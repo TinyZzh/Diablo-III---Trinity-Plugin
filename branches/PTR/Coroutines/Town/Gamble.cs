@@ -158,7 +158,7 @@ namespace Trinity.Coroutines.Town
                 }
 
                 _gambleRotation.Remove(slot);
-                ZetaDia.Me.Inventory.BuyItem(item.AnnId);
+                InventoryManager.BuyItem(item.AnnId);
                 Logger.Log("[Gamble] Buying: {0}", slot);
                 _lastGambleTime = DateTime.UtcNow;
             }
@@ -231,7 +231,7 @@ namespace Trinity.Coroutines.Town
                     return false;
                 }
 
-                if (!DefaultLootProvider.IsAnyTwoSlotBackpackLocation || ZetaDia.Me.Inventory.NumFreeBackpackSlots < 5)
+                if (!DefaultLootProvider.IsAnyTwoSlotBackpackLocation || InventoryManager.NumFreeBackpackSlots < 5)
                 {
                     LogVerbose("No Backpack space!");
                     return false;

@@ -1,45 +1,44 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Trinity.Components.Adventurer.Game.Rift;
 using Trinity.Framework.Actors.ActorTypes;
+using Trinity.Framework.Objects;
 using Trinity.Reference;
 using Zeta.Game;
 using Zeta.Game.Internals;
 
-namespace Trinity.Framework.Helpers
+namespace Trinity.Modules
 {
-    public static class RiftProgression
+    public class RiftProgression : Module
     {
-        public static float CurrentProgressionPct => ZetaDia.Globals.RiftProgressionPercent;
+        protected override int UpdateIntervalMs => 500;
 
-        public static bool IsInRift
+        protected override void OnPulse()
         {
-            get
-            {
-                if (ZetaDia.Globals.IsLoadingWorld)
-                    return false;
+            IsNephalemRift = ZetaDia.Storage.CurrentRiftType == RiftType.Nephalem;
+            IsGreaterRift = ZetaDia.Storage.CurrentRiftType == RiftType.Greater;
 
-                return ZetaDia.Storage.RiftStarted && GameData.RiftWorldIds.Contains(ZetaDia.Globals.WorldSnoId);
-            }
+            if (!IsNephalemRift && !IsNephalemRift)
+                return;
+
+            CurrentProgressionPct = ZetaDia.Globals.RiftProgressionPercent;
+            IsInRift = ZetaDia.Globals.IsLoadingWorld && ZetaDia.Storage.RiftStarted && GameData.RiftWorldIds.Contains(ZetaDia.Globals.WorldSnoId);
+            IsGaurdianSpawned = IsInRift && ZetaDia.Storage.RiftGuardianSpawned;
+            RiftComplete = ZetaDia.Storage.RiftCompleted;
         }
 
-        public static bool IsGreaterRift => ZetaDia.Storage.CurrentRiftType == RiftType.Greater;
-        public static bool IsNephalemRift => ZetaDia.Storage.CurrentRiftType == RiftType.Nephalem;
-        public static RiftQuest Quest => new RiftQuest();
+        public RiftQuest Quest => new RiftQuest();
+        public float CurrentProgressionPct { get; private set; }
+        public bool IsInRift { get; private set; }
+        public bool IsGreaterRift { get; private set; }
+        public bool IsNephalemRift { get; private set; }
+        public bool IsGaurdianSpawned { get; private set; }
+        public bool RiftComplete { get; private set; }
 
-        public static bool IsGaurdianSpawned
-        {
-            get { return IsInRift && ZetaDia.Storage.RiftGuardianSpawned; }
-        }
-
-        public static bool RiftComplete
-        {
-            get
-            {
-                return ZetaDia.Storage.RiftCompleted;
-            }
-        }
-
-        public static void SetRiftValue(TrinityActor actor)
+        public void SetRiftValue(TrinityActor actor)
         {
             if (IsInRift)
             {
@@ -49,7 +48,7 @@ namespace Trinity.Framework.Helpers
             }
         }
 
-        public static double GetRiftValue(TrinityActor actor)
+        public double GetRiftValue(TrinityActor actor)
         {
             var riftValue = 0d;
             if (IsInRift)
@@ -59,7 +58,7 @@ namespace Trinity.Framework.Helpers
             return riftValue;
         }
 
-        public static bool TryGetRiftValue(TrinityActor actor, out double riftValuePct)
+        public bool TryGetRiftValue(TrinityActor actor, out double riftValuePct)
         {
             riftValuePct = -1;
             if (actor.IsMinion)

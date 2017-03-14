@@ -363,7 +363,7 @@ namespace Trinity.Modules
             InActiveEvent = ZetaDia.Storage.Quests.ActiveQuests.Any(q => GameData.EventQuests.Contains(q.QuestSNO) && q.QuestStep != 13);
             HasEventInspectionTask = ZetaDia.Storage.Quests.ActiveQuests.Any(q => GameData.EventQuests.Contains(q.QuestSNO) && q.QuestStep == 13);
 
-            FreeBackpackSlots = _me.Inventory.NumFreeBackpackSlots;
+            FreeBackpackSlots = InventoryManager.NumFreeBackpackSlots;
 
             WorldType = ZetaDia.Storage.CurrentWorldType;
             if (WorldType != Act.OpenWorld)
@@ -475,7 +475,7 @@ namespace Trinity.Modules
                 {
                     Logger.LogError($"Exception finding EquippedHealthPotion {ex}");
                 }
-                return ZetaDia.Me.Inventory.BaseHealthPotion;
+                return InventoryManager.BaseHealthPotion;
             }
         }
 
@@ -581,7 +581,6 @@ namespace Trinity.Modules
         public int TeamId { get; set; }
         public float Radius { get; set; }
         public int CurrentSceneSnoId { get; set; }
-        public PlayerAction CurrentAction { get; set; }
         public bool IsInBossEncounter { get; set; }
 
         public bool IsInBossEncounterArea { get; set; }

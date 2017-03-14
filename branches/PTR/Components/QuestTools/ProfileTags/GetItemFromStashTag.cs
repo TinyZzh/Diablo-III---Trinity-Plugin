@@ -112,7 +112,7 @@ namespace QuestTools.ProfileTags
                 return true;
             }
 
-            var backPackCount = ZetaDia.Me.Inventory.Backpack.Where(ItemMatcherFunc).Sum(i => i.ItemStackQuantity);
+            var backPackCount = InventoryManager.Backpack.Where(ItemMatcherFunc).Sum(i => i.ItemStackQuantity);
 
             // Check to see if we already have the stack in our backpack
             if (StackCount != 0 && backPackCount >= StackCount)
@@ -146,7 +146,7 @@ namespace QuestTools.ProfileTags
             if (UIElements.StashWindow.IsVisible)
             {
                 Logger.Debug("Stash window is visible");
-                var itemList = ZetaDia.Me.Inventory.StashItems.Where(ItemMatcherFunc).ToList();
+                var itemList = InventoryManager.StashItems.Where(ItemMatcherFunc).ToList();
                 var firstItem = itemList.FirstOrDefault();
 
                 // Check to see if we have the item in the stash
@@ -182,7 +182,7 @@ namespace QuestTools.ProfileTags
                 {
                     bool highestFirst = QuestToolsSettings.Instance.UseHighestKeystone;
 
-                    var itemsList = ZetaDia.Me.Inventory.StashItems.Where(ItemMatcherFunc).ToList();
+                    var itemsList = InventoryManager.StashItems.Where(ItemMatcherFunc).ToList();
 
                     ACDItem item;
                     if (GreaterRiftKey && highestFirst)
@@ -204,10 +204,10 @@ namespace QuestTools.ProfileTags
                     if (item == null)
                         break;
                     Logger.Debug("Withdrawing item {0} from stash {0}", item.Name);
-                    ZetaDia.Me.Inventory.QuickWithdraw(item);
+                    InventoryManager.QuickWithdraw(item);
                     itemCount++;
                     await Coroutine.Yield();
-                    backPackCount = ZetaDia.Me.Inventory.Backpack.Where(ItemMatcherFunc).Sum(i => i.ItemStackQuantity);
+                    backPackCount = InventoryManager.Backpack.Where(ItemMatcherFunc).Sum(i => i.ItemStackQuantity);
                 }
 
                 if (MaxItems > 0 && itemCount >= MaxItems)

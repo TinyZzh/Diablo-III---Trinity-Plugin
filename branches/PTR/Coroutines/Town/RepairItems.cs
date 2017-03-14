@@ -26,10 +26,10 @@ namespace Trinity.Coroutines.Town
                 return false;
 
             var coinage = ZetaDia.Storage.PlayerDataManager.ActivePlayerData.Coinage;
-            var shouldRepairAll = coinage > ZetaDia.Me.Inventory.GetRepairCost(true);
+            var shouldRepairAll = coinage > InventoryManager.GetRepairCost(true);
             if (!shouldRepairAll)
             {
-                if (coinage < ZetaDia.Me.Inventory.GetRepairCost(false))
+                if (coinage < InventoryManager.GetRepairCost(false))
                 {
                     Logger.LogVerbose("[RepairItems] Can't afford to repair");
                     return false;
@@ -93,17 +93,17 @@ namespace Trinity.Coroutines.Town
 
             if (shouldRepairAll)
             {
-                ZetaDia.Me.Inventory.RepairAllItems();
+                InventoryManager.RepairAllItems();
             }
             else
             {
-                ZetaDia.Me.Inventory.RepairEquippedItems();
+                InventoryManager.RepairEquippedItems();
             }
         }
 
         public static bool EquipmentNeedsRepair()
         {
-            var equippedItems = ZetaDia.Me.Inventory.Equipped.Where(i => i.DurabilityCurrent < i.DurabilityMax).ToList();
+            var equippedItems = InventoryManager.Equipped.Where(i => i.DurabilityCurrent < i.DurabilityMax).ToList();
             if (!equippedItems.Any())
                 return false;
 

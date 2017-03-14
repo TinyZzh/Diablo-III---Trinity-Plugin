@@ -49,13 +49,13 @@ namespace Trinity.Coroutines.Town
             var overageTaken = itemIdsHashSet.ToDictionary(k => k, v => false);
             var lastStackTaken = itemIdsHashSet.ToDictionary(k => k, v => default(ACDItem));
 
-            foreach (var item in ZetaDia.Me.Inventory.Backpack.Where(i => i.ACDId != 0 && i.IsValid && itemIdsHashSet.Contains(i.ActorSnoId)).ToList())
+            foreach (var item in InventoryManager.Backpack.Where(i => i.ACDId != 0 && i.IsValid && itemIdsHashSet.Contains(i.ActorSnoId)).ToList())
             {
                 amountWithdrawn[item.ActorSnoId] += item.ItemStackQuantity;
                 lastStackTaken[item.ActorSnoId] = item;
             }
 
-            foreach (var item in ZetaDia.Me.Inventory.StashItems.Where(i => i.ACDId != 0 && i.IsValid && itemIdsHashSet.Contains(i.ActorSnoId)).ToList())
+            foreach (var item in InventoryManager.StashItems.Where(i => i.ACDId != 0 && i.IsValid && itemIdsHashSet.Contains(i.ActorSnoId)).ToList())
             {
                 try
                 {
@@ -88,7 +88,7 @@ namespace Trinity.Coroutines.Town
                             var amountToSplit = stackSize - lastItem.ItemStackQuantity;
                             Logger.Log($"[TakeItemsFromStash] Merging Stash Stack {item.Name} ({item.ActorSnoId}) onto Backpack Stack. StackSize={amountToSplit} WithdrawnAlready={numTakenAlready} InternalName={item.InternalName} Id={item.ActorSnoId} Quality={item.ItemQualityLevel} AncientRank={item.AncientRank}");
 
-                            ZetaDia.Me.Inventory.MoveItem(item.AnnId, ZetaDia.Me.CommonData.AnnId, InventorySlot.BackpackItems, lastItem.InventoryColumn, lastItem.InventoryRow);
+                            InventoryManager.MoveItem(item.AnnId, ZetaDia.Me.CommonData.AnnId, InventorySlot.BackpackItems, lastItem.InventoryColumn, lastItem.InventoryRow);
 
                             amountWithdrawn[item.ActorSnoId] += amountToSplit;
                             overageTaken[item.ActorSnoId] = true;
@@ -98,7 +98,7 @@ namespace Trinity.Coroutines.Town
                             if (item.IsValid && !item.IsDisposed)
                             {
                                 Logger.Log($"[TakeItemsFromStash] Removing {item.Name} ({item.ActorSnoId}) from stash. StackSize={stackSize} WithdrawnAlready={numTakenAlready} InternalName={item.InternalName} Id={item.ActorSnoId} AnnId={item.AnnId} Quality={item.ItemQualityLevel} AncientRank={item.AncientRank}");
-                                ZetaDia.Me.Inventory.QuickWithdraw(item);
+                                InventoryManager.QuickWithdraw(item);
                                 amountWithdrawn[item.ActorSnoId] += stackSize;
                                 lastStackTaken[item.ActorSnoId] = item;
                             }
@@ -152,7 +152,7 @@ namespace Trinity.Coroutines.Town
                     }
 
                     Logger.LogVerbose($"[TakeItemsFromStash] QuickWithdrawing: {item.InternalName} Id={item.ActorSnoId} AnnId={item.AnnId} Name={item.Name} Quality={item.ItemQualityLevel} IsAncient={item.IsAncient}");
-                    ZetaDia.Me.Inventory.QuickWithdraw(item.ToAcdItem());
+                    InventoryManager.QuickWithdraw(item.ToAcdItem());
                 }
                 catch (Exception ex)
                 {

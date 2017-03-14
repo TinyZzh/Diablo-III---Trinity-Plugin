@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Trinity.Components.Combat;
 using Trinity.Framework.Actors.ActorTypes;
+using Trinity.Framework.Avoidance;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
 using Trinity.Reference;
@@ -72,7 +73,7 @@ namespace Trinity.Framework.Actors.Properties
             actor.IsGizmo = actor.ActorType == ActorType.Gizmo;
             actor.IsMonster = actor.ActorType == ActorType.Monster;
 
-            if (actor.IsAcdBased && actor.IsAcdValid)
+            if (actor.IsAcdBased) // && actor.IsAcdValid)
             {
                 //actor.Position = commonData.Position; // ACD is not returning position properly for ground items.
                 actor.AnnId = commonData.AnnId;
@@ -134,7 +135,7 @@ namespace Trinity.Framework.Actors.Properties
                 UpdateDistance(actor);
             }
 
-            if (actor.IsAcdBased && actor.IsAcdValid)
+            if (actor.IsAcdBased) // && actor.IsAcdValid)
             {
                 //actor.Position = commonData.Position; // ACD is not reporting commondata position
                 actor.AcdId = actor.CommonData.ACDId;
@@ -175,18 +176,22 @@ namespace Trinity.Framework.Actors.Properties
             if (actor.ActorType == ActorType.Item && actor.InventorySlot != InventorySlot.None)
                 return;
 
-            var grid = Core.Avoidance.Grid;
+            var grid = AvoidanceGrid.GetUnsafeGrid();
+            if (grid == null)
+                return;
 
             if (actor.Position != Vector3.Zero && grid.GridBounds != 0)
             {
                 var inLineOfSight = grid.CanRayCast(Core.Player.Position, actor.Position);
                 actor.IsInLineOfSight = inLineOfSight;
+
                 if (!actor.HasBeenInLoS && inLineOfSight)
                     actor.HasBeenInLoS = true;
 
-                if (actor.IsInLineOfSight)
+                if (inLineOfSight)
                 {
                     actor.IsWalkable = grid.CanRayWalk(actor);
+
                     if (actor.IsWalkable)
                         actor.HasBeenWalkable = true;
                 }

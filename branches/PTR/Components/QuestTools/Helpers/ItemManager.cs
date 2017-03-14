@@ -42,7 +42,7 @@ namespace QuestTools.Helpers
             try
             {
                 if (_lastBackPackLocation != new Vector2(-2, -2) &&
-                    _lastBackPackCount == ZetaDia.Me.Inventory.Backpack.Count(i => i.IsValid))
+                    _lastBackPackCount == InventoryManager.Backpack.Count(i => i.IsValid))
                 {
                     return _lastBackPackLocation;
                 }
@@ -52,7 +52,7 @@ namespace QuestTools.Helpers
                 int freeBagSlots = 60;
 
                 _lastProtectedSlotsCount = CharacterSettings.Instance.ProtectedBagSlots.Count;
-                _lastBackPackCount = ZetaDia.Me.Inventory.Backpack.Count(i => i.IsValid);
+                _lastBackPackCount = InventoryManager.Backpack.Count(i => i.IsValid);
 
                 // Block off the entire of any "protected bag slots"
                 foreach (InventorySquare square in CharacterSettings.Instance.ProtectedBagSlots)
@@ -62,7 +62,7 @@ namespace QuestTools.Helpers
                 }
 
                 // Map out all the items already in the backpack
-                foreach (ACDItem item in ZetaDia.Me.Inventory.Backpack)
+                foreach (ACDItem item in InventoryManager.Backpack)
                 {
                     if (!item.IsValid)
                         continue;

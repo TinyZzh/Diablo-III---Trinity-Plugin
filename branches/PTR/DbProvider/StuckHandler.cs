@@ -28,7 +28,7 @@ namespace Trinity.DbProvider
         private bool _isStuck;
         private int _checkIntervalMs = 2000;
         private bool _isSuspectedStuck;
-        private int _stuckValidationTime = 6000;
+        private int _stuckValidationTime = Core.Player.IsInTown  ? 30000 : 10000;
         private DateTime _suspectedStuckStartTime = DateTime.MaxValue;
         private Vector3 _stuckPosition;
         private Vector3 _suspectedStuckPosition;

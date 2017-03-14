@@ -350,7 +350,7 @@ namespace Trinity.UI
         {
             try
             {
-                //RiftProgression.ThreadStart();
+                //Core.Rift.ThreadStart();
             }
             catch (Exception ex)
             {
@@ -1127,7 +1127,7 @@ namespace Trinity.UI
         {
             try
             {
-                //RiftProgression.ThreadStop();
+                //Core.Rift.ThreadStop();
             }
             catch (Exception ex)
             {
@@ -1139,7 +1139,7 @@ namespace Trinity.UI
         //{
         //    try
         //    {
-        //        RiftProgression.StartAutomated();
+        //        Core.Rift.StartAutomated();
         //    }
         //    catch (Exception ex)
         //    {
@@ -1204,7 +1204,7 @@ namespace Trinity.UI
                 {
                     ZetaDia.Actors.Update();
 
-                    foreach (var item in ZetaDia.Me.Inventory.Backpack)
+                    foreach (var item in InventoryManager.Backpack)
                     {
                         var stackHi = item.GetAttribute<int>(ActorAttributeType.ItemStackQuantityHi);
                         var stackLo = item.GetAttribute<int>(ActorAttributeType.ItemStackQuantityLo);
@@ -1421,7 +1421,7 @@ namespace Trinity.UI
             {
                 using (new AquireFrameHelper())
                 {
-                    ZetaDia.Me.Inventory.Backpack.Where(i => i.ItemQualityLevel == ItemQuality.Legendary).ForEach(i => i.Drop());
+                    InventoryManager.Backpack.Where(i => i.ItemQualityLevel == ItemQuality.Legendary).ForEach(i => i.Drop());
 
                     if (BotMain.IsRunning && !BotMain.IsPausedForStateExecution)
                         BotMain.PauseFor(TimeSpan.FromSeconds(2));

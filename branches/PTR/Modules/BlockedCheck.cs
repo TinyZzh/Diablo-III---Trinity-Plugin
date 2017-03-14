@@ -8,6 +8,9 @@ using Trinity.Framework.Objects;
 
 namespace Trinity.Modules
 {
+    /// <summary>
+    /// Checks the space in front of the player for monsters and other blocking objects
+    /// </summary>
     public class BlockedCheck : Module
     {
         protected override int UpdateIntervalMs => 100;

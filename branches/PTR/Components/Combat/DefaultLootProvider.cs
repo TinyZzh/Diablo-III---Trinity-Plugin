@@ -835,7 +835,7 @@ namespace Trinity.Components.Combat
                     }
 
                     // Map out all the items already in the backpack
-                    foreach (ACDItem item in ZetaDia.Me.Inventory.Backpack)
+                    foreach (ACDItem item in InventoryManager.Backpack)
                     {
                         if (!item.IsValid)
                         {

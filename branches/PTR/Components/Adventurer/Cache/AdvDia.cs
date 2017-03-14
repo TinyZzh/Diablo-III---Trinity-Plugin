@@ -106,7 +106,7 @@ namespace Trinity.Components.Adventurer.Cache
             get
             {
                 ZetaDia.Actors.Update();
-                return ZetaDia.Me.Inventory.Backpack.Union(ZetaDia.Me.Inventory.StashItems);
+                return InventoryManager.Backpack.Union(InventoryManager.StashItems);
             }
         }
 

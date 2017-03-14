@@ -8,7 +8,6 @@ using Action = Zeta.TreeSharp.Action;
 
 namespace QuestTools.ProfileTags
 {
-    // * TrinityUseReset - Resets a UseOnce tag as if it has never been used
     [XmlElement("TrinityRandomWait")]
     [XmlElement("RandomWait")]
     public class RandomWaitTag : ProfileBehavior, IEnhancedProfileBehavior

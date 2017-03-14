@@ -235,16 +235,16 @@ namespace Trinity.Components.Combat
                 IsDoingKamakazi = false;
 
 
-                //var riftProgressionKillAll = RiftProgression.IsInRift && !RiftProgression.IsGaurdianSpawned && !RiftProgression.RiftComplete &&
-                //                             Core.Settings.Combat.Misc.RiftProgressionAlwaysKillPct < 100 && RiftProgression.CurrentProgressionPct < 100 &&
-                //                             RiftProgression.CurrentProgressionPct >= Core.Settings.Combat.Misc.RiftProgressionAlwaysKillPct;
+                //var riftProgressionKillAll = Core.Rift.IsInRift && !Core.Rift.IsGaurdianSpawned && !Core.Rift.RiftComplete &&
+                //                             Core.Settings.Combat.Misc.RiftProgressionAlwaysKillPct < 100 && Core.Rift.CurrentProgressionPct < 100 &&
+                //                             Core.Rift.CurrentProgressionPct >= Core.Settings.Combat.Misc.RiftProgressionAlwaysKillPct;
 
                 //if (riftProgressionKillAll != _riftProgressionKillAll)
                 //{
                 //    _riftProgressionKillAll = riftProgressionKillAll;
                 //    if (riftProgressionKillAll)
                 //    {
-                //        Logger.Log($"Rift Progression is now at {RiftProgression.CurrentProgressionPct} - Killing everything!");
+                //        Logger.Log($"Rift Progression is now at {Core.Rift.CurrentProgressionPct} - Killing everything!");
                 //        CombatBase.CombatMode = CombatMode.KillAll;
                 //    }
                 //    else
@@ -467,7 +467,7 @@ namespace Trinity.Components.Combat
                                     #endregion
 
                                     // Only ignore monsters we have a rift value for and below the settings threshold.
-                                    //if (RiftProgression.IsInRift && cacheObject.RiftValuePct > 0 &&
+                                    //if (Core.Rift.IsInRift && cacheObject.RiftValuePct > 0 &&
                                     //    cacheObject.RiftValuePct < Settings.Combat.Misc.RiftValueIgnoreUnitsBelow &&
                                     //    !cacheObject.IsElite && !PlayerMover.IsCompletelyBlocked)
                                     //{
@@ -702,7 +702,7 @@ namespace Trinity.Components.Combat
 
                                     else if (cacheObject.IsTrashMob)
                                     {
-                                        //var isAlwaysKillByValue = RiftProgression.IsInRift &&
+                                        //var isAlwaysKillByValue = Core.Rift.IsInRift &&
                                         //                          cacheObject.RiftValuePct > 0 &&
                                         //                          cacheObject.RiftValuePct >
                                         //                          Core.Settings.Combat.Misc.RiftValueAlwaysKillUnitsAbove;
@@ -2203,7 +2203,7 @@ namespace Trinity.Components.Combat
         {
             var result = 0d;
 
-            //if (!RiftProgression.IsInRift || !cacheObject.IsUnit)
+            //if (!Core.Rift.IsInRift || !cacheObject.IsUnit)
             //    return result;
 
             //// get all other units within cluster radius of this unit.
@@ -2250,7 +2250,7 @@ namespace Trinity.Components.Combat
             if (cacheObject.ActorSnoId == 3349) // Belial, can't be pathed to.
                 return 0;
 
-            var isInRift = RiftProgression.IsInRift || RiftProgression.IsGreaterRift;
+            var isInRift = Core.Rift.IsInRift || Core.Rift.IsGreaterRift;
 
             if (cacheObject.IsUnit && !(isInRift && cacheObject.IsElite) && !cacheObject.IsQuestMonster)
             {

@@ -11,8 +11,8 @@ using Zeta.XmlEngine;
 
 namespace QuestTools.ProfileTags.Complex
 {
-    [XmlElement("HasTrialRiftKeys")]
-    public class HasTrialRiftKeysTag : BaseComplexNodeTag
+    [XmlElement("HasNoRiftKeys")]
+    public class HasNoRiftKeysTag : BaseComplexNodeTag
     {
         protected override Composite CreateBehavior()
         {
@@ -24,17 +24,17 @@ namespace QuestTools.ProfileTags.Complex
              );
         }
 
-        private Func<ACDItem, bool> IsTrialRiftKeyFunc
+        private Func<ACDItem, bool> IsRiftKeyFunc
         {
-            get { return i => i.ItemType == ItemType.KeystoneFragment && i.TieredLootRunKeyLevel == 0; }
+            get { return i => i.ItemType == ItemType.KeystoneFragment; }
         }
 
         public override bool GetConditionExec()
         {
-            bool backpack = ZetaDia.Me.Inventory.Backpack.Any(IsTrialRiftKeyFunc);
-            bool stash = ZetaDia.Me.Inventory.StashItems.Any(IsTrialRiftKeyFunc);
+            bool backpack = InventoryManager.Backpack.Any(IsRiftKeyFunc);
+            bool stash = InventoryManager.StashItems.Any(IsRiftKeyFunc);
 
-            return backpack || stash;
+            return !backpack && !stash;
         }
     }
 }

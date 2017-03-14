@@ -48,7 +48,7 @@ namespace Trinity.ProfileTags
             if (MinFreeBagSlots == 0)
                 return maxFreeSlots;
 
-            foreach (var item in ZetaDia.Me.Inventory.Backpack)
+            foreach (var item in InventoryManager.Backpack)
             {
                 slotsTaken++;
                 if (item.IsTwoSquareItem)
@@ -68,7 +68,7 @@ namespace Trinity.ProfileTags
             return minDurabilityEquipped <= MinDurability;
         }
 
-        public float GetMinDurability() => ZetaDia.Me.Inventory.Equipped.Min(i => i.DurabilityPercent) * 100;
+        public float GetMinDurability() => InventoryManager.Equipped.Min(i => i.DurabilityPercent) * 100;
 
         protected override Composite CreateBehavior() => new ActionRunCoroutine(ret => TownRun());
 

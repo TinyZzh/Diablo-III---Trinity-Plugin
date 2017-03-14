@@ -35,8 +35,6 @@ namespace Trinity.UI.UIComponents
         {
             storage.CopyTo(_originalStorage);
             _originalStorage.Save();
-
-            TrinityPlugin.SetBotTicksPerSecond();
         }
 
         public void LoadSettings(TrinityStorage model, IEnumerable<string> ignorePropertyNames = null)

@@ -49,7 +49,7 @@ namespace Trinity.Coroutines.Town
                 return false;
             }
 
-            if (!BackpackHasMaterials && ZetaDia.Me.Inventory.NumFreeBackpackSlots < 5)
+            if (!BackpackHasMaterials && InventoryManager.NumFreeBackpackSlots < 5)
             {
                 Logger.LogVerbose("[CubeRaresToLegendary] Not enough bag space");
                 return false;
@@ -178,7 +178,7 @@ namespace Trinity.Coroutines.Town
 
                 Logger.Log("[CubeRaresToLegendary] CubeRaresToLegendary Started! Wooo!");
 
-                var backpackGuids = new HashSet<int>(ZetaDia.Me.Inventory.Backpack.Select(i => i.ACDId));
+                var backpackGuids = new HashSet<int>(InventoryManager.Backpack.Select(i => i.ACDId));
 
                 if (BackpackHasMaterials)
                 {
@@ -213,7 +213,7 @@ namespace Trinity.Coroutines.Town
                     await Transmute.Execute(transmuteGroup);
                     await Coroutine.Sleep(1500);
 
-                    var newItem = ZetaDia.Me.Inventory.Backpack.FirstOrDefault(i => !backpackGuids.Contains(i.ACDId));
+                    var newItem = InventoryManager.Backpack.FirstOrDefault(i => !backpackGuids.Contains(i.ACDId));
                     if (newItem != null)
                     {
                         var newLegendaryItem = Legendary.GetItemByACD(newItem);

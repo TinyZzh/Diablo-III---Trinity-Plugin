@@ -22,6 +22,7 @@ using Zeta.Game.Internals.SNO;
 using Zeta.TreeSharp;
 using Zeta.XmlEngine;
 using Action = Zeta.TreeSharp.Action;
+using Trinity.Framework;
 
 namespace QuestTools.ProfileTags
 {
@@ -832,15 +833,15 @@ namespace QuestTools.ProfileTags
             CheckSetTimer();
             if (_lastCoinage == -1)
             {
-                _lastCoinage = Player.Coinage;
+                _lastCoinage = Core.Player.Coinage;
                 return RunStatus.Failure;
             }
-            if (_lastCoinage != Player.Coinage)
+            if (_lastCoinage != Core.Player.Coinage)
             {
                 _tagTimer.Restart();
                 return RunStatus.Failure;
             }
-            if (_lastCoinage == Player.Coinage && _tagTimer.Elapsed.TotalSeconds > TimeoutValue)
+            if (_lastCoinage == Core.Player.Coinage && _tagTimer.Elapsed.TotalSeconds > TimeoutValue)
             {
                 Logger.Log("ExploreDungeon gold inactivity timer tripped ({0}), tag finished!", TimeoutValue);
                 _timeoutBreached = true;

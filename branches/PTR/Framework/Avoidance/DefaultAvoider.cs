@@ -77,7 +77,7 @@ namespace Trinity.Framework.Avoidance
                 if (!Settings.Entries.Any(a => a.IsEnabled))
                     return false;
 
-                //if (Settings.OnlyAvoidWhileInGrifts && (!RiftProgression.IsInRift || ZetaDia.Storage.CurrentRiftType != RiftType.Greater))
+                //if (Settings.OnlyAvoidWhileInGrifts && (!Core.Rift.IsInRift || ZetaDia.Storage.CurrentRiftType != RiftType.Greater))
                 //    return false;
 
                 if (Core.Avoidance.GridEnricher.ActiveAvoidanceSnoIds == null || !Core.Avoidance.GridEnricher.ActiveAvoidanceSnoIds.Any())

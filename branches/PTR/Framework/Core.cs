@@ -22,7 +22,6 @@ namespace Trinity.Framework
             Logger.LogNormal("Framework Core Initialized");
         }
 
-        public static bool IsEnabled { get; private set; }
         public static RoutineManager Routines => RoutineManager.Instance;
         public static Adventurer Adventurer { get; } = Adventurer.Instance;
         public static Plugin QuestTools { get; } = new Plugin();
@@ -43,14 +42,17 @@ namespace Trinity.Framework
         public static MinimapCache Minimap { get; } = new MinimapCache();
         public static WorldCache World { get; } = new WorldCache();
         public static Clusters Clusters { get; } = new Clusters();
+        public static RiftProgression Rift { get; } = new RiftProgression();
+        public static LazyRaider LazyRaider { get; } = new LazyRaider();
+        public static Performance Performance { get; } = new Performance();
         public static SessionLogger SessionLogger { get; } = new SessionLogger();
         public static ItemLogger ItemLogger { get; } = new ItemLogger();
-        public static HeroDataCache HeroData { get; } = new HeroDataCache();
         public static QuestCache Quests { get; } = new QuestCache();
         public static GridHelper Grids { get; } = new GridHelper();
         public static PlayerMover PlayerMover { get; } = new PlayerMover();
         public static StuckHandler StuckHandler { get; } = new StuckHandler();
         public static BlockedCheck BlockedCheck { get; } = new BlockedCheck();
+        public static WindowTitle WindowTitle { get; } = new WindowTitle();
         public static ChangeMonitor ChangeMonitor { get; } = new ChangeMonitor();
         public static InactivityMonitor InactivityMonitor { get; } = new InactivityMonitor();
         public static ProfileSettings ProfileSettings { get; } = new ProfileSettings();

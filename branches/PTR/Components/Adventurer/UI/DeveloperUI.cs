@@ -574,7 +574,7 @@ namespace Trinity.Components.Adventurer.UI
                     ZetaDia.Actors.Update();
                     //AdvDia.Update();
 
-                    var objects = ZetaDia.Me.Inventory.Backpack.ToList();
+                    var objects = InventoryManager.Backpack.ToList();
                     Logger.Raw(" ");
                     Logger.Raw("Actors (Count: {0})", objects.Count);
 
