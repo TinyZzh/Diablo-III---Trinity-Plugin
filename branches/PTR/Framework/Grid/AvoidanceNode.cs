@@ -144,7 +144,7 @@ namespace Trinity.Framework.Avoidance.Structures
 
         public List<AvoidanceNode> AdjacentNodes
         {
-            get { return _adjacentNodes ?? (_adjacentNodes = AvoidanceGrid.Instance.GetNeighbors(this)); }
+            get { return _adjacentNodes ?? (_adjacentNodes = TrinityGrid.Instance.GetNeighbors(this)); }
             set { _adjacentNodes = value; }
         }
 

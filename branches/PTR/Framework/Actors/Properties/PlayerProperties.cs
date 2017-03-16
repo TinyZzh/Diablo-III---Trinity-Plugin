@@ -38,7 +38,7 @@ namespace Trinity.Framework.Actors.Properties
         public static int GetHeroIdByAcdId(int acdId)
         {
             // Only works if player is in the same area.
-            var player = ZetaDia.Storage.PlayerDataManager.Players.FirstOrDefault(p => p.ACDId == acdId);
+            var player = ZetaDia.Storage.PlayerDataManager.GetPlayerDataByAcdId(acdId);
             return player?.HeroId ?? -1;
         }
 

@@ -9,7 +9,7 @@ namespace Trinity.Framework.Avoidance.Handlers
 {
     internal class PoisonEnchantedAvoidanceHandler : IAvoidanceHandler
     {
-        public void UpdateNodes(AvoidanceGrid grid, Structures.Avoidance avoidance)
+        public void UpdateNodes(TrinityGrid grid, Structures.Avoidance avoidance)
         {
             foreach (var actor in avoidance.Actors)
             {

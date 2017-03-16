@@ -263,8 +263,7 @@ namespace QuestTools.ProfileTags.Movement
                                     new Action(ret => _interactObject.Interact()),
                                     new Action(ret => _completedInteractAttempts++),
                                     new Action(ret => Logger.Debug("Interacting with portal object {0}, result: {1}", _interactObject.ActorSnoId, Status())),
-                                    new Sleep(500),
-                                    new Action(ret => GameEvents.FireWorldTransferStart())
+                                    new Sleep(500)
                                 )
                             )
                         ),

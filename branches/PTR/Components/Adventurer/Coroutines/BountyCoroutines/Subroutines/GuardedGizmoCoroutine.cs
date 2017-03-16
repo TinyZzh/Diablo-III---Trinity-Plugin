@@ -267,10 +267,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                     hasBeenOperated = !ActorFinder.IsGizmoInteractable(gizmo);
                     untargetable = gizmo.CommonData.GetAttribute<int>(ActorAttributeType.Untargetable) == 1;
                 }
-                catch (ACDAttributeLookupFailedException)
-                {
-                    continue;
-                }
                 catch (Exception ex)
                 {
                     if (ex.Message.Contains("ReadProcessMemory"))

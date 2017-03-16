@@ -176,7 +176,7 @@ namespace Trinity.Framework.Actors.Properties
             if (actor.ActorType == ActorType.Item && actor.InventorySlot != InventorySlot.None)
                 return;
 
-            var grid = AvoidanceGrid.GetUnsafeGrid();
+            var grid = TrinityGrid.GetUnsafeGrid();
             if (grid == null)
                 return;
 

@@ -9,6 +9,7 @@ using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
+using Trinity.Framework.Objects.Enums;
 using Trinity.Reference;
 using Trinity.Settings;
 using Zeta.Common;
@@ -19,22 +20,21 @@ using Logger = Trinity.Framework.Helpers.Logger;
 namespace Trinity.Coroutines.Town
 {
     /// <summary>
-    ///     Convert rares into legendaries with Kanai's cube
+    /// Convert rares into legendaries with Kanai's cube
     /// </summary>
     public class ExtractLegendaryPowers
     {
         public static bool HasUnlockedCube = true;
-        private static DateTime DisabledUntil = DateTime.MinValue;
+        private static DateTime _disabledUntil = DateTime.MinValue;
         private static readonly TimeSpan DisableDuration = TimeSpan.FromMinutes(1);
 
-        public static Dictionary<InventoryItemType, int> ExtractLegendaryPowerRecipe = new Dictionary<InventoryItemType, int>
+
+        public static HashSet<RawItemType> DoNotExtractRawItemTypes = new HashSet<RawItemType>
         {
-            {InventoryItemType.KhanduranRune, 1},
-            {InventoryItemType.CaldeumNightshade, 1},
-            {InventoryItemType.ArreatWarTapestry, 1},
-            {InventoryItemType.CorruptedAngelFlesh, 1},
-            {InventoryItemType.WestmarchHolyWater, 1},
-            {InventoryItemType.DeathsBreath, 1}
+            RawItemType.EnchantressSpecial,
+            RawItemType.ScoundrelSpecial,
+            RawItemType.FollowerSpecial,
+            RawItemType.TemplarSpecial,
         };
 
         public static HashSet<int> DoNotExtractItemIds = new HashSet<int>()
@@ -45,18 +45,11 @@ namespace Trinity.Coroutines.Town
 
         private static List<TrinityItem> _backpackCandidates;
         private static List<TrinityItem> _stashCandidates;
-        private static readonly List<int> _itemsTakenFromStashAnnId = new List<int>();
-        private static readonly HashSet<int> _blacklistedActorSnoIds = new HashSet<int>();
+        private static List<int> _itemsTakenFromStashAnnId = new List<int>();
+        private static HashSet<int> _blacklistedActorSnoIds = new HashSet<int>();
 
-        public static bool BackpackHasMaterials
-        {
-            get { return Inventory.Materials.HasRecipe(ExtractLegendaryPowerRecipe, InventorySlot.BackpackItems); }
-        }
-
-        public static bool StashHasMaterials
-        {
-            get { return Inventory.Materials.HasRecipe(ExtractLegendaryPowerRecipe, InventorySlot.SharedStash); }
-        }
+        public static bool HasCurrencyRequired 
+            => Core.Inventory.Currency.HasCurrency(TransmuteRecipe.ExtractLegendaryPower);
 
         public static bool CanRun()
         {
@@ -66,7 +59,7 @@ namespace Trinity.Coroutines.Town
             if (Core.Settings.KanaisCube.ExtractLegendaryPowers == CubeExtractOption.None)
                 return false;
 
-            if (DateTime.UtcNow < DisabledUntil)
+            if (DateTime.UtcNow < _disabledUntil)
                 return false;
 
             var kule = TownInfo.ZultonKule?.GetActor() as DiaUnit;
@@ -75,7 +68,7 @@ namespace Trinity.Coroutines.Town
                 if (kule.IsQuestGiver)
                 {
                     Logger.LogVerbose("[ExtractLegendaryPowers] Cube is not unlocked yet");
-                    DisabledUntil = DateTime.UtcNow.Add(DisableDuration);
+                    _disabledUntil = DateTime.UtcNow.Add(DisableDuration);
                     HasUnlockedCube = false;
                     return false;
                 }
@@ -85,15 +78,7 @@ namespace Trinity.Coroutines.Town
             if (!HasUnlockedCube)
                 return false;
 
-            Inventory.Materials.Update();
-
-            if (!BackpackHasMaterials && InventoryManager.NumFreeBackpackSlots < ExtractLegendaryPowerRecipe.Count)
-            {
-                Logger.LogVerbose("[ExtractLegendaryPowers] Not enough bag space");
-                return false;
-            }
-
-            if (!BackpackHasMaterials && !StashHasMaterials)
+            if (!HasCurrencyRequired)
             {
                 Logger.LogVerbose("[ExtractLegendaryPowers] Unable to find the required materials!");
                 return false;
@@ -108,7 +93,7 @@ namespace Trinity.Coroutines.Town
             if (!_backpackCandidates.Any() && !_stashCandidates.Any())
             {
                 Logger.LogVerbose("[ExtractLegendaryPowers] There are no items that need extraction!");
-                DisabledUntil = DateTime.UtcNow.Add(DisableDuration);
+                _disabledUntil = DateTime.UtcNow.Add(DisableDuration);
                 return false;
             }
 
@@ -122,8 +107,7 @@ namespace Trinity.Coroutines.Town
             if (Core.Settings.KanaisCube.ExtractLegendaryPowers == CubeExtractOption.None)
                 return result;
 
-            // var source = ZetaDia.Actors.ACDList.OfType<ACDItem>().Where(i => i.InventorySlot == slot);
-            var source = Inventory.AllItems.Where(i => i.InventorySlot == slot);
+            var source = Core.Inventory.Where(i => i.InventorySlot == slot);
             var alreadyCubedIds = new HashSet<int>(ZetaDia.Storage.PlayerDataManager.ActivePlayerData.KanaisPowersExtractedActorSnoIds);
 
             foreach (var item in source)
@@ -135,6 +119,9 @@ namespace Trinity.Coroutines.Town
                     continue;
 
                 if (item.FollowerType != FollowerType.None)
+                    continue;
+
+                if (DoNotExtractRawItemTypes.Contains(item.RawItemType))
                     continue;
 
                 if (DoNotExtractItemIds.Contains(item.ActorSnoId))
@@ -197,7 +184,7 @@ namespace Trinity.Coroutines.Town
         {
             while (true)
             {
-                if (BackpackHasMaterials && _backpackCandidates.Any())
+                if (HasCurrencyRequired && _backpackCandidates.Any())
                 {
                     if (!await MoveToCube())
                     {
@@ -225,19 +212,16 @@ namespace Trinity.Coroutines.Town
         public static async Task<bool> Main()
         {
             var started = false;
-
             while (CanRun())
             {
                 if (!started)
                 {
-                    Logger.Log("[ExtractLegendaryPowers] Extraction is currently set to: {0}",
-                        Core.Settings.KanaisCube.ExtractLegendaryPowers);
-                    ;
+                    Logger.Log("[ExtractLegendaryPowers] Extraction is currently set to: {0}", Core.Settings.KanaisCube.ExtractLegendaryPowers);                    
                     Logger.Log("[ExtractLegendaryPowers] We begin the extractions.");
                     started = true;
                 }
 
-                if (BackpackHasMaterials && _backpackCandidates.Any())
+                if (HasCurrencyRequired && _backpackCandidates.Any())
                 {
                     if (!await MoveToCube())
                     {
@@ -250,12 +234,6 @@ namespace Trinity.Coroutines.Town
                         Logger.LogVerbose("[ExtractLegendaryPowers] ExtractPowers() failed");
                         return false;
                     }
-                }
-                else if (StashHasMaterials)
-                {
-                    Logger.Log("[ExtractLegendaryPowers] Getting Materials from Stash");
-                    if (!await TakeItemsFromStash.Execute(ExtractLegendaryPowerRecipe.Select(pair => (int)pair.Key), 5000))
-                        return false;
                 }
                 else if (_stashCandidates.Any() && Core.Settings.KanaisCube.CubeExtractFromStash)
                 {
@@ -275,7 +253,6 @@ namespace Trinity.Coroutines.Town
                 await Coroutine.Sleep(500);
                 await Coroutine.Yield();
             }
-
             return true;
         }
 
@@ -295,29 +272,19 @@ namespace Trinity.Coroutines.Town
             var itemInternalName = item.InternalName;
             var itemSnoId = item.ActorSnoId;
 
-            var transmuteGroup = Inventory.Materials.GetRecipeItems(ExtractLegendaryPowerRecipe,
-                InventorySlot.BackpackItems);
-
-            transmuteGroup.Add(item);
-
-            await Transmute.Execute(transmuteGroup);
+            await Transmute.Execute(item, TransmuteRecipe.ExtractLegendaryPower);
             await Coroutine.Sleep(1500);
 
             var shouldBeDestroyedItem = InventoryManager.Backpack.FirstOrDefault(i => i.AnnId == itemDynamicId);
             if (shouldBeDestroyedItem == null && ZetaDia.Storage.PlayerDataManager.ActivePlayerData.KanaisPowersExtractedActorSnoIds.Contains(itemSnoId))
             {
-                Logger.Log("[ExtractLegendaryPowers] Item Power Extracted! '{0}' ({1})",
-                    itemName, itemSnoId);
-
-                Inventory.InvalidItemDynamicIds.Add(itemDynamicId);
+                Logger.Log("[ExtractLegendaryPowers] Item Power Extracted! '{0}' ({1})",itemName, itemSnoId);
+                Core.Inventory.InvalidAnnIds.Add(itemDynamicId);
                 _itemsTakenFromStashAnnId.Remove(itemDynamicId);
             }
             else
             {
-                Logger.Log(
-                    "[ExtractLegendaryPowers] Failed to Extract Power! '{0}' {1} DynId={2} HasBackpackMaterials={3}",
-                    itemName, itemInternalName, itemDynamicId, BackpackHasMaterials);
-
+                Logger.Log("[ExtractLegendaryPowers] Failed to Extract Power! '{0}' {1} DynId={2} HasBackpackMaterials={3}", itemName, itemInternalName, itemDynamicId, HasCurrencyRequired);
                 _blacklistedActorSnoIds.Add(itemSnoId);
                 return false;
             }

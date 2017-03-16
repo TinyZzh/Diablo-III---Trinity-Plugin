@@ -166,6 +166,9 @@ namespace Trinity.Framework.Actors.ActorTypes
 
         public override void OnUpdated()
         {
+            if (IsExcludedId || IsExcludedType)
+                return;
+
             Attributes.Update();
 
             if (DateTime.UtcNow.Subtract(LastFullUpdate).TotalSeconds > 10)

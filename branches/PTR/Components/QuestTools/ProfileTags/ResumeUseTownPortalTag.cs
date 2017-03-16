@@ -55,8 +55,7 @@ namespace QuestTools.ProfileTags
                         new Sequence(
                             new Action(ret => Logger.Log("Taking town portal back")),
                             new ActionRunCoroutine(ctx => TakeTownPortalBackTask()),
-                            new Sleep(500),
-                            new Action(ret => GameEvents.FireWorldTransferStart())
+                            new Sleep(500)
                         )
                     )
                 ),

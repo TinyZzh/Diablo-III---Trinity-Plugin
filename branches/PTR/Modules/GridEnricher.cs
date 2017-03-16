@@ -9,6 +9,7 @@ using Trinity.Framework.Avoidance.Settings;
 using Trinity.Framework.Avoidance.Structures;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
+using Trinity.Framework.Objects.Enums;
 using Trinity.Settings;
 using Zeta.Common;
 using Zeta.Game;
@@ -17,7 +18,7 @@ using Logger = Trinity.Framework.Helpers.Logger;
 
 namespace Trinity.Framework.Avoidance
 {
-    public class GridEnricher
+    public class GridEnricher : Module
     {
         public const float GlobeWeightRadiusFactor = 1f;
         public const float MonsterWeightRadiusFactor = 1f;
@@ -67,12 +68,15 @@ namespace Trinity.Framework.Avoidance
         public Vector3 MonsterCentroid { get; set; }
         public Vector3 AvoidanceCentroid { get; set; }
         public AvoidanceNode HighestNode { get; set; }
-        public AvoidanceGrid Grid => Core.Grids.Avoidance;
+        public TrinityGrid Grid => Core.Grids.Avoidance;
         public AvoidanceSettings Settings => Core.Avoidance.Settings;
+
+        protected override int UpdateIntervalMs => 200;
+        protected override void OnPulse() => UpdateGrid();
 
         public void UpdateGrid()
         {
-            var grid = Grid;
+            var grid = Core.Grids.Avoidance;
 
             grid.IsUpdatingNodes = true;
 

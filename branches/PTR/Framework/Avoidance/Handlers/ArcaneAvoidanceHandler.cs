@@ -13,7 +13,7 @@ namespace Trinity.Framework.Avoidance.Handlers
     {
         private static Dictionary<int, Rotator> _rotators = new Dictionary<int, Rotator>();
 
-        public void UpdateNodes(AvoidanceGrid grid, Structures.Avoidance avoidance)
+        public void UpdateNodes(TrinityGrid grid, Structures.Avoidance avoidance)
         {
             CleanUpRotators();
 

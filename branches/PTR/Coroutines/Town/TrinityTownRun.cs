@@ -175,8 +175,8 @@ namespace Trinity.Coroutines.Town
                     if (!await CubeRaresToLegendary.Execute())
                         continue;
 
-                    if (!await CubeItemsToMaterials.Execute())
-                        continue;
+                    //if (!await CubeItemsToMaterials.Execute())
+                    //    continue;
 
                     if (await Any(
                         DropItems.Execute,
@@ -420,7 +420,7 @@ namespace Trinity.Coroutines.Town
             return false;
         }
 
-        private async static Task<bool> TakeReturnPortal()
+        private static async Task<bool> TakeReturnPortal()
         {
             if (!ZetaDia.IsInTown)
                 return false;

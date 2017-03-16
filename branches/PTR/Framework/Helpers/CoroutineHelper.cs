@@ -43,8 +43,6 @@ namespace Trinity.Coroutines.Resources
         /// </summary>
         public static void RunCoroutine<T>(Func<Task<T>> taskProducer, Func<T, bool> stopCondition = null, int tickMilliseconds = 50, Action onFinished = null)
         {
-            var tickDelay = Math.Max(tickMilliseconds, 10);
-
             if (BotMain.IsPaused)
                 return;
 
@@ -71,6 +69,7 @@ namespace Trinity.Coroutines.Resources
             {
                 Logger.Info("ForceRunCoroutine Finished");
                 BotMain.IsPausedForStateExecution = false;
+
             }, tickMilliseconds);
         }
 
@@ -85,13 +84,12 @@ namespace Trinity.Coroutines.Resources
             {
                 try
                 {
-                    using (ZetaDia.Memory.AcquireFrame(true))
+                    using (ZetaDia.Memory.AcquireFrame())
                     {
                         if (!ZetaDia.IsInGame || !ZetaDia.Service.IsValid)
                             return;
 
                         ZetaDia.Actors.Update();
-                        BotMain.PauseFor(TimeSpan.FromSeconds(1));
                         Core.Update();
                     }
 
@@ -101,11 +99,7 @@ namespace Trinity.Coroutines.Resources
                         if (BotMain.IsPaused)
                             continue;
 
-                        using (ZetaDia.Memory.ReleaseFrame(true))
-                        {
-                        }
-
-                        using (ZetaDia.Memory.AcquireFrame(true))
+                        using (ZetaDia.Memory.AcquireFrame())
                         {
                             if (!ZetaDia.IsInGame || !ZetaDia.Service.IsValid)
                                 return;
@@ -116,10 +110,7 @@ namespace Trinity.Coroutines.Resources
                             if (ZetaDia.Me == null || !ZetaDia.Me.IsValid)
                                 return;
 
-                            // Note: execution of taskProducer needs to occur within the Coroutine
-                            // otherwise you'll get exceptions running Coroutine.Sleep/Wait
                             result = ToCoroutine(taskProducer, stopCondition).Result;
-
                             Thread.Sleep(tickDelay);
                         }
 
@@ -133,9 +124,9 @@ namespace Trinity.Coroutines.Resources
                 }
                 finally
                 {
-                    if (onFinished != null)
-                        onFinished();
+                    onFinished?.Invoke();
                 }
+
             }, _token);
 
             RecordTask(task);
@@ -153,6 +144,8 @@ namespace Trinity.Coroutines.Resources
         /// </summary>
         public static void CancelRunningTasks()
         {
+            if (!Tasks.Any()) return;
+
             Logger.InfoFormat("Sending Cancel Request to {0} Running Tasks...", Tasks.Count(t => t.Status == TaskStatus.Running));
 
             if (_tokenSource.Token.CanBeCanceled)

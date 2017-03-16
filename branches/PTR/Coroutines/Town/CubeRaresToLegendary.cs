@@ -49,13 +49,13 @@ namespace Trinity.Coroutines.Town
                 return false;
             }
 
-            if (!BackpackHasMaterials && InventoryManager.NumFreeBackpackSlots < 5)
+            if (!HasMaterialsRequired && InventoryManager.NumFreeBackpackSlots < 5)
             {
                 Logger.LogVerbose("[CubeRaresToLegendary] Not enough bag space");
                 return false;
             }
 
-            var dbs = Inventory.OfType(InventoryItemType.DeathsBreath).StackQuantity();
+            var dbs = Core.Inventory.Currency.DeathsBreath;
             if (dbs < Core.Settings.KanaisCube.DeathsBreathMinimum)
             {
                 Logger.LogVerbose("[CubeRaresToLegendary] Not enough deaths breath - Limit is set to {0}, You currently have {1}", Core.Settings.KanaisCube.DeathsBreathMinimum, dbs);
@@ -68,7 +68,7 @@ namespace Trinity.Coroutines.Town
                 return false;
             }
 
-            if (!BackpackHasMaterials && !StashHasMaterials)
+            if (!HasMaterialsRequired)
             {
                 Logger.LogVerbose("[CubeRaresToLegendary] Unable to find the materials we need, maybe you don't have them!");
                 return false;
@@ -85,14 +85,14 @@ namespace Trinity.Coroutines.Town
             if (types == null)
                 types = Core.Settings.KanaisCube.GetRareUpgradeSettings();
 
-            if (!Inventory.Backpack.Items.Any())
+            if (!Core.Inventory.Backpack.Any())
             {
                 Logger.LogVerbose("[CubeRaresToLegendary] No items were found in backpack!");
             }
 
-            var rares = Inventory.Backpack.Items.Where(i =>
+            var rares = Core.Inventory.Backpack.Where(i =>
             {
-                if (Inventory.InvalidItemDynamicIds.Contains(i.AnnId))
+                if (Core.Inventory.InvalidAnnIds.Contains(i.AnnId))
                     return false;
 
                 if (i.ItemBaseType != ItemBaseType.Armor && i.ItemBaseType != ItemBaseType.Weapon && i.ItemBaseType != ItemBaseType.Jewelry)
@@ -101,13 +101,8 @@ namespace Trinity.Coroutines.Town
                 if (!RareQualities.Contains(i.ItemQualityLevel) || i.ItemQualityLevel == ItemQuality.Legendary)
                     return false;
 
-                //if (i.ItemStackQuantity != 0 || !i.IsValid || i.ItemLevel < 70)
-                //{
-                //    Logger.LogVerbose($"Skipping Item - Invalid {i.InternalName} IsValid={i.IsValid} InvalidStackQuantity={i.ItemStackQuantity != 0} Level={i.ItemLevel}");
-                //    return false;
-                //}
-
                 return types == null || types.Contains(GetItemSelectionType(i));
+
             }).ToList();
 
             Logger.Log(LogCategory.Behavior, "[CubeRaresToLegendary] {0} Valid Rares in Backpack", rares.Count);
@@ -127,43 +122,8 @@ namespace Trinity.Coroutines.Town
             ItemQuality.Rare6,
         };
 
-        /// <summary>
-        /// If backpack has enough materials to convert a rare to a legendary
-        /// </summary>
-        public static bool BackpackHasMaterials
-        {
-            get
-            {
-                var dust = Inventory.Backpack.ArcaneDust.Select(i => i.ItemStackQuantity).Sum();
-                var crystals = Inventory.Backpack.VeiledCrystals.Select(i => i.ItemStackQuantity).Sum();
-                var deaths = Inventory.Backpack.DeathsBreath.Select(i => i.ItemStackQuantity).Sum();
-                var parts = Inventory.Backpack.ReusableParts.Select(i => i.ItemStackQuantity).Sum();
-
-                Logger.Log("[CubeRaresToLegendary] Backpack Crafting Materials: Dust={0} Crystals={1} Deaths={2} Parts={3}",
-                    dust, crystals, deaths, parts);
-
-                return dust >= 50 && crystals >= 50 && deaths >= 25 && parts >= 50;
-            }
-        }
-
-        /// <summary>
-        /// If stash has enough materials to convert a rare to a legendary
-        /// </summary>
-        public static bool StashHasMaterials
-        {
-            get
-            {
-                var dust = Inventory.Stash.ArcaneDust.Select(i => i.ItemStackQuantity).Sum();
-                var crystals = Inventory.Stash.VeiledCrystals.Select(i => i.ItemStackQuantity).Sum();
-                var deaths = Inventory.Stash.DeathsBreath.Select(i => i.ItemStackQuantity).Sum();
-                var parts = Inventory.Stash.ReusableParts.Select(i => i.ItemStackQuantity).Sum();
-
-                Logger.Log("[CubeRaresToLegendary] Stash Crafting Materials: Dust={0} Crystals={1} Deaths={2} Parts={3}",
-                    dust, crystals, deaths, parts);
-
-                return dust >= 50 && crystals >= 50 && deaths >= 25 && parts >= 50;
-            }
-        }
+        public static bool HasMaterialsRequired 
+            => Core.Inventory.Currency.HasCurrency(TransmuteRecipe.UpgradeRareItem);
 
         /// <summary>
         /// Convert rares into legendaries with Kanai's cube
@@ -180,7 +140,7 @@ namespace Trinity.Coroutines.Town
 
                 var backpackGuids = new HashSet<int>(InventoryManager.Backpack.Select(i => i.ACDId));
 
-                if (BackpackHasMaterials)
+                if (HasMaterialsRequired)
                 {
                     if (TownInfo.KanaisCube.Distance > 10f || !GameUI.KanaisCubeWindow.IsVisible)
                     {
@@ -196,21 +156,9 @@ namespace Trinity.Coroutines.Town
 
                     var item = GetBackPackRares(types).First();
                     var itemName = item.Name;
-                    var itemDynamicId = item.AnnId;
+                    var itemAnnId = item.AnnId;
                     var itemInternalName = item.InternalName;
-                    var transmuteGroup = new List<TrinityItem>();
-
-                    // Position in the cube matters; it looks like it will fail if
-                    // stacks are added after the required amount of ingredient is met,
-                    // as the cube encounters them from top left to bottom right.
-
-                    transmuteGroup.Add(item);
-                    transmuteGroup.AddRange(Inventory.GetStacksUpToQuantity(Inventory.Backpack.ArcaneDust, 50));
-                    transmuteGroup.AddRange(Inventory.GetStacksUpToQuantity(Inventory.Backpack.VeiledCrystals, 50));
-                    transmuteGroup.AddRange(Inventory.GetStacksUpToQuantity(Inventory.Backpack.ReusableParts, 50));
-                    transmuteGroup.AddRange(Inventory.GetStacksUpToQuantity(Inventory.Backpack.DeathsBreath, 25));
-
-                    await Transmute.Execute(transmuteGroup);
+                    await Transmute.Execute(item, TransmuteRecipe.UpgradeRareItem);
                     await Coroutine.Sleep(1500);
 
                     var newItem = InventoryManager.Backpack.FirstOrDefault(i => !backpackGuids.Contains(i.ACDId));
@@ -226,17 +174,17 @@ namespace Trinity.Coroutines.Town
                     else
                     {
                         Logger.Log("[CubeRaresToLegendary] Failed to upgrade Item '{0}' {1} DynId={2} HasBackpackMaterials={3}",
-                            itemName, itemInternalName, itemDynamicId, BackpackHasMaterials);
+                            itemName, itemInternalName, itemAnnId, HasMaterialsRequired);
                     }
 
-                    Inventory.InvalidItemDynamicIds.Add(itemDynamicId);
+                    Core.Inventory.InvalidAnnIds.Add(itemAnnId);
                 }
-                else if (StashHasMaterials)
-                {
-                    Logger.Log("[CubeRaresToLegendary] Getting Materials from Stash");
-                    if (!await TakeItemsFromStash.Execute(Inventory.RareUpgradeIds, 5000))
-                        return true;
-                }
+                //else if (StashHasMaterials)
+                //{
+                //    Logger.Log("[CubeRaresToLegendary] Getting Materials from Stash");
+                //    if (!await TakeItemsFromStash.Execute(Inventory.RareUpgradeIds, 5000))
+                //        return true;
+                //}
                 else
                 {
                     Logger.Log("[CubeRaresToLegendary] Oh no! Out of materials!");

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Trinity.Components.Combat;
 using Trinity.Coroutines.Resources;
+using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Events;
 using Trinity.Framework.Helpers;
@@ -45,7 +46,7 @@ namespace Trinity.Coroutines.Town
             return decision;
         }
 
-        public async static Task<bool> Execute()
+        public static async Task<bool> Execute()
         {
             if (!ZetaDia.IsInTown)
             {
@@ -53,7 +54,7 @@ namespace Trinity.Coroutines.Town
                 return false;
             }
 
-            var itemsToDrop = Inventory.Backpack.Items.Where(ShouldDrop).ToList();
+            var itemsToDrop = Core.Inventory.Backpack.Where(ShouldDrop).ToList();
             if (!itemsToDrop.Any())
             {
                 Logger.LogVerbose($"[DropItems] Nothign to Drop");

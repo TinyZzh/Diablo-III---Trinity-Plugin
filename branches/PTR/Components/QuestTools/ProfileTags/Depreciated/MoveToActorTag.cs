@@ -451,7 +451,7 @@ namespace QuestTools.ProfileTags.Movement
 
                 if (IsPortal)
                 {
-                    GameEvents.FireWorldTransferStart();
+                    //GameEvents.FireWorldTransferStart();
                 }
 
                 if (IsChanneling)

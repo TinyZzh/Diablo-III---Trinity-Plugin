@@ -53,7 +53,7 @@ namespace Trinity.Coroutines.Town
             return decision;
         }
 
-        public async static Task<bool> Execute()
+        public static async Task<bool> Execute()
         {
             if (!ZetaDia.IsInTown)
             {
@@ -61,16 +61,7 @@ namespace Trinity.Coroutines.Town
                 return false;
             }
 
-            //if (Inventory.Backpack.Items.Any(Inventory.IsBadData))
-            //{
-            //    Logger.Log("[SalvageItems] Bad Data Detected; Clearing Actor Manager.");
-            //    ZetaDia.Actors.Clear();
-            //    ZetaDia.Actors.Update();
-            //    await Coroutine.Sleep(500);
-            //    Cache.Clear();
-            //}
-
-            var salvageItems = Inventory.Backpack.Items.Where(ShouldSalvage).ToList();
+            var salvageItems = Core.Inventory.Backpack.Where(ShouldSalvage).ToList();
             if (!salvageItems.Any())
             {
                 Logger.LogVerbose("[SalvageItems] Nothing to salvage");
@@ -115,7 +106,7 @@ namespace Trinity.Coroutines.Town
             {
                 if (ZetaDia.Me.Level >= 70 && UIElements.SalvageAllWrapper.IsVisible)
                 {
-                    var items = Inventory.Backpack.Items.Where(i => Combat.Loot.ShouldSalvage(i)).ToList();
+                    var items = Core.Inventory.Backpack.Where(i => Combat.Loot.ShouldSalvage(i)).ToList();
 
                     var normals = items.Where(i => NormalQualityLevels.Contains(i.ItemQualityLevel)).ToList();
                     if (normals.Count > 0)
@@ -160,7 +151,7 @@ namespace Trinity.Coroutines.Town
                     await Coroutine.Sleep(Rnd.Next(500, 750));
                     Core.Actors.Update();
 
-                    var freshItems = Inventory.Backpack.Items.Where(i => ShouldSalvage(i) && !Inventory.InvalidItemDynamicIds.Contains(i.AnnId)).ToList();
+                    var freshItems = Core.Inventory.Backpack.Where(i => ShouldSalvage(i) && !Core.Inventory.InvalidAnnIds.Contains(i.AnnId)).ToList();
                     if (!freshItems.Any())
                         break;
 
@@ -169,20 +160,20 @@ namespace Trinity.Coroutines.Town
                     if (ZetaDia.Actors.GetACDByAnnId(item.AnnId) == null)
                     {
                         Logger.Log("AnnId doesn't exist, skipping salvage");
-                        Inventory.InvalidItemDynamicIds.Add(item.AnnId);
+                        Core.Inventory.InvalidAnnIds.Add(item.AnnId);
                         continue;
                     }
 
                     if (!Core.Actors.IsAnnIdValid(item.AnnId))
                     {
                         Logger.Log("AnnId test failed, skipping salvage to prevent disconnect");
-                        Inventory.InvalidItemDynamicIds.Add(item.AnnId);
+                        Core.Inventory.InvalidAnnIds.Add(item.AnnId);
                         continue;
                     }
 
                     Logger.Log($"Salvaging: {item.Name} ({item.ActorSnoId}) Ancient={item.IsAncient}");
                     InventoryManager.SalvageItem(item.AnnId);
-                    Inventory.InvalidItemDynamicIds.Add(item.AnnId);
+                    Core.Inventory.InvalidAnnIds.Add(item.AnnId);
                     ItemEvents.FireItemSalvaged(item);
                 }
 

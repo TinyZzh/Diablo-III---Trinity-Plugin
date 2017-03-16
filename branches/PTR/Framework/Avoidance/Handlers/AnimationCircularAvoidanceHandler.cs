@@ -5,7 +5,7 @@ namespace Trinity.Framework.Avoidance.Handlers
 {
     public class AnimationCircularAvoidanceHandler : IAvoidanceHandler
     {
-        public void UpdateNodes(AvoidanceGrid grid, Structures.Avoidance avoidance)
+        public void UpdateNodes(TrinityGrid grid, Structures.Avoidance avoidance)
         {
             foreach (var actor in avoidance.Actors)
             {

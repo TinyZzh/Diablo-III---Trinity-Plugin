@@ -179,7 +179,7 @@ namespace Trinity.Modules
 
         private void LeaveGame()
         {
-            GameEvents.FireWorldTransferStart();
+            //GameEvents.FireWorldTransferStart();
             ZetaDia.Service.Party.LeaveGame();
             BotMain.PauseWhile(() => ZetaDia.IsInGame);
         }

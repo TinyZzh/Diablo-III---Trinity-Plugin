@@ -165,7 +165,7 @@ namespace QuestTools.ProfileTags
                             new Action(ret =>
                             {
                                 PortalCastTimer.Restart();
-                                GameEvents.FireWorldTransferStart();
+                                //GameEvents.FireWorldTransferStart();
                                 ZetaDia.Me.UseTownPortal();
                             }),
 

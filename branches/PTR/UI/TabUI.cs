@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -28,7 +29,7 @@ using UIElement = Zeta.Game.Internals.UIElement;
 // For Debug Watch Panel Namespace.
 
 using Trinity.Framework.Objects;
-
+using Trinity.Framework.Objects.Memory;
 using Trinity.Framework.Objects.Memory.UX;
 using Trinity.Framework.Objects.Memory.Attributes;
 using Trinity.Items.Sorting;
@@ -93,8 +94,9 @@ namespace Trinity.UI
                             //CreateButton("Clean Stash", CleanStashEventHandler),
                             CreateButton("Convert to Magic", btnClick_ConvertToBlue),
                             CreateButton("Convert to Common", btnClick_ConvertToCommon),
-                            CreateButton("Convert to Rare", btnClick_ConvertToRare),
+                            //CreateButton("Convert to Rare", btnClick_ConvertToRare),
                             CreateButton("Do Not Click", btnClick_CrazyTest),
+                            CreateButton("Set", btnClick_CrazyTestSet),
                         });
 
                 CreateGroup("Debugging", new List<Control>
@@ -271,15 +273,73 @@ namespace Trinity.UI
             }
         }
 
+        private static ulong _lastClickedHash;
+
         private static void btnClick_CrazyTest(object sender, RoutedEventArgs routedEventArgs)
         {
             try
             {
+                Task.Run(async () =>
+                {
+                    while (true)
+                    {
+                        using (ZetaDia.Memory.AcquireFrame())
+                        {
+                            try
+                            {
+                                _overflagComparison?.Compare(
+                                    e => Logger.Log($"[{_clicked.BaseAddress}] {_clicked.Hash} {_clicked} Gained flags: {e}"),
+                                    e => Logger.Log($"Lost flags: {e}"));
+
+                            }
+                            catch (Exception)
+                            {
+                                
+                            }
+                        }
+                        await Task.Delay(50);
+                    }
+                });
+
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Exception {0}", ex);
+            }
+        }
+
+        private static UXControl _clicked;
+
+        private static void btnClick_CrazyTestSet(object sender, RoutedEventArgs routedEventArgs)
+        {
+            try
+            {
+
                 using (ZetaDia.Memory.AcquireFrame())
                 {
-                    WizardBase.CancelArchon();
-                    //ZetaDia.Me.UsePower(SNOPower.Wizard_Archon_Cancel, ZetaDia.Me.Position, ZetaDia.Me.WorldId, ZetaDia.Me.ACDId);
-                }
+                    try
+                    {
+                        var uimanager = ZetaDia.Memory.Read<int>(ZetaDia.Storage.BaseAddress - 0x7C8 + 0xA04);
+                        var mouseOver = MemoryWrapper.Create<UXReference>((IntPtr)uimanager + 0x0A30);
+                        var clicked = MemoryWrapper.Create<UXReference>((IntPtr)uimanager + 0x0828);
+                        var x = ZetaDia.Memory.Read<int>((IntPtr)uimanager + 0x1E60);
+                        var y = ZetaDia.Memory.Read<int>((IntPtr)uimanager + 0x1E64);
+                        var control = clicked.Control;
+
+
+                        if (_lastClickedHash != clicked.Hash)
+                        {
+                            _clicked = control;
+                            Logger.Log($"Now monitoring clicked Element on {_clicked.Hash} {_clicked.Name} at [{x},{y}]");
+                            _overflagComparison = new MemoryAnalysis.FlagComparison<UXControlFlags>(() => UXHelper.GetControl(_clicked.Hash).Flags);
+                            _lastClickedHash = _clicked.Hash;
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                }                
             }
             catch (Exception ex)
             {
@@ -1167,11 +1227,11 @@ namespace Trinity.UI
         {
             try
             {
-                // todo figure out why the first time cache doesnt update properly
-                //Core.ForcedUpdate();
-
                 var alltypes = Enum.GetValues(typeof(ItemSelectionType)).Cast<ItemSelectionType>().ToList();
-                CoroutineHelper.RunCoroutine(() => CubeRaresToLegendary.Execute(alltypes), result => !CubeRaresToLegendary.CanRun());
+
+                CoroutineHelper.RunCoroutine(
+                    () => CubeRaresToLegendary.Execute(alltypes),
+                    result => true); //!CubeRaresToLegendary.CanRun());
             }
             catch (Exception ex)
             {
@@ -1241,40 +1301,40 @@ namespace Trinity.UI
         private static bool ConvertMaterials(InventoryItemType[] fromMaterials, InventoryItemType to)
         {
             var conversions = 0;
-            var working = false;
-            var startTime = DateTime.UtcNow;
+            //var working = false;
+            //var startTime = DateTime.UtcNow;
 
-            foreach (var fromMaterial in fromMaterials)
-            {
-                var canRun = false;
-                using (ZetaDia.Memory.AcquireFrame())
-                {
-                    ZetaDia.Actors.Update();
-                    Core.Update();
-                    canRun = Coroutines.Town.ConvertMaterials.CanRun(fromMaterial, to);
-                }
+            //foreach (var fromMaterial in fromMaterials)
+            //{
+            //    var canRun = false;
+            //    using (ZetaDia.Memory.AcquireFrame())
+            //    {
+            //        ZetaDia.Actors.Update();
+            //        Core.Update();
+            //        canRun = Coroutines.Town.ConvertMaterials.CanRun(fromMaterial, to);
+            //    }
 
-                if (UIElements.TransmuteItemsDialog.IsVisible && canRun)
-                {
-                    LastStartedConvert = DateTime.UtcNow;
-                    CoroutineHelper.RunCoroutine(() => Coroutines.Town.ConvertMaterials.Execute(fromMaterial, to), result =>
-                    {
-                        var r = !Coroutines.Town.ConvertMaterials.CanRun(fromMaterial, to) || CheckConvertTimeout() || !result;
-                        working = !r;
-                        return r;
-                    }, 50, () => working = false);
-                    conversions++;
-                }
-                while (working)
-                {
-                    if (DateTime.UtcNow.Subtract(startTime).TotalSeconds > 30)
-                    {
-                        Logger.LogError("ConvertMaterials timed out");
-                        break;
-                    }
-                    Thread.Sleep(500);
-                }
-            }
+            //    if (UIElements.TransmuteItemsDialog.IsVisible && canRun)
+            //    {
+            //        LastStartedConvert = DateTime.UtcNow;
+            //        CoroutineHelper.RunCoroutine(() => Coroutines.Town.ConvertMaterials.Execute(fromMaterial, to), result =>
+            //        {
+            //            var r = !Coroutines.Town.ConvertMaterials.CanRun(fromMaterial, to) || CheckConvertTimeout() || !result;
+            //            working = !r;
+            //            return r;
+            //        }, 50, () => working = false);
+            //        conversions++;
+            //    }
+            //    while (working)
+            //    {
+            //        if (DateTime.UtcNow.Subtract(startTime).TotalSeconds > 30)
+            //        {
+            //            Logger.LogError("ConvertMaterials timed out");
+            //            break;
+            //        }
+            //        Thread.Sleep(500);
+            //    }
+            //}
 
             return conversions > 0;
         }
@@ -1323,29 +1383,29 @@ namespace Trinity.UI
 
         private static void btnClick_MassConvertRareToMagic(object sender, RoutedEventArgs routedEventArgs)
         {
-            try
-            {
-                Logger.Log("Starting Conversion of Backpack VeiledCrystals to ArcaneDust");
+            //try
+            //{
+            //    Logger.Log("Starting Conversion of Backpack VeiledCrystals to ArcaneDust");
 
-                var from = InventoryItemType.VeiledCrystal;
-                var to = InventoryItemType.ArcaneDust;
+            //    var from = InventoryItemType.VeiledCrystal;
+            //    var to = InventoryItemType.ArcaneDust;
 
-                if (!UIElements.TransmuteItemsDialog.IsVisible || !Coroutines.Town.ConvertMaterials.CanRun(from, to))
-                {
-                    Logger.LogError("You need to have the cube window open and all the required materials in your backpack.");
-                    return;
-                }
+            //    if (!UIElements.TransmuteItemsDialog.IsVisible || !Coroutines.Town.ConvertMaterials.CanRun(from, to))
+            //    {
+            //        Logger.LogError("You need to have the cube window open and all the required materials in your backpack.");
+            //        return;
+            //    }
 
-                LastStartedConvert = DateTime.UtcNow;
+            //    LastStartedConvert = DateTime.UtcNow;
 
-                CoroutineHelper.RunCoroutine(() => Coroutines.Town.ConvertMaterials.Execute(from, to), result => !Coroutines.Town.ConvertMaterials.CanRun(from, to) || CheckConvertTimeout());
+            //    CoroutineHelper.RunCoroutine(() => Coroutines.Town.ConvertMaterials.Execute(from, to), result => !Coroutines.Town.ConvertMaterials.CanRun(from, to) || CheckConvertTimeout());
 
-                Logger.Log("Finished");
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("Exception: " + ex);
-            }
+            //    Logger.Log("Finished");
+            //}
+            //catch (Exception ex)
+            //{
+            //    Logger.LogError("Exception: " + ex);
+            //}
         }
 
         private static void btnClick_ScanUIElement(object sender, RoutedEventArgs routedEventArgs)
@@ -1542,6 +1602,7 @@ namespace Trinity.UI
         private static readonly SolidColorBrush BackgroundBrush = new SolidColorBrush(Color.FromRgb(67, 67, 67));
         private static Dictionary<int, AttributeItem> _lastAtts;
         private static int _lastAnn;
+        private static MemoryAnalysis.FlagComparison<UXControlFlags> _overflagComparison;
 
         private static void CreateGroup(string title, List<Control> items)
         {

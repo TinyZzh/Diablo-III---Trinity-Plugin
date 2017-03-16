@@ -8,7 +8,7 @@ namespace Trinity.Framework.Helpers
     {
         public ExplorationGrid Exploration => ExplorationGrid.Instance;
 
-        public AvoidanceGrid Avoidance => AvoidanceGrid.Instance;
+        public TrinityGrid Avoidance => TrinityGrid.Instance;
 
         public bool CanRayCast(Vector3 @from, Vector3 to)
         {

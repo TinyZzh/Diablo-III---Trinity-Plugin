@@ -156,6 +156,7 @@ namespace Trinity.Framework.Actors.ActorTypes
             hash = (hash * 7) + ActorSnoId.GetHashCode();
             return hash;
         }
+
     }
 
 }

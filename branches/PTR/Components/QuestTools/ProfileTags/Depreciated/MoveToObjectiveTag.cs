@@ -342,7 +342,7 @@ namespace QuestTools.ProfileTags.Movement
                     _completedInteractAttempts++;
                     Logger.Debug("Interacting with portal object {0}, result: {1}", _objectiveObject.ActorSnoId, Status());
                     await Coroutine.Sleep(500);
-                    GameEvents.FireWorldTransferStart();
+                    //GameEvents.FireWorldTransferStart();
                     return true;
                 }
 

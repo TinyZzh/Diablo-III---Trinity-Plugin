@@ -91,37 +91,6 @@ namespace Trinity.Framework.Objects.Memory.Attributes
                 return false;
 
             var isChanged = Map.Count != _lastRowCount;
-
-            //    _previousItems = new Dictionary<int, AttributeItem>(Items);
-
-            //    ReadAttributes(FastAttributeGroupId);
-
-            //    foreach (var newItem in Items)
-            //    {
-            //        var key = newItem.Key;
-            //        if (!_previousItems.ContainsKey(key))
-            //        {
-            //            Logger.Log("Attribute Added " + newItem.Value);
-            //        }
-            //        else
-            //        {
-            //            var oldValue = _previousItems[key].GetValue();
-            //            if (!Equals(newItem.Value.GetValue(), oldValue))
-            //            {
-            //                Logger.Log($"Attribute Changed {newItem.Value }, was {oldValue}");
-            //            }
-            //        }
-            //        _previousItems.Remove(key);
-            //    }
-
-            //    foreach (var removedItem in _previousItems)
-            //    {
-            //        Logger.Log("Attribute Removed " + removedItem);
-            //    }
-
-            //    _lastRowCount = Map.Count;
-            //    return isChanged;
-
             if (isChanged || DateTime.UtcNow.Subtract(LastUpdatedTime).TotalSeconds > 1)
             {
                 ReadAttributes(FastAttributeGroupId);
@@ -299,12 +268,6 @@ namespace Trinity.Framework.Objects.Memory.Attributes
                 return foundAttribute.Value.GetValue<T>();
             }
             return default(T);
-            //AttributeItem foundAttribute;
-            //if (!Items.TryGetValue((int)attr, out foundAttribute))
-            //    return default(T);
-
-            //foundAttribute.Update();
-            //return foundAttribute.GetValue<T>();
         }
 
         internal AttributeItem GetAttributeItem(ActorAttributeType attr)

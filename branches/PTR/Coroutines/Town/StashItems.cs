@@ -59,7 +59,7 @@ namespace Trinity.Coroutines.Town
                 return false;
             }
 
-            var stashItems = Inventory.Backpack.Items.Where(ShouldStash).Where(i => AllowedToStash(dontStashCraftingMaterials, i)).ToList();
+            var stashItems = Core.Inventory.Backpack.Where(ShouldStash).Where(i => AllowedToStash(dontStashCraftingMaterials, i)).ToList();
             if (!stashItems.Any())
             {
                 Logger.LogVerbose($"[StashItems] Nothing to stash");
@@ -108,7 +108,7 @@ namespace Trinity.Coroutines.Town
                 var isStashFull = false;
 
                 // Get items again to make sure they are valid and current this tick
-                var freshItems = Inventory.Backpack.Items.Where(ShouldStash).Where(i => AllowedToStash(dontStashCraftingMaterials, i)).ToList();
+                var freshItems = Core.Inventory.Backpack.Where(ShouldStash).Where(i => AllowedToStash(dontStashCraftingMaterials, i)).ToList();
                 if (!freshItems.Any())
                 {
                     Logger.LogVerbose($"[StashItems] No items to stash");
@@ -187,7 +187,7 @@ namespace Trinity.Coroutines.Town
 
         public static async Task<bool> StackRamaladnisGift()
         {
-            var items = Inventory.Stash.Items.Where(i => i.RawItemType == RawItemType.GeneralUtility && !i.IsTradeable).ToList();
+            var items = Core.Inventory.Stash.Where(i => i.RawItemType == RawItemType.GeneralUtility && !i.IsTradeable).ToList();
             if (!items.Any())
                 return false;
 
@@ -212,14 +212,14 @@ namespace Trinity.Coroutines.Town
 
         public static TrinityItem GetItemAtLocation(int col, int row)
         {
-            return Inventory.Stash.Items.FirstOrDefault(i => i.InventoryRow == row && i.InventoryColumn == col);
+            return Core.Inventory.Stash.FirstOrDefault(i => i.InventoryRow == row && i.InventoryColumn == col);
         }
 
         public static TrinityItem GetNextStashItem(int currentCol, int currentRow, int actorSnoId = -1)
         {
             if (actorSnoId > 0)
             {
-                var nextItemOfType = Inventory.Stash.Items.FirstOrDefault(i =>
+                var nextItemOfType = Core.Inventory.Stash.FirstOrDefault(i =>
                     i.ActorSnoId == actorSnoId &&
                     i.InventoryRow > currentRow || i.InventoryRow == currentRow && i.InventoryColumn > currentCol);
 
@@ -228,14 +228,14 @@ namespace Trinity.Coroutines.Town
                     return nextItemOfType;
                 }
             }
-            return Inventory.Stash.Items.FirstOrDefault(i => !i.IsTwoSquareItem && i.InventoryRow > currentRow || i.InventoryRow == currentRow && i.InventoryColumn > currentCol);
+            return Core.Inventory.Stash.FirstOrDefault(i => !i.IsTwoSquareItem && i.InventoryRow > currentRow || i.InventoryRow == currentRow && i.InventoryColumn > currentCol);
         }
 
         public static async Task<bool> StackCraftingMaterials()
         {
             var items = GetInventoryMap();
 
-            foreach (var itemGroup in Inventory.Stash.Items.Where(i => i.MaxStackCount > 0 && i.ItemStackQuantity < i.MaxStackCount && !i.IsTradeable).GroupBy(i => i.Name))
+            foreach (var itemGroup in Core.Inventory.Stash.Where(i => i.MaxStackCount > 0 && i.ItemStackQuantity < i.MaxStackCount && !i.IsTradeable).GroupBy(i => i.Name))
             {
                 if (itemGroup.Count() <= 1)
                     continue;
@@ -262,7 +262,7 @@ namespace Trinity.Coroutines.Town
 
         public static IEnumerable<TrinityItem> GetItemsOnStashPage(int page)
         {
-            return Inventory.Stash.Items.Where(i => i.InventoryRow >= page * 10 && i.InventoryRow < page * 10 + 10);
+            return Core.Inventory.Stash.Where(i => i.InventoryRow >= page * 10 && i.InventoryRow < page * 10 + 10);
         }
 
         //public static async Task<bool> SortStashPages()
@@ -600,7 +600,7 @@ namespace Trinity.Coroutines.Town
         private static InventoryMap GetInventoryMap()
         {
             Core.Actors.UpdateInventory();
-            var items = Inventory.Stash.Items.ToList();
+            var items = Core.Inventory.Stash.ToList();
             return new InventoryMap(items.ToDictionary(k => new Tuple<int, int>(k.InventoryColumn, k.InventoryRow), v => v));
         }
 

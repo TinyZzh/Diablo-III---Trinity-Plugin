@@ -9,6 +9,7 @@ using Zeta.Game.Internals.SNO;
 
 namespace Trinity.Reference
 {
+
     /// <summary>
     /// Contains hard-coded meta-lists of ActorSnoId's, Spells and other non-dynamic info
     /// </summary>
@@ -19,6 +20,8 @@ namespace Trinity.Reference
         public const int RiftTrialLevelAreaId = 405915;
 
         public const int WALLER_SNO = 226808;
+
+
 
         /// <summary>
         /// Client effects that will be let into the object cache

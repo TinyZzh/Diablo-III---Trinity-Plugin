@@ -156,8 +156,8 @@ namespace QuestTools
             {
                 if (IsElementVisible(element))
                 {
-                    if (fireWorldTransfer)
-                        GameEvents.FireWorldTransferStart();
+                    //if (fireWorldTransfer)
+                    //    GameEvents.FireWorldTransferStart();
 
                     Logger.Log("Clicking UI element {0} ({1})", name, element.BaseAddress);
                     element.Click();

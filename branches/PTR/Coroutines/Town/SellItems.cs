@@ -48,7 +48,7 @@ namespace Trinity.Coroutines.Town
                 return false;
             }
 
-            var sellItems = Inventory.Backpack.Items.Where(ShouldSell).ToList();
+            var sellItems = Core.Inventory.Backpack.Where(ShouldSell).ToList();
             if (!sellItems.Any())
             {
                 await RepairItems.Execute();
@@ -83,7 +83,7 @@ namespace Trinity.Coroutines.Town
             if (UIElements.VendorWindow.IsVisible)
             {
                 await Coroutine.Sleep(Randomizer.Fudge(1500));
-                var freshItems = Inventory.Backpack.Items.Where(ShouldSell);
+                var freshItems = Core.Inventory.Backpack.Where(ShouldSell);
                 foreach (var item in freshItems)
                 {
                     if (InventoryManager.CanSellItem(item.ToAcdItem()))
@@ -98,7 +98,7 @@ namespace Trinity.Coroutines.Town
                         Logger.LogVerbose($"[SellItems] Selling: {item.Name} ({item.ActorSnoId}) Quality={item.ItemQualityLevel} IsAncient={item.IsAncient} Name={item.InternalName}");
                         InventoryManager.SellItem(item.ToAcdItem());
                         ItemEvents.FireItemSold(item);
-                        Inventory.InvalidItemDynamicIds.Add(item.AnnId);
+                        Core.Inventory.InvalidAnnIds.Add(item.AnnId);
                     }
                 }
 

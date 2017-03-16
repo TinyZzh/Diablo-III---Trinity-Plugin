@@ -466,7 +466,7 @@ namespace Trinity.Framework.Helpers
             Logger.Log("Starting ItemList Backpack Test");
 
             var backpackItems = Core.Inventory.Backpack;
-            var total = backpackItems.Count;
+            var total = backpackItems.Count();
             var toBeStashed = 0;
 
             foreach (var acdItem in backpackItems)

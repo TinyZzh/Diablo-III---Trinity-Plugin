@@ -27,7 +27,7 @@ namespace Trinity.Coroutines.Town
 
             var timeout = DateTime.UtcNow.Add(TimeSpan.FromSeconds(30));
 
-            while (Inventory.Backpack.Items.Any(i => i.IsUnidentified))
+            while (Core.Inventory.Backpack.Any(i => i.IsUnidentified))
             {
                 if (DateTime.UtcNow > timeout)
                     break;

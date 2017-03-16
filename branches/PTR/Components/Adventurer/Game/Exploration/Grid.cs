@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Exploration.Algorithms;
+using Trinity.Framework;
 using Zeta.Common;
 using Zeta.Game;
 
@@ -109,10 +110,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
             BaseSize = (int)Math.Round(BoxSize / 4, MidpointRounding.AwayFromZero);
         }
 
-        public T NearestNode
-        {
-            get { return GetNearestNode(AdvDia.MyPosition); }
-        }
+        public T NearestNode => GetNearestNode(Core.Player.Position);
 
         //public T GetNearestNode(Vector3 position)
         //{

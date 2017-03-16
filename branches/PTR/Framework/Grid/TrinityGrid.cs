@@ -17,9 +17,9 @@ using ScenesStorage = Trinity.Components.Adventurer.Game.Exploration.ScenesStora
 
 namespace Trinity.Framework.Avoidance
 {
-    public sealed class AvoidanceGrid : Grid<AvoidanceNode>
+    public sealed class TrinityGrid : Grid<AvoidanceNode>
     {
-        static AvoidanceGrid()
+        static TrinityGrid()
         {
             Flags = Enum.GetValues(typeof(AvoidanceFlags)).Cast<AvoidanceFlags>().ToList();
         }
@@ -30,37 +30,37 @@ namespace Trinity.Framework.Avoidance
 
         public override float BoxSize => 2.5f;
         public override int GridBounds => Bounds;
-        public static AvoidanceGrid Instance => GetWorldGrid();
+        public static TrinityGrid Instance => GetWorldGrid();
 
         public bool IsUpdatingNodes { get; set; }
 
-        private static AvoidanceGrid _currentGrid;
+        private static TrinityGrid _currentGrid;
 
-        public static AvoidanceGrid GetWorldGrid()
+        public static TrinityGrid GetWorldGrid()
         {
             if (_currentGrid == null)
             {
-                _currentGrid = new AvoidanceGrid();
+                _currentGrid = new TrinityGrid();
             }
             else if (_currentGrid == null || ZetaDia.Globals.WorldId != _currentGrid.WorldDynamicId)
             {
-                _currentGrid = new AvoidanceGrid();
+                _currentGrid = new TrinityGrid();
             }
             else if (!ScenesStorage.CurrentWorldScenes.Any())
             {
                 return _currentGrid;
             }
-            else if (_currentGrid.NearestNode == null)
-            {
-                if (DateTime.UtcNow.Subtract(_currentGrid.Created).TotalSeconds > 2)
-                {
-                    _currentGrid = new AvoidanceGrid();
-                }
-            }
+            //else if (_currentGrid.NearestNode == null)
+            //{
+            //    if (DateTime.UtcNow.Subtract(_currentGrid.Created).TotalSeconds > 2)
+            //    {
+            //        _currentGrid = new TrinityGrid();
+            //    }
+            //}
             return _currentGrid;
         }
 
-        public static AvoidanceGrid GetUnsafeGrid() => _currentGrid;
+        public static TrinityGrid GetUnsafeGrid() => _currentGrid;
 
         public bool IsValidGridWorldPosition(Vector3 position)
         {

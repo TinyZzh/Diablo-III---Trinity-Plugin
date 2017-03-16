@@ -71,6 +71,11 @@ namespace Trinity.Framework.Objects.Memory.UX
             return GetControl(el.BaseAddress);
         }
 
+        public static UXControl GetControl(ulong hash)
+        {
+            return GetControl(UIElement.FromHash(hash).BaseAddress);
+        }
+
         public static UXControl GetControl(IntPtr ptr)
         {
             var type = ZetaDia.Memory.Read<ControlType>(ptr + 0x430);
@@ -79,14 +84,17 @@ namespace Trinity.Framework.Objects.Memory.UX
                 case ControlType.Text:
                     return MemoryWrapper.Create<UXLabel>(ptr);
 
-                //case ControlType.Button:
-                //    return MemoryWrapper.Create<UXButton>(ptr);
+                case ControlType.Blinker:
+                    return MemoryWrapper.Create<UXBlinker>(ptr);
 
-                //case ControlType.ItemButton:
-                //    return MemoryWrapper.Create<UXItemButton>(ptr);
+                case ControlType.Button:
+                    return MemoryWrapper.Create<UXButton>(ptr);
 
-                //case ControlType.ListItem:
-                //    return MemoryWrapper.Create<UXListItem>(ptr);
+                case ControlType.HotbarButton:
+                    return MemoryWrapper.Create<UXHotbarButton>(ptr);
+
+                case ControlType.StackPanel:
+                    return MemoryWrapper.Create<UXStackPanel>(ptr);
             }
             return MemoryWrapper.Create<UXControl>(ptr);
         }

@@ -811,7 +811,7 @@ namespace Trinity.Components.Combat
                 try
                 {
                     if (!forceRefresh && _lastBackPackLocation != new Vector2(-2, -2) && _lastBackPackLocation != new Vector2(-1, -1) &&
-                        _lastBackPackCount == Core.Inventory.Backpack.Count &&
+                        _lastBackPackCount == Core.Inventory.BackpackItemCount &&
                         _lastProtectedSlotsCount == CharacterSettings.Instance.ProtectedBagSlots.Count)
                     {
                         return _lastBackPackLocation;
@@ -824,7 +824,7 @@ namespace Trinity.Components.Combat
                     if (!forceRefresh)
                     {
                         _lastProtectedSlotsCount = CharacterSettings.Instance.ProtectedBagSlots.Count;
-                        _lastBackPackCount = Core.Inventory.Backpack.Count;
+                        _lastBackPackCount = Core.Inventory.BackpackItemCount;
                     }
 
                     // Block off the entire of any "protected bag slots"

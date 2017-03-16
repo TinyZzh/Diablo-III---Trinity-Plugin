@@ -220,10 +220,6 @@ namespace Trinity.Components.Adventurer.Cache
                     }
                 }
             }
-            catch (ACDAttributeLookupFailedException acdEx)
-            {
-                Util.Logger.Debug("[AdvDia] ACDAttributeLookupFailedException {0}", acdEx.Message);
-            }
             catch (Exception ex)
             {
                 Util.Logger.Debug("[AdvDia] {0}", ex.Message);

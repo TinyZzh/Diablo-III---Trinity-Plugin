@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Trinity.Coroutines.Resources;
 using Trinity.Coroutines.Town;
+using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Helpers;
 using Trinity.ProfileTags.EmbedTags;
@@ -38,7 +39,7 @@ namespace Trinity.ProfileTags
 
             foreach (var item in Items)
             {
-                var stashItem = Inventory.Stash.ByActorSNO(item.Id);
+                var stashItem = Core.Inventory.Stash.FirstOrDefault(i => i.ActorSnoId == item.Id);
                 if (stashItem == null)
                 {
                     Logger.LogError("[TakeFromStash] Item Id={0} was not found in stash", item.Id);

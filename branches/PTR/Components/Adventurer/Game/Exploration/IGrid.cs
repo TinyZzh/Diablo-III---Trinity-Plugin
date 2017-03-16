@@ -27,8 +27,6 @@ namespace Trinity.Components.Adventurer.Game.Exploration
         bool CanRayCast(Vector3 from, Vector3 to);
 
         bool CanRayWalk(Vector3 from, Vector3 to);
-
-        void Reset();
     }
 
     public interface IGrid

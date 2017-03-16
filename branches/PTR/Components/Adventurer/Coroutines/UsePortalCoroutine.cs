@@ -201,7 +201,7 @@ namespace Trinity.Components.Adventurer.Coroutines
             // Doubly-make sure we interact
             actor.Interact();
             _interactAttempts++;
-            GameEvents.FireWorldTransferStart();
+            //GameEvents.FireWorldTransferStart();
             await Coroutine.Sleep(_sleepTime);
             return retVal;
         }

@@ -5,7 +5,7 @@ namespace Trinity.Framework.Avoidance.Handlers
 {
     public class FireChainsAvoidanceHandler : IAvoidanceHandler
     {
-        public void UpdateNodes(AvoidanceGrid grid, Structures.Avoidance avoidance)
+        public void UpdateNodes(TrinityGrid grid, Structures.Avoidance avoidance)
         {
             var actor = avoidance.Actors.FirstOrDefault();
             if (actor == null)

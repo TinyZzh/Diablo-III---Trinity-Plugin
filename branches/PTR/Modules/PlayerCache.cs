@@ -6,6 +6,7 @@ using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
 using Trinity.Framework.Objects.Enums;
+using Trinity.Framework.Objects.Memory.UX;
 using Trinity.Reference;
 using Zeta.Common;
 using Zeta.Game;
@@ -460,15 +461,13 @@ namespace Trinity.Modules
         {
             get
             {
-                //var potionElement = UIElement.FromHash(9033406906766196825);
-                //var potionGameBalanceId = ZetaDia.Memory.Read<int>(potionElement.BaseAddress - 0x24);
                 try
                 {
-                    var potionElement = UIElement.FromHash(16768550267251786851);
-                    if (potionElement != null && potionElement.IsValid)
+                    var element = UXHelper.GetControl(13566120389425937876);
+                    if (element != null && element.IsValid)
                     {
-                        var potionAnnId = ZetaDia.Memory.Read<int>(potionElement.BaseAddress - 0x18);
-                        return ZetaDia.Actors.GetActorsOfType<ACDItem>().FirstOrDefault(a => a.AnnId == potionAnnId);
+                        var ann = ((UXHotbarButton)element.Parent.Control).x1678;
+                        return ZetaDia.Actors.GetActorsOfType<ACDItem>().FirstOrDefault(a => a.AnnId == ann);
                     }
                 }
                 catch (Exception ex)

@@ -16,12 +16,11 @@ namespace Trinity.Framework.Avoidance
     public class AvoidanceManager : Module, IDynamicSetting
     {
         public IAvoider Avoider { get; set; }
-        public GridEnricher GridEnricher { get; }
+        public GridEnricher GridEnricher => Core.GridEnricher;
 
         public AvoidanceManager()
         {
             Avoider = new DefaultAvoider();
-            GridEnricher = new GridEnricher();
         }
 
         public bool InAvoidance(Vector3 position)
@@ -49,7 +48,7 @@ namespace Trinity.Framework.Avoidance
         public List<Structures.Avoidance> CurrentAvoidances = new List<Structures.Avoidance>();
         public AvoidanceAreaStats NearbyStats = new AvoidanceAreaStats();
 
-        public AvoidanceGrid Grid => AvoidanceGrid.Instance;
+        public TrinityGrid Grid => TrinityGrid.Instance;
 
         protected override void OnPulse()
         {
@@ -58,7 +57,7 @@ namespace Trinity.Framework.Avoidance
 
             UpdateAvoidances();
             RemoveExpiredAvoidances();
-            GridEnricher.UpdateGrid();
+            
             NearbyStats.Update(GridEnricher.NearbyNodes);
         }
 

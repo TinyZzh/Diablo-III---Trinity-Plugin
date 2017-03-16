@@ -13,57 +13,59 @@ namespace Trinity.Coroutines.Town
 {
     public static class Transmute
     {
-        public static async Task<bool> Execute(List<TrinityItem> transmuteGroup)
+        /// <summary>
+        /// Move to Kanai's cube and transmute.
+        /// </summary>
+        public static async Task<bool> Execute(TrinityItem item, TransmuteRecipe recipe)
         {
+            return await Execute(new List<TrinityItem> { item }, recipe);
+        }
+
+        /// <summary>
+        /// Move to Kanai's cube and transmute.
+        /// </summary>
+        public static async Task<bool> Execute(List<TrinityItem> transmuteGroup, TransmuteRecipe recipe)
+        {
+            return await Execute(transmuteGroup.Select(i => i.AnnId).ToList(), recipe);
+        }
+
+        /// <summary>
+        /// Move to Kanai's cube and transmute.
+        /// </summary>
+        public static async Task<bool> Execute(IEnumerable<int> transmuteGroupAnnIds, TransmuteRecipe recipe)
+        {
+            if (!ZetaDia.IsInGame)
+                return false;
+
+            Logger.Log("Transmuting:");
+
+            if (!Core.Inventory.Currency.HasCurrency(recipe))
+            {
+                Logger.LogError($"--> Not enough currency for {recipe}");
+                return false;
+            }
+
             if (!UIElements.TransmuteItemsDialog.IsVisible)
             {
                 await MoveToAndInteract.Execute(TownInfo.KanaisCube);
                 await Coroutine.Sleep(1000);
             }
-            var acds = transmuteGroup.Select(i => Core.Actors.GetAcdItemByAcdId(i.AcdId)).ToList();
-            return await Execute(acds);
-        }
-
-        public static async Task<bool> Execute(List<ACDItem> transmuteGroup)
-        {
-            if (!ZetaDia.IsInGame)
-                return false;
-
-            if (transmuteGroup.Count > 9)
-            {
-                Logger.Log(" --> Can't convert with more than 9 items!");
-                return false;
-            }
-
-            Logger.Log("Transmuting:");
-
-            foreach (var item in transmuteGroup)
-            {
-                if (item == null || !item.IsValid || item.IsDisposed)
-                {
-                    Logger.Log(" --> Invalid Item Found {0}");
-                    return false;
-                }
-
-                if (!item.IsCraftingReagent && item.Level < 70)
-                {
-                    Logger.Log($" --> The internal item level for {item.Name} is {item.Level}; most items less than 70 level will cause a failed transmute");
-                    return false;
-                }
-
-                Logger.Log($@" --> {item.Name} StackQuantity={item.ItemStackQuantity} Quality={item.GetItemQuality()} CraftingMaterial={item.IsCraftingReagent}
-                                   InventorySlot={item.InventorySlot} Row={item.InventoryRow} Col={item.InventoryColumn}  (Ann={item.AnnId} AcdId={item.ACDId})");
-            }
 
             if (!UIElements.TransmuteItemsDialog.IsVisible)
             {
-                Logger.Log("Cube window needs to be open before you can transmute anything.");
+                Logger.Log(" --> Can't transmute without the vendor window open!");
                 return false;
             }
 
             Logger.Log("Zip Zap!");
-            InventoryManager.TransmuteItems(transmuteGroup);
+            InventoryManager.TransmuteItems(transmuteGroupAnnIds.ToArray(), recipe);
+            await Coroutine.Sleep(Randomizer.Fudge(500));
+            UIElement.FromHash(TransmuteButtonHash)?.Click();
             return true;
         }
+
+        private const long TransmuteButtonHash = 0x7BD4F1CE7188C0D7;
+
     }
 }
+ 

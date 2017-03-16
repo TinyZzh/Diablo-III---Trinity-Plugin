@@ -6,12 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Trinity.Coroutines.Resources;
 using Trinity.Coroutines.Town;
+using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Helpers;
 using Trinity.ProfileTags.EmbedTags;
 using Trinity.Reference;
 using Zeta.Bot;
 using Zeta.Bot.Profile;
+using Zeta.Game;
 using Zeta.TreeSharp;
 using Zeta.XmlEngine;
 using Zeta.Game.Internals.Actors;
@@ -24,6 +26,9 @@ namespace Trinity.ProfileTags
         [XmlElement("Items")]
         public List<ItemTag> Items { get; set; }
 
+        [XmlAttribute("recipe")]
+        public TransmuteRecipe Recipe { get; set; }
+
         private bool _isDone;
         public override bool IsDone => _isDone;
         protected override Composite CreateBehavior() => new ActionRunCoroutine(ret => Task());
@@ -32,7 +37,7 @@ namespace Trinity.ProfileTags
         {
             if(Items == null || !Items.Any())
             {
-                Logger.LogError("[TransmuteTag] No items were specified. Use: <Transmute><Items><Item id=\"0\" quantity =\"0\" /></Items></Transmute>");
+                Logger.LogError("[TransmuteTag] No items were specified. Use: <Transmute recipe=\"UpgradeRareItem\"><Items><Item id=\"0\" quantity =\"0\" /></Items></Transmute>");
                 _isDone = true;
                 return false;
             }
@@ -44,11 +49,17 @@ namespace Trinity.ProfileTags
                 return false;
             }
 
-            var transmuteGroup = new List<TrinityItem>();
+            if (Recipe == 0)
+            {
+                Logger.LogError("[TransmuteTag] You must specifiy a recipe to use: <Transmute recipe=\"UpgradeRareItem\"... valid values are: ConvertCraftingMaterialsFromRare, AugmentAncientItem, ConvertGems, RemoveLevelRequirement, ConvertCraftingMaterialsFromMagic, ExtractLegendaryPower, OpenPortalToCow, OpenPortalToGreed, ConvertCraftingMaterialsFromNormal, ConvertSetItem, ReforgeLegendary, UpgradeRareItem");
+                _isDone = true;
+                return false;
+            }
 
+            var transmuteGroup = new List<TrinityItem>();
             foreach (var item in Items)
             {
-                var backpackItem = Inventory.Backpack.ByActorSNO(item.Id);
+                var backpackItem = Core.Inventory.Backpack.ByActorSno(item.Id);
                 if (backpackItem == null)
                 {
                     Logger.LogError("[TransmuteTag] Item Id={0} was not found in backpack", item.Id);
@@ -56,11 +67,11 @@ namespace Trinity.ProfileTags
                     return false;
                 }
 
-                var stacks = Inventory.GetStacksUpToQuantity(backpackItem, item.Quantity);
+                var stacks = Core.Inventory.GetStacksUpToQuantity(backpackItem, item.Quantity);
                 transmuteGroup.AddRange(stacks);
             }
 
-            if (!await Transmute.Execute(transmuteGroup))
+            if (!await Transmute.Execute(transmuteGroup, Recipe))
             {
                 Logger.LogError("[TransmuteTag] Trasmute Failed.");
                 _isDone = true;

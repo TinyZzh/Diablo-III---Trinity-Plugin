@@ -33,7 +33,7 @@
     <RootNamespace>Trinity</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Demonbuddy, Version=1.1.3133.178, Culture=neutral, PublicKeyToken=eff32ccf253d66d4, processorArchitecture=x86">
+    <Reference Include="Demonbuddy, Version=1.1.3134.180, Culture=neutral, PublicKeyToken=eff32ccf253d66d4, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DB-PTR\Demonbuddy.exe</HintPath>
     </Reference>
@@ -354,6 +354,7 @@
     <Compile Include="Coroutines\MoveTo.cs" />
     <Compile Include="Coroutines\MoveToAndInteract.cs" />
     <Compile Include="Coroutines\OpenBountyCache.cs" />
+    <Compile Include="Framework\Objects\Enums\InventoryItemType.cs" />
     <Compile Include="Framework\Helpers\CoroutineHelper.cs" />
     <Compile Include="Coroutines\Resources\Inventory.cs" />
     <Compile Include="Coroutines\Town\ConvertMaterials.cs" />
@@ -403,11 +404,11 @@
     <Compile Include="Framework\Actors\Properties\UnitProperties.cs" />
     <Compile Include="Framework\Avoidance\AvoidanceDefinitions.cs" />
     <Compile Include="Framework\Avoidance\AvoidanceFactory.cs" />
-    <Compile Include="Framework\Avoidance\AvoidanceGrid.cs" />
+    <Compile Include="Framework\Grid\TrinityGrid.cs" />
     <Compile Include="Framework\Avoidance\AvoidanceManager.cs" />
     <Compile Include="Framework\Avoidance\AvoidanceType.cs" />
     <Compile Include="Framework\Avoidance\DefaultAvoider.cs" />
-    <Compile Include="Framework\Avoidance\GridEnricher.cs" />
+    <Compile Include="Modules\GridEnricher.cs" />
     <Compile Include="Framework\Avoidance\Handlers\AnimationBeamAvoidanceHandler.cs" />
     <Compile Include="Framework\Avoidance\Handlers\AnimationCircularAvoidanceHandler.cs" />
     <Compile Include="Framework\Avoidance\Handlers\AnimationConeAvoidanceHandler.cs" />
@@ -424,7 +425,7 @@
     <Compile Include="Framework\Avoidance\Structures\AvoidanceDefinition.cs" />
     <Compile Include="Framework\Avoidance\Structures\AvoidanceFlags.cs" />
     <Compile Include="Framework\Avoidance\Structures\AvoidanceLayer.cs" />
-    <Compile Include="Framework\Avoidance\Structures\AvoidanceNode.cs" />
+    <Compile Include="Framework\Grid\AvoidanceNode.cs" />
     <Compile Include="Framework\Avoidance\Structures\AvoidancePart.cs" />
     <Compile Include="Framework\Avoidance\Structures\MovementType.cs" />
     <Compile Include="Framework\Avoidance\Structures\PartType.cs" />
@@ -471,7 +472,7 @@
     <Compile Include="Framework\Helpers\GameBalanceTable.cs" />
     <Compile Include="Framework\Helpers\GameEvents.cs" />
     <Compile Include="Framework\Helpers\GenericBlacklist.cs" />
-    <Compile Include="Framework\Helpers\GridHelper.cs" />
+    <Compile Include="Framework\Grid\GridHelper.cs" />
     <Compile Include="Framework\Helpers\HashGenerator.cs" />
     <Compile Include="Framework\Helpers\InterfaceLoader.cs" />
     <Compile Include="Framework\Helpers\Internals.cs" />

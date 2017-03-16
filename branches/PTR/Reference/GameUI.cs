@@ -359,8 +359,8 @@ namespace Trinity.Reference
             if (!IsElementVisible(element))
                 return false;
 
-            if (fireWorldTransfer)
-                GameEvents.FireWorldTransferStart();
+            //if (fireWorldTransfer)
+            //    GameEvents.FireWorldTransferStart();
 
             Logger.Log("Clicking UI element {0} ({1})", name, element.BaseAddress);
             Core.StuckHandler.Reset("Clicked UI Element");

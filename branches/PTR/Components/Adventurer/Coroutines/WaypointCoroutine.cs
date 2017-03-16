@@ -144,7 +144,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                 return false;
             }
             State = States.WorldTransferStartFired;
-            GameEvents.FireWorldTransferStart();
+            //GameEvents.FireWorldTransferStart();
             await Coroutine.Sleep(100);
             return false;
         }
