@@ -43,7 +43,7 @@ namespace Trinity.Framework.Helpers
             UpdateCount = _updateCount;
             TotalTimeMilliseconds = _totalTimeMs;
             AverageUpdateTimeMilliseconds = _totalTimeMs / _updateCount;
-            Logger.Log(LogCategory.Performance, ToString());
+            Core.Logger.Log(LogCategory.Performance, ToString());
         }
 
         public override string ToString()

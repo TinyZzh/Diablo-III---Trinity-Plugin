@@ -1,15 +1,15 @@
-﻿using System.Linq;
+﻿using System.Linq; using Trinity.Framework;
 using System.Threading.Tasks;
-using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Game.Combat;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Adventurer.Game.Quests;
 using Trinity.Components.Adventurer.Util;
+using Trinity.Framework.Helpers;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals.SNO;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
+
 
 namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
 {
@@ -49,7 +49,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                 if (_state == value) return;
                 if (value != States.NotStarted)
                 {
-                    Util.Logger.Info("[KillUniqueMonster] " + value);
+                    Core.Logger.Log("[KillUniqueMonster] " + value);
                 }
                 _state = value;
             }
@@ -193,7 +193,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             {
                 _objectiveLocation = _previouslyFoundLocation;
                 _previouslyFoundLocation = Vector3.Zero;
-                Logger.Debug("[KillUniqueMonster] Returning previous objective location.");
+                Core.Logger.Debug("[KillUniqueMonster] Returning previous objective location.");
                 return;
             }
 
@@ -212,14 +212,14 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                 {
                     using (new PerformanceLogger("[KillUniqueMonster] Path to Objective Check", true))
                     {
-                        //if ((Navigator.GetNavigationProviderAs<DefaultNavigationProvider>().CanFullyClientPathTo(_objectiveLocation)))
+                        //if ((Navigator.GetNavigationProviderAs<Navigator>().CanFullyClientPathTo(_objectiveLocation)))
                         //{
-                        Logger.Info("[KillUniqueMonster] Found the objective at distance {0}",
+                        Core.Logger.Log("[KillUniqueMonster] Found the objective at distance {0}",
                             AdvDia.MyPosition.Distance(_objectiveLocation));
                         //}
                         //else
                         //{
-                        //    Logger.Debug("[KillUniqueMonster] Found the objective at distance {0}, but cannot get a path to it.",
+                        //    Core.Logger.Debug("[KillUniqueMonster] Found the objective at distance {0}, but cannot get a path to it.",
                         //        AdvDia.MyPosition.Distance(_objectiveLocation));
                         //    _objectiveLocation = Vector3.Zero;
                         //}

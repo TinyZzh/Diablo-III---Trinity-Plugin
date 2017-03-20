@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects.Enums;
 using Zeta.Game.Internals.SNO;
 
-namespace Trinity.Framework.Objects.Memory.Sno.Helpers
+namespace Trinity.Framework.Objects.Memory
 {
     public class GameBalanceHelper
     {
@@ -37,7 +35,7 @@ namespace Trinity.Framework.Objects.Memory.Sno.Helpers
                 }
                 else
                 {
-                    Logger.Log($"SnoRecord not found GbId={gbId} GbType={gbType}");
+                    Core.Logger.Log($"SnoRecord not found GbId={gbId} GbType={gbType}");
                 }
             }
             return default(T);

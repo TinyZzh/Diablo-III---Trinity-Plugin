@@ -65,7 +65,6 @@
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
@@ -74,7 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\Adventurer\Adventurer.cs" />
-    <Compile Include="Components\Adventurer\Cache\AdvDia.cs" />
+    <Compile Include="Components\Adventurer\AdvDia.cs" />
     <Compile Include="Components\Adventurer\Coroutines\BountyCoroutines\ActBountiesCoroutine.cs" />
     <Compile Include="Components\Adventurer\Coroutines\BountyCoroutines\AttackCoroutine.cs" />
     <Compile Include="Components\Adventurer\Coroutines\BountyCoroutines\BountyCoroutine.cs" />
@@ -113,7 +112,6 @@
     <Compile Include="Components\Adventurer\Coroutines\WaypointCoroutine.cs" />
     <Compile Include="Components\Adventurer\Game\Actors\ActorFinder.cs" />
     <Compile Include="Components\Adventurer\Game\Actors\EntryPortals.cs" />
-    <Compile Include="Components\Adventurer\Game\Actors\MarkerExtensions.cs" />
     <Compile Include="Components\Adventurer\Game\Actors\WaypointFactory.cs" />
     <Compile Include="Components\Adventurer\Game\Combat\ClearAreaHelper.cs" />
     <Compile Include="Components\Adventurer\Game\Combat\SafeZerg.cs" />
@@ -153,13 +151,6 @@
     <Compile Include="Components\Adventurer\Game\Exploration\SplitArray.cs" />
     <Compile Include="Components\Adventurer\Game\Exploration\WorldScene.cs" />
     <Compile Include="Components\Adventurer\Game\Exploration\WorldSceneCell.cs" />
-    <Compile Include="Components\Adventurer\Game\Grid\GridNode.cs" />
-    <Compile Include="Components\Adventurer\Game\Grid\GridPoint.cs" />
-    <Compile Include="Components\Adventurer\Game\Grid\GridProvider.cs" />
-    <Compile Include="Components\Adventurer\Game\Grid\GridScene.cs" />
-    <Compile Include="Components\Adventurer\Game\Grid\MainGrid.cs" />
-    <Compile Include="Components\Adventurer\Game\Grid\NavCellDefinition.cs" />
-    <Compile Include="Components\Adventurer\Game\Grid\SceneDefinition.cs" />
     <Compile Include="Components\Adventurer\Game\Quests\BountyCoroutineFactory.cs" />
     <Compile Include="Components\Adventurer\Game\Quests\BountyData.cs" />
     <Compile Include="Components\Adventurer\Game\Quests\BountyDataFactory.cs" />
@@ -172,52 +163,22 @@
     <Compile Include="Components\Adventurer\Game\Rift\RiftData.cs" />
     <Compile Include="Components\Adventurer\Game\Rift\RiftQuest.cs" />
     <Compile Include="Components\Adventurer\Game\Rift\RiftStep.cs" />
-    <Compile Include="Components\Adventurer\Game\Rift\RiftType.cs" />
     <Compile Include="Components\Adventurer\Game\Stats\ExperienceTracker.cs" />
     <Compile Include="Components\Adventurer\Settings\AdventurerGem.cs" />
     <Compile Include="Components\Adventurer\Settings\AdventurerGems.cs" />
     <Compile Include="Components\Adventurer\Settings\AdventurerGemSetting.cs" />
     <Compile Include="Components\Adventurer\Settings\PluginSettings.cs" />
-    <Compile Include="Components\Adventurer\UI\AdventurerProxy.cs" />
     <Compile Include="Components\Adventurer\UI\ConfigWindow.cs" />
     <Compile Include="Components\Adventurer\UI\DeveloperUI.cs" />
-    <Compile Include="Components\Adventurer\UI\InputBox.cs" />
     <Compile Include="Components\Adventurer\UI\MainUI.cs" />
-    <Compile Include="Components\Adventurer\UI\OverlayBase.cs" />
-    <Compile Include="Components\Adventurer\UI\OverlayUI.cs" />
-    <Compile Include="Components\Adventurer\UI\RadarWindow.cs" />
-    <Compile Include="Components\Adventurer\UI\UIComponents\BindingProxy.cs" />
-    <Compile Include="Components\Adventurer\UI\UIComponents\CacheUI.cs" />
-    <Compile Include="Components\Adventurer\UI\UIComponents\CacheUIDataModel.cs" />
-    <Compile Include="Components\Adventurer\UI\UIComponents\Converters\BoolToValueConverter.cs" />
-    <Compile Include="Components\Adventurer\UI\UIComponents\Converters\IntToStringConverter.cs" />
-    <Compile Include="Components\Adventurer\UI\UIComponents\Events.cs" />
-    <Compile Include="Components\Adventurer\UI\UIComponents\MathUtil.cs" />
-    <Compile Include="Components\Adventurer\UI\UIComponents\RadarCanvas\CanvasData.cs" />
-    <Compile Include="Components\Adventurer\UI\UIComponents\RadarCanvas\Drawings.cs" />
-    <Compile Include="Components\Adventurer\UI\UIComponents\RadarCanvas\DrawingUtilities.cs" />
-    <Compile Include="Components\Adventurer\UI\UIComponents\RadarCanvas\PointMorph.cs" />
-    <Compile Include="Components\Adventurer\UI\UIComponents\RadarCanvas\RadarCanvas.cs" />
-    <Compile Include="Components\Adventurer\UI\UIComponents\RadarCanvas\RadarObject.cs" />
-    <Compile Include="Components\Adventurer\UI\UIComponents\RadarCanvas\RadarOverlayControl.cs" />
-    <Compile Include="Components\Adventurer\UI\UIComponents\RadarCanvas\RelativeDrawing.cs" />
-    <Compile Include="Components\Adventurer\UI\UIComponents\RadarCanvas\Resources.cs" />
-    <Compile Include="Components\Adventurer\UI\UIComponents\RadarCanvas\Shapes.cs" />
-    <Compile Include="Components\Adventurer\UI\UIComponents\RadarCanvas\StaticDrawing.cs" />
-    <Compile Include="Components\Adventurer\UI\UIComponents\RadarViewport\RadarViewport.cs" />
-    <Compile Include="Components\Adventurer\UI\UIComponents\ThreadedWindow.cs" />
-    <Compile Include="Components\Adventurer\UI\UIComponents\UILoader.cs" />
-    <Compile Include="Components\Adventurer\Util\CoroutineQueue.cs" />
-    <Compile Include="Components\Adventurer\Util\EmptyLookup.cs" />
+    <Compile Include="Components\QuestTools\BaseContainerProfileBehavior.cs" />
+    <Compile Include="Components\QuestTools\ProfileTagLogger.cs" />
+    <Compile Include="Framework\Helpers\Extensions\CollectionExtensions.cs" />
+    <Compile Include="Framework\Helpers\Extensions\AttributeExtensions.cs" />
+    <Compile Include="Framework\Helpers\CoroutineQueue.cs" />
     <Compile Include="Components\Adventurer\Util\FileUtils.cs" />
-    <Compile Include="Components\Adventurer\Util\JsonSerializer.cs" />
-    <Compile Include="Components\Adventurer\Util\Logger.cs" />
     <Compile Include="Components\Adventurer\Util\ObjectDumper.cs" />
-    <Compile Include="Components\Adventurer\Util\PerformanceLogger.cs" />
-    <Compile Include="Components\Adventurer\Util\PluginCommunicator.cs" />
     <Compile Include="Components\Adventurer\Util\PluginTime.cs" />
-    <Compile Include="Components\Adventurer\Util\Randomizer.cs" />
-    <Compile Include="Components\Adventurer\Util\SafeFrameLock.cs" />
     <Compile Include="Components\Combat\Combat.cs" />
     <Compile Include="Components\Combat\DefaultLootProvider.cs" />
     <Compile Include="Components\Combat\DefaultPartyProvider.cs" />
@@ -239,146 +200,94 @@
     <Compile Include="Components\Combat\Resources\TargetUtil.cs" />
     <Compile Include="Components\Combat\Resources\TrinityPower.cs" />
     <Compile Include="Components\Combat\Resources\WeightingUtils.cs" />
-    <Compile Include="Components\QuestTools\Helpers\ActorExtensions.cs" />
-    <Compile Include="Components\QuestTools\Helpers\ActorHistory.cs" />
-    <Compile Include="Components\QuestTools\Helpers\BotBehaviorQueue.cs" />
-    <Compile Include="Components\QuestTools\Helpers\BotEvents.cs" />
-    <Compile Include="Components\QuestTools\Helpers\ChangeMonitor.cs" />
-    <Compile Include="Components\QuestTools\Helpers\Common.cs" />
-    <Compile Include="Components\QuestTools\Helpers\ConvertExtensions.cs" />
-    <Compile Include="Components\QuestTools\Helpers\CustomConditions.cs" />
-    <Compile Include="Components\QuestTools\Helpers\DataDictionary.cs" />
-    <Compile Include="Components\QuestTools\Helpers\Death.cs" />
-    <Compile Include="Components\QuestTools\Helpers\DemonbuddyUI.cs" />
-    <Compile Include="Components\QuestTools\Helpers\FileManager.cs" />
-    <Compile Include="Components\QuestTools\Helpers\GameUI.cs" />
-    <Compile Include="Components\QuestTools\Helpers\ItemManager.cs" />
-    <Compile Include="Components\QuestTools\Helpers\Keys.cs" />
-    <Compile Include="Components\QuestTools\Helpers\Logger.cs" />
-    <Compile Include="Components\QuestTools\Helpers\MathUtil.cs" />
-    <Compile Include="Components\QuestTools\Helpers\MemoryHelper.cs" />
-    <Compile Include="Components\QuestTools\Helpers\NativeExtensions.cs" />
-    <Compile Include="Components\QuestTools\Helpers\NavExtensions.cs" />
-    <Compile Include="Components\QuestTools\Helpers\ObservableDictionary.cs" />
-    <Compile Include="Components\QuestTools\Helpers\PositionCache.cs" />
-    <Compile Include="Components\QuestTools\Helpers\ProfileExtensions.cs" />
-    <Compile Include="Components\QuestTools\Helpers\ProfileHistory.cs" />
-    <Compile Include="Components\QuestTools\Helpers\ProfileUtils.cs" />
-    <Compile Include="Components\QuestTools\Helpers\QuestToolsPlugin.cs" />
-    <Compile Include="Components\QuestTools\Helpers\RiftTrial.cs" />
-    <Compile Include="Components\QuestTools\Helpers\StringUtils.cs" />
-    <Compile Include="Components\QuestTools\Helpers\TrinityApi.cs" />
-    <Compile Include="Components\QuestTools\Helpers\Vendor.cs" />
-    <Compile Include="Components\QuestTools\Helpers\WindowManager.cs" />
-    <Compile Include="Components\QuestTools\Helpers\Worker.cs" />
-    <Compile Include="Components\QuestTools\Helpers\ZetaCacheHelper.cs" />
-    <Compile Include="Components\QuestTools\Navigation\GridProvider.cs" />
-    <Compile Include="Components\QuestTools\Navigation\GridRoute.cs" />
-    <Compile Include="Components\QuestTools\Navigation\MiniMapMarker.cs" />
-    <Compile Include="Components\QuestTools\Navigation\QTNavigator.cs" />
-    <Compile Include="Components\QuestTools\Navigation\SceneSegmentation.cs" />
-    <Compile Include="Components\QuestTools\Navigation\WeightedDungeonNode.cs" />
-    <Compile Include="Components\QuestTools\Player.cs" />
-    <Compile Include="Components\QuestTools\Plugin.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\CommandTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\RandomMoveTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\StartTimerTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\StopAllTimersTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\StopTimerTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\TimeTracker.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\Timing.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\ClearAreaTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\CombatSettingTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\CompleteGreaterRiftTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\ActBountiesCompleteTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\BaseComplexNodeTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\HasGreaterRiftKeysTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\HasNoRiftKeysTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\HasNormalRiftKeysTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\HasQuestAndStepTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\HasTrialRiftKeysTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\HaveBountyTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\IEnhancedProfileBehavior.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\IfRandomTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\LoadOnceTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\ShuffleTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\UseOnceTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\UseResetTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\UseStopTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\WhenTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\ConfirmOKTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\TrinityCombatIgnoreTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\TrinityIfSNOInRangeTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\TrinityIfTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\TrinityInteractTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\TrinityLoadProfileTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\TrinityLogTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\TrinityMoveToSNOTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\EnchancedDefaultTags.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\ExploreDungeonTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\GetItemFromStashTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\IncrementCounterTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\LoadLastProfileTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\MaxDeathsTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\MoveToActorTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\MoveToMapMarkerTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\MoveToObjectiveTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\MoveToSceneTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\OffsetMoveTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\SafeMoveToTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\ProfileSettingTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\QTOpenRiftWrapperTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\QuestToolsVariableTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\RandomRollTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\RandomWaitTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\ReloadProfileTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\ResetCounterTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\RestartActTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\ResumeUseTownPortalTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\Depreciated\SetQuestingTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\TownPortalTag.cs" />
-    <Compile Include="Components\QuestTools\ProfileTags\TownRunTag.cs" />
+    <Compile Include="Components\QuestTools\BotBehaviorQueue.cs" />
+    <Compile Include="Framework\Helpers\Extensions\ConvertExtensions.cs" />
+    <Compile Include="Framework\Helpers\DemonbuddyUI.cs" />
+    <Compile Include="Components\QuestTools\ProfileExtensions.cs" />
+    <Compile Include="Components\QuestTools\ProfileHistory.cs" />
+    <Compile Include="Components\QuestTools\ProfileUtils.cs" />
+    <Compile Include="Framework\Helpers\Extensions\StringExtensions.cs" />
+    <Compile Include="ProfileTags\Deprecated\StartTimerTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\StopAllTimersTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\StopTimerTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\TimeTracker.cs" />
+    <Compile Include="ProfileTags\Deprecated\Timing.cs" />
+    <Compile Include="ProfileTags\Deprecated\CombatSettingTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\CompleteGreaterRiftTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\ActBountiesCompleteTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\HasGreaterRiftKeysTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\HasNoRiftKeysTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\HasNormalRiftKeysTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\HasQuestAndStepTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\HasTrialRiftKeysTag.cs" />
+    <Compile Include="Components\QuestTools\IEnhancedProfileBehavior.cs" />
+    <Compile Include="ProfileTags\Deprecated\IfRandomTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\LoadOnceTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\UseOnceTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\UseResetTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\UseStopTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\ConfirmOKTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\TrinityCombatIgnoreTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\TrinityIfSNOInRangeTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\TrinityIfTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\TrinityInteractTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\TrinityLoadProfileTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\TrinityLogTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\TrinityMoveToSNOTag.cs" />
+    <Compile Include="Components\QuestTools\EnhancedDefaultTags.cs" />
+    <Compile Include="ProfileTags\Deprecated\ExploreDungeonTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\GetItemFromStashTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\IncrementCounterTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\MaxDeathsTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\MoveToMapMarkerTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\MoveToObjectiveTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\MoveToSceneTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\OffsetMoveTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\SafeMoveToTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\QTOpenRiftWrapperTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\QuestToolsVariableTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\RandomRollTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\ResetCounterTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\RestartActTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\ResumeUseTownPortalTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\SetQuestingTag.cs" />
     <Compile Include="Components\QuestTools\QuestTools.cs" />
-    <Compile Include="Components\QuestTools\QuestToolsSettings.cs" />
-    <Compile Include="Components\QuestTools\UI\BoolInverterConverter.cs" />
-    <Compile Include="Components\QuestTools\UI\ConfigWindow.cs" />
-    <Compile Include="Components\QuestTools\UI\PercentConverter.cs" />
-    <Compile Include="Components\QuestTools\UI\RelayCommand.cs" />
-    <Compile Include="Components\QuestTools\UI\SettingsModel.cs" />
-    <Compile Include="Components\QuestTools\UI\TabUI.cs" />
-    <Compile Include="Coroutines\AutoEquipItems.cs" />
-    <Compile Include="Coroutines\AutoEquipSkills.cs" />
-    <Compile Include="Coroutines\ClearArea.cs" />
-    <Compile Include="Coroutines\EmergencyRepair.cs" />
-    <Compile Include="Coroutines\EquipBehavior.cs" />
-    <Compile Include="Coroutines\MoveTo.cs" />
-    <Compile Include="Coroutines\MoveToAndInteract.cs" />
-    <Compile Include="Coroutines\OpenBountyCache.cs" />
+    <Compile Include="Components\Coroutines\AutoEquipItems.cs" />
+    <Compile Include="Components\Coroutines\AutoEquipSkills.cs" />
+    <Compile Include="Components\Coroutines\ClearArea.cs" />
+    <Compile Include="Components\Coroutines\EmergencyRepair.cs" />
+    <Compile Include="Components\Coroutines\EquipBehavior.cs" />
+    <Compile Include="Components\Coroutines\MoveTo.cs" />
+    <Compile Include="Components\Coroutines\MoveToAndInteract.cs" />
+    <Compile Include="Components\Coroutines\OpenBountyCache.cs" />
+    <Compile Include="Framework\Helpers\Extensions\DoubleExtensions.cs" />
+    <Compile Include="Framework\Helpers\LineEquation.cs" />
+    <Compile Include="Framework\Helpers\PointExtensions.cs" />
+    <Compile Include="Framework\Helpers\Extensions\RectExtentions.cs" />
     <Compile Include="Framework\Objects\Enums\InventoryItemType.cs" />
     <Compile Include="Framework\Helpers\CoroutineHelper.cs" />
-    <Compile Include="Coroutines\Resources\Inventory.cs" />
-    <Compile Include="Coroutines\Town\ConvertMaterials.cs" />
-    <Compile Include="Coroutines\Town\CubeItemsToMaterials.cs" />
-    <Compile Include="Coroutines\Town\CubeRaresToLegendary.cs" />
-    <Compile Include="Coroutines\Town\DropItems.cs" />
-    <Compile Include="Coroutines\Town\ExtractLegendaryPowers.cs" />
-    <Compile Include="Coroutines\Town\Gamble.cs" />
-    <Compile Include="Coroutines\Town\IdentifyItems.cs" />
-    <Compile Include="Coroutines\Town\PutItemsInStash.cs" />
-    <Compile Include="Coroutines\Town\RepairItems.cs" />
-    <Compile Include="Coroutines\Town\ReturnToStash.cs" />
-    <Compile Include="Coroutines\Town\SalvageItems.cs" />
-    <Compile Include="Coroutines\Town\SellItems.cs" />
-    <Compile Include="Coroutines\Town\ServiceType.cs" />
-    <Compile Include="Coroutines\Town\StashItems.cs" />
-    <Compile Include="Coroutines\Town\TakeItemsFromStash.cs" />
-    <Compile Include="Coroutines\Town\TownActor.cs" />
-    <Compile Include="Coroutines\Town\TownInfo.cs" />
-    <Compile Include="Coroutines\Town\Transmute.cs" />
-    <Compile Include="Coroutines\Town\TrinityTownRun.cs" />
-    <Compile Include="Coroutines\Town\UseCraftingRecipes.cs" />
-    <Compile Include="Coroutines\UsePotion.cs" />
-    <Compile Include="Coroutines\VacuumItems.cs" />
+    <Compile Include="Components\Coroutines\Town\ConvertMaterials.cs" />
+    <Compile Include="Components\Coroutines\Town\CubeItemsToMaterials.cs" />
+    <Compile Include="Components\Coroutines\Town\CubeRaresToLegendary.cs" />
+    <Compile Include="Components\Coroutines\Town\DropItems.cs" />
+    <Compile Include="Components\Coroutines\Town\ExtractLegendaryPowers.cs" />
+    <Compile Include="Components\Coroutines\Town\Gamble.cs" />
+    <Compile Include="Components\Coroutines\Town\IdentifyItems.cs" />
+    <Compile Include="Components\Coroutines\Town\PutItemsInStash.cs" />
+    <Compile Include="Components\Coroutines\Town\RepairItems.cs" />
+    <Compile Include="Components\Coroutines\Town\ReturnToStash.cs" />
+    <Compile Include="Components\Coroutines\Town\SalvageItems.cs" />
+    <Compile Include="Components\Coroutines\Town\SellItems.cs" />
+    <Compile Include="Components\Coroutines\Town\ServiceType.cs" />
+    <Compile Include="Components\Coroutines\Town\StashItems.cs" />
+    <Compile Include="Components\Coroutines\Town\TakeItemsFromStash.cs" />
+    <Compile Include="Components\Coroutines\Town\TownActor.cs" />
+    <Compile Include="Components\Coroutines\Town\TownInfo.cs" />
+    <Compile Include="Components\Coroutines\Town\Transmute.cs" />
+    <Compile Include="Components\Coroutines\Town\TrinityTownRun.cs" />
+    <Compile Include="Components\Coroutines\Town\UseCraftingRecipes.cs" />
+    <Compile Include="Components\Coroutines\UsePotion.cs" />
+    <Compile Include="Components\Coroutines\VacuumItems.cs" />
     <Compile Include="DbProvider\BlankItemManager.cs" />
     <Compile Include="DbProvider\BlankLootProvider.cs" />
     <Compile Include="DbProvider\BlankObstacleProvider.cs" />
@@ -441,28 +350,15 @@
     <Compile Include="Framework\Core.cs" />
     <Compile Include="Framework\Events\ActorEvents.cs" />
     <Compile Include="Framework\Events\ItemEvents.cs" />
-    <Compile Include="Framework\Helpers\ActorExtensions.cs" />
-    <Compile Include="Framework\Helpers\AquireFrameHelper.cs" />
-    <Compile Include="Framework\Helpers\AttributeExtensions.cs" />
-    <Compile Include="Framework\Helpers\Bitwise.cs" />
     <Compile Include="Framework\Helpers\CacheField.cs" />
-    <Compile Include="Framework\Helpers\CData.cs" />
     <Compile Include="Framework\Helpers\ConcurrentCache.cs" />
-    <Compile Include="Framework\Helpers\CoroutineExtensions.cs" />
     <Compile Include="Framework\Helpers\DebugUtil.cs" />
-    <Compile Include="Framework\Helpers\DoubleInt.cs" />
     <Compile Include="Framework\Helpers\EasyCache.cs" />
     <Compile Include="Framework\Helpers\EasyXmlSerializer.cs" />
     <Compile Include="Framework\Helpers\EmptyLookup.cs" />
-    <Compile Include="Framework\Helpers\EnumExtensions.cs" />
+    <Compile Include="Framework\Helpers\Extensions\EnumExtensions.cs" />
     <Compile Include="Framework\Helpers\EnumValue.cs" />
-    <Compile Include="Framework\Helpers\ExceptionExtensions.cs" />
-    <Compile Include="Framework\Helpers\Exporter\DictionaryExporter.cs" />
-    <Compile Include="Framework\Helpers\Exporter\EnumExporter.cs" />
-    <Compile Include="Framework\Helpers\Exporter\Exporter.cs" />
-    <Compile Include="Framework\Helpers\Exporter\ExporterBase.cs" />
-    <Compile Include="Framework\Helpers\Exporter\ExportOptions.cs" />
-    <Compile Include="Framework\Helpers\Exporter\IStructureExporter.cs" />
+    <Compile Include="Framework\Helpers\Extensions\ExceptionExtensions.cs" />
     <Compile Include="Framework\Helpers\ExportHelper.cs" />
     <Compile Include="Framework\Helpers\ExpressionEvaluator.cs" />
     <Compile Include="Framework\Helpers\Extensions.cs" />
@@ -470,57 +366,41 @@
     <Compile Include="Framework\Helpers\FileManager.cs" />
     <Compile Include="Framework\Helpers\FullyObservableCollection.cs" />
     <Compile Include="Framework\Helpers\GameBalanceTable.cs" />
-    <Compile Include="Framework\Helpers\GameEvents.cs" />
     <Compile Include="Framework\Helpers\GenericBlacklist.cs" />
     <Compile Include="Framework\Grid\GridHelper.cs" />
     <Compile Include="Framework\Helpers\HashGenerator.cs" />
     <Compile Include="Framework\Helpers\InterfaceLoader.cs" />
-    <Compile Include="Framework\Helpers\Internals.cs" />
-    <Compile Include="Framework\Helpers\IPluginCommunicator.cs" />
     <Compile Include="Framework\Helpers\JsonSerializer.cs" />
-    <Compile Include="Framework\Helpers\LogCategory.cs" />
-    <Compile Include="Framework\Helpers\Logger.cs" />
+    <Compile Include="Framework\Objects\Enums\LogCategory.cs" />
+    <Compile Include="Framework\DefaultLogger.cs" />
     <Compile Include="Framework\Helpers\LookupList.cs" />
     <Compile Include="Framework\Helpers\MathUtil.cs" />
     <Compile Include="Framework\Helpers\MemoryHelper.cs" />
-    <Compile Include="Framework\Helpers\NavExtensions.cs" />
     <Compile Include="Framework\Helpers\NotifyBase.cs" />
-    <Compile Include="Framework\Helpers\ObjectComparer.cs" />
-    <Compile Include="Framework\Helpers\OrderedDictionary.cs" />
     <Compile Include="Framework\Helpers\PerformanceLogger.cs" />
-    <Compile Include="Framework\Helpers\PluginCheck.cs" />
-    <Compile Include="Framework\Helpers\PluginCommunicator.cs" />
-    <Compile Include="Framework\Helpers\ProfileUtils.cs" />
-    <Compile Include="Framework\Helpers\ProjectionEqualityComparer.cs" />
     <Compile Include="Framework\Helpers\PropertyCopy.cs" />
     <Compile Include="Framework\Helpers\Randomizer.cs" />
     <Compile Include="Framework\Helpers\ReflectionHelper.cs" />
-    <Compile Include="Framework\Helpers\RegexExtensions.cs" />
     <Compile Include="Framework\Helpers\Rotator.cs" />
     <Compile Include="Framework\Helpers\StaticRouter.cs" />
-    <Compile Include="Framework\Helpers\SystemInformation.cs" />
     <Compile Include="Framework\Helpers\TaskDispatcher.cs" />
-    <Compile Include="Framework\Helpers\ToStringReflector.cs" />
-    <Compile Include="Framework\Helpers\TrinitiyLogLevel.cs" />
+    <Compile Include="Framework\Objects\Enums\TrinitiyLogLevel.cs" />
     <Compile Include="Framework\Helpers\ChangeDetector.cs" />
     <Compile Include="Framework\Helpers\TypeConversions.cs" />
     <Compile Include="Framework\Helpers\TypeUtil.cs" />
-    <Compile Include="Framework\Helpers\UIElementExtensions.cs" />
+    <Compile Include="Framework\Helpers\Extensions\UIElementExtensions.cs" />
     <Compile Include="Framework\Helpers\UpdateStats.cs" />
     <Compile Include="Framework\Helpers\VectorExt.cs" />
     <Compile Include="Framework\Helpers\Worker.cs" />
     <Compile Include="Framework\HookManager.cs" />
     <Compile Include="Framework\ModuleManager.cs" />
     <Compile Include="Framework\Objects\UIAttributes.cs" />
-    <Compile Include="Framework\Objects\BaseObject.cs" />
     <Compile Include="Framework\Objects\Build.cs" />
     <Compile Include="Framework\Objects\CachedBuff.cs" />
-    <Compile Include="Framework\Objects\Component.cs" />
     <Compile Include="Framework\Objects\DynamicSetting.cs" />
     <Compile Include="Framework\Objects\Enums.cs" />
     <Compile Include="Framework\Objects\Enums\ComparisonOperator.cs" />
     <Compile Include="Framework\Objects\Enums\ControlType.cs" />
-    <Compile Include="Framework\Objects\Enums\ModuleEvent.cs" />
     <Compile Include="Framework\Objects\Enums\RawItemType.cs" />
     <Compile Include="Framework\Objects\Enums\RawMonsterType.cs" />
     <Compile Include="Framework\Objects\Enums\RawQualityType.cs" />
@@ -542,7 +422,6 @@
     <Compile Include="Framework\Objects\Memory\AttributeItem.cs" />
     <Compile Include="Framework\Objects\Memory\AttributeKey.cs" />
     <Compile Include="Framework\Objects\Memory\AttributeManager.cs" />
-    <Compile Include="Framework\Objects\Memory\AttributeResult.cs" />
     <Compile Include="Framework\Objects\Memory\Attributes.cs" />
     <Compile Include="Framework\Objects\Memory\BasicMap.cs" />
     <Compile Include="Framework\Objects\Memory\Container.cs" />
@@ -550,8 +429,6 @@
     <Compile Include="Framework\Objects\Memory\GameBalanceHelper.cs" />
     <Compile Include="Framework\Objects\Memory\Pointers.cs" />
     <Compile Include="Framework\Objects\Memory\Table.cs" />
-    <Compile Include="Framework\Objects\Memory\Globals.cs" />
-    <Compile Include="Framework\Objects\Memory\Hero.cs" />
     <Compile Include="Framework\Objects\Memory\MemoryWrapper.cs" />
     <Compile Include="Framework\Objects\Memory\ItemRecord.cs" />
     <Compile Include="Framework\Objects\Memory\Marker.cs" />
@@ -559,7 +436,6 @@
     <Compile Include="Framework\Objects\Memory\StringListHelper.cs" />
     <Compile Include="Framework\Objects\Memory\SnoDictionary.cs" />
     <Compile Include="Framework\Objects\Memory\SnoManager.cs" />
-    <Compile Include="Framework\Objects\Memory\Storage.cs" />
     <Compile Include="Framework\Objects\Memory\Symbols.cs" />
     <Compile Include="Framework\Objects\Memory\UXControl.cs" />
     <Compile Include="Framework\Objects\Memory\UXHelper.cs" />
@@ -576,8 +452,39 @@
     <Compile Include="Framework\Objects\SkillSettings.cs" />
     <Compile Include="Framework\Objects\WeightSettings.cs" />
     <Compile Include="Framework\RoutineManager.cs" />
-    <Compile Include="Items\ItemListEvaluator.cs" />
-    <Compile Include="Items\ItemSort.cs" />
+    <Compile Include="ProfileTags\MoveToMapMarkerTag.cs" />
+    <Compile Include="ProfileTags\RunActBountiesTag.cs" />
+    <Compile Include="ProfileTags\Todo\ClearAreaTag.cs" />
+    <Compile Include="ProfileTags\Deprecated\CommandTag.cs" />
+    <Compile Include="ProfileTags\ExploreTag.cs" />
+    <Compile Include="ProfileTags\Todo\GreaterRiftTag.cs" />
+    <Compile Include="ProfileTags\Todo\HaveBountyTag.cs" />
+    <Compile Include="ProfileTags\InteractTag.cs" />
+    <Compile Include="ProfileTags\KeywardensTag.cs" />
+    <Compile Include="ProfileTags\Todo\LoadLastProfileTag.cs" />
+    <Compile Include="ProfileTags\MoveToActorTag.cs" />
+    <Compile Include="ProfileTags\Todo\NephalemRiftTag.cs" />
+    <Compile Include="ProfileTags\ProfileSettingTag.cs" />
+    <Compile Include="ProfileTags\Todo\RandomMoveTag.cs" />
+    <Compile Include="ProfileTags\Todo\RandomWaitTag.cs" />
+    <Compile Include="ProfileTags\Todo\ReloadProfileTag.cs" />
+    <Compile Include="ProfileTags\RiftTag.cs" />
+    <Compile Include="ProfileTags\Todo\RunActBountiesTag.cs" />
+    <Compile Include="ProfileTags\RunBountyTag.cs" />
+    <Compile Include="ProfileTags\Todo\SetCombatMode.cs" />
+    <Compile Include="ProfileTags\ShuffleTag.cs" />
+    <Compile Include="ProfileTags\StopBotTag.cs" />
+    <Compile Include="ProfileTags\TakeFromStash.cs" />
+    <Compile Include="ProfileTags\TakeWaypointTag.cs" />
+    <Compile Include="ProfileTags\Todo\TownPortalTag.cs" />
+    <Compile Include="ProfileTags\Todo\TownRunTag.cs" />
+    <Compile Include="ProfileTags\TransmuteTag.cs" />
+    <Compile Include="ProfileTags\Todo\WaitForCombat.cs" />
+    <Compile Include="ProfileTags\RandomWaitTag.cs" />
+    <Compile Include="ProfileTags\Todo\WhenTag.cs" />
+    <Compile Include="ProfileTags\WhenTag.cs" />
+    <Compile Include="Settings\ItemList\ItemListEvaluator.cs" />
+    <Compile Include="Components\Coroutines\ItemSort.cs" />
     <Compile Include="Modules\BlockedCheck.cs" />
     <Compile Include="Modules\BuffsCache.cs" />
     <Compile Include="Modules\BuildLogger.cs" />
@@ -607,43 +514,23 @@
     <Compile Include="Modules\TargetsCache.cs" />
     <Compile Include="Modules\WorldCache.cs" />
     <Compile Include="Plugin.cs" />
-    <Compile Include="ProfileTags\BountiesTag.cs" />
-    <Compile Include="ProfileTags\ClearAreaTag.cs" />
-    <Compile Include="ProfileTags\EmbedTags\ItemTag.cs" />
-    <Compile Include="ProfileTags\ExploreTag.cs" />
-    <Compile Include="ProfileTags\GreaterRiftTag.cs" />
-    <Compile Include="ProfileTags\InteractTag.cs" />
-    <Compile Include="ProfileTags\KeywardensTag.cs" />
+    <Compile Include="ProfileTags\ChildTags\ItemTag.cs" />
     <Compile Include="ProfileTags\MoveToPositionTag.cs" />
-    <Compile Include="ProfileTags\NephalemRiftTag.cs" />
-    <Compile Include="ProfileTags\RiftTag.cs" />
-    <Compile Include="ProfileTags\RunActBountiesTag.cs" />
-    <Compile Include="ProfileTags\RunBountyTag.cs" />
-    <Compile Include="ProfileTags\SetCombatMode.cs" />
-    <Compile Include="ProfileTags\StopBotTag.cs" />
-    <Compile Include="ProfileTags\TakeItemsFromStash.cs" />
-    <Compile Include="ProfileTags\TakeWaypointTag.cs" />
-    <Compile Include="ProfileTags\TestTag.cs" />
-    <Compile Include="ProfileTags\TestTag2.cs" />
-    <Compile Include="ProfileTags\TownRunTag.cs" />
-    <Compile Include="ProfileTags\TransmuteTag.cs" />
-    <Compile Include="ProfileTags\TrinityConditions.cs" />
-    <Compile Include="ProfileTags\TrinityProfileBehavior.cs" />
-    <Compile Include="ProfileTags\WaitForCombat.cs" />
-    <Compile Include="ProfileTags\WaitForNSecondsTag.cs" />
+    <Compile Include="Components\QuestTools\ProfileConditions.cs" />
+    <Compile Include="Components\QuestTools\BaseProfileBehavior.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Reference\GameData.cs" />
-    <Compile Include="Reference\GameUI.cs" />
-    <Compile Include="Reference\Gems.cs" />
-    <Compile Include="Reference\Legendary.cs" />
-    <Compile Include="Reference\Passives.cs" />
-    <Compile Include="Reference\PassiveUtils.cs" />
-    <Compile Include="Reference\Runes.cs" />
-    <Compile Include="Reference\RuneUtils.cs" />
-    <Compile Include="Reference\Sets.cs" />
-    <Compile Include="Reference\Skills.cs" />
-    <Compile Include="Reference\SkillUtils.cs" />
-    <Compile Include="Reference\TownActors.cs" />
+    <Compile Include="Framework\Reference\GameData.cs" />
+    <Compile Include="Framework\Reference\GameUI.cs" />
+    <Compile Include="Framework\Reference\Gems.cs" />
+    <Compile Include="Framework\Reference\Legendary.cs" />
+    <Compile Include="Framework\Reference\Passives.cs" />
+    <Compile Include="Framework\Reference\PassiveUtils.cs" />
+    <Compile Include="Framework\Reference\Runes.cs" />
+    <Compile Include="Framework\Reference\RuneUtils.cs" />
+    <Compile Include="Framework\Reference\Sets.cs" />
+    <Compile Include="Framework\Reference\Skills.cs" />
+    <Compile Include="Framework\Reference\SkillUtils.cs" />
+    <Compile Include="Framework\Reference\TownActors.cs" />
     <Compile Include="Routines\Advanced\MrRobotRoutine.cs" />
     <Compile Include="Routines\Barbarian\BarbarianBase.cs" />
     <Compile Include="Routines\Barbarian\BarbarianDefault.cs" />
@@ -730,7 +617,6 @@
     <Compile Include="UI\UIComponents\BindingProxy.cs" />
     <Compile Include="UI\UIComponents\ConfigViewModel.cs" />
     <Compile Include="UI\UIComponents\Controls\AutoSizedGridView.cs" />
-    <Compile Include="UI\UIComponents\Controls\ColumnDefinitionExtended.cs" />
     <Compile Include="UI\UIComponents\Controls\GridViewColumnExtended.cs" />
     <Compile Include="UI\UIComponents\Controls\ModalContentCommands.cs" />
     <Compile Include="UI\UIComponents\Controls\ModalContentPresenter.cs" />
@@ -753,7 +639,6 @@
     <Compile Include="UI\UIComponents\Converters\FlagsToBoolConverter.cs" />
     <Compile Include="UI\UIComponents\Converters\FlagsToGridLengthConverter.cs" />
     <Compile Include="UI\UIComponents\Converters\ImagePathConverter.cs" />
-    <Compile Include="UI\UIComponents\Converters\IndexOfConverter.cs" />
     <Compile Include="UI\UIComponents\Converters\IntToStringConverter.cs" />
     <Compile Include="UI\UIComponents\Converters\IsEnumConverter.cs" />
     <Compile Include="UI\UIComponents\Converters\NullToVisibilityConverter.cs" />
@@ -814,21 +699,11 @@
     <Compile Include="UI\Visualizer\RadarCanvas\RadarDebug.cs" />
     <Compile Include="UI\Visualizer\RadarCanvas\RadarHitTestUtility.cs" />
     <Compile Include="UI\Visualizer\RadarCanvas\RadarObject.cs" />
-    <Compile Include="UI\Visualizer\RadarCanvas\RadarOverlayControl.cs" />
     <Compile Include="UI\Visualizer\RadarCanvas\RadarVisibilityFlags.cs" />
     <Compile Include="UI\Visualizer\RadarCanvas\RelativeDrawing.cs" />
     <Compile Include="UI\Visualizer\RadarCanvas\Resources.cs" />
-    <Compile Include="UI\Visualizer\RadarCanvas\Shapes.cs" />
     <Compile Include="UI\Visualizer\RadarCanvas\StaticDrawing.cs" />
-    <Compile Include="UI\Visualizer\SceneEditor\SceneDrawings.cs" />
     <Compile Include="UI\Visualizer\VisualizerViewModel.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include=".vs\config\applicationhost.config" />
-    <None Include=".vs\Trinity22 PTR\v14\.suo" />
-    <None Include=".vs\Trinity22 PTR\v15\.suo" />
-    <None Include=".vs\Trinity22\v14\.suo" />
-    <None Include=".vs\Trinity22\v15\.suo" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Profiles\AutoFollow\FollowerCombat.xml" />
@@ -836,29 +711,37 @@
     <Content Include="Profiles\AutoFollow\LeaderManual.xml" />
     <Content Include="Profiles\Bounties.xml" />
     <Content Include="Profiles\BrutalWhiteFarm.xml" />
-    <Content Include="Profiles\Debug\A2 345954 A Miner%27s Gold.xml" />
-    <Content Include="Profiles\Debug\A2 347598 Clear the Mysterious Cave.xml" />
-    <Content Include="Profiles\Debug\A2 350564 Rygnar Idol.xml" />
-    <Content Include="Profiles\Debug\A2 432334 Blood and Iron.xml" />
-    <Content Include="Profiles\Debug\A3 346186 Crazy Climber.xml" />
-    <Content Include="Profiles\Debug\A3 349216 Kill Direclaw the Demonflyer.xml" />
-    <Content Include="Profiles\Debug\A3 436282 King of the Ziggurat.xml" />
-    <Content Include="Profiles\Debug\A4 349262 Kill Rakanoth.xml" />
-    <Content Include="Profiles\Debug\A4 349288 Kill Diablo.xml" />
-    <Content Include="Profiles\Debug\A4 369900 The Cursed Dais.xml" />
-    <Content Include="Profiles\Debug\A5 3346146 Forged in Battle.xml" />
-    <Content Include="Profiles\Debug\A5 359319 The Lord of the Hill.xml" />
-    <Content Include="Profiles\Debug\A5 363431 The Hatchery.xml" />
-    <Content Include="Profiles\Debug\A5 363555 Kill Valtesk the Cruel.xml" />
-    <Content Include="Profiles\Debug\A5 363557 Kill Scythys.xml" />
-    <Content Include="Profiles\Debug\A5 367872 The Bogan Haul.xml" />
-    <Content Include="Profiles\Debug\A5 367926 The Lost Legion.xml" />
-    <Content Include="Profiles\Debug\A5 368536 Noble Deaths.xml" />
-    <Content Include="Profiles\Debug\A5 375268 The Cursed Forum.xml" />
-    <Content Include="Profiles\Debug\A5 436965 The Cursed Pond.xml" />
-    <Content Include="Profiles\Debug\A5 436965 Walk in the Park.xml" />
-    <Content Include="Profiles\Debug\A5 445044 Binding Evil.xml" />
     <Content Include="Profiles\Debug\BelialBounty.xml" />
+    <Content Include="ProfileTags\Tests\Rift.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProfileTags\Tests\Keywardens.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProfileTags\Tests\RunBounty.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProfileTags\Tests\RunActBounties.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProfileTags\Tests\Interact.xml" />
+    <Content Include="ProfileTags\Tests\Explore.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProfileTags\Tests\MoveToMapMarker.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProfileTags\Tests\MoveToActor.xml" />
+    <Content Include="ProfileTags\Tests\RandomWait.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProfileTags\Tests\StopBot.xml" />
+    <Content Include="ProfileTags\Tests\Shuffle.xml" />
+    <Content Include="ProfileTags\Tests\TakeFromStash.xml" />
+    <Content Include="ProfileTags\Tests\When.xml" />
+    <Content Include="ProfileTags\Tests\Transmute.xml" />
+    <Content Include="ProfileTags\Tests\TakeWaypoint.xml" />
+    <Content Include="ProfileTags\Tests\MoveToPosition.xml" />
     <Content Include="Profiles\Debug\Bosses.xml" />
     <Content Include="Profiles\Debug\MalthaelBounty.xml" />
     <Content Include="Profiles\Debug\MoveWithinScene.xml" />
@@ -875,7 +758,9 @@
     <Content Include="Profiles\InDevelopment\Story_A5.xml" />
     <Content Include="Profiles\Keywardens.xml" />
     <Content Include="Profiles\NephalemRift.xml" />
-    <Content Include="Profiles\NerdersGoblinFarmQuickRoutes.xml" />
+    <Content Include="Profiles\NerdersGoblinFarmQuickRoutes.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Profiles\NerdersWhimsydale.xml" />
     <Content Include="Profiles\Questing\Act1.xml" />
     <Content Include="Profiles\Questing\Act1_StartNew.xml" />
@@ -897,14 +782,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Components\Adventurer\UI\Config.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Components\Adventurer\UI\MapUI.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Components\QuestTools\UI\ConfigWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1100,10 +977,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\RadarUI.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="UI\Routine.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1121,9 +994,7 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Components\Adventurer\Tags\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />

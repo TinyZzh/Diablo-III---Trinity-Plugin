@@ -1,5 +1,6 @@
 ﻿using Microsoft.CSharp.RuntimeBinder;
 using System;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Globalization;

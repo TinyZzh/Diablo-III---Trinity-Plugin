@@ -1,5 +1,4 @@
 ﻿using Trinity.Framework.Objects;
-using Zeta.Game;
 
 namespace Trinity.Modules
 {

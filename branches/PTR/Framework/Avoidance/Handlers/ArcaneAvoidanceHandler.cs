@@ -1,10 +1,11 @@
 using System;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Avoidance.Structures;
-using Trinity.Framework.Helpers;
+using Trinity.Framework.Grid;
 using Zeta.Common;
 
 namespace Trinity.Framework.Avoidance.Handlers

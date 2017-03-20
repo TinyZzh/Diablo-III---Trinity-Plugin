@@ -1,12 +1,12 @@
 ﻿using System;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Avoidance.Structures;
-using Trinity.Framework.Helpers;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 
 namespace Trinity.Framework.Avoidance
 {
@@ -75,7 +75,7 @@ namespace Trinity.Framework.Avoidance
                     }
                     catch (Exception ex)
                     {
-                        Logger.LogError("Failed to add AvoidanceData for {0} > {1}. Probably a duplicate ActorSnoId ({2})", avoidanceDatum.Name, part.Name, part.ActorSnoId);
+                        Core.Logger.Error("Failed to add AvoidanceData for {0} > {1}. Probably a duplicate ActorSnoId ({2})", avoidanceDatum.Name, part.Name, part.ActorSnoId);
                     }
                 }
             }

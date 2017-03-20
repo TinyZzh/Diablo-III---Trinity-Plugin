@@ -1,10 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Trinity.Framework;
 using Trinity.Framework.Helpers;
+using System.Collections.Generic;
+using System.Linq;
 using Trinity.Framework.Objects;
-using Trinity.Reference;
+using Trinity.Framework.Reference;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
 
@@ -207,7 +207,7 @@ namespace Trinity.Modules
             var data = UpdateCooldownData(powerId, attrKey, startTime, (ActorAttributeType)startAttr, endTime, (ActorAttributeType)endAttr);
 
             if (IsLogging)
-                Logger.Log("Buff Cooldown: {0} Variant={1}", data, name);
+                Core.Logger.Log("Buff Cooldown: {0} Variant={1}", data, name);
         }
 
         internal void RecordSkillData(SNOPower power)
@@ -225,7 +225,7 @@ namespace Trinity.Modules
             var data = UpdateCooldownData((int)power, storageKey, startTime, startAttr, endTime, endAttr);
 
             if (IsLogging)
-                Logger.Log("Skill Cooldown: {0}", data);
+                Core.Logger.Log("Skill Cooldown: {0}", data);
         }
 
         private static CooldownData UpdateCooldownData(int snoId, int storageKey, int startTime, ActorAttributeType startAttr, int endTime, ActorAttributeType endAttr)

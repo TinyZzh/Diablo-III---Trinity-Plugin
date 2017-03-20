@@ -1,19 +1,18 @@
 using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Game.Combat;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Adventurer.Game.Quests;
 using Trinity.Components.Adventurer.Settings;
-using Trinity.Framework;
 using Zeta.Bot;
 using Zeta.Common;
 using Zeta.Common.Helpers;
 using Zeta.Game;
-using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
 
 namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
@@ -48,7 +47,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                 if (_state == value) return;
                 if (value != States.NotStarted)
                 {
-                    Util.Logger.Info("[GuardedGizmo] " + value);
+                    Core.Logger.Log("[GuardedGizmo] " + value);
                 }
 
                 _state = value;
@@ -177,7 +176,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                 Core.PlayerMover.MoveTowards(_currentGizmo.Position);
                 ObjectSearchRadius = 150;
                 _guardedGizmos.Remove(_currentGizmo.Position);
-                Util.Logger.Info("[Bounty] Gizmo is out of reach, lowering the search radius to {0}", ObjectSearchRadius);
+                Core.Logger.Log("[Bounty] Gizmo is out of reach, lowering the search radius to {0}", ObjectSearchRadius);
                 State = States.SearchingForGizmo;
                 return false;
             }
@@ -302,7 +301,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
         {
             if (!_isPulsing)
             {
-                Util.Logger.Debug("[GuardedGizmo] Registered to pulsator.");
+                Core.Logger.Debug("[GuardedGizmo] Registered to pulsator.");
                 Pulsator.OnPulse += OnPulse;
                 _isPulsing = true;
             }
@@ -312,7 +311,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
         {
             if (_isPulsing)
             {
-                Util.Logger.Debug("[GuardedGizmo] Unregistered from pulsator.");
+                Core.Logger.Debug("[GuardedGizmo] Unregistered from pulsator.");
                 Pulsator.OnPulse -= OnPulse;
                 _isPulsing = false;
             }

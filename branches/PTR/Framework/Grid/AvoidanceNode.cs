@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Trinity.Components.Adventurer.Game.Exploration;
+using Trinity.Framework.Avoidance;
+using Trinity.Framework.Avoidance.Structures;
 using Zeta.Common;
 
-namespace Trinity.Framework.Avoidance.Structures
+namespace Trinity.Framework.Grid
 {
     public class AvoidanceNode : INode
     {

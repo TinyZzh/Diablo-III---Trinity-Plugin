@@ -1,5 +1,5 @@
-﻿//using System;
-//using System.Linq;
+﻿//using System; using Trinity.Framework; using Trinity.Framework.Helpers;
+//using System.Linq; using Trinity.Framework;
 //using Trinity.Components.Adventurer.Cache;
 //using Zeta.Common;
 //using Zeta.Game;
@@ -108,7 +108,7 @@
 //                }
 //            }
 
-//            Util.Logger.Debug("[NavigationGrid] Updated");
+//            Core.Logger.Debug("[NavigationGrid] Updated");
 //        }
 //    }
 //}

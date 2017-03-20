@@ -1,14 +1,15 @@
 ﻿using Buddy.Coroutines;
 using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Adventurer.Game.Rift;
 using Trinity.Components.Adventurer.Settings;
-using Trinity.Reference;
+using Trinity.Framework.Reference;
 using Zeta.Bot;
 using Zeta.Bot.Coroutines;
 using Zeta.Bot.Logic;
@@ -59,7 +60,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                 if (_state == value) return;
                 if (value != States.NotStarted)
                 {
-                    Util.Logger.Debug("[UpgradeGems] " + value);
+                    Core.Logger.Debug("[UpgradeGems] " + value);
                 }
                 _state = value;
             }
@@ -140,12 +141,12 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             }
             if (!await ExplorationCoroutine.Explore(new HashSet<int> { AdvDia.CurrentLevelAreaId }))
             {
-                Util.Logger.Info("[UpgradeGems] Exploration for urshi has failed, the sadness!");
+                Core.Logger.Log("[UpgradeGems] Exploration for urshi has failed, the sadness!");
                 State = States.Failed;
                 return false;
             }
 
-            Util.Logger.Info("[UpgradeGems] Where are you, my dear Urshi!");
+            Core.Logger.Log("[UpgradeGems] Where are you, my dear Urshi!");
             ScenesStorage.Reset();
             return false;
         }
@@ -171,7 +172,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             var urshi = ZetaDia.Actors.GetActorsOfType<DiaUnit>().FirstOrDefault(a => a.IsFullyValid() && a.ActorSnoId == RiftData.UrshiSNO);
             if (urshi == null)
             {
-                Util.Logger.Debug("[UpgradeGems] Can't find the Urshi lady :(");
+                Core.Logger.Debug("[UpgradeGems] Can't find the Urshi lady :(");
                 State = States.Failed;
                 return false;
             }
@@ -198,7 +199,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
         {
             if (RiftData.VendorDialog.IsVisible && RiftData.ContinueButton.IsVisible && RiftData.ContinueButton.IsEnabled)
             {
-                Util.Logger.Debug("[UpgradeGems] Clicking to Continue button.");
+                Core.Logger.Debug("[UpgradeGems] Clicking to Continue button.");
                 RiftData.ContinueButton.Click();
                 RiftData.VendorCloseButton.Click();
                 await Coroutine.Sleep(250);
@@ -208,22 +209,22 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             var gemToUpgrade = PluginSettings.Current.Gems.GetUpgradeTarget();
             if (gemToUpgrade == null)
             {
-                Util.Logger.Info("[UpgradeGems] I couldn't find any gems to upgrade, failing.");
+                Core.Logger.Log("[UpgradeGems] I couldn't find any gems to upgrade, failing.");
                 State = States.Failed;
                 return false;
             }
             _enableGemUpgradeLogs = false;
             if (AdvDia.RiftQuest.Step == RiftStep.Cleared)
             {
-                Util.Logger.Debug("[UpgradeGems] Rift Quest is completed, returning to town");
+                Core.Logger.Debug("[UpgradeGems] Rift Quest is completed, returning to town");
                 State = States.Completed;
                 return false;
             }
 
-            Util.Logger.Debug("[UpgradeGems] Gem upgrades left before the attempt: {0}", ZetaDia.Me.JewelUpgradesLeft);
+            Core.Logger.Debug("[UpgradeGems] Gem upgrades left before the attempt: {0}", ZetaDia.Me.JewelUpgradesLeft);
             if (!await CommonCoroutines.AttemptUpgradeGem(gemToUpgrade))
             {
-                Util.Logger.Debug("[UpgradeGems] Gem upgrades left after the attempt: {0}", ZetaDia.Me.JewelUpgradesLeft);
+                Core.Logger.Debug("[UpgradeGems] Gem upgrades left after the attempt: {0}", ZetaDia.Me.JewelUpgradesLeft);
                 return false;
             }
             var gemUpgradesLeft = ZetaDia.Me.JewelUpgradesLeft;
@@ -234,7 +235,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             }
             if (gemUpgradesLeft == 0)
             {
-                Util.Logger.Debug("[UpgradeGems] Finished all upgrades, returning to town.");
+                Core.Logger.Debug("[UpgradeGems] Finished all upgrades, returning to town.");
                 State = States.Completed;
                 return false;
             }
@@ -246,7 +247,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
         {
             if (!_isPulsing)
             {
-                Util.Logger.Debug("[UpgradeGems] Registered to pulsator.");
+                Core.Logger.Debug("[UpgradeGems] Registered to pulsator.");
                 Pulsator.OnPulse += OnPulse;
                 _isPulsing = true;
             }
@@ -256,7 +257,7 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
         {
             if (_isPulsing)
             {
-                Util.Logger.Debug("[UpgradeGems] Unregistered from pulsator.");
+                Core.Logger.Debug("[UpgradeGems] Unregistered from pulsator.");
                 Pulsator.OnPulse -= OnPulse;
                 _isPulsing = false;
             }
@@ -293,9 +294,9 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             }
             if (_urshiLocation != Vector3.Zero)
             {
-                Util.Logger.Info("[UpgradeGems] Urshi is near.");
+                Core.Logger.Log("[UpgradeGems] Urshi is near.");
                 State = States.MovingToUrshi;
-                Util.Logger.Debug("[UpgradeGems] Found Urshi at distance {0}", AdvDia.MyPosition.Distance(_urshiLocation));
+                Core.Logger.Debug("[UpgradeGems] Found Urshi at distance {0}", AdvDia.MyPosition.Distance(_urshiLocation));
             }
         }
 

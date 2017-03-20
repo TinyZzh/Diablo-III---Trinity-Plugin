@@ -1,7 +1,8 @@
 ﻿using System;
+using Trinity.Framework;
 using System.Windows;
 using System.Windows.Controls;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
+
 
 namespace Trinity.Components.Adventurer.UI
 {
@@ -34,7 +35,7 @@ namespace Trinity.Components.Adventurer.UI
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error("[MainUI][InstallButtons] " + ex.Message);
+                        Core.Logger.Error("[MainUI][InstallButtons] " + ex.Message);
                     }
                 });
         }
@@ -53,7 +54,7 @@ namespace Trinity.Components.Adventurer.UI
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error("[MainUI][RemoveButtons] " + ex.Message);
+                        Core.Logger.Error("[MainUI][RemoveButtons] " + ex.Message);
                     }
                 });
         }
@@ -87,7 +88,7 @@ namespace Trinity.Components.Adventurer.UI
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error("[MainUI][Configure] " + ex.Message);
+                        Core.Logger.Error("[MainUI][Configure] " + ex.Message);
                     }
                 });
             }

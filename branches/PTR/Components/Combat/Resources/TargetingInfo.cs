@@ -1,5 +1,4 @@
 using System;
-
 namespace Trinity.Components.Combat.Resources
 {
     public class TargetingInfo

@@ -1,17 +1,14 @@
-﻿using QuestTools;
-using System;
-using Trinity.Components.Adventurer;
+﻿using Trinity.Components.Adventurer;
+using Trinity.Components.QuestTools;
 using Trinity.DbProvider;
 using Trinity.Framework.Actors;
 using Trinity.Framework.Avoidance;
-using Trinity.Framework.Helpers;
-using Trinity.Framework.Objects.Enums;
+using Trinity.Framework.Grid;
 using Trinity.Modules;
 using Trinity.Settings;
-using Zeta.Bot;
 using Zeta.Bot.Navigation;
 using Zeta.Game;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 
 namespace Trinity.Framework
 {
@@ -19,17 +16,20 @@ namespace Trinity.Framework
     {
         public static void Init()
         {
-            Logger.LogNormal("Framework Core Initialized");
+            Logger.Log("Framework Core Initialized");
         }
+
+        public static IFrameworkLogger Logger { get; } = new DefaultLogger();
+        public static PlayerCache Player { get; } = new PlayerCache();
 
         public static RoutineManager Routines => RoutineManager.Instance;
         public static Adventurer Adventurer { get; } = Adventurer.Instance;
-        public static Plugin QuestTools { get; } = new Plugin();
+        public static QuestTools QuestTools { get; } = new QuestTools();
         public static InventoryCache Inventory { get; } = new InventoryCache();
         public static ActorCache Actors { get; } = new ActorCache();
         public static HotbarCache Hotbar { get; } = new HotbarCache();
-        public static PlayerCache Player { get; } = new PlayerCache();
         public static BuffsCache Buffs { get; } = new BuffsCache();
+        public static BuildLogger BuildLogger { get; } = new BuildLogger();
         public static TargetsCache Targets { get; } = new TargetsCache();
         public static AvoidanceManager Avoidance { get; } = new AvoidanceManager();
         public static CastStatus CastStatus { get; } = new CastStatus();
@@ -38,7 +38,7 @@ namespace Trinity.Framework
         public static Paragon Paragon { get; } = new Paragon();
         public static StatusBar StatusBar { get; } = new StatusBar();
         public static GameStopper GameStopper { get; } = new GameStopper();
-        public static MarkersCache Markers { get; } = new MarkersCache();
+        public static IMarkerProvider Markers { get; } = new MarkersCache();
         public static MinimapCache Minimap { get; } = new MinimapCache();
         public static WorldCache World { get; } = new WorldCache();
         public static Clusters Clusters { get; } = new Clusters();
@@ -57,10 +57,15 @@ namespace Trinity.Framework
         public static ChangeMonitor ChangeMonitor { get; } = new ChangeMonitor();
         public static InactivityMonitor InactivityMonitor { get; } = new InactivityMonitor();
         public static ProfileSettings ProfileSettings { get; } = new ProfileSettings();
+
         public static SettingsModel Settings => TrinitySettings.Settings;
         public static TrinityStorage Storage => TrinitySettings.Storage;
+
+
         public static MainGridProvider DBGridProvider => (MainGridProvider)Navigator.SearchGridProvider;
         public static DefaultNavigationProvider DBNavProvider => (DefaultNavigationProvider)Navigator.NavigationProvider;
+
+
         public static bool GameIsReady => ZetaDia.IsInGame && ZetaDia.Me.IsValid && !ZetaDia.Globals.IsLoadingWorld && !ZetaDia.Globals.IsPlayingCutscene;
 
         internal static void Update()

@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using Trinity.Components.Combat;
 using Trinity.Framework.Objects;
-using Trinity.Framework.Helpers;
 using Zeta.Game;
-using Trinity.Framework;
 using Zeta.Bot;
 
 namespace Trinity.Modules
@@ -23,12 +19,12 @@ namespace Trinity.Modules
         {
             if (IsGoldInactive())
             {
-                Logger.Warn($"Gold Inactivity Timer Tripped");
+                Core.Logger.Warn($"Gold Inactivity Timer Tripped");
                 LeaveGame();
             }
             if (IsXPInactive())
             {
-                Logger.Warn($"XP Inactivity Timer Tripped");
+                Core.Logger.Warn($"XP Inactivity Timer Tripped");
                 LeaveGame();
             }
         }
@@ -89,14 +85,14 @@ namespace Trinity.Modules
                 // sometimes bosses take a LONG time
                 if (Combat.Targeting.CurrentTarget != null && Combat.Targeting.CurrentTarget.IsBoss)
                 {
-                    Logger.Log("Current target is boss, gold inactivity reset");
+                    Core.Logger.Log("Current target is boss, gold inactivity reset");
                     ResetGold();
                     return false;
                 }
 
                 if (Core.Player.Coinage != _lastGoldAmount && Core.Player.Coinage != 0)
                 {
-                    Logger.LogVerbose(LogCategory.GlobalHandler, "Gold Changed from {0} to {1}", _lastGoldAmount, Core.Player.Coinage);
+                    Core.Logger.Verbose(LogCategory.GlobalHandler, "Gold Changed from {0} to {1}", _lastGoldAmount, Core.Player.Coinage);
                     _lastFoundGold = DateTime.UtcNow;
                     _lastGoldAmount = Core.Player.Coinage;
                 }
@@ -104,19 +100,19 @@ namespace Trinity.Modules
                 int goldUnchangedSeconds = Convert.ToInt32(DateTime.UtcNow.Subtract(_lastFoundGold).TotalSeconds);
                 if (goldUnchangedSeconds >= Core.Settings.Advanced.InactivityTimer)
                 {
-                    Logger.Log(TrinityLogLevel.Info, LogCategory.UserInformation, "Gold inactivity after {0}s. (Setting={1}) Sending abort. ", goldUnchangedSeconds, Core.Settings.Advanced.InactivityTimer);
+                    Core.Logger.Log("Gold inactivity after {0}s. (Setting={1}) Sending abort. ", goldUnchangedSeconds, Core.Settings.Advanced.InactivityTimer);
                     _lastFoundGold = DateTime.UtcNow;
                     _lastGoldAmount = Core.Player.Coinage;
                     return true;
                 }
                 if (goldUnchangedSeconds > 0)
                 {
-                    Logger.Log(LogCategory.GlobalHandler, "Gold unchanged for {0}s", goldUnchangedSeconds);
+                    Core.Logger.Log(LogCategory.GlobalHandler, "Gold unchanged for {0}s", goldUnchangedSeconds);
                 }
             }
             catch (Exception e)
             {
-                Logger.Log(LogCategory.GlobalHandler, "Error in GoldInactivity: " + e.Message);
+                Core.Logger.Log(LogCategory.GlobalHandler, "Error in GoldInactivity: " + e.Message);
             }
 
             return false;
@@ -139,7 +135,7 @@ namespace Trinity.Modules
                 }
                 if (ZetaDia.Globals.IsLoadingWorld)
                 {
-                    Logger.Log("Loading world, XP inactivity reset");
+                    Core.Logger.Log("Loading world, XP inactivity reset");
                     return false;
                 }
 
@@ -151,7 +147,7 @@ namespace Trinity.Modules
 
                 if (exp != _lastXpAmount && exp != 0)
                 {
-                    Logger.LogVerbose(LogCategory.GlobalHandler, "Experience Changed from {0} to {1}", _lastXpAmount, exp);
+                    Core.Logger.Verbose(LogCategory.GlobalHandler, "Experience Changed from {0} to {1}", _lastXpAmount, exp);
                     _lastFoundXp = DateTime.UtcNow;
                     _lastXpAmount = exp;
                 }
@@ -159,19 +155,19 @@ namespace Trinity.Modules
                 int xpUnchangedSeconds = Convert.ToInt32(DateTime.UtcNow.Subtract(_lastFoundXp).TotalSeconds);
                 if (xpUnchangedSeconds >= Core.Settings.Advanced.InactivityTimer)
                 {
-                    Logger.Log(TrinityLogLevel.Info, LogCategory.UserInformation, "Experience inactivity after {0}s. Sending abort.", xpUnchangedSeconds);
+                    Core.Logger.Log("Experience inactivity after {0}s. Sending abort.", xpUnchangedSeconds);
                     _lastFoundXp = DateTime.UtcNow;
                     _lastXpAmount = Core.Player.Coinage;
                     return true;
                 }
                 if (xpUnchangedSeconds > 0)
                 {
-                    Logger.Log(LogCategory.GlobalHandler, "Experience unchanged for {0}s", xpUnchangedSeconds);
+                    Core.Logger.Log(LogCategory.GlobalHandler, "Experience unchanged for {0}s", xpUnchangedSeconds);
                 }
             }
             catch (Exception e)
             {
-                Logger.Log(LogCategory.GlobalHandler, "Error in XpInactivity: " + e.Message);
+                Core.Logger.Log(LogCategory.GlobalHandler, "Error in XpInactivity: " + e.Message);
             }
 
             return false;

@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 using Zeta.Game;
-using Zeta.Game.Internals;
 
 namespace Trinity.Framework.Helpers
 {
@@ -83,7 +79,7 @@ namespace Trinity.Framework.Helpers
                 }
                 catch (Exception)
                 {
-                    //Logger.Log($"Exception at {i}");
+                    //Core.Logger.Log($"Exception at {i}");
                 }
             }
             return -1;

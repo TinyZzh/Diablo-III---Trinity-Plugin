@@ -1,8 +1,7 @@
 ﻿using Trinity.Components.Adventurer.Game.Exploration;
-using Trinity.Framework.Avoidance;
 using Zeta.Common;
 
-namespace Trinity.Framework.Helpers
+namespace Trinity.Framework.Grid
 {
     public class GridHelper
     {

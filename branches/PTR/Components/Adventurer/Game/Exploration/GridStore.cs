@@ -1,7 +1,8 @@
 ﻿using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
-using Trinity.Components.Adventurer.Util;
 using Zeta.Game;
 
 namespace Trinity.Components.Adventurer.Game.Exploration
@@ -29,7 +30,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
                     result.Add(grid);
             }
 
-            Logger.Debug("[GridStore] contains {0} grid instances, {1} for Current world", Grids.Count, result.Count);
+            Core.Logger.Debug("[GridStore] contains {0} grid instances, {1} for Current world", Grids.Count, result.Count);
 
             return result;
         }

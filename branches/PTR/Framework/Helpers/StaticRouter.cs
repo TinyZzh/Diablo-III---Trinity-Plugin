@@ -1,5 +1,4 @@
 using System;
-
 namespace Trinity.Framework.Helpers
 {
     public class StaticRouter<T>

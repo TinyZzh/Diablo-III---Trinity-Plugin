@@ -1,7 +1,7 @@
 ﻿using System;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
-using Trinity.Components.Adventurer.Cache;
 using Zeta.Common;
 using Zeta.Game.Internals.SNO;
 

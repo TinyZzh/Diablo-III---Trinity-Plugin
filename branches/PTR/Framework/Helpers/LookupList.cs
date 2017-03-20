@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
 namespace Trinity.Framework.Helpers
 {
     public class LookupList<TKey, TElement> : ILookup<TKey, TElement>

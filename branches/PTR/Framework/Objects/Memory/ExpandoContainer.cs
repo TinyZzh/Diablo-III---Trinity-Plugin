@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Zeta.Game;
 
-namespace Trinity.Framework.Objects.Memory.Containers
+namespace Trinity.Framework.Objects.Memory
 {
     public class ExpandoContainer<T> : Container<T>, IEnumerable<T> where T : MemoryWrapper, new()
     {

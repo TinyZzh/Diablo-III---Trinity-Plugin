@@ -1,14 +1,13 @@
 using System;
+using Trinity.Framework.Helpers;
 using Trinity.Components.Combat;
 using Trinity.Components.Combat.Resources;
 using Trinity.Framework.Actors.Attributes;
 using Trinity.Framework.Actors.Properties;
 using Trinity.Framework.Avoidance.Structures;
 using Trinity.Framework.Events;
-using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
 using Trinity.Framework.Objects.Enums;
-using Trinity.Framework.Objects.Memory.Misc;
 using Trinity.Framework.Objects.Memory;
 using Trinity.Settings;
 using Zeta.Bot.Navigation;
@@ -17,7 +16,7 @@ using Zeta.Game;
 using Zeta.Game.Internals.Actors;
 using Zeta.Game.Internals.SNO;
 using GizmoType = Zeta.Game.Internals.SNO.GizmoType;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 
 namespace Trinity.Framework.Actors.ActorTypes
 {
@@ -268,10 +267,10 @@ namespace Trinity.Framework.Actors.ActorTypes
 
             if (IsElite)
             {
-                Logger.Log(LogCategory.Targetting, $"Elite Died: {Name} Acd={AcdId} Sno={ActorSnoId} Size={MonsterSize} Race={MonsterRace} Quality={MonsterQuality} Type={MonsterType} Affixes={MonsterAffixes} CollisionRadius={CollisionRadius} AxialRadius={AxialRadius} SphereRadius={Radius} RiftValue={RiftValuePct}");
+                Core.Logger.Log(LogCategory.Targetting, $"Elite Died: {Name} Acd={AcdId} Sno={ActorSnoId} Size={MonsterSize} Race={MonsterRace} Quality={MonsterQuality} Type={MonsterType} Affixes={MonsterAffixes} CollisionRadius={CollisionRadius} AxialRadius={AxialRadius} SphereRadius={Radius} RiftValue={RiftValuePct}");
             }
             //else
-            //    Logger.Log($"Unit Died: {Name} Acd={AcdId} Sno={ActorSnoId}");
+            //    Core.Logger.Log($"Unit Died: {Name} Acd={AcdId} Sno={ActorSnoId}");
       
             ActorEvents.FireUnitKilled(this);
         }

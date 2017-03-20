@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Trinity.Framework;
 using Trinity.Components.Adventurer.Game.Actors;
-using Trinity.Components.Adventurer.Util;
 using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.SNO;
@@ -60,7 +60,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
             //    questData.BountyScript.Reset();
             //}
 
-            //Logger.Debug("[QuestData] Saving Quest {0} ({1})", questData.Name, questData.QuestId);
+            //Core.Logger.Debug("[QuestData] Saving Quest {0} ({1})", questData.Name, questData.QuestId);
             //questData.Save();
             return questData;
         }
@@ -151,13 +151,13 @@ namespace Trinity.Components.Adventurer.Game.Quests
             var currentQuest = QuestInfo.FromId(questId);
             if (currentQuest == null)
             {
-                Logger.Debug("[Bounty] Failed to determine the step id. Reason: Quest not found.");
+                Core.Logger.Debug("[Bounty] Failed to determine the step id. Reason: Quest not found.");
                 return false;
             }
             var step = currentQuest.QuestRecord.Steps.FirstOrDefault();
             if (step == null)
             {
-                Logger.Debug("[Bounty] Failed to determine the step id. Reason: Step not found.");
+                Core.Logger.Debug("[Bounty] Failed to determine the step id. Reason: Step not found.");
                 return false;
             }
             var objectives = currentQuest.QuestRecord.Steps.First(qs => qs.StepId == questStepId).QuestStepObjectiveSet.QuestStepObjectives;

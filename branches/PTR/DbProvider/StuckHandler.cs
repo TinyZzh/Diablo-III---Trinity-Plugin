@@ -1,5 +1,7 @@
 ﻿using Buddy.Coroutines;
 using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,8 +9,6 @@ using Trinity.Components.Adventurer;
 using Trinity.Components.Adventurer.Coroutines;
 using Trinity.Components.Combat;
 using Trinity.Components.Combat.Resources;
-using Trinity.Framework;
-using Trinity.Framework.Helpers;
 using Zeta.Bot;
 using Zeta.Bot.Navigation;
 using Zeta.Bot.Profile;
@@ -17,7 +17,7 @@ using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 
 namespace Trinity.DbProvider
 {
@@ -64,10 +64,10 @@ namespace Trinity.DbProvider
             if (IsNotStuck())
             {
                 if (_isSuspectedStuck)
-                    Logger.Log(LogCategory.StuckHandler, "No longer suspected of stuck");
+                    Core.Logger.Log(LogCategory.StuckHandler, "No longer suspected of stuck");
 
                 if (_isStuck)
-                    Logger.Log(LogCategory.StuckHandler, "No longer stuck!");
+                    Core.Logger.Log(LogCategory.StuckHandler, "No longer stuck!");
 
                 Reset();
                 return _isStuck;
@@ -88,7 +88,7 @@ namespace Trinity.DbProvider
                     return _isStuck;
                 }
 
-                Logger.Log(LogCategory.StuckHandler, "Suspected Stuck for {0}ms", millisecondsSuspected);
+                Core.Logger.Log(LogCategory.StuckHandler, "Suspected Stuck for {0}ms", millisecondsSuspected);
                 return _isStuck;
             }
 
@@ -101,7 +101,7 @@ namespace Trinity.DbProvider
 
         private void SetStuck()
         {
-            Logger.Log(LogCategory.StuckHandler, "Definately Stuck!");
+            Core.Logger.Log(LogCategory.StuckHandler, "Definately Stuck!");
             _isStuck = true;
             _stuckPosition = ZetaDia.Me.Position;
             _isSuspectedStuck = false;
@@ -119,7 +119,7 @@ namespace Trinity.DbProvider
         public void Reset(string reason = default(string))
         {
             if (!string.IsNullOrEmpty(reason))
-                Logger.Log(LogCategory.StuckHandler, $"Not Stuck: {reason}");
+                Core.Logger.Log(LogCategory.StuckHandler, $"Not Stuck: {reason}");
 
             _isStuck = false;
             _isSuspectedStuck = false;
@@ -132,13 +132,13 @@ namespace Trinity.DbProvider
         {
             if (Core.Settings.Advanced.DisableAllMovement)
             {
-                Logger.Log(LogCategory.Movement, $"Not Stuck: Movement is disabled in settings");
+                Core.Logger.Log(LogCategory.Movement, $"Not Stuck: Movement is disabled in settings");
                 return true;
             }
 
             if (!ZetaDia.IsInGame || ZetaDia.Me == null || !ZetaDia.Me.IsValid)
             {
-                Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Player data invalid");
+                Core.Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Player data invalid");
                 return true;
             }
 
@@ -147,89 +147,89 @@ namespace Trinity.DbProvider
 
             if (ZetaDia.Me.IsInConversation || ZetaDia.Globals.IsPlayingCutscene || ZetaDia.Globals.IsLoadingWorld)
             {
-                Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Conversation/CutScene/Loading");
+                Core.Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Conversation/CutScene/Loading");
                 return true;
             }
 
             if (ZetaDia.Me.LoopingAnimationEndTime > 0)
             {
-                Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Casting");
+                Core.Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Casting");
                 return true;
             }
 
             if (_stuckPosition != Vector3.Zero && _stuckPosition.Distance(ZetaDia.Me.Position) > 20f)
             {
-                Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Moved {_stuckPosition.Distance(ZetaDia.Me.Position)} from stuck position");
+                Core.Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Moved {_stuckPosition.Distance(ZetaDia.Me.Position)} from stuck position");
                 return true;
             }
 
             if (_suspectedStuckPosition != Vector3.Zero && _suspectedStuckPosition.Distance(ZetaDia.Me.Position) > 15f)
             {
-                Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Moved {_suspectedStuckPosition.Distance(ZetaDia.Me.Position)} from suspected stuck position");
+                Core.Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Moved {_suspectedStuckPosition.Distance(ZetaDia.Me.Position)} from suspected stuck position");
                 return true;
             }
 
             if (Combat.IsCurrentlyAvoiding)
             {
-                Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Currently Avoiding");
+                Core.Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Currently Avoiding");
                 return false;
             }
 
             if (Combat.IsCurrentlyKiting)
             {
-                Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Currently Kiting");
+                Core.Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Currently Kiting");
                 return false;
             }
 
             var isWaiting = Combat.Targeting.CurrentTarget != null && Combat.Targeting.CurrentPower?.SNOPower == SNOPower.Walk && Core.Player.MovementSpeed < 4 && Core.Grids.CanRayWalk(ZetaDia.Me.Position, Combat.Targeting.CurrentTarget.Position);
             if (isWaiting)
             {
-                Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Waiting (Routine Walk)");
+                Core.Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Waiting (Routine Walk)");
                 return false;
             }
 
             var secondsSincePowerUse = DateTime.UtcNow.Subtract(SpellHistory.LastSpellUseTime).TotalSeconds;
             if (secondsSincePowerUse < 4 && !_invalidBusyPowers.Contains(SpellHistory.LastPowerUsed) && Combat.IsInCombat)
             {
-                Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Recently cast power in combat ({SpellHistory.LastPowerUsed}, {secondsSincePowerUse}s ago)");
+                Core.Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Recently cast power in combat ({SpellHistory.LastPowerUsed}, {secondsSincePowerUse}s ago)");
                 return true;
             }
 
             //var startTime = DateTime.UtcNow.Subtract(TrinityPlugin.BotStartTime).TotalSeconds;
             //if (startTime < 10)
             //{
-            //    Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Busy Animation State ({startTime})");
+            //    Core.Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Busy Animation State ({startTime})");
             //    return true;
             //}
 
             var anim = ZetaDia.Me.CommonData.AnimationState;
             if (_busyAnimationStates.Contains(anim))
             {
-                Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Busy Animation State ({anim})");
+                Core.Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Busy Animation State ({anim})");
                 return true;
             }
 
             if (Core.Player.MovementSpeed > 3)
             {
-                Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Moving (Speed: {Core.Player.MovementSpeed})");
+                Core.Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Moving (Speed: {Core.Player.MovementSpeed})");
                 return true;
             }
 
             if (ZetaDia.Me.IsDead || UIElements.WaypointMap.IsVisible)
             {
-                Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Dead");
+                Core.Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Dead");
                 return true;
             }
 
             if (IsProfileBusy())
             {
-                Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Profile is Busy");
+                Core.Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Profile is Busy");
                 return true;
             }
 
             if (IsAdventurerBusy())
             {
-                Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Adventurer is Busy");
+                Core.Logger.Log(LogCategory.StuckHandler, $"Not Stuck: Adventurer is Busy");
                 return true;
             }
 
@@ -305,8 +305,8 @@ namespace Trinity.DbProvider
             }
             catch (Exception ex)
             {
-                Logger.Log(LogCategory.UserInformation, "Exception while checking for current profile behavior!");
-                Logger.Log(LogCategory.GlobalHandler, ex.ToString());
+                Core.Logger.Log("Exception while checking for current profile behavior!");
+                Core.Logger.Log(LogCategory.GlobalHandler, ex.ToString());
             }
             if (currentProfileBehavior != null)
             {
@@ -327,14 +327,14 @@ namespace Trinity.DbProvider
 
         public async Task<bool> DoUnstick()
         {
-            Logger.Warn("Trying to get Unstuck...");
+            Core.Logger.Warn("Trying to get Unstuck...");
             Navigator.Clear();
             Navigator.NavigationProvider.Clear();
             await Navigator.SearchGridProvider.Update();
             var startPosition = ZetaDia.Me.Position;
-            Logger.Log("Starting Segment 1...");
+            Core.Logger.Log("Starting Segment 1...");
             await MoveAwayFrom(startPosition);
-            Logger.Log("Starting Segment 2 ...");
+            Core.Logger.Log("Starting Segment 2 ...");
             await MoveAwayFrom(startPosition);
             return true;
         }
@@ -347,7 +347,7 @@ namespace Trinity.DbProvider
 
             if (!positions.Any())
             {
-                Logger.LogDebug($"No Unstuck Positions were found. IsMainGridProviderEmpty={Core.DBGridProvider.Width == 0}");
+                Core.Logger.Debug($"No Unstuck Positions were found. IsMainGridProviderEmpty={Core.DBGridProvider.Width == 0}");
                 return false;
             }
 
@@ -361,7 +361,7 @@ namespace Trinity.DbProvider
 
                 var distance = targetPosition.Distance(ZetaDia.Me.Position);
 
-                Logger.Log("Moving to {0} Dist={1}", targetPosition, distance);
+                Core.Logger.Log("Moving to {0} Dist={1}", targetPosition, distance);
                 ZetaDia.Me.UsePower(SNOPower.Walk, targetPosition, ZetaDia.Globals.WorldId);
                 await Coroutine.Sleep(50);
 
@@ -385,19 +385,19 @@ namespace Trinity.DbProvider
             var circlePoints = GetCirclePoints(10, 65, ZetaDia.Me.Position);
             if (!circlePoints.Any())
             {
-                Logger.LogDebug("No circle unstick positions found!");
+                Core.Logger.Debug("No circle unstick positions found!");
                 circlePoints = GetCirclePoints(10, 150, ZetaDia.Me.Position);
             }
             var directionalPoints = circlePoints.Where(p => p.Distance(myPosition) > distanceToAwayPosition);
             if (!directionalPoints.Any())
             {
-                Logger.LogDebug("No directional unstick positions found!");
+                Core.Logger.Debug("No directional unstick positions found!");
                 directionalPoints = circlePoints;
             }
             var validatedPoints = directionalPoints.Where(p => Core.DBGridProvider.CanStandAt(p));
             if (!validatedPoints.Any())
             {
-                Logger.LogDebug("No validated unstick positions found!");
+                Core.Logger.Debug("No validated unstick positions found!");
                 validatedPoints = directionalPoints;
             }
             return RandomShuffle(validatedPoints.ToList());
@@ -431,7 +431,7 @@ namespace Trinity.DbProvider
                 var newpoint = new Vector3(newX, newY, center.Z);
                 result.Add(newpoint);
 
-                //Logger.Log(TrinityLogLevel.Debug, LogCategory.Movement, "Calculated point {0}: {1}", i, newpoint.ToString());
+                //Core.Logger.Debug(LogCategory.Movement, "Calculated point {0}: {1}", i, newpoint.ToString());
             }
             return result;
         }

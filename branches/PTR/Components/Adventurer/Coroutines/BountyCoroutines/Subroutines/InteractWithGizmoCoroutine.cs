@@ -1,13 +1,13 @@
 ﻿using System;
+using Trinity.Framework;
 using System.Threading.Tasks;
-using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Game.Combat;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Adventurer.Game.Quests;
 using Trinity.Components.Adventurer.Util;
 using Zeta.Common;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
+
 
 namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
 {
@@ -46,7 +46,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                 if (_state == value) return;
                 if (value != States.NotStarted)
                 {
-                    Util.Logger.Info("[InteractWithGizmo] " + value);
+                    Core.Logger.Log("[InteractWithGizmo] " + value);
                 }
                 _state = value;
             }
@@ -131,7 +131,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                 // Special case for cursed chest events.
                 if (_objectiveLocation.Distance(AdvDia.MyPosition) < 16f && _actorId == 365097 && ActorFinder.FindGizmo(364559) != null)
                 {
-                    Util.Logger.Debug("Target gizmo has transformed into invulnerable event gizmo. Ending.");
+                    Core.Logger.Debug("Target gizmo has transformed into invulnerable event gizmo. Ending.");
                     State = States.Failed;
                     return false;
                 }
@@ -181,21 +181,21 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             //    var portalGizmo = BountyHelpers.GetPortalNearMarkerPosition(_markerPosition);
             //    if (portalGizmo == null)
             //    {
-            //        Logger.Debug("[Bounty] No portal nearby, keep exploring .");
+            //        Core.Logger.Debug("[Bounty] No portal nearby, keep exploring .");
             //        State = States.SearchingForDestinationWorld;
             //        return false;
             //    }
             //    _interactionCoroutine.DiaObject = portalGizmo;
             //}
 
-            Logger.Debug("[InteractWithGizmo] Starting interaction subroutine.");
+            Core.Logger.Debug("[InteractWithGizmo] Starting interaction subroutine.");
 
             if (await _interactionCoroutine.GetCoroutine())
             {
                 ActorFinder.InteractWhitelist.Remove(_actorId);
                 if (_interactionCoroutine.State == InteractionCoroutine.States.TimedOut)
                 {
-                    Util.Logger.Debug("[InteractWithGizmo] Interaction timed out.");
+                    Core.Logger.Debug("[InteractWithGizmo] Interaction timed out.");
                     State = States.Failed;
                     return false;
                 }
@@ -205,7 +205,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                     var nextGizmo = ActorFinder.FindGizmo(_actorId, gizmo => gizmo.IsInteractableQuestObject());
                     if (nextGizmo != null)
                     {
-                        Util.Logger.Warn("Found another actor that needs some interaction. Dist={0}", nextGizmo.Distance);
+                        Core.Logger.Warn("Found another actor that needs some interaction. Dist={0}", nextGizmo.Distance);
                         State = States.Searching;
                         return false;
                     }
@@ -254,7 +254,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                 }
                 if (_objectiveLocation != Vector3.Zero)
                 {
-                    Logger.Info("[InteractWithGizmo] Found the objective at distance {0}", AdvDia.MyPosition.Distance(_objectiveLocation));
+                    Core.Logger.Log("[InteractWithGizmo] Found the objective at distance {0}", AdvDia.MyPosition.Distance(_objectiveLocation));
                 }
             }
         }

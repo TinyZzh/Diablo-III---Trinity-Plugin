@@ -2,7 +2,7 @@
 using Trinity.Framework.Objects.Enums;
 using Trinity.UI.UIComponents;
 
-namespace Trinity.Framework.Objects.Attributes
+namespace Trinity.Framework.Objects
 {
     /// <summary>
     ///     Attribute to set author name.

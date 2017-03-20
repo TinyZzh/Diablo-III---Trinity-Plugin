@@ -1,9 +1,5 @@
-﻿using System;
-using Trinity.Framework.Actors.ActorTypes;
-using Trinity.Framework.Objects.Memory;
-using Trinity.Framework.Objects.Memory.Misc;
+﻿using Trinity.Framework.Actors.ActorTypes;
 using Zeta.Common;
-using Zeta.Game;
 using Zeta.Game.Internals.Actors;
 using Zeta.Game.Internals.SNO;
 

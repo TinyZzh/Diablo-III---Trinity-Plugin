@@ -1,14 +1,16 @@
 ﻿using System;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Trinity.Components.Coroutines;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Objects;
-using Trinity.Items;
-using Trinity.Items.Sorting;
-using Trinity.Reference;
+using Trinity.Framework.Objects.Enums;
+using Trinity.Framework.Reference;
+using Trinity.Settings.ItemList;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals;
@@ -80,7 +82,7 @@ namespace Trinity.Framework.Helpers
             sb.AppendLine("");
             foreach (var item in Variances)
             {
-                sb.AppendLine(string.Format("\r{0}: {1} => {2} ", item.Name, item.valA, item.valB));
+                sb.AppendLine($"\r{item.Name}: {item.valA} => {item.valB} ");
             }
             return sb.ToString();
         }
@@ -111,7 +113,7 @@ namespace Trinity.Framework.Helpers
             // Log Animation
             if (!_seenAnimationCache.ContainsKey(name))
             {
-                Logger.Log(LogCategory.Animation, "{0} State={1} By: {2} ({3})", name, state, cacheObject.InternalName, cacheObject.ActorSnoId);
+                Core.Logger.Log(LogCategory.Animation, "{0} State={1} By: {2} ({3})", name, state, cacheObject.InternalName, cacheObject.ActorSnoId);
                 _seenAnimationCache.Add(name, DateTime.UtcNow);
             }
 
@@ -126,7 +128,7 @@ namespace Trinity.Framework.Helpers
             // Log Object
             if (!_seenUnknownCache.ContainsKey(diaObject.ActorSnoId))
             {
-                Logger.Log(LogCategory.UnknownObjects, "{0} ({1}) Type={2}", diaObject.Name, diaObject.ActorSnoId, diaObject.ActorType);
+                Core.Logger.Log(LogCategory.UnknownObjects, "{0} ({1}) Type={2}", diaObject.Name, diaObject.ActorSnoId, diaObject.ActorType);
                 _seenUnknownCache.Add(diaObject.ActorSnoId, DateTime.UtcNow);
             }
 
@@ -180,7 +182,7 @@ namespace Trinity.Framework.Helpers
                     if (Core.Buffs.ActiveBuffs.Any(o => o.Id + o.BuffAttributeSlot == b.Key))
                         return;
 
-                    Logger.Log(LogCategory.ActiveBuffs, "Buff lost '{0}' ({1}) Stacks={2} VariantId={3} VariantName={4}", b.Value.InternalName, b.Value.Id, b.Value.StackCount, b.Value.BuffAttributeSlot, b.Value.VariantName);
+                    Core.Logger.Log(LogCategory.ActiveBuffs, "Buff lost '{0}' ({1}) Stacks={2} VariantId={3} VariantName={4}", b.Value.InternalName, b.Value.Id, b.Value.StackCount, b.Value.BuffAttributeSlot, b.Value.VariantName);
                 });
 
                 Core.Buffs.ActiveBuffs.ForEach(b =>
@@ -190,12 +192,12 @@ namespace Trinity.Framework.Helpers
                     {
                         if (b.StackCount != lastBuff.StackCount)
                         {
-                            Logger.Log(LogCategory.ActiveBuffs, "Buff Stack Changed: '{0}' ({1}) Stacks={2}", b.InternalName, b.Id, b.StackCount);
+                            Core.Logger.Log(LogCategory.ActiveBuffs, "Buff Stack Changed: '{0}' ({1}) Stacks={2}", b.InternalName, b.Id, b.StackCount);
                         }
                     }
                     else
                     {
-                        Logger.Log(LogCategory.ActiveBuffs, "Buff Gained '{0}' ({1}) Stacks={2} VariantId={3} VariantName={4}", b.InternalName, b.Id, b.StackCount, b.BuffAttributeSlot, b.VariantName);
+                        Core.Logger.Log(LogCategory.ActiveBuffs, "Buff Gained '{0}' ({1}) Stacks={2} VariantId={3} VariantName={4}", b.InternalName, b.Id, b.StackCount, b.BuffAttributeSlot, b.VariantName);
                     }
                 });
 
@@ -226,42 +228,40 @@ namespace Trinity.Framework.Helpers
             {
                 Action<Item, TrinityLogLevel> logItem = (i, l) =>
                 {
-                    Logger.Log(l, LogCategory.UserInformation, string.Format("Item: {0}: {1} ({2}) is Equipped",
-                        i.ItemType, i.Name, i.Id));
+                    Core.Logger.Log($"Item: {i.ItemType}: {i.Name} ({i.Id}) is Equipped");
                 };
 
                 Action<ACDItem, TrinityLogLevel> logACDItem = (i, l) =>
                 {
-                    Logger.Log(l, LogCategory.UserInformation, string.Format("Item: {0}: {1} ({2}) is Equipped",
-                        i.ItemType, i.Name, i.ActorSnoId));
+                    Core.Logger.Log($"Item: {i.ItemType}: {i.Name} ({i.ActorSnoId}) is Equipped");
                 };
 
                 if (ZetaDia.Me == null || !ZetaDia.Me.IsValid)
                 {
-                    Logger.Log("Error: Not in game");
+                    Core.Logger.Log("Error: Not in game");
                     return;
                 }
 
                 var equipped = InventoryManager.Equipped;
                 if (!equipped.Any())
                 {
-                    Logger.Log("Error: No equipped items detected");
+                    Core.Logger.Log("Error: No equipped items detected");
                     return;
                 }
 
                 LogNewItems();
 
                 var equippedItems = Legendary.Equipped.Where(c => (!c.IsSetItem || !c.Set.IsEquipped) && !c.IsEquippedInCube).ToList();
-                Logger.Log(level, LogCategory.UserInformation, "------ Equipped Non-Set Legendaries: Items={0}, Sets={1} ------", equippedItems.Count, Sets.Equipped.Count);
+                Core.Logger.Log("------ Equipped Non-Set Legendaries: Items={0}, Sets={1} ------", equippedItems.Count, Sets.Equipped.Count);
                 equippedItems.ForEach(i => logItem(i, level));
 
                 var cubeItems = Legendary.Equipped.Where(c => c.IsEquippedInCube).ToList();
-                Logger.Log(level, LogCategory.UserInformation, "------ Equipped in Kanai's Cube: Items={0} ------", cubeItems.Count, Sets.Equipped.Count);
+                Core.Logger.Log("------ Equipped in Kanai's Cube: Items={0} ------", cubeItems.Count, Sets.Equipped.Count);
                 cubeItems.ForEach(i => logItem(i, level));
 
                 Sets.Equipped.ForEach(s =>
                 {
-                    Logger.Log(level, LogCategory.UserInformation, "------ Set: {0} {1}: {2}/{3} Equipped. ActiveBonuses={4}/{5} ------",
+                    Core.Logger.Log("------ Set: {0} {1}: {2}/{3} Equipped. ActiveBonuses={4}/{5} ------",
                         s.Name,
                         s.IsClassRestricted ? "(" + s.ClassRestriction + ")" : string.Empty,
                         s.EquippedItems.Count,
@@ -272,11 +272,11 @@ namespace Trinity.Framework.Helpers
                     s.Items.Where(i => i.IsEquipped).ForEach(i => logItem(i, level));
                 });
 
-                Logger.Log(level, LogCategory.UserInformation, "------ Active Skills / Runes ------", SkillUtils.Active.Count, SkillUtils.Active.Count);
+                Core.Logger.Log("------ Active Skills / Runes ------", SkillUtils.Active.Count, SkillUtils.Active.Count);
 
                 Action<Skill> logSkill = s =>
                 {
-                    Logger.Log(level, LogCategory.UserInformation, "Skill: {0} Rune={1} Type={2}",
+                    Core.Logger.Log("Skill: {0} Rune={1} Type={2}",
                         s.Name,
                         s.CurrentRune.Name,
                         (s.IsAttackSpender) ? "Spender" : (s.IsGeneratorOrPrimary) ? "Generator" : "Other"
@@ -285,36 +285,36 @@ namespace Trinity.Framework.Helpers
 
                 SkillUtils.Active.ForEach(logSkill);
 
-                Logger.Log(level, LogCategory.UserInformation, "------ Passives ------", SkillUtils.Active.Count, SkillUtils.Active.Count);
+                Core.Logger.Log("------ Passives ------", SkillUtils.Active.Count, SkillUtils.Active.Count);
 
-                Action<Passive> logPassive = p => Logger.Log(level, LogCategory.UserInformation, "Passive: {0}", p.Name);
+                Action<Passive> logPassive = p => Core.Logger.Log("Passive: {0}", p.Name);
 
                 PassiveUtils.Active.ForEach(logPassive);
             }
             catch (Exception ex)
             {
-                Logger.Log("Exception in DebugUtil > LogBuildAndItems: {0} {1} {2}", ex.Message, ex.InnerException, ex);
+                Core.Logger.Log("Exception in DebugUtil > LogBuildAndItems: {0} {1} {2}", ex.Message, ex.InnerException, ex);
             }
         }
 
         public static void LogSystemInformation(TrinityLogLevel level = TrinityLogLevel.Debug)
         {
-            try
-            {
-                Logger.Log(level, LogCategory.UserInformation, "------ System Information ------");
-                Logger.Log(level, LogCategory.UserInformation, "Processor: " + SystemInformation.Processor);
-                Logger.Log(level, LogCategory.UserInformation, "Current Speed: " + SystemInformation.ActualProcessorSpeed);
-                Logger.Log(level, LogCategory.UserInformation, "Operating System: " + SystemInformation.OperatingSystem);
-                Logger.Log(level, LogCategory.UserInformation, "Motherboard: " + SystemInformation.MotherBoard);
-                Logger.Log(level, LogCategory.UserInformation, "System Type: " + SystemInformation.SystemType);
-                Logger.Log(level, LogCategory.UserInformation, "Free Physical Memory: " + SystemInformation.FreeMemory);
-                Logger.Log(level, LogCategory.UserInformation, "Hard Drive: " + SystemInformation.HardDisk);
-                Logger.Log(level, LogCategory.UserInformation, "Video Card: " + SystemInformation.VideoCard);
-                Logger.Log(level, LogCategory.UserInformation, "Resolution: " + SystemInformation.Resolution);
-            }
-            catch (Exception)
-            {
-            }
+            //try
+            //{
+            //    Core.Logger.Log("------ System Information ------");
+            //    Core.Logger.Log("Processor: " + SystemInformation.Processor);
+            //    Core.Logger.Log("Current Speed: " + SystemInformation.ActualProcessorSpeed);
+            //    Core.Logger.Log("Operating System: " + SystemInformation.OperatingSystem);
+            //    Core.Logger.Log("Motherboard: " + SystemInformation.MotherBoard);
+            //    Core.Logger.Log("System Type: " + SystemInformation.SystemType);
+            //    Core.Logger.Log("Free Physical Memory: " + SystemInformation.FreeMemory);
+            //    Core.Logger.Log("Hard Drive: " + SystemInformation.HardDisk);
+            //    Core.Logger.Log("Video Card: " + SystemInformation.VideoCard);
+            //    Core.Logger.Log("Resolution: " + SystemInformation.Resolution);
+            //}
+            //catch (Exception)
+            //{
+            //}
         }
 
         internal static void DumpReferenceItems(TrinityLogLevel level = TrinityLogLevel.Debug)
@@ -333,13 +333,13 @@ namespace Trinity.Framework.Helpers
                     var key = !string.IsNullOrEmpty(item.Slug) ? item.Slug : RemoveApostophes(item.Name).ToLower();
 
                     if (item.Id != 0)
-                        w.WriteLine(string.Format("     \"{0}\": [\"{1}\", {2}, \"{3}\"],", key, item.Name, item.Id, item.InternalName));
+                        w.WriteLine($"     \"{key}\": [\"{item.Name}\", {item.Id}, \"{item.InternalName}\"],");
                 }
 
                 w.WriteLine("}");
             }
 
-            Logger.Log("Dumped Reference Items to: {0}", path);
+            Core.Logger.Log("Dumped Reference Items to: {0}", path);
         }
 
         public static string RemoveApostophes(string input)
@@ -352,37 +352,32 @@ namespace Trinity.Framework.Helpers
 
         internal static void LogInvalidItems(TrinityLogLevel level = TrinityLogLevel.Debug)
         {
-            var p = Logger.Prefix;
-            Logger.Prefix = "";
-
             var dropItems = Legendary.ToList().Where(i => !i.IsCrafted && i.Id == 0).OrderBy(i => i.TrinityItemType).ToList();
             var craftedItems = Legendary.ToList().Where(i => i.IsCrafted && i.Id == 0).OrderBy(i => i.TrinityItemType).ToList();
 
-            Logger.Log("Dropped Items: {0}", dropItems.Count);
+            Core.Logger.Log("Dropped Items: {0}", dropItems.Count);
             foreach (var item in dropItems)
             {
-                Logger.Log("{0} - {1} = 0", item.TrinityItemType, item.Name);
+                Core.Logger.Log("{0} - {1} = 0", item.TrinityItemType, item.Name);
             }
 
-            Logger.Log(" ");
-            Logger.Log("Crafted Items: {0}", craftedItems.Count);
+            Core.Logger.Log(" ");
+            Core.Logger.Log("Crafted Items: {0}", craftedItems.Count);
             foreach (var item in craftedItems)
             {
-                Logger.Log("{0} - {1} = 0", item.TrinityItemType, item.Name);
+                Core.Logger.Log("{0} - {1} = 0", item.TrinityItemType, item.Name);
             }
-
-            Logger.Prefix = p;
         }
 
         internal static void LogNewItems()
         {
             var knownIds = Legendary.ItemIds;
 
-            using (new AquireFrameHelper())
+            using (ZetaDia.Memory.AcquireFrame())
             {
                 if (ZetaDia.Me == null || !ZetaDia.Me.IsValid)
                 {
-                    Logger.Log("Not in game");
+                    Core.Logger.Log("Not in game");
                     return;
                 }
 
@@ -399,11 +394,11 @@ namespace Trinity.Framework.Helpers
                 if (!newItems.Any())
                     return;
 
-                Logger.Log(TrinityLogLevel.Info, LogCategory.UserInformation, "------ New/Unknown Items {0} ------", newItems.Count);
+                Core.Logger.Log("------ New/Unknown Items {0} ------", newItems.Count);
 
                 newItems.ForEach(i =>
                 {
-                    Logger.Log(string.Format("Item: {0}: {1} ({2})", i.ItemType, i.Name, i.ActorSnoId));
+                    Core.Logger.Log($"Item: {i.ItemType}: {i.Name} ({i.ActorSnoId})");
                 });
             }
         }
@@ -421,12 +416,12 @@ namespace Trinity.Framework.Helpers
                 if (type != TrinityItemType.Unknown || GameData.GoldSNO.Contains(sno) ||
                     GameData.ForceToItemOverrideIds.Contains(sno) || GameData.HealthGlobeSNO.Contains(sno) || Legendary.ItemIds.Contains(sno))
                 {
-                    toLog.Add(string.Format("{{ {0}, TrinityItemType.{1} }}, // {2}", sno, type, name));
+                    toLog.Add($"{{ {sno}, TrinityItemType.{type} }}, // {name}");
                 }
             }
 
             var path = WriteLinesToLog("ItemSNOReference.log", toLog, true);
-            Logger.Log("Finished Dumping Item SNO Reference to {0}", path);
+            Core.Logger.Log("Finished Dumping Item SNO Reference to {0}", path);
         }
 
         public static string WriteLinesToLog(string logFileName, string lines, bool deleteFirst = false)
@@ -463,7 +458,7 @@ namespace Trinity.Framework.Helpers
 
         public static void ItemListTest()
         {
-            Logger.Log("Starting ItemList Backpack Test");
+            Core.Logger.Log("Starting ItemList Backpack Test");
 
             var backpackItems = Core.Inventory.Backpack;
             var total = backpackItems.Count();
@@ -471,17 +466,17 @@ namespace Trinity.Framework.Helpers
 
             foreach (var acdItem in backpackItems)
             {
-                Logger.Log($"{acdItem.Name} ActorSnoId={acdItem.ActorSnoId} GameBalanceId={acdItem.GameBalanceId} ACDId={acdItem.AcdId} AnnId={acdItem.AnnId}");
-                Logger.LogVerbose(acdItem.ToString());
-                Logger.LogVerbose(acdItem.Attributes.ToString());
+                Core.Logger.Log($"{acdItem.Name} ActorSnoId={acdItem.ActorSnoId} GameBalanceId={acdItem.GameBalanceId} ACDId={acdItem.AcdId} AnnId={acdItem.AnnId}");
+                Core.Logger.Verbose(acdItem.ToString());
+                Core.Logger.Verbose(acdItem.Attributes.ToString());
 
                 if (ItemListEvaluator.ShouldStashItem(acdItem, true))
                     toBeStashed++;
             }
 
-            Logger.Log("Finished ItemList Backpack Test");
+            Core.Logger.Log("Finished ItemList Backpack Test");
 
-            Logger.Log("Finished - Stash {0} / {1}", toBeStashed, total);
+            Core.Logger.Log("Finished - Stash {0} / {1}", toBeStashed, total);
         }
 
         public enum DumpItemLocation
@@ -503,7 +498,7 @@ namespace Trinity.Framework.Helpers
             }
             catch
             {
-                Logger.LogError("QuickDump: Item Errors Detected!");
+                Core.Logger.Error("QuickDump: Item Errors Detected!");
                 itemList = ZetaDia.Actors.GetActorsOfType<ACDItem>(true).ToList();
             }
             StringBuilder sbTopList = new StringBuilder();
@@ -519,7 +514,7 @@ namespace Trinity.Framework.Helpers
                     sbTopList.AppendFormat("Exception reading data from ACDItem ACDId={0}", item.ACDId);
                 }
             }
-            Logger.Log(sbTopList.ToString());
+            Core.Logger.Log(sbTopList.ToString());
         }
 
         public static void DumpItems(DumpItemLocation location)
@@ -559,7 +554,7 @@ namespace Trinity.Framework.Helpers
                         }
                         else
                         {
-                            Logger.Log("Stash window not open!");
+                            Core.Logger.Log("Stash window not open!");
                         }
                         break;
                 }
@@ -571,14 +566,13 @@ namespace Trinity.Framework.Helpers
                 {
                     try
                     {
-                        string itemName = String.Format("\nName={0} InternalName={1} ActorSnoId={2} DynamicID={3} InventorySlot={4}",
-                        item.Name, item.InternalName, item.ActorSnoId, item.DynamicId, item.InventorySlot);
+                        string itemName = $"\nName={item.Name} InternalName={item.InternalName} ActorSnoId={item.ActorSnoId} DynamicID={item.DynamicId} InventorySlot={item.InventorySlot}";
 
-                        Logger.Log(itemName);
+                        Core.Logger.Log(itemName);
                     }
                     catch (Exception ex)
                     {
-                        Logger.Log("Exception reading Basic Item Info\n{0}", ex.ToString());
+                        Core.Logger.Log("Exception reading Basic Item Info\n{0}", ex.ToString());
                     }
                     try
                     {
@@ -588,12 +582,12 @@ namespace Trinity.Framework.Helpers
                             float fVal = item.Item.GetAttribute<float>((ActorAttributeType)val);
 
                             if (iVal > 0 || fVal > 0)
-                                Logger.Log("Attribute: {0}, iVal: {1}, fVal: {2}", val, iVal, (fVal != fVal) ? "" : fVal.ToString());
+                                Core.Logger.Log("Attribute: {0}, iVal: {1}, fVal: {2}", val, iVal, (fVal != fVal) ? "" : fVal.ToString());
                         }
                     }
                     catch (Exception ex)
                     {
-                        Logger.Log("Exception reading attributes for {0}\n{1}", item.Name, ex.ToString());
+                        Core.Logger.Log("Exception reading attributes for {0}\n{1}", item.Name, ex.ToString());
                     }
 
                     try
@@ -603,21 +597,21 @@ namespace Trinity.Framework.Helpers
                             float fStatVal = item.Stats.GetStat<float>(stat);
                             int iStatVal = item.Stats.GetStat<int>(stat);
                             if (fStatVal > 0 || iStatVal > 0)
-                                Logger.Log("Stat {0}={1}f ({2})", stat, fStatVal, iStatVal);
+                                Core.Logger.Log("Stat {0}={1}f ({2})", stat, fStatVal, iStatVal);
                         }
                     }
                     catch (Exception ex)
                     {
-                        Logger.Log("Exception reading Item Stats\n{0}", ex.ToString());
+                        Core.Logger.Log("Exception reading Item Stats\n{0}", ex.ToString());
                     }
 
                     try
                     {
-                        Logger.Log("Link Color ItemQuality=" + item.Item.GetItemQuality());
+                        Core.Logger.Log("Link Color ItemQuality=" + item.Item.GetItemQuality());
                     }
                     catch (Exception ex)
                     {
-                        Logger.Log("Exception reading Item Link\n{0}", ex.ToString());
+                        Core.Logger.Log("Exception reading Item Link\n{0}", ex.ToString());
                     }
 
                     try
@@ -626,7 +620,7 @@ namespace Trinity.Framework.Helpers
                     }
                     catch (Exception ex)
                     {
-                        Logger.Log("Exception reading Item PropertyLoader\n{0}", ex.ToString());
+                        Core.Logger.Log("Exception reading Item PropertyLoader\n{0}", ex.ToString());
                     }
                 }
             }
@@ -642,21 +636,21 @@ namespace Trinity.Framework.Helpers
                     object val = property.GetValue(item, null);
                     if (val != null)
                     {
-                        Logger.Log(typeof(T).Name + "." + property.Name + "=" + val);
+                        Core.Logger.Log(typeof(T).Name + "." + property.Name + "=" + val);
 
                         // Special cases!
                         if (property.Name == "ValidInventorySlots")
                         {
                             foreach (var slot in ((InventorySlot[])val))
                             {
-                                Logger.Log(slot.ToString());
+                                Core.Logger.Log(slot.ToString());
                             }
                         }
                     }
                 }
                 catch
                 {
-                    Logger.Log("Exception reading {0} from object", property.Name);
+                    Core.Logger.Log("Exception reading {0} from object", property.Name);
                 }
             }
         }

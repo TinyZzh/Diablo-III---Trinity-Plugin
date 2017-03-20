@@ -1,5 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using System.Linq;
+using System.Linq; using Trinity.Framework;
 using System.Threading.Tasks;
 using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Game.Combat;
@@ -39,7 +39,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                 if (_state == value) return;
                 if (value != States.NotStarted)
                 {
-                    Util.Logger.Debug("[ClearArea] " + value);
+                    Core.Logger.Debug("[ClearArea] " + value);
                 }
                 _state = value;
             }
@@ -104,13 +104,13 @@ namespace Trinity.Components.Adventurer.Coroutines
                     new ConcurrentBag<Vector3>(
                         ExplorationHelpers.GetFourPointsInEachDirection(_center, _radius).Where(d => d != Vector3.Zero));
 
-                Util.Logger.Debug($"[ClearArea] No actors found in the area, using the desperate measures. Center={_center} Radius={_radius}");
+                Core.Logger.Debug($"[ClearArea] No actors found in the area, using the desperate measures. Center={_center} Radius={_radius}");
                 State = States.ForceClearing;
                 if (_forceClearDestinations.TryTake(out _currentDestination))
                 {
                     return false;
                 }
-                Util.Logger.Error($"[ClearArea] Couldn't get force clear destinations, ending tag. Center={_center} Radius={_radius}");
+                Core.Logger.Error($"[ClearArea] Couldn't get force clear destinations, ending tag. Center={_center} Radius={_radius}");
                 State = States.Completed;
                 return true;
             }

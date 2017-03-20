@@ -34,7 +34,7 @@ namespace Trinity.Framework.Helpers
         /// </summary>
         /// <param name="worker">Delegate to be run</param>
         /// <param name="waitTime"></param>
-        public static void Start(Func<bool> worker, int waitTime = 50)
+        public static void Start(Func<bool> worker, int waitTime = 25)
         {
             if (IsRunning)
                 return;
@@ -49,12 +49,12 @@ namespace Trinity.Framework.Helpers
             _worker = worker;
             _thread = new Thread(SafeWorkerDelegate)
             {
-                Name = string.Format("Worker: {0}.{1}", ns, type),
+                Name = $"Worker: {ns}.{type}",
                 IsBackground = true,
                 Priority = ThreadPriority.BelowNormal,
             };
 
-            Logger.LogDebug("Starting {0} Thread Id={1}", _thread.Name, _thread.ManagedThreadId);
+            Core.Logger.Debug("Starting {0} Thread Id={1}", _thread.Name, _thread.ManagedThreadId);
 
             _working = true;
             _thread.Start();
@@ -69,7 +69,7 @@ namespace Trinity.Framework.Helpers
                 if (!IsRunning)
                     return;
 
-                Logger.LogDebug("Shutting down thread");
+                Core.Logger.Debug("Shutting down thread");
 
                 _thread.Abort(new { RequestingThreadId = Thread.CurrentThread.ManagedThreadId });
             }
@@ -84,7 +84,7 @@ namespace Trinity.Framework.Helpers
             if (_thread == null)
                 return;
 
-            Logger.LogDebug("Thread {0}: {1} Started", _thread.ManagedThreadId, _thread.Name);
+            Core.Logger.Debug("Thread {0}: {1} Started", _thread.ManagedThreadId, _thread.Name);
 
             while (_working)
             {
@@ -101,16 +101,16 @@ namespace Trinity.Framework.Helpers
                 catch (ThreadAbortException ex)
                 {
                     _working = false;
-                    Logger.LogDebug("Aborting Thread: {0}, StateInfo={1}", _thread.ManagedThreadId, ex.ExceptionState);
+                    Core.Logger.Debug("Aborting Thread: {0}, StateInfo={1}", _thread.ManagedThreadId, ex.ExceptionState);
                     Thread.ResetAbort();
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log("Error in Thread {0}: {1} {2}", _thread.ManagedThreadId, _thread.Name, ex);
+                    Core.Logger.Log("Error in Thread {0}: {1} {2}", _thread.ManagedThreadId, _thread.Name, ex);
                 }
             }
 
-            Logger.LogDebug("Thread {0}: {1} Finished", _thread.ManagedThreadId, _thread.Name);
+            Core.Logger.Debug("Thread {0}: {1} Finished", _thread.ManagedThreadId, _thread.Name);
 
             OnStopped.Invoke();
         }

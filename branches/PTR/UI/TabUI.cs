@@ -1,4 +1,6 @@
 ﻿using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,37 +8,29 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
-using Trinity.Coroutines.Resources;
-using Trinity.Coroutines.Town;
-using Trinity.Framework;
-using Trinity.Framework.Helpers;
+using Trinity.Components.Coroutines;
+using Trinity.Components.Coroutines.Town;
 using Trinity.Framework.Objects.Enums;
-using Trinity.Reference;
 using Zeta.Bot;
 using Zeta.Common;
 using Zeta.Game;
-using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
 using Zeta.TreeSharp;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 using UIElement = Zeta.Game.Internals.UIElement;
 
 // For Debug Watch Panel Namespace.
 
 using Trinity.Framework.Objects;
 using Trinity.Framework.Objects.Memory;
-using Trinity.Framework.Objects.Memory.UX;
-using Trinity.Framework.Objects.Memory.Attributes;
-using Trinity.Items.Sorting;
+using Trinity.Framework.Reference;
 using Trinity.Settings;
 using Trinity.UI.Visualizer;
 using ScenesStorage = Trinity.Components.Adventurer.Game.Exploration.ScenesStorage;
-using Trinity.Routines.Wizard;
 
 namespace Trinity.UI
 {
@@ -53,16 +47,16 @@ namespace Trinity.UI
             var hasAccessToApp = Application.Current.CheckAccess();
 
             if (!hasAccessToApp)
-                Logger.Log("Current Thread Id={0} Name='{1}' cannot access the current application. CanAccessDispatcher={2}",
+                Core.Logger.Log("Current Thread Id={0} Name='{1}' cannot access the current application. CanAccessDispatcher={2}",
                     Thread.CurrentThread.ManagedThreadId, Thread.CurrentThread.Name, Application.Current.Dispatcher.CheckAccess());
 
-            //Logger.Log($"ApplicationDispatcherThreadId={Application.Current.Dispatcher.Thread.ManagedThreadId} " +
+            //Core.Logger.Log($"ApplicationDispatcherThreadId={Application.Current.Dispatcher.Thread.ManagedThreadId} " +
             //           $"CurrenThreadId={Thread.CurrentThread.ManagedThreadId}" +
             //           $"CanAccessMainWindow={Application.Current.MainWindow.CheckAccess()}");
 
             if (!Application.Current.MainWindow.CheckAccess())
             {
-                Logger.Log("Current Thread {0} '{1}' cannot access MainWindow Dispatcher",
+                Core.Logger.Log("Current Thread {0} '{1}' cannot access MainWindow Dispatcher",
                     Thread.CurrentThread.ManagedThreadId, Thread.CurrentThread.Name);
 
                 return;
@@ -91,27 +85,27 @@ namespace Trinity.UI
                         {
                             CreateButton("Sort Backpack", SortBackEventHandler),
                             CreateButton("Sort Stash", SortStashEventHandler),
-                            //CreateButton("Clean Stash", CleanStashEventHandler),
-                            CreateButton("Convert to Magic", btnClick_ConvertToBlue),
-                            CreateButton("Convert to Common", btnClick_ConvertToCommon),
-                            //CreateButton("Convert to Rare", btnClick_ConvertToRare),
-                            CreateButton("Do Not Click", btnClick_CrazyTest),
-                            CreateButton("Set", btnClick_CrazyTestSet),
                         });
 
-                CreateGroup("Debugging", new List<Control>
-                        {
-                            CreateButton("Find New ActorIds", GetNewActorSNOsEventHandler),
-                            //CreateButton("Log Invalid Items", LogInvalidHandler),
-                            CreateButton("> Gizmo Attribtues", StartGizmoTestHandler),
-                            CreateButton("> Unit Attribtues", StartUnitTestHandler),
-                            CreateButton("> Player Attribtues", StartPlayerTestHandler),
-                            //CreateButton("> Log Power Data", LogPowerDataHandler),
-                            //CreateButton("Dump Item Powers", StartDataTestHandler),
-                            //CreateButton("> Buff Test", StartBuffTestHandler),
-                            //CreateButton("> Stop Tests", StopTestHandler),
-                            CreateButton("> Unit Monitor", StartUnitMonitor),
-                            CreateButton("> Player Monitor", StartPlayerMonitor),
+                CreateGroup("Cube Backpack", new List<Control>
+                {
+                    CreateButton("Upgrade Rares", RunUpgradeBackpackRares),
+                    CreateButton("Extract Powers", RunExtractBackpackPowers),
+                    CreateButton("Convert to Magic", btnClick_ConvertToBlue),
+                    CreateButton("Convert to Common", btnClick_ConvertToCommon),
+                    CreateButton("Convert to Rare", btnClick_ConvertToRare),
+
+                    //CreateButton("Find New ActorIds", GetNewActorSNOsEventHandler),
+                    ////CreateButton("Log Invalid Items", LogInvalidHandler),
+                    //CreateButton("> Gizmo Attribtues", StartGizmoTestHandler),
+                    //CreateButton("> Unit Attribtues", StartUnitTestHandler),
+                    //CreateButton("> Player Attribtues", StartPlayerTestHandler),
+                    ////CreateButton("> Log Power Data", LogPowerDataHandler),
+                    ////CreateButton("Dump Item Powers", StartDataTestHandler),
+                    ////CreateButton("> Buff Test", StartBuffTestHandler),
+                    ////CreateButton("> Stop Tests", StopTestHandler),
+                    //CreateButton("> Unit Monitor", StartUnitMonitor),
+                    //CreateButton("> Player Monitor", StartPlayerMonitor),
                 });
 
                 CreateGroup("Tools", new List<Control>
@@ -132,7 +126,7 @@ namespace Trinity.UI
 
                             //CreateButton("Test", TestUIElement),
 
-                            CreateButton("Upgrade Rares", UpgradeBackpackRares),
+                            //CreateButton("Upgrade Rares", RunUpgradeBackpackRares),
                             //CreateButton("Extract Powers", ExtractBackpackPowers),
                             CreateButton("ItemList Check", btnClick_TestItemList),
 
@@ -183,12 +177,12 @@ namespace Trinity.UI
                 }
                 else
                 {
-                    Logger.LogError("Unable to open settings file {0} - file does not exist", logFile);
+                    Core.Logger.Error("Unable to open settings file {0} - file does not exist", logFile);
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error opening settings file: {0} {1}", logFile, ex.Message);
+                Core.Logger.Error("Error opening settings file: {0} {1}", logFile, ex.Message);
             }
         }
 
@@ -227,12 +221,12 @@ namespace Trinity.UI
 
                     //Logger.LogRaw(scan.Floats.ToString());
 
-                    //Logger.Log($"WorldEnv == {Core.World.EnvironmentType}");
+                    //Core.Logger.Log($"WorldEnv == {Core.World.EnvironmentType}");
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogError("Exception: " + ex);
+                Core.Logger.Error("Exception: " + ex);
             }
         }
 
@@ -257,7 +251,7 @@ namespace Trinity.UI
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error Opening Radar Window:" + ex);
+                Core.Logger.Error("Error Opening Radar Window:" + ex);
             }
         }
 
@@ -265,87 +259,14 @@ namespace Trinity.UI
         {
             try
             {
-                Logger.Log("Bot {0} has been running for {1} hours {2} minutes and {3} seconds", Core.Player.Name, GameStats.Instance.RunTime.Hours, GameStats.Instance.RunTime.Minutes, GameStats.Instance.RunTime.Seconds);
+                Core.Logger.Log("Bot {0} has been running for {1} hours {2} minutes and {3} seconds", Core.Player.Name, GameStats.Instance.RunTime.Hours, GameStats.Instance.RunTime.Minutes, GameStats.Instance.RunTime.Seconds);
             }
             catch (Exception ex)
             {
-                Logger.LogError("Exception {0}", ex);
+                Core.Logger.Error("Exception {0}", ex);
             }
         }
 
-        private static ulong _lastClickedHash;
-
-        private static void btnClick_CrazyTest(object sender, RoutedEventArgs routedEventArgs)
-        {
-            try
-            {
-                Task.Run(async () =>
-                {
-                    while (true)
-                    {
-                        using (ZetaDia.Memory.AcquireFrame())
-                        {
-                            try
-                            {
-                                _overflagComparison?.Compare(
-                                    e => Logger.Log($"[{_clicked.BaseAddress}] {_clicked.Hash} {_clicked} Gained flags: {e}"),
-                                    e => Logger.Log($"Lost flags: {e}"));
-
-                            }
-                            catch (Exception)
-                            {
-                                
-                            }
-                        }
-                        await Task.Delay(50);
-                    }
-                });
-
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("Exception {0}", ex);
-            }
-        }
-
-        private static UXControl _clicked;
-
-        private static void btnClick_CrazyTestSet(object sender, RoutedEventArgs routedEventArgs)
-        {
-            try
-            {
-
-                using (ZetaDia.Memory.AcquireFrame())
-                {
-                    try
-                    {
-                        var uimanager = ZetaDia.Memory.Read<int>(ZetaDia.Storage.BaseAddress - 0x7C8 + 0xA04);
-                        var mouseOver = MemoryWrapper.Create<UXReference>((IntPtr)uimanager + 0x0A30);
-                        var clicked = MemoryWrapper.Create<UXReference>((IntPtr)uimanager + 0x0828);
-                        var x = ZetaDia.Memory.Read<int>((IntPtr)uimanager + 0x1E60);
-                        var y = ZetaDia.Memory.Read<int>((IntPtr)uimanager + 0x1E64);
-                        var control = clicked.Control;
-
-
-                        if (_lastClickedHash != clicked.Hash)
-                        {
-                            _clicked = control;
-                            Logger.Log($"Now monitoring clicked Element on {_clicked.Hash} {_clicked.Name} at [{x},{y}]");
-                            _overflagComparison = new MemoryAnalysis.FlagComparison<UXControlFlags>(() => UXHelper.GetControl(_clicked.Hash).Flags);
-                            _lastClickedHash = _clicked.Hash;
-                        }
-                    }
-                    catch (Exception)
-                    {
-
-                    }
-                }                
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("Exception {0}", ex);
-            }
-        }
 
         private static void btnClick_TestItemList(object sender, RoutedEventArgs routedEventArgs)
         {
@@ -362,7 +283,7 @@ namespace Trinity.UI
             }
             catch (Exception ex)
             {
-                Logger.LogError("Exception {0}", ex);
+                Core.Logger.Error("Exception {0}", ex);
             }
         }
 
@@ -373,12 +294,12 @@ namespace Trinity.UI
                 if (!BotMain.IsRunning)
                 {
                     //ActorManager.Start();
-                    TaskDispatcher.Start(ret => Coroutines.Town.StashItems.Execute(), o => o == null || (RunStatus)o != RunStatus.Running);
+                    TaskDispatcher.Start(ret => Components.Coroutines.Town.StashItems.Execute(), o => o == null || (RunStatus)o != RunStatus.Running);
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error running StashItems: " + ex);
+                Core.Logger.Error("Error running StashItems: " + ex);
             }
         }
 
@@ -390,7 +311,7 @@ namespace Trinity.UI
             }
             catch (Exception ex)
             {
-                Logger.LogError("Exception {0}", ex);
+                Core.Logger.Error("Exception {0}", ex);
             }
         }
 
@@ -398,11 +319,11 @@ namespace Trinity.UI
         {
             try
             {
-                Logger.Log("Finished Cache Test");
+                Core.Logger.Log("Finished Cache Test");
             }
             catch (Exception ex)
             {
-                Logger.LogError("Exception {0}", ex);
+                Core.Logger.Error("Exception {0}", ex);
             }
         }
 
@@ -414,7 +335,7 @@ namespace Trinity.UI
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error Starting Rift Progression : " + ex);
+                Core.Logger.Error("Error Starting Rift Progression : " + ex);
             }
         }
 
@@ -442,13 +363,13 @@ namespace Trinity.UI
 
                 //    var acd = MemoryWrapper.Create<ActorCommonData>(testunit.CommonData.BaseAddress);
                 //    var atts = new Trinity.Framework.Objects.Memory.Attributes.Attributes(acd.FastAttributeGroupId);
-                //    Logger.Log($"-- Dumping Attribtues for {acd.Name} (Sno={acd.ActorSnoId} Ann={acd.AnnId}) at {acd.Position} ----");
-                //    Logger.Log(atts + "\r\n");
+                //    Core.Logger.Log($"-- Dumping Attribtues for {acd.Name} (Sno={acd.ActorSnoId} Ann={acd.AnnId}) at {acd.Position} ----");
+                //    Core.Logger.Log(atts + "\r\n");
                 //}
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error Starting LazyCache: " + ex);
+                Core.Logger.Error("Error Starting LazyCache: " + ex);
             }
         }
 
@@ -496,8 +417,8 @@ namespace Trinity.UI
                 //        //    if (_lastAtts == null || ann != _lastAnn)
                 //        //    {
                 //        //        _lastAtts = null;
-                //        //        Logger.Log($"-- Dumping Attribtues for {acd.Name} (Sno={acd.ActorSnoId} Ann={acd.AnnId}) at {acd.Position} ----");
-                //        //        Logger.Log(atts + "\r\n");
+                //        //        Core.Logger.Log($"-- Dumping Attribtues for {acd.Name} (Sno={acd.ActorSnoId} Ann={acd.AnnId}) at {acd.Position} ----");
+                //        //        Core.Logger.Log(atts + "\r\n");
                 //        //    }
 
                 //        //    if (_lastAtts != null)
@@ -510,12 +431,12 @@ namespace Trinity.UI
                 //        //                var lastValue = _lastAtts[att.Key].GetValue();
                 //        //                if (Convert.ToInt32(lastValue) != Convert.ToInt32(curValue))
                 //        //                {
-                //        //                    Logger.Log($"-- Attribute {att} changed from {lastValue}");
+                //        //                    Core.Logger.Log($"-- Attribute {att} changed from {lastValue}");
                 //        //                }
                 //        //            }
                 //        //            else
                 //        //            {
-                //        //                Logger.Log($"-- Attribute Added {att}");
+                //        //                Core.Logger.Log($"-- Attribute Added {att}");
                 //        //            }
                 //        //        }
 
@@ -524,7 +445,7 @@ namespace Trinity.UI
                 //        //            var lastValue = att.Value.GetValue();
                 //        //            if (!atts.Items.ContainsKey(att.Key))
                 //        //            {
-                //        //                Logger.Log(
+                //        //                Core.Logger.Log(
                 //        //                    $"-- Attribute removed {(ActorAttributeType)att.Key} Value was {lastValue}");
                 //        //            }
                 //        //        }
@@ -538,7 +459,7 @@ namespace Trinity.UI
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error Starting LazyCache: " + ex);
+                Core.Logger.Error("Error Starting LazyCache: " + ex);
             }
         }
 
@@ -586,8 +507,8 @@ namespace Trinity.UI
             //                if (_lastAtts == null || ann != _lastAnn)
             //                {
             //                    _lastAtts = null;
-            //                    Logger.Log($"-- Dumping Attribtues for {acd.Name} (Sno={acd.ActorSnoId} Ann={acd.AnnId}) at {acd.Position} ----");
-            //                    Logger.Log(atts + "\r\n");
+            //                    Core.Logger.Log($"-- Dumping Attribtues for {acd.Name} (Sno={acd.ActorSnoId} Ann={acd.AnnId}) at {acd.Position} ----");
+            //                    Core.Logger.Log(atts + "\r\n");
             //                }
 
             //                if (_lastAtts != null)
@@ -600,12 +521,12 @@ namespace Trinity.UI
             //                            var lastValue = _lastAtts[att.Key].GetValue();
             //                            if (Convert.ToInt32(lastValue) != Convert.ToInt32(curValue))
             //                            {
-            //                                Logger.Log($"-- Attribute {att} changed from {lastValue}");
+            //                                Core.Logger.Log($"-- Attribute {att} changed from {lastValue}");
             //                            }
             //                        }
             //                        else
             //                        {
-            //                            Logger.Log($"-- Attribute Added {att}");
+            //                            Core.Logger.Log($"-- Attribute Added {att}");
             //                        }
             //                    }
 
@@ -614,7 +535,7 @@ namespace Trinity.UI
             //                        var lastValue = att.Value.GetValue();
             //                        if (!atts.Items.ContainsKey(att.Key))
             //                        {
-            //                            Logger.Log(
+            //                            Core.Logger.Log(
             //                                $"-- Attribute removed {(ActorAttributeType)att.Key} Value was {lastValue}");
             //                        }
             //                    }
@@ -628,7 +549,7 @@ namespace Trinity.UI
             //}
             //catch (Exception ex)
             //{
-            //    Logger.LogError("Error Starting LazyCache: " + ex);
+            //    Core.Logger.Error("Error Starting LazyCache: " + ex);
             //}
         }
 
@@ -644,26 +565,26 @@ namespace Trinity.UI
                     ZetaDia.Actors.Update();
                     Core.Update();
 
-                    //Logger.Log($"--- Dumping Power Data ---");
+                    //Core.Logger.Log($"--- Dumping Power Data ---");
 
                     //foreach (var power in Core.Hotbar.ActivePowers)
                     //{
-                    //    Logger.Log($"--- Dumping Tags for {power} ---");
+                    //    Core.Logger.Log($"--- Dumping Tags for {power} ---");
                     //    var data = PowerHelper.Instance.GetPowerData(power);
-                    //    data.Tags.ForEach(t => Logger.Log($"{t.Key} = {t.Value}"));
+                    //    data.Tags.ForEach(t => Core.Logger.Log($"{t.Key} = {t.Value}"));
                     //}
 
                     //foreach (var power in Core.Hotbar.PassivePowers)
                     //{
-                    //    Logger.Log($"--- Dumping Tags for {power} ---");
+                    //    Core.Logger.Log($"--- Dumping Tags for {power} ---");
                     //    var data = PowerHelper.Instance.GetPowerData(power);
-                    //    data.Tags.ForEach(t => Logger.Log($"{t.Key} = {t.Value}"));
+                    //    data.Tags.ForEach(t => Core.Logger.Log($"{t.Key} = {t.Value}"));
                     //}
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error Starting LazyCache: " + ex);
+                Core.Logger.Error("Error Starting LazyCache: " + ex);
             }
         }
 
@@ -688,13 +609,13 @@ namespace Trinity.UI
 
             //        var acd = MemoryWrapper.Create<ActorCommonData>(testunit.CommonData.BaseAddress);
             //        var atts = new Trinity.Framework.Objects.Memory.Attributes.Attributes(acd.FastAttributeGroupId);
-            //        Logger.Log($"-- Dumping Attribtues for {acd.Name} (Sno={acd.ActorSnoId} Ann={acd.AnnId}) at {acd.Position} ----");
-            //        Logger.Log(atts + "\r\n");
+            //        Core.Logger.Log($"-- Dumping Attribtues for {acd.Name} (Sno={acd.ActorSnoId} Ann={acd.AnnId}) at {acd.Position} ----");
+            //        Core.Logger.Log(atts + "\r\n");
             //    }
             //}
             //catch (Exception ex)
             //{
-            //    Logger.LogError("Error Starting LazyCache: " + ex);
+            //    Core.Logger.Error("Error Starting LazyCache: " + ex);
             //}
         }
 
@@ -813,12 +734,12 @@ namespace Trinity.UI
                     //}
 
                     //if (count == 0)
-                    //    Logger.Log("No new passive powers were found");
+                    //    Core.Logger.Log("No new passive powers were found");
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogError("Exception: " + ex);
+                Core.Logger.Error("Exception: " + ex);
             }
         }
 
@@ -838,12 +759,12 @@ namespace Trinity.UI
                     Process.Start(logFile);
                 else
                 {
-                    Logger.LogError("Unable to open log file {0} - file does not exist", logFile);
+                    Core.Logger.Error("Unable to open log file {0} - file does not exist", logFile);
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error opening log file: {0} {1}", logFile, ex.Message);
+                Core.Logger.Error("Error opening log file: {0} {1}", logFile, ex.Message);
             }
         }
 
@@ -854,7 +775,7 @@ namespace Trinity.UI
             string logFile = "";
             try
             {
-                using (new AquireFrameHelper())
+                using (ZetaDia.Memory.AcquireFrame())
                 {
                     var nearestActor = ZetaDia.Actors.GetActorsOfType<DiaObject>(true)
                         .Where(a => a.IsFullyValid() && (a is DiaUnit || a is DiaGizmo) && a.CommonData.SummonedByACDId <= 0 &&
@@ -865,7 +786,7 @@ namespace Trinity.UI
 
                     var internalName = NameRegex.Replace(nearestActor.Name, "");
 
-                    Components.Adventurer.Util.Logger.Raw($@"
+                    Core.Logger.Raw($@"
             public static TownActor {internalName} = new TownActor
             {{
                 Name = ""{internalName}"",
@@ -886,7 +807,7 @@ namespace Trinity.UI
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error in LogTownActor: {0} {1}", logFile, ex.Message);
+                Core.Logger.Error("Error in LogTownActor: {0} {1}", logFile, ex.Message);
             }
         }
 
@@ -895,7 +816,7 @@ namespace Trinity.UI
             string logFile = "";
             try
             {
-                using (new AquireFrameHelper())
+                using (ZetaDia.Memory.AcquireFrame())
                 {
                     var uiMapT = UXHelper.UIMapByType;
 
@@ -924,7 +845,7 @@ namespace Trinity.UI
                     //var el = UIElement.FromHash(0xE062F8B5040F3076);
                     //el.Click();
 
-                    //Logger.Warn($"CurrentDifficulty={Core.MemoryModel.Storage.CurrentDifficulty}");
+                    //Core.Logger.Warn($"CurrentDifficulty={Core.MemoryModel.Storage.CurrentDifficulty}");
 
                     //var elName = "Root.NormalLayer.gamemenu_dialog.gamemenu_bkgrnd.GameParams.GameParams.RightButtonStackContainer.Difficulty";
                     //var el = UIElement.FromName(elName);
@@ -935,7 +856,7 @@ namespace Trinity.UI
                     //}
                     //else
                     //{
-                    //    Logger.Log($"UIElement not found {elName}");
+                    //    Core.Logger.Log($"UIElement not found {elName}");
                     //}
 
                     //var elsA = new List<UIElement>();
@@ -958,10 +879,10 @@ namespace Trinity.UI
                     //var test = UIElement.FromHash(3401232850578496395);
                     //var ptr = ZetaDia.Memory.Read<IntPtr>(test.BaseAddress - 0x170);
                     //var difficulty = ZetaDia.Memory.ReadString(ptr, Encoding.UTF8);
-                    //Logger.Warn(difficulty + " (A)");
+                    //Core.Logger.Warn(difficulty + " (A)");
 
                     //var test2 = UIElement.FromHash(17922421684644209059).Text;
-                    //Logger.Warn(test2);
+                    //Core.Logger.Warn(test2);
 
                     //if (el != null)
                     //{
@@ -970,7 +891,7 @@ namespace Trinity.UI
                     //}
                     //else
                     //{
-                    //    Logger.Log($"UIElement not found {elName}");
+                    //    Core.Logger.Log($"UIElement not found {elName}");
                     //}
 
                     //elName = "Root.NormalLayer.gamemenu_dialog.gamemenu_bkgrnd.GameParams.GameParams.RightButtonStackContainer";
@@ -982,7 +903,7 @@ namespace Trinity.UI
                     //}
                     //else
                     //{
-                    //    Logger.Log($"UIElement not found {elName}");
+                    //    Core.Logger.Log($"UIElement not found {elName}");
                     //}
 
                     //Root.NormalLayer.BattleNetStore_main.LayoutRoot.OverlayContainer.CurrencyPurchase.PurchaseButtonStackPanel1.PurchaseButtonTemplate2.TextDefault.PriceBannerTemplate.DiscountBanner;
@@ -990,7 +911,7 @@ namespace Trinity.UI
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error in TestUIElement: {0} {1}", logFile, ex.Message);
+                Core.Logger.Error("Error in TestUIElement: {0} {1}", logFile, ex.Message);
             }
         }
 
@@ -1042,13 +963,13 @@ namespace Trinity.UI
 
             //        var acd = MemoryWrapper.Create<ActorCommonData>(testunit.CommonData.BaseAddress);
             //        var atts = new Trinity.Framework.Objects.Memory.Attributes.Attributes(acd.FastAttributeGroupId);
-            //        Logger.Log($"-- Dumping Attribtues for {acd.Name} (Sno={acd.ActorSnoId} Ann={acd.AnnId}) at {acd.Position} ----");
-            //        Logger.Log(atts + "\r\n");
+            //        Core.Logger.Log($"-- Dumping Attribtues for {acd.Name} (Sno={acd.ActorSnoId} Ann={acd.AnnId}) at {acd.Position} ----");
+            //        Core.Logger.Log(atts + "\r\n");
             //    }
             //}
             //catch (Exception ex)
             //{
-            //    Logger.LogError("Error Starting LazyCache: " + ex);
+            //    Core.Logger.Error("Error Starting LazyCache: " + ex);
             //}
         }
 
@@ -1060,7 +981,7 @@ namespace Trinity.UI
             var acdId = ZetaDia.Me.ACDId;
 
             //var root = ZetaDia.Me.CommonData.GetAttribute<int>(ActorAttributeType.RootTotalTicks);
-            //Logger.Log("Root Ticks {0}", root);
+            //Core.Logger.Log("Root Ticks {0}", root);
 
             //[TrinityPlugin 2.14.34] Unit FallenGrunt_A-69336 has MonsterAffix_IllusionistCast (PowerBuff0VisualEffectNone)
 
@@ -1075,7 +996,7 @@ namespace Trinity.UI
                     {
                         if (!existingAtts.Contains(att) || att.ToString().ToLower().Contains("time") || att.ToString().ToLower().Contains("tick"))
                         {
-                            Logger.Log("Unit {0} ({4}) has gained {1} (i:{2} f:{3:00.00000})", testunit.Name, att.ToString(), attiResult, attfResult, testunit.ActorSnoId);
+                            Core.Logger.Log("Unit {0} ({4}) has gained {1} (i:{2} f:{3:00.00000})", testunit.Name, att.ToString(), attiResult, attfResult, testunit.ActorSnoId);
                             existingAtts.Add(att);
                         }
                     }
@@ -1085,12 +1006,12 @@ namespace Trinity.UI
                         //var acdIdResult = testunit.CommonData.GetAttribute<int>((acdId << 12) + ((int)att & 0xFFF));
                         //if (annIdResult > 0 || acdIdResult > 0)
                         //{
-                        //    Logger.Log("Unit {0} ({4}) has ACD/ANN ATTR {1} (acd{2} ann:{3})", testunit.Name, att.ToString(), annIdResult, acdIdResult, testunit.ActorSnoId);
+                        //    Core.Logger.Log("Unit {0} ({4}) has ACD/ANN ATTR {1} (acd{2} ann:{3})", testunit.Name, att.ToString(), annIdResult, acdIdResult, testunit.ActorSnoId);
                         //}
 
                         if (existingAtts.Contains(att))
                         {
-                            Logger.Log("Unit {0} ({4}) has lost {1} (i:{2} f:{3:00.00000})", testunit.Name, att.ToString(), attiResult, attfResult, testunit.ActorSnoId);
+                            Core.Logger.Log("Unit {0} ({4}) has lost {1} (i:{2} f:{3:00.00000})", testunit.Name, att.ToString(), attiResult, attfResult, testunit.ActorSnoId);
                             existingAtts.Remove(att);
                         }
                     }
@@ -1119,7 +1040,7 @@ namespace Trinity.UI
                     {
                         if (testunit.CommonData.GetAttribute<int>(((int)power << 12) + ((int)buffattr & 0xFFF)) == 1)
                         {
-                            Logger.Log("Unit {0} has {1} ({2})", testunit.Name, power, buffattr);
+                            Core.Logger.Log("Unit {0} has {1} ({2})", testunit.Name, power, buffattr);
                         }
                     }
                     catch (Exception)
@@ -1139,7 +1060,7 @@ namespace Trinity.UI
                         var result = testunit.CommonData.GetAttribute<int>((int)timeAttr & ((1 << 12) - 1) | ((int)power << 12));
                         if (result > 1)
                         {
-                            Logger.Log("Unit {0} has {1} ({2}) Value={3}", testunit.Name, power, timeAttr, result);
+                            Core.Logger.Log("Unit {0} has {1} ({2}) Value={3}", testunit.Name, power, timeAttr, result);
                         }
                     }
                     catch (Exception)
@@ -1160,7 +1081,7 @@ namespace Trinity.UI
             //        var result = testunit.CommonData.GetAttribute<int>((int)ActorAttributeType.PowerCooldown & ((1 << 12) - 1) | ((int)power << 12));
             //        if (result > 0)
             //        {
-            //            Logger.Log("Unit {0} has {1} ({2}) Value={3}", testunit.Name, power, timeAttr, result);
+            //            Core.Logger.Log("Unit {0} has {1} ({2}) Value={3}", testunit.Name, power, timeAttr, result);
             //        }
             //    }
             //    catch (Exception)
@@ -1168,7 +1089,7 @@ namespace Trinity.UI
             //    }
             //}
 
-            //Logger.Log("),"testunit.CommonData.GetAttribute<int>((SNOPower.None << 12) + ((int)ActorAttributeType.None & 0xFFF)));
+            //Core.Logger.Log("),"testunit.CommonData.GetAttribute<int>((SNOPower.None << 12) + ((int)ActorAttributeType.None & 0xFFF)));
         }
 
         private static void StopTestHandler(object sender, RoutedEventArgs routedEventArgs)
@@ -1179,7 +1100,7 @@ namespace Trinity.UI
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error Starting LazyCache: " + ex);
+                Core.Logger.Error("Error Starting LazyCache: " + ex);
             }
         }
 
@@ -1191,7 +1112,7 @@ namespace Trinity.UI
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error Starting LazyCache: " + ex);
+                Core.Logger.Error("Error Starting LazyCache: " + ex);
             }
         }
 
@@ -1203,7 +1124,7 @@ namespace Trinity.UI
         //    }
         //    catch (Exception ex)
         //    {
-        //        Logger.LogError("Error Starting LazyCache: " + ex);
+        //        Core.Logger.Error("Error Starting LazyCache: " + ex);
         //    }
         //}
 
@@ -1211,19 +1132,19 @@ namespace Trinity.UI
         {
             try
             {
-                Logger.Log("Starting");
+                Core.Logger.Log("Starting");
 
                 CoroutineHelper.RunCoroutine(() => CubeRaresToLegendary.Execute());
 
-                Logger.Log("Finished");
+                Core.Logger.Log("Finished");
             }
             catch (Exception ex)
             {
-                Logger.LogError("Exception: " + ex);
+                Core.Logger.Error("Exception: " + ex);
             }
         }
 
-        private static void UpgradeBackpackRares(object sender, RoutedEventArgs routedEventArgs)
+        private static void RunUpgradeBackpackRares(object sender, RoutedEventArgs routedEventArgs)
         {
             try
             {
@@ -1231,54 +1152,35 @@ namespace Trinity.UI
 
                 CoroutineHelper.RunCoroutine(
                     () => CubeRaresToLegendary.Execute(alltypes),
-                    result => true); //!CubeRaresToLegendary.CanRun());
+                    result => !CubeRaresToLegendary.CanRun());
             }
             catch (Exception ex)
             {
-                Logger.LogError("Exception: " + ex);
+                Core.Logger.Error("Exception: " + ex);
             }
         }
 
-        private static void ExtractBackpackPowers(object sender, RoutedEventArgs routedEventArgs)
+        private static void RunExtractLegendaryPowers(object sender, RoutedEventArgs routedEventArgs)
         {
             try
             {
-                // todo figure out why the first time cache doesnt update properly
-                //Core.ForcedUpdate();
+                CoroutineHelper.RunCoroutine(ExtractLegendaryPowers.Execute);
+            }
+            catch (Exception ex)
+            {
+                Core.Logger.Error("Exception: " + ex);
+            }
+        }
 
+        private static void RunExtractBackpackPowers(object sender, RoutedEventArgs routedEventArgs)
+        {
+            try
+            {
                 CoroutineHelper.RunCoroutine(ExtractLegendaryPowers.ExtractAllBackpack);
             }
             catch (Exception ex)
             {
-                Logger.LogError("Exception: " + ex);
-            }
-        }
-
-        private static void btnClick_Test1(object sender, RoutedEventArgs routedEventArgs)
-        {
-            try
-            {
-                Logger.Log("Starting");
-
-                using (ZetaDia.Memory.AcquireFrame())
-                {
-                    ZetaDia.Actors.Update();
-
-                    foreach (var item in InventoryManager.Backpack)
-                    {
-                        var stackHi = item.GetAttribute<int>(ActorAttributeType.ItemStackQuantityHi);
-                        var stackLo = item.GetAttribute<int>(ActorAttributeType.ItemStackQuantityLo);
-
-                        Logger.Log("Item: {0} {1} ItemStackQuantity={2} StackHi={3} StackLo={4}",
-                            item.Name, item.ACDId, item.ItemStackQuantity, stackHi, stackLo);
-                    }
-                }
-
-                Logger.Log("Finished");
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("Exception: " + ex);
+                Core.Logger.Error("Exception: " + ex);
             }
         }
 
@@ -1286,15 +1188,15 @@ namespace Trinity.UI
         {
             try
             {
-                Logger.Log("Starting Conversion of Backpack VeiledCrystals to Magic Dust.");
+                Core.Logger.Log("Starting Conversion of Backpack VeiledCrystals to Magic Dust.");
 
                 var result = ConvertMaterials(new[] { InventoryItemType.VeiledCrystal, InventoryItemType.ReusableParts }, InventoryItemType.ArcaneDust);
 
-                Logger.Log("Finished Result={0}", result);
+                Core.Logger.Log("Finished Result={0}", result);
             }
             catch (Exception ex)
             {
-                Logger.LogError("Exception: " + ex);
+                Core.Logger.Error("Exception: " + ex);
             }
         }
 
@@ -1329,7 +1231,7 @@ namespace Trinity.UI
             //    {
             //        if (DateTime.UtcNow.Subtract(startTime).TotalSeconds > 30)
             //        {
-            //            Logger.LogError("ConvertMaterials timed out");
+            //            Core.Logger.Error("ConvertMaterials timed out");
             //            break;
             //        }
             //        Thread.Sleep(500);
@@ -1343,7 +1245,7 @@ namespace Trinity.UI
         {
             if (DateTime.UtcNow.Subtract(LastStartedConvert).TotalSeconds > 20)
             {
-                Logger.LogError("Timeout");
+                Core.Logger.Error("Timeout");
                 return true;
             }
             return false;
@@ -1353,15 +1255,15 @@ namespace Trinity.UI
         {
             try
             {
-                Logger.Log("Starting Conversion of Backpack VeiledCrystals to ReusableParts");
+                Core.Logger.Log("Starting Conversion of Backpack VeiledCrystals to ReusableParts");
 
                 var result = ConvertMaterials(new[] { InventoryItemType.ArcaneDust, InventoryItemType.VeiledCrystal }, InventoryItemType.ReusableParts);
 
-                Logger.Log("Finished Result={0}", result);
+                Core.Logger.Log("Finished Result={0}", result);
             }
             catch (Exception ex)
             {
-                Logger.LogError("Exception: " + ex);
+                Core.Logger.Error("Exception: " + ex);
             }
         }
 
@@ -1369,15 +1271,15 @@ namespace Trinity.UI
         {
             try
             {
-                Logger.Log("Starting Conversion of Backpack ReusableParts/ArcaneDust to VeiledCrystals");
+                Core.Logger.Log("Starting Conversion of Backpack ReusableParts/ArcaneDust to VeiledCrystals");
 
                 var result = ConvertMaterials(new[] { InventoryItemType.ArcaneDust, InventoryItemType.ReusableParts }, InventoryItemType.VeiledCrystal);
 
-                Logger.Log("Finished Result={0}", result);
+                Core.Logger.Log("Finished Result={0}", result);
             }
             catch (Exception ex)
             {
-                Logger.LogError("Exception: " + ex);
+                Core.Logger.Error("Exception: " + ex);
             }
         }
 
@@ -1385,14 +1287,14 @@ namespace Trinity.UI
         {
             //try
             //{
-            //    Logger.Log("Starting Conversion of Backpack VeiledCrystals to ArcaneDust");
+            //    Core.Logger.Log("Starting Conversion of Backpack VeiledCrystals to ArcaneDust");
 
             //    var from = InventoryItemType.VeiledCrystal;
             //    var to = InventoryItemType.ArcaneDust;
 
             //    if (!UIElements.TransmuteItemsDialog.IsVisible || !Coroutines.Town.ConvertMaterials.CanRun(from, to))
             //    {
-            //        Logger.LogError("You need to have the cube window open and all the required materials in your backpack.");
+            //        Core.Logger.Error("You need to have the cube window open and all the required materials in your backpack.");
             //        return;
             //    }
 
@@ -1400,11 +1302,11 @@ namespace Trinity.UI
 
             //    CoroutineHelper.RunCoroutine(() => Coroutines.Town.ConvertMaterials.Execute(from, to), result => !Coroutines.Town.ConvertMaterials.CanRun(from, to) || CheckConvertTimeout());
 
-            //    Logger.Log("Finished");
+            //    Core.Logger.Log("Finished");
             //}
             //catch (Exception ex)
             //{
-            //    Logger.LogError("Exception: " + ex);
+            //    Core.Logger.Error("Exception: " + ex);
             //}
         }
 
@@ -1415,14 +1317,14 @@ namespace Trinity.UI
                 //[1E8E8E20] Last clicked: 0x80E63C97B008F590, Name: Root.NormalLayer.vendor_dialog_mainPage.training_dialog
                 //[1E94FCC0] Mouseover: 0x244BD04C84DF92F1, Name: Root.NormalLayer.vendor_dialog_mainPage
 
-                using (new AquireFrameHelper())
+                using (ZetaDia.Memory.AcquireFrame())
                 {
                     UIElement.FromHash(0x244BD04C84DF92F1).FindDecedentsWithText("jeweler");
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error btnClick_ScanUIElement:" + ex);
+                Core.Logger.Error("Error btnClick_ScanUIElement:" + ex);
             }
         }
 
@@ -1435,7 +1337,7 @@ namespace Trinity.UI
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error showing Configuration from TabUI:" + ex);
+                Core.Logger.Error("Error showing Configuration from TabUI:" + ex);
             }
         }
 
@@ -1447,7 +1349,7 @@ namespace Trinity.UI
             }
             catch (Exception ex)
             {
-                Logger.LogError("DumpBuildEventHandler: " + ex);
+                Core.Logger.Error("DumpBuildEventHandler: " + ex);
             }
         }
 
@@ -1459,7 +1361,7 @@ namespace Trinity.UI
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error logging new items:" + ex);
+                Core.Logger.Error("Error logging new items:" + ex);
             }
         }
 
@@ -1471,7 +1373,7 @@ namespace Trinity.UI
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error sorting backpack:" + ex);
+                Core.Logger.Error("Error sorting backpack:" + ex);
             }
         }
 
@@ -1479,7 +1381,7 @@ namespace Trinity.UI
         {
             try
             {
-                using (new AquireFrameHelper())
+                using (ZetaDia.Memory.AcquireFrame())
                 {
                     InventoryManager.Backpack.Where(i => i.ItemQualityLevel == ItemQuality.Legendary).ForEach(i => i.Drop());
 
@@ -1489,7 +1391,7 @@ namespace Trinity.UI
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error dropping legendaries:" + ex);
+                Core.Logger.Error("Error dropping legendaries:" + ex);
             }
         }
 
@@ -1497,14 +1399,14 @@ namespace Trinity.UI
         {
             try
             {
-                Logger.Log("This must be started with stash open.");
-                Logger.Warn("Please wait - this may take up to 30 seconds before starting.");
+                Core.Logger.Log("This must be started with stash open.");
+                Core.Logger.Warn("Please wait - this may take up to 30 seconds before starting.");
 
                 ItemSort.SortStash();
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error dropping legendaries:" + ex);
+                Core.Logger.Error("Error dropping legendaries:" + ex);
             }
         }
 
@@ -1512,7 +1414,7 @@ namespace Trinity.UI
         {
             try
             {
-                Logger.Log("This feature has been disabled");
+                Core.Logger.Log("This feature has been disabled");
                 return;
 
                 //var result = MessageBox.Show("Are you sure? This may remove and salvage/sell items from your stash! Permanently!", "Clean Stash Confirmation",
@@ -1525,7 +1427,7 @@ namespace Trinity.UI
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error Cleaning Stash:" + ex);
+                Core.Logger.Error("Error Cleaning Stash:" + ex);
             }
         }
 
@@ -1602,7 +1504,7 @@ namespace Trinity.UI
         private static readonly SolidColorBrush BackgroundBrush = new SolidColorBrush(Color.FromRgb(67, 67, 67));
         private static Dictionary<int, AttributeItem> _lastAtts;
         private static int _lastAnn;
-        private static MemoryAnalysis.FlagComparison<UXControlFlags> _overflagComparison;
+        //private static MemoryAnalysis.FlagComparison<UXControlFlags> _overflagComparison;
 
         private static void CreateGroup(string title, List<Control> items)
         {

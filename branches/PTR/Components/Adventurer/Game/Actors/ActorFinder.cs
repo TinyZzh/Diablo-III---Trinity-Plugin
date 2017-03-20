@@ -1,11 +1,11 @@
 ﻿using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
-using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Coroutines;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Adventurer.Game.Rift;
-using Trinity.Components.Adventurer.Util;
 using Zeta.Bot.Settings;
 using Zeta.Common;
 using Zeta.Game;
@@ -42,7 +42,7 @@ namespace Trinity.Components.Adventurer.Game.Actors
 
             if (_radiusChangeCount >= 2)
             {
-                Util.Logger.Info("[ActorFinder] It looks like we couldn't path to the destination, lowering the search radius (New Radius = {0})", radius);
+                Core.Logger.Log("[ActorFinder] It looks like we couldn't path to the destination, lowering the search radius (New Radius = {0})", radius);
                 _radiusChangeCount = 0;
             }
             _radiusChangeCount++;
@@ -52,7 +52,7 @@ namespace Trinity.Components.Adventurer.Game.Actors
 
         public static Vector3 FindNearestHostileUnitInRadius(Vector3 center, float radius)
         {
-            using (new PerformanceLogger())
+            using (new PerformanceLogger("FindNearestHostileUnitInRadius"))
             {
                 try
                 {
@@ -176,7 +176,7 @@ namespace Trinity.Components.Adventurer.Game.Actors
         }
 
         //public static Func<DiaObject, bool> CanPathTo = actor
-        //    => actor.Distance < 10f || ((AdvDia.Navigator as DefaultNavigationProvider)?.CanPathWithinDistance(actor.Position, 10f).Result ?? false);
+        //    => actor.Distance < 10f || ((AdvDia.Navigator as Navigator)?.CanPathWithinDistance(actor.Position, 10f).Result ?? false);
 
         public static bool IsFullyValid<T>(this T actor) where T : DiaObject
         {

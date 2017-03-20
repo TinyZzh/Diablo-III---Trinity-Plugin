@@ -1,4 +1,5 @@
 ﻿using System;
+using Trinity.Framework;
 using System.Linq;
 using System.Threading.Tasks;
 using Trinity.Components.Adventurer.Game.Combat;
@@ -36,7 +37,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                 if (_state == value) return;
                 if (value != States.NotStarted)
                 {
-                    Util.Logger.Info("[ClearLevelArea] " + value);
+                    Core.Logger.Log("[ClearLevelArea] " + value);
                 }
                 _state = value;
             }
@@ -149,7 +150,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             HostileSearchTimer.Reset();
 
             if (actor == null) return Vector3.Zero;
-            Util.Logger.Debug("[ClearLevelArea] Found a hostile unit {0} at {1} distance", ((SNOActor)actor.ActorSnoId).ToString(), actor.Distance);
+            Core.Logger.Debug("[ClearLevelArea] Found a hostile unit {0} at {1} distance", ((SNOActor)actor.ActorSnoId).ToString(), actor.Distance);
             return actor.Position;
         }
     }

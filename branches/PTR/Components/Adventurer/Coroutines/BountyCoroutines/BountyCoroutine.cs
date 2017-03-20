@@ -1,10 +1,9 @@
 using Buddy.Coroutines;
 using System;
+using Trinity.Framework;
 using System.Threading.Tasks;
-using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Game.Quests;
-using Trinity.Components.Adventurer.Util;
 using Zeta.Common.Helpers;
 using Zeta.Game;
 
@@ -88,7 +87,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
                 if (_state == value) return;
                 if (value != States.NotStarted)
                 {
-                    Logger.Debug("[Bounty] " + value);
+                    Core.Logger.Debug("[Bounty] " + value);
                 }
                 _logStateChange = true;
                 _state = value;
@@ -112,15 +111,12 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
                     return await NotStarted();
 
                 case States.TakingWaypoint:
-                    if (_logStateChange) { _logStateChange = false; Logger.Log(LogLevel.Overlay, "[Bounty] Using waypoint {0}", BountyData.WaypointNumber); }
                     return await TakingWaypoint();
 
                 case States.InZone:
-                    if (_logStateChange) { _logStateChange = false; Logger.Log(LogLevel.Overlay, "[Bounty] Reached starting zone"); }
                     return await InZone();
 
                 case States.BountyMain:
-                    if (_logStateChange) { _logStateChange = false; Logger.Log(LogLevel.Overlay, "[Bounty] Executing main routine"); }
                     return await BountyMain();
 
                 case States.Completed:
@@ -158,14 +154,14 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             if (Stats.EndTime == default(DateTime))
                 Stats.EndTime = DateTime.UtcNow;
 
-            Logger.Log(LogLevel.Overlay, "[Bounty] Starting {0} ({1})", QuestData.Name, QuestId);
+            Core.Logger.Log("[Bounty] Starting {0} ({1})", QuestData.Name, QuestId);
             if (IsInZone)
             {
                 State = States.InZone;
             }
             else
             {
-                Logger.Debug("[Bounty] Using waypoint to reach one of the bounty LevelAreaSnoIdIds: {0}", string.Join(", ", BountyData.LevelAreaIds));
+                Core.Logger.Debug("[Bounty] Using waypoint to reach one of the bounty LevelAreaSnoIdIds: {0}", string.Join(", ", BountyData.LevelAreaIds));
                 State = States.TakingWaypoint;
             }
             return false;
@@ -204,7 +200,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             {
                 Stats.EndTime = DateTime.UtcNow;
                 Stats.IsCompleted = true;
-                Logger.Log(LogLevel.Overlay, "[Bounty] Completed {0} ({1}) Time {2:hh\\:mm\\:ss}", QuestData.Name, QuestId, Stats.EndTime - Stats.StartTime);
+                Core.Logger.Log("[Bounty] Completed {0} ({1}) Time {2:hh\\:mm\\:ss}", QuestData.Name, QuestId, Stats.EndTime - Stats.StartTime);
                 currentRandomizedBounty = -1;
             }
 
@@ -213,7 +209,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
 
         private async Task<bool> Failed()
         {
-            Logger.Error("[Bounty] Failed {0} ({1})", QuestData.Name, QuestId);
+            Core.Logger.Error("[Bounty] Failed {0} ({1})", QuestData.Name, QuestId);
             _isDone = true;
             Stats.EndTime = DateTime.UtcNow;
             Stats.IsFailed = true;
@@ -236,7 +232,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             //{
             //    if (!IsInZone && State != States.TakingWaypoint)
             //    {
-            //        Logger.Info("[Bounty] Looks like we left the bounty zone, returning");
+            //        Core.Logger.Log("[Bounty] Looks like we left the bounty zone, returning");
             //        State = States.TakingWaypoint;
             //    }
             //}

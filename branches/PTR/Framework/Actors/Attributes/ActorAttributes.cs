@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using Trinity.Framework.Objects.Memory;
-using Trinity.Framework.Objects.Memory.Attributes;
 using Zeta.Game.Internals.Actors;
 
 namespace Trinity.Framework.Actors.Attributes
 {
-    public class ActorAttributes : Objects.Memory.Attributes.Attributes
+    public class ActorAttributes : Objects.Memory.Attributes
     {
         public ActorAttributes()
         {

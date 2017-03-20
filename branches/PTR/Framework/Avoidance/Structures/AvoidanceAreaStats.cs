@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using Trinity.Framework.Helpers;
+using System.Collections.Generic;
+using Trinity.Framework.Grid;
 
 namespace Trinity.Framework.Avoidance.Structures
 {

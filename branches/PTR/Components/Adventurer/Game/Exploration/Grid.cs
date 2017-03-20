@@ -1,9 +1,8 @@
 ﻿using System;
+using Trinity.Framework;
 using System.Collections.Generic;
 using System.Linq;
-using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Exploration.Algorithms;
-using Trinity.Framework;
 using Zeta.Common;
 using Zeta.Game;
 
@@ -44,7 +43,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
             var worldId = ZetaDia.Globals.WorldId;
             //if (InnerGrid == null)
             //{
-            Util.Logger.Debug("[{0}] Creating grid [{1},{1}] ZetaWorldId={2} AdvDiaWorldId={3}", GetType().Name, GridBounds, worldId, AdvDia.CurrentWorldDynamicId);
+            Core.Logger.Debug("[{0}] Creating grid [{1},{1}] ZetaWorldId={2} AdvDiaWorldId={3}", GetType().Name, GridBounds, worldId, AdvDia.CurrentWorldDynamicId);
 
             InnerGrid = new SplitArray<T>(GridBounds, GridBounds);
             WorldDynamicId = AdvDia.CurrentWorldDynamicId;
@@ -52,7 +51,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
             var currentScenes = ScenesStorage.CurrentWorldScenes;
             if (currentScenes.Any() && currentScenes.First().DynamicWorldId == worldId)
             {
-                Util.Logger.Debug("[{0}] Importing Current World Data from SceneStorage", GetType().Name);
+                Core.Logger.Debug("[{0}] Importing Current World Data from SceneStorage", GetType().Name);
                 Update(ScenesStorage.CreateSceneData(currentScenes, currentScenes.First().DynamicWorldId));
             }
 
@@ -62,7 +61,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
 
         public void Update(ISceneData newNodes)
         {
-            Util.Logger.DebugSetting($"Update called for {this.GetType().Name}");
+            Core.Logger.Debug($"Update called for {this.GetType().Name}");
 
             var sceneData = newNodes as SceneData;
             if (sceneData != null)
@@ -81,7 +80,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
 
         protected void UpdateInnerGrid(IEnumerable<INode> nodes)
         {
-            Util.Logger.Verbose("[{0}] Updating grid with {1} new nodes", GetType().Name, nodes.Count());
+            Core.Logger.Verbose("[{0}] Updating grid with {1} new nodes", GetType().Name, nodes.Count());
 
             //nodes = nodes.OrderBy(n => n.Center.X).ThenBy(n => n.Center.Y).ToList();
 
@@ -91,7 +90,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
             {
                 if (node.DynamicWorldId != worldId)
                 {
-                    Util.Logger.Debug("[{0}] A node has different worldId than current world, skipping", GetType().Name);
+                    Core.Logger.Debug("[{0}] A node has different worldId than current world, skipping", GetType().Name);
                     return;
                 }
 
@@ -110,7 +109,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
             BaseSize = (int)Math.Round(BoxSize / 4, MidpointRounding.AwayFromZero);
         }
 
-        public T NearestNode => GetNearestNode(Core.Player.Position);
+        public T NearestNode => GetNearestNode(Core.Actors.ActivePlayerPosition);
 
         //public T GetNearestNode(Vector3 position)
         //{

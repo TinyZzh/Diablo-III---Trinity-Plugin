@@ -1,5 +1,5 @@
 ﻿using System;
-using Trinity.Components.Adventurer.Cache;
+using Trinity.Framework;
 using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Adventurer.Game.Quests;
@@ -41,18 +41,20 @@ namespace Trinity.Components.Adventurer.Game.Events
         {
             if (!Adventurer.IsAdventurerTagRunning())
             {
-                Logger.Debug("[BotEvents] Reseting the grids.");
+                Core.Logger.Debug("[BotEvents] Reseting the grids.");
                 ScenesStorage.Reset();
             }
             WorldChangeTime = PluginTime.CurrentMillisecond;
-            Logger.Debug("[BotEvents] World has changed to WorldId: {0} LevelAreaSnoIdId: {1}", AdvDia.CurrentWorldId, AdvDia.CurrentLevelAreaId);
+            Core.Logger.Debug("[BotEvents] World has changed to WorldId: {0} LevelAreaSnoIdId: {1}", AdvDia.CurrentWorldId, AdvDia.CurrentLevelAreaId);
             EntryPortals.AddEntryPortal();
         }
 
         public static void GameEvents_OnGameJoined(object sender, EventArgs e)
         {
-            ScenesStorage.Reset();
-            //AdvDia.Update();
+            if (ScenesStorage.CurrentScene?.LevelAreaId != ZetaDia.CurrentLevelAreaSnoId)
+            {
+                ScenesStorage.Reset();
+            }
         }
 
         public static void OnBotStart(IBot bot)

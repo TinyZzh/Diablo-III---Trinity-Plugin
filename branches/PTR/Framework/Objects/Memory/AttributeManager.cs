@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Trinity.Framework.Helpers;
-using Trinity.Framework.Objects.Memory.Containers;
 using Zeta.Game;
 
-namespace Trinity.Framework.Objects.Memory.Attributes
+namespace Trinity.Framework.Objects.Memory
 {
     public class AttributeManager : MemoryWrapper
     {
@@ -52,7 +51,7 @@ namespace Trinity.Framework.Objects.Memory.Attributes
                 }
                 if (!IsValid)
                 {
-                    Logger.LogError("Failed to find AttributeGroupManager");
+                    Core.Logger.Error("Failed to find AttributeGroupManager");
                     return null;
                 }
                 return _attributeGroups;

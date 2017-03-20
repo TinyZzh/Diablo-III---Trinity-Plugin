@@ -1,10 +1,10 @@
 ﻿using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Events;
-using Trinity.Components.Adventurer.Game.Exploration.Algorithms;
 using Zeta.Common;
 using Zeta.Game;
 
@@ -142,7 +142,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
                     WalkableNodes.Add(node);
             }
 
-            Util.Logger.Debug("[ExplorationGrid] Updated WalkableNodes={0}", WalkableNodes.Count);
+            Core.Logger.Debug("[ExplorationGrid] Updated WalkableNodes={0}", WalkableNodes.Count);
         }
     }
 }

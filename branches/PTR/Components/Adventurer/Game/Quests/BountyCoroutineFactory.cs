@@ -1,9 +1,10 @@
 using System.Collections.Generic;
-using System.Linq;
+using System.Linq; using Trinity.Framework;
 using Trinity.Components.Adventurer.Coroutines.BountyCoroutines;
-using Trinity.Components.Adventurer.Util;
+using Trinity.Framework.Helpers;
 using Zeta.Game;
 using Zeta.Game.Internals;
+
 
 namespace Trinity.Components.Adventurer.Game.Quests
 {
@@ -38,12 +39,12 @@ namespace Trinity.Components.Adventurer.Game.Quests
             var bountyData = BountyDataFactory.GetBountyData((int)bountyInfo.Quest);
             if (bountyData == null)
             {
-                Logger.Info("Unsupported bounty: {0} - {1}", (int)bountyInfo.Quest, bountyInfo.Info.DisplayName);
+                Core.Logger.Log("Unsupported bounty: {0} - {1}", (int)bountyInfo.Quest, bountyInfo.Info.DisplayName);
                 return null;
             }
             //if (bountyData.QuestType != BountyQuestType.SpecialEvent)
             //{
-            //    Logger.Debug("Skipping bounty: {0} - {1}", (int)bountyInfo.Quest, bountyInfo.Info.DisplayName);
+            //    Core.Logger.Debug("Skipping bounty: {0} - {1}", (int)bountyInfo.Quest, bountyInfo.Info.DisplayName);
             //    return null;
             //}
 
@@ -58,7 +59,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
 
             //if (Bounties.TryGetValue((int)bountyInfo.Quest, out bounty))
             //{
-            //    Logger.Debug("[BountyFactory] Returning hardcoded bounty:" + bounty.QuestData.Name);
+            //    Core.Logger.Debug("[BountyFactory] Returning hardcoded bounty:" + bounty.QuestData.Name);
             //}
 
             // Try to get the kill bounty
@@ -66,19 +67,19 @@ namespace Trinity.Components.Adventurer.Game.Quests
             //// Try to get the kill bounty
             //if (bounty == null && bountyInfo.Info.DisplayName.Replace("Bounty: ", string.Empty).StartsWith("Kill ") && TryGetKillBounty((int)bountyInfo.Quest, out bounty))
             //{
-            //    Logger.Debug("[BountyFactory] Returning generated bounty:" + bounty.QuestData.Name);
+            //    Core.Logger.Debug("[BountyFactory] Returning generated bounty:" + bounty.QuestData.Name);
             //}
 
             // Try to get the clear bounty
             //if (bounty == null && bountyInfo.Info.DisplayName.Replace("Bounty: ", string.Empty).StartsWith("Clear ") && TryGetClearBounty((int)bountyInfo.Quest, out bounty))
             //{
-            //    Logger.Debug("[BountyFactory] Returning generated bounty:" + bounty.QuestData.Name);
+            //    Core.Logger.Debug("[BountyFactory] Returning generated bounty:" + bounty.QuestData.Name);
             //}
 
             //// Try to get the curse bounty
             //if (bounty == null && bountyInfo.Info.DisplayName.Replace("Bounty: ", string.Empty).StartsWith("The Cursed") && bountyInfo.Quest != SNOQuest.X1_Bounty_A5_PandExt_Event_CursedCrystals && TryGetCursedBounty((int)bountyInfo.Quest, out bounty))
             //{
-            //    Logger.Debug("[BountyFactory] Returning generated bounty:" + bounty.QuestData.Name);
+            //    Core.Logger.Debug("[BountyFactory] Returning generated bounty:" + bounty.QuestData.Name);
             //}
 
             if (bounty == null)
@@ -88,7 +89,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
                 //    return null;
                 //if (bounty.QuestData.QuestType != BountyQuestType.KillMonster && bounty.QuestData.QuestType != BountyQuestType.ClearZone)
                 //    return null;
-                Logger.Debug("[BountyFactory] Returning generic bounty:" + bounty.QuestData.Name);
+                Core.Logger.Debug("[BountyFactory] Returning generic bounty:" + bounty.QuestData.Name);
             }
 
             if (bounty != null)

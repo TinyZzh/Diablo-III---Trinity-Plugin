@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Runtime.Serialization;
 using Trinity.Framework.Actors.ActorTypes;
-using Trinity.Reference;
+using Trinity.Framework.Reference;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
 

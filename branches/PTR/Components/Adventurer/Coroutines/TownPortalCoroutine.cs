@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Trinity.Components.Adventurer.Cache;
+using Trinity.Framework;
 using Zeta.Bot.Coroutines;
 using Zeta.Bot.Navigation;
 using Zeta.Common;
@@ -51,7 +51,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                 if (_state == value) return;
                 if (value != States.NotStarted)
                 {
-                    Util.Logger.Debug("[TownPortal] " + value);
+                    Core.Logger.Debug("[TownPortal] " + value);
                 }
                 _state = value;
             }

@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using Trinity.Framework;
+using System.Collections.Generic;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Objects;
-using Trinity.Reference;
+using Trinity.Framework.Reference;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;

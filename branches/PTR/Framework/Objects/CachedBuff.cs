@@ -1,8 +1,7 @@
 ﻿using System;
-using Trinity.Framework.Helpers;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 
 namespace Trinity.Framework.Objects
 {
@@ -25,7 +24,7 @@ namespace Trinity.Framework.Objects
             }
             catch (Exception ex)
             {
-                Logger.LogVerbose("Exception finding buff VariantId {0}", ex);
+                Core.Logger.Verbose("Exception finding buff VariantId {0}", ex);
             }
 
             _buff = buff;
@@ -66,10 +65,7 @@ namespace Trinity.Framework.Objects
                 _buff.Cancel();
         }
 
-        public override string ToString()
-        {
-            return ToStringReflector.GetObjectString(this);
-        }
+        public override string ToString() => InternalName;
 
         public override int GetHashCode()
         {

@@ -1,6 +1,5 @@
 ﻿using System.Linq;
-
-namespace Trinity.Framework.Objects.Memory.UX
+namespace Trinity.Framework.Objects.Memory
 {
     public class UXReference : MemoryWrapper
     {

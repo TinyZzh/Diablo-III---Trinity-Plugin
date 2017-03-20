@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-
 namespace Trinity.Framework.Helpers
 {
     public class ConcurrentCache<TK, TCacheValue, TSourceValue> : IEnumerable<TCacheValue>

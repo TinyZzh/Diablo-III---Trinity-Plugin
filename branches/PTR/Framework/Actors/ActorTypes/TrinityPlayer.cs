@@ -1,9 +1,9 @@
 using System;
+using Trinity.Framework.Helpers;
 using Trinity.Components.Combat;
 using Trinity.Components.Combat.Resources;
 using Trinity.Framework.Actors.Attributes;
 using Trinity.Framework.Actors.Properties;
-using Trinity.Framework.Helpers;
 using Zeta.Game;
 
 namespace Trinity.Framework.Actors.ActorTypes

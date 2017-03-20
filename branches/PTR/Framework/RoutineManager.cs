@@ -1,19 +1,14 @@
 ﻿using System;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Trinity.Components.Combat;
-using Trinity.Framework.Actors.ActorTypes;
-using Trinity.Framework.Helpers;
+using Trinity.Framework.Events;
 using Trinity.Framework.Helpers.AutoFollow.Resources;
 using Trinity.Framework.Objects;
-using Trinity.Reference;
+using Trinity.Framework.Reference;
 using Trinity.Routines;
-using Trinity.Routines.Wizard;
 using Trinity.Settings;
-using Trinity.UI;
-using Trinity.UI.UIComponents;
-using Zeta.Bot;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
 
@@ -33,7 +28,7 @@ namespace Trinity.Framework
 
         private void Initialize()
         {
-            Logger.Log($"RoutineManager Initializing from thread {Thread.CurrentThread.ManagedThreadId}");
+            Core.Logger.Log($"RoutineManager Initializing from thread {Thread.CurrentThread.ManagedThreadId}");
 
             _routineLoader = new InterfaceLoader<IRoutine>();
             _routineLoader.Load();
@@ -90,7 +85,7 @@ namespace Trinity.Framework
             {
                 if (value != null && _currentRoutine != value)
                 {
-                    Logger.Warn($"Routine Changed to: {value.DisplayName} {value.BuildRequirements?.Summary}");
+                    Core.Logger.Warn($"Routine Changed to: {value.DisplayName} {value.BuildRequirements?.Summary}");
                      _currentRoutine = value;
                     Changed?.Invoke(value);
                 }
@@ -119,7 +114,7 @@ namespace Trinity.Framework
 
             if (Settings.RoutineMode == RoutineMode.Manual && !string.IsNullOrEmpty(manualSelectionName))
             {
-                Logger.Log($"Loading Selected Routine: {manualSelectionName}");
+                Core.Logger.Log($"Loading Selected Routine: {manualSelectionName}");
                 var routine = AllRoutines.FirstOrDefault(r => r.GetType().Name == manualSelectionName);
                 if (routine != null)
                 {
@@ -144,7 +139,7 @@ namespace Trinity.Framework
                     return;
                 }
             }
-            Logger.Log($"Auto-Selecting default routine for class");
+            Core.Logger.Log($"Auto-Selecting default routine for class");
             CurrentRoutine = genericRoutines.FirstOrDefault();           
         }
 
@@ -153,7 +148,7 @@ namespace Trinity.Framework
         //    CurrentRoutine = routine;
         //    Settings.SelectedRoutineClassName = routine.GetType().Name;
         //    Settings.RoutineMode = RoutineMode.Manual;
-        //    Logger.Log($"Set Routine Selection: {Settings.SelectedRoutineClassName}");
+        //    Core.Logger.Log($"Set Routine Selection: {Settings.SelectedRoutineClassName}");
 
         //}
 
@@ -165,7 +160,7 @@ namespace Trinity.Framework
                 CurrentRoutine = routine;
                 Settings.SelectedRoutineClassName = routine.GetType().Name;
                 Settings.RoutineMode = RoutineMode.Manual;
-                Logger.Log($"Set Routine Selection: {Settings.SelectedRoutineClassName}");
+                Core.Logger.Log($"Set Routine Selection: {Settings.SelectedRoutineClassName}");
             }
         }
 

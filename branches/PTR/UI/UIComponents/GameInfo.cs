@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Trinity.Components.Combat;
-using Trinity.Framework;
+﻿using Trinity.Framework;
 using Trinity.Framework.Helpers;
+using Trinity.Components.Combat;
+using Trinity.Framework.Events;
 
 namespace Trinity.UI.UIComponents
 {
@@ -38,7 +36,7 @@ namespace Trinity.UI.UIComponents
         private void LootProviderOnChanged(ChangeEventArgs<ILootProvider> args)
         {
             var name = args.NewValue.GetType().Name;
-            Logger.LogDebug($"LootProvider changed to {name}");
+            Core.Logger.Debug($"LootProvider changed to {name}");
             LootProviderName = name;
             IsExternalLootProvider = !(args.NewValue is DefaultLootProvider);
         }

@@ -11,7 +11,7 @@ using Zeta.Bot;
 
 namespace Trinity.Components.Adventurer
 {
-    public sealed class Adventurer : Component, IDynamicSetting
+    public sealed class Adventurer : Module, IDynamicSetting
     {
         private static readonly Lazy<Adventurer> _instance = new Lazy<Adventurer>(() => new Adventurer());
         public static Adventurer Instance => _instance.Value;

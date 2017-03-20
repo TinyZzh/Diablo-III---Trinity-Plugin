@@ -1,10 +1,11 @@
 using System;
+using Trinity.Framework;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 
 namespace Trinity.Modules
 {
@@ -111,15 +112,15 @@ namespace Trinity.Modules
                     return;
 
                 case CastResult.Success:
-                    Logger.LogVerbose($"Casting {info.Power} was Successful");
+                    Core.Logger.Verbose($"Casting {info.Power} was Successful");
                     break;
 
                 case CastResult.Failed:
-                    Logger.LogVerbose($"Casting {info.Power} Failed! Elapsed={info.DurationMs}ms");
+                    Core.Logger.Verbose($"Casting {info.Power} Failed! Elapsed={info.DurationMs}ms");
                     break;
 
                 case CastResult.Casting:
-                    Logger.LogVerbose($"Casting {info.Power}, Elapsed={info.DurationMs}ms");
+                    Core.Logger.Verbose($"Casting {info.Power}, Elapsed={info.DurationMs}ms");
                     break;
 
             }
@@ -142,7 +143,7 @@ namespace Trinity.Modules
 
             if (isCasting)
             {
-                Logger.LogVerbose($"Started Casting {info.Power}");
+                Core.Logger.Verbose($"Started Casting {info.Power}");
                 info.StartPosition = ZetaDia.Me.Position;
                 info.StartTime = DateTime.UtcNow;
                 info.WorldId = ZetaDia.Globals.WorldSnoId;
@@ -151,7 +152,7 @@ namespace Trinity.Modules
                 return CastResult.Casting;
             }
 
-            Logger.LogVerbose($"Stopped Casting {info.Power} after {info.DurationMs}ms");
+            Core.Logger.Verbose($"Stopped Casting {info.Power} after {info.DurationMs}ms");
 
             if (info.Success(info))
             {

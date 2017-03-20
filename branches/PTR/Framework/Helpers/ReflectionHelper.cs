@@ -7,7 +7,6 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using Trinity.Framework.Objects.Memory.Misc;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
 

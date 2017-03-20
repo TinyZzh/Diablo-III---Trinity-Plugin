@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
+using Trinity.Components.Adventurer.Game.Exploration;
 using Zeta.Common;
+using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.SNO;
 using GridPoint = Trinity.Components.Adventurer.Game.Exploration.GridPoint;
@@ -11,6 +12,8 @@ namespace Trinity.Framework.Helpers
 {
     internal class MathUtil
     {
+
+
         //http://totologic.blogspot.co.nz/2014/01/accurate-point-in-triangle-test.html
 
         private const double Epsilon = 0.001;
@@ -42,68 +45,6 @@ namespace Trinity.Framework.Helpers
             var yMax = Math.Max(y1, Math.Max(y2, y3)) + Epsilon;
             return !(x < xMin) && !(xMax < x) && !(y < yMin) && !(yMax < y);
         }
-
-        //        function side(x1, y1, x2, y2, x, y:Number):Number
-        //{
-        // return (y2 - y1)*(x - x1) + (-x2 + x1)*(y - y1);
-
-        //    function naivePointInTriangle(x1, y1, x2, y2, x3, y3, x, y:Number):Boolean
-        //{
-        // var checkSide1:Boolean = side(x1, y1, x2, y2, x, y) >= 0;
-        // var checkSide2:Boolean = side(x2, y2, x3, y3, x, y) >= 0;
-        // var checkSide3:Boolean = side(x3, y3, x1, y1, x, y) >= 0;
-        // return checkSide1 && checkSide2 && checkSide3;
-        //}
-
-        //function pointInTriangleBoundingBox(x1, y1, x2, y2, x3, y3, x, y:Number):Boolean
-        //{
-        // var xMin:Number = Math.min(x1, Math.min(x2, x3)) - EPSILON;
-        // var xMax:Number = Math.max(x1, Math.max(x2, x3)) + EPSILON;
-        // var yMin:Number = Math.min(y1, Math.min(y2, y3)) - EPSILON;
-        // var yMax:Number = Math.max(y1, Math.max(y2, y3)) + EPSILON;
-
-        // if ( x<xMin || xMax<x || y<yMin || yMax<y )
-        //  return false;
-        // else
-        //  return true;
-        //}
-
-        //function distanceSquarePointToSegment(x1, y1, x2, y2, x, y:Number):Number
-        //{
-        // var p1_p2_squareLength:Number = (x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1);
-        // var dotProduct:Number = ((x - x1)*(x2 - x1) + (y - y1)*(y2 - y1)) / p1_p2_squareLength;
-        // if ( dotProduct< 0 )
-        // {
-        //  return (x - x1)*(x - x1) + (y - y1)*(y - y1);
-        // }
-        // else if ( dotProduct <= 1 )
-        // {
-        //  var p_p1_squareLength:Number = (x1 - x)*(x1 - x) + (y1 - y)*(y1 - y);
-        //  return p_p1_squareLength - dotProduct* dotProduct * p1_p2_squareLength;
-        // }
-        // else
-        // {
-        //  return (x - x2)*(x - x2) + (y - y2)*(y - y2);
-        // }
-        //}
-
-        //function accuratePointInTriangle(x1, y1, x2, y2, x3, y3, x, y:Number):Boolean
-        //{
-        // if (! pointInTriangleBoundingBox(x1, y1, x2, y2, x3, y3, x, y))
-        //  return false;
-
-        // if (naivePointInTriangle(x1, y1, x2, y2, x3, y3, x, y))
-        //  return true;
-
-        // if (distanceSquarePointToSegment(x1, y1, x2, y2, x, y) <= EPSILON_SQUARE)
-        //  return true;
-        // if (distanceSquarePointToSegment(x2, y2, x3, y3, x, y) <= EPSILON_SQUARE)
-        //  return true;
-        // if (distanceSquarePointToSegment(x3, y3, x1, y1, x, y) <= EPSILON_SQUARE)
-        //  return true;
-
-        // return false;
-        //}
 
         public static Vector3 Centroid(IEnumerable<Vector3> points)
         {
@@ -316,7 +257,7 @@ namespace Trinity.Framework.Helpers
             // Halve/Double required angle every 20yd; 60* @ 15yd, 11.25* @ 80yd
             var angularVarianceThreshold = Math.Min(angularVarianceBase / (toDestination / 20), 90);
 
-            //Logger.Log("DistToObj={0} DistToDest={1} relativeAV={2} AVThreshold={3} Result={4}",
+            //Core.Logger.Log("DistToObj={0} DistToDest={1} relativeAV={2} AVThreshold={3} Result={4}",
             //    toObstacle, toDestination, relativeAngularVariance, angularVarianceThreshold,
             //    toObstacle < toDestination && relativeAngularVariance <= angularVarianceThreshold);
 
@@ -770,646 +711,90 @@ namespace Trinity.Framework.Helpers
             return (float)(degrees * 0.017453292519943295769236907684886);
         }
 
-        //#region LeagueSharp + SharpDX MathUtils
 
-        //public static bool CheckLineIntersection(Vector2 a, Vector2 b, Vector2 c, Vector2 d)
-        //{
-        //    return a.Intersection(b, c, d).Intersects;
-        //}
+        #region Human Readable Headings
 
-        //public static bool CheckLineIntersectionEx(Vector2 a, Vector2 b, Vector2 c, Vector2 d)
-        //{
-        //    Tuple<float, float> ret = LineToLineIntersection(a.X, a.Y, b.X, b.Y, c.X, c.Y, d.X, d.Y);
+        public static Direction GetDirectionToPoint(Vector3 targetPoint)
+        {
+            return GetDirection(FindDirectionDegree(ZetaDia.Me.Position, targetPoint));
+        }
 
-        //    var t1 = ret.Item1;
-        //    var t2 = ret.Item2;
+        public static Direction GetDirectionToPoint(Vector3 targetPoint, Vector3 startingPoint)
+        {
+            return GetDirection(FindDirectionDegree(startingPoint, targetPoint));
+        }
 
-        //    if (t1 >= 0 && t1 <= 1 && t2 >= 0 && t2 <= 1)
-        //    {
-        //        return true;
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-        //}
+        public static Direction GetDirection(float heading)
+        {
+            var index = ((((int)heading) + 23) / 45) + 1;
+            if (index == 9)
+                index = 1;
+            return (Direction)index; ;
+        }
 
-        //public static Vector2 CheckLineIntersectionEx2(Vector2 a, Vector2 b, Vector2 c, Vector2 d)
-        //{
-        //    Tuple<float, float> ret = LineToLineIntersection(a.X, a.Y, b.X, b.Y, c.X, c.Y, d.X, d.Y);
 
-        //    var t1 = ret.Item1;
-        //    var t2 = ret.Item2;
 
-        //    if (t1 >= 0 && t1 <= 1 && t2 >= 0 && t2 <= 1)
-        //    {
-        //        return new Vector2(t1, t2);
-        //    }
-        //    else
-        //    {
-        //        return Vector2.Zero;
-        //    }
-        //}
-
-        //public static Vector2 RotateVector(Vector2 start, Vector2 end, float angle)
-        //{
-        //    angle = angle * ((float)(Math.PI / 180));
-        //    Vector2 ret = end;
-        //    ret.X = ((float)Math.Cos(angle) * (end.X - start.X) -
-        //        (float)Math.Sin(angle) * (end.Y - start.Y) + start.X);
-        //    ret.Y = ((float)Math.Sin(angle) * (end.X - start.X) +
-        //        (float)Math.Cos(angle) * (end.Y - start.Y) + start.Y);
-        //    return ret;
-        //}
-
-        //public static Tuple<float, float> LineToLineIntersection(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
-        //{
-        //    var d = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
-
-        //    if (d == 0)
-        //    {
-        //        return Tuple.Create(float.MaxValue, float.MaxValue); //lines are parallel or coincidental
-        //    }
-        //    else
-        //    {
-        //        return Tuple.Create(((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / d,
-        //            ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / d);
-        //    }
-        //}
-
-        ///*
-        // *
-        // * //from leaguesharp.commons
-        //        var spellPos = spell.GetCurrentSpellPosition(true);
-        //        var sol = Geometry.VectorMovementCollision(spellPos, spell.endPos, spell.info.projectileSpeed, heroPos, ObjectCache.myHeroCache.moveSpeed);
-
-        //        var startTime = 0f;
-        //        var endTime = spellPos.Distance(spell.endPos) / spell.info.projectileSpeed;
-
-        //        var time = (float) sol[0];
-        //        var pos = (Vector2) sol[1];
-
-        //        if (pos.IsValid() && time >= startTime && time <= startTime + endTime)
-        //        {
-        //            return true;
-        //        }
-        // *
-        // */
-
-        //public static float VectorMovementCollisionEx(Vector2 targetPos, Vector2 targetDir, float targetSpeed, Vector2 sourcePos, float projSpeed, out bool collision, float extraDelay = 0, float extraDist = 0)
-        //{
-        //    Vector2 velocity = targetDir * targetSpeed;
-        //    targetPos = targetPos - velocity * (extraDelay / 1000);
-
-        //    float velocityX = velocity.X;
-        //    float velocityY = velocity.Y;
-
-        //    Vector2 relStart = targetPos - sourcePos;
-
-        //    float relStartX = relStart.X;
-        //    float relStartY = relStart.Y;
-
-        //    float a = velocityX * velocityX + velocityY * velocityY - projSpeed * projSpeed;
-        //    float b = 2 * velocityX * relStartX + 2 * velocityY * relStartY;
-        //    float c = Math.Max(0, relStartX * relStartX + relStartY * relStartY + extraDist * extraDist);
-
-        //    float disc = b * b - 4 * a * c;
-
-        //    if (disc >= 0)
-        //    {
-        //        float t1 = -(b + (float)Math.Sqrt(disc)) / (2 * a);
-        //        float t2 = -(b - (float)Math.Sqrt(disc)) / (2 * a);
-
-        //        collision = true;
-
-        //        if (t1 > 0 && t2 > 0)
-        //        {
-        //            return (t1 > t2) ? t2 : t1;
-
-        //        }
-        //        else if (t1 > 0)
-        //            return t1;
-        //        else if (t2 > 0)
-        //            return t2;
-        //    }
-
-        //    collision = false;
-
-        //    return 0;
-        //}
-
-        //public static bool PointOnLineSegment(Vector2 point, Vector2 start, Vector2 end)
-        //{
-        //    var dotProduct = Vector2.Dot((end - start), (point - start));
-        //    if (dotProduct < 0)
-        //        return false;
-
-        //    var lengthSquared = Vector2.DistanceSquared(start, end);
-        //    if (dotProduct > lengthSquared)
-        //        return false;
-
-        //    return true;
-        //}
-
-        //public static bool isPointOnLineSegment(Vector2 point, Vector2 start, Vector2 end)
-        //{
-        //    if (Math.Max(start.X, end.X) > point.X && point.X > Math.Min(start.X, end.X)
-        //        && Math.Max(start.Y, end.Y) > point.Y && point.Y > Math.Min(start.Y, end.Y))
-        //    {
-        //        return true;
-        //    }
-
-        //    return false;
-        //}
-
-        ////https://code.google.com/p/xna-circle-collision-detection/downloads/detail?name=Circle%20Collision%20Example.zip&can=2&q=
-
-        //public static float GetCollisionTime(Vector2 Pa, Vector2 Pb, Vector2 Va, Vector2 Vb, float Ra, float Rb, out bool collision)
-        //{
-        //    Vector2 Pab = Pa - Pb;
-        //    Vector2 Vab = Va - Vb;
-        //    float a = Vector2.Dot(Vab, Vab);
-        //    float b = 2 * Vector2.Dot(Pab, Vab);
-        //    float c = Vector2.Dot(Pab, Pab) - (Ra + Rb) * (Ra + Rb);
-
-        //    float discriminant = b * b - 4 * a * c;
-
-        //    float t;
-        //    if (discriminant < 0)
-        //    {
-        //        t = -b / (2 * a);
-        //        collision = false;
-        //    }
-        //    else
-        //    {
-        //        float t0 = (-b + (float)Math.Sqrt(discriminant)) / (2 * a);
-        //        float t1 = (-b - (float)Math.Sqrt(discriminant)) / (2 * a);
-
-        //        if (t0 >= 0 && t1 >= 0)
-        //            t = Math.Min(t0, t1);
-        //        else
-        //            t = Math.Max(t0, t1);
-
-        //        if (t < 0)
-        //            collision = false;
-        //        else
-        //            collision = true;
-        //    }
-
-        //    if (t < 0)
-        //        t = 0;
-
-        //    return t;
-        //}
-
-        //public static float GetCollisionDistanceEx(Vector2 Pa, Vector2 Va, float Ra,
-        //                                           Vector2 Pb, Vector2 Vb, float Rb,
-        //                                           out Vector2 PA, out Vector2 PB)
-        //{
-        //    bool collision;
-        //    var collisionTime = GetCollisionTime(Pa, Pb, Va, Vb, Ra, Rb, out collision);
-
-        //    if (collision)
-        //    {
-        //        PA = Pa + (collisionTime * Va);
-        //        PB = Pb + (collisionTime * Vb);
-
-        //        return PA.Distance(PB);
-        //    }
-
-        //    PA = Vector2.Zero;
-        //    PB = Vector2.Zero;
-
-        //    return float.MaxValue;
-        //}
-
-        //public static float GetCollisionDistance(Vector2 Pa, Vector2 PaEnd, Vector2 Va, float Ra,
-        //                                         Vector2 Pb, Vector2 PbEnd, Vector2 Vb, float Rb)
-        //{
-        //    bool collision;
-        //    var collisionTime = GetCollisionTime(Pa, Pb, Va, Vb, Ra, Rb, out collision);
-
-        //    if (collision)
-        //    {
-        //        Vector2 PA = Pa + (collisionTime * Va);
-        //        Vector2 PB = Pb + (collisionTime * Vb);
-
-        //        PA = PA.ProjectOn(Pa, PaEnd).SegmentPoint;
-        //        PB = PB.ProjectOn(Pb, PbEnd).SegmentPoint;
-
-        //        return PA.Distance(PB);
-        //    }
-
-        //    return float.MaxValue;
-        //}
-
-        ////http://csharphelper.com/blog/2014/09/determine-where-a-line-intersects-a-circle-in-c/
-        //// Find the points of intersection.
-        //public static int FindLineCircleIntersections(
-        //    Vector2 center, float radius,
-        //    Vector2 from, Vector2 to,
-        //    out Vector2 intersection1, out Vector2 intersection2)
-        //{
-        //    float cx = center.X;
-        //    float cy = center.Y;
-        //    float dx, dy, A, B, C, det, t;
-
-        //    dx = to.X - from.X;
-        //    dy = to.Y - from.Y;
-
-        //    A = dx * dx + dy * dy;
-        //    B = 2 * (dx * (from.X - cx) + dy * (from.Y - cy));
-        //    C = (from.X - cx) * (from.X - cx) +
-        //        (from.Y - cy) * (from.Y - cy) -
-        //        radius * radius;
-
-        //    det = B * B - 4 * A * C;
-        //    if ((A <= 0.0000001) || (det < 0))
-        //    {
-        //        // No real solutions.
-        //        intersection1 = new Vector2(float.NaN, float.NaN);
-        //        intersection2 = new Vector2(float.NaN, float.NaN);
-        //        return 0;
-        //    }
-        //    else if (det == 0)
-        //    {
-        //        // One solution.
-        //        t = -B / (2 * A);
-        //        intersection1 =
-        //            new Vector2(from.X + t * dx, from.Y + t * dy);
-        //        intersection2 = new Vector2(float.NaN, float.NaN);
-
-        //        var projection1 = intersection1.ProjectOn(from, to);
-        //        if (projection1.IsOnSegment)
-        //        {
-        //            return 1;
-        //        }
-        //        else
-        //        {
-        //            return 0;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        // Two solutions.
-        //        t = (float)((-B + Math.Sqrt(det)) / (2 * A));
-        //        intersection1 =
-        //            new Vector2(from.X + t * dx, from.Y + t * dy);
-        //        t = (float)((-B - Math.Sqrt(det)) / (2 * A));
-        //        intersection2 =
-        //            new Vector2(from.X + t * dx, from.Y + t * dy);
-
-        //        var projection1 = intersection1.ProjectOn(from, to);
-        //        var projection2 = intersection2.ProjectOn(from, to);
-
-        //        if (projection1.IsOnSegment && projection2.IsOnSegment)
-        //        {
-        //            return 2;
-        //        }
-        //        else if (projection1.IsOnSegment && !projection2.IsOnSegment)
-        //        {
-        //            return 1;
-        //        }
-        //        else if (!projection1.IsOnSegment && projection2.IsOnSegment)
-        //        {
-        //            intersection1 = intersection2;
-        //            return 1;
-        //        }
-
-        //        return 0;
-        //    }
-        //}
-
-        //#endregion
+        #endregion
     }
 
-    public static class RectExtentions
+    public static class Quartiles
     {
-        //improved name from original
-        public static IEnumerable<LineEquation> LineSegments(this Rect rectangle)
+        public static double LowerQuartile(this IOrderedEnumerable<double> list)
         {
-            var lines = new List<LineEquation>
+            return GetQuartile(list, 0.25);
+        }
+
+        public static double UpperQuartile(this IOrderedEnumerable<double> list)
+        {
+            return GetQuartile(list, 0.75);
+        }
+
+        public static double MiddleQuartile(this IOrderedEnumerable<double> list)
+        {
+            return GetQuartile(list, 0.50);
+        }
+
+        public static double InterQuartileRange(this IOrderedEnumerable<double> list)
+        {
+            return list.UpperQuartile() - list.LowerQuartile();
+        }
+
+        private static double GetQuartile(IOrderedEnumerable<double> list, double quartile)
+        {
+            double result;
+
+            // Get roughly the index
+            double index = quartile * (list.Count() + 1);
+
+            // Get the remainder of that index value if exists
+            double remainder = index % 1;
+
+            // Get the integer value of that index
+            index = Math.Floor(index) - 1;
+
+            if (remainder.Equals(0))
             {
-                new LineEquation(new Point(rectangle.X, rectangle.Y),
-                                 new Point(rectangle.X, rectangle.Y + rectangle.Height)),
-
-                new LineEquation(new Point(rectangle.X, rectangle.Y + rectangle.Height),
-                                 new Point(rectangle.X + rectangle.Width, rectangle.Y + rectangle.Height)),
-
-                new LineEquation(new Point(rectangle.X + rectangle.Width, rectangle.Y + rectangle.Height),
-                                 new Point(rectangle.X + rectangle.Width, rectangle.Y)),
-
-                new LineEquation(new Point(rectangle.X + rectangle.Width, rectangle.Y),
-                                 new Point(rectangle.X, rectangle.Y)),
-            };
-
-            return lines;
-        }
-
-        //improved from original at http://www.codeproject.com/Tips/403031/Extension-methods-for-finding-centers-of-a-rectang
-
-        /// <summary>
-        /// Returns the center point of the rectangle
-        /// </summary>
-        /// <param name="r"></param>
-        /// <returns>Center point of the rectangle</returns>
-        public static Point Center(this Rect r)
-        {
-            return new Point(r.Left + (r.Width / 2D), r.Top + (r.Height / 2D));
-        }
-
-        /// <summary>
-        /// Returns the center right point of the rectangle
-        /// i.e. the right hand edge, centered vertically.
-        /// </summary>
-        /// <param name="r"></param>
-        /// <returns>Center right point of the rectangle</returns>
-        public static Point CenterRight(this Rect r)
-        {
-            return new Point(r.Right, r.Top + (r.Height / 2D));
-        }
-
-        /// <summary>
-        /// Returns the center left point of the rectangle
-        /// i.e. the left hand edge, centered vertically.
-        /// </summary>
-        /// <param name="r"></param>
-        /// <returns>Center left point of the rectangle</returns>
-        public static Point CenterLeft(this Rect r)
-        {
-            return new Point(r.Left, r.Top + (r.Height / 2D));
-        }
-
-        /// <summary>
-        /// Returns the center bottom point of the rectangle
-        /// i.e. the bottom edge, centered horizontally.
-        /// </summary>
-        /// <param name="r"></param>
-        /// <returns>Center bottom point of the rectangle</returns>
-        public static Point CenterBottom(this Rect r)
-        {
-            return new Point(r.Left + (r.Width / 2D), r.Bottom);
-        }
-
-        /// <summary>
-        /// Returns the center top point of the rectangle
-        /// i.e. the topedge, centered horizontally.
-        /// </summary>
-        /// <param name="r"></param>
-        /// <returns>Center top point of the rectangle</returns>
-        public static Point CenterTop(this Rect r)
-        {
-            return new Point(r.Left + (r.Width / 2D), r.Top);
-        }
-    }
-
-    public class LineEquation
-    {
-        public LineEquation(Point start, Point end)
-        {
-            Start = start;
-            End = end;
-
-            IsVertical = Math.Abs(End.X - start.X) < 0.00001f;
-            M = (End.Y - Start.Y) / (End.X - Start.X);
-            A = -M;
-            B = 1;
-            C = Start.Y - M * Start.X;
-        }
-
-        public bool IsVertical { get; private set; }
-
-        public double M { get; private set; }
-
-        public Point Start { get; private set; }
-        public Point End { get; private set; }
-
-        public double A { get; private set; }
-        public double B { get; private set; }
-        public double C { get; private set; }
-
-        public bool IntersectsWithLine(LineEquation otherLine, out Point intersectionPoint)
-        {
-            intersectionPoint = new Point(0, 0);
-            if (IsVertical && otherLine.IsVertical)
-                return false;
-            if (IsVertical || otherLine.IsVertical)
-            {
-                intersectionPoint = GetIntersectionPointIfOneIsVertical(otherLine, this);
-                return true;
+                // we have an integer value, no interpolation needed
+                result = list.ElementAt((int)index);
             }
-            double delta = A * otherLine.B - otherLine.A * B;
-            bool hasIntersection = Math.Abs(delta - 0) > 0.0001f;
-            if (hasIntersection)
+            else
             {
-                double x = (otherLine.B * C - B * otherLine.C) / delta;
-                double y = (A * otherLine.C - otherLine.A * C) / delta;
-                intersectionPoint = new Point(x, y);
+                // we need to interpolate
+                double value = list.ElementAt((int)index);
+                double interpolationValue = value
+                    .Interpolate(list.ElementAt((int)(index + 1)), remainder);
+
+                result = value + interpolationValue;
             }
-            return hasIntersection;
+
+            return result;
         }
 
-        private static Point GetIntersectionPointIfOneIsVertical(LineEquation line1, LineEquation line2)
+        private static double Interpolate(this double a, double b, double remainder)
         {
-            LineEquation verticalLine = line2.IsVertical ? line2 : line1;
-            LineEquation nonVerticalLine = line2.IsVertical ? line1 : line2;
-
-            double y = (verticalLine.Start.X - nonVerticalLine.Start.X) *
-                       (nonVerticalLine.End.Y - nonVerticalLine.Start.Y) /
-                       ((nonVerticalLine.End.X - nonVerticalLine.Start.X)) +
-                       nonVerticalLine.Start.Y;
-            double x = line1.IsVertical ? line1.Start.X : line2.Start.X;
-            return new Point(x, y);
+            return (b - a) * remainder;
         }
 
-        public bool IntersectWithSegementOfLine(LineEquation otherLine, out Point intersectionPoint)
-        {
-            bool hasIntersection = IntersectsWithLine(otherLine, out intersectionPoint);
-            if (hasIntersection)
-                return intersectionPoint.IsBetweenTwoPoints(otherLine.Start, otherLine.End);
-            return false;
-        }
 
-        public override string ToString()
-        {
-            return "[" + Start + "], [" + End + "]";
-        }
-    }
-
-    public static class DoubleExtensions
-    {
-        //SOURCE: https://github.com/mathnet/mathnet-numerics/blob/master/src/Numerics/Precision.cs
-        //        https://github.com/mathnet/mathnet-numerics/blob/master/src/Numerics/Precision.Equality.cs
-        //        http://referencesource.microsoft.com/#WindowsBase/Shared/MS/Internal/DoubleUtil.cs
-        //        http://stackoverflow.com/questions/2411392/double-epsilon-for-equality-greater-than-less-than-less-than-or-equal-to-gre
-
-        /// <summary>
-        /// The smallest positive number that when SUBTRACTED from 1D yields a result different from 1D.
-        /// The value is derived from 2^(-53) = 1.1102230246251565e-16, where IEEE 754 binary64 &quot;double precision&quot; floating point numbers have a significand precision that utilize 53 bits.
-        ///
-        /// This number has the following properties:
-        ///     (1 - NegativeMachineEpsilon) &lt; 1 and
-        ///     (1 + NegativeMachineEpsilon) == 1
-        /// </summary>
-        public const double NegativeMachineEpsilon = 1.1102230246251565e-16D; //Math.Pow(2, -53);
-
-        /// <summary>
-        /// The smallest positive number that when ADDED to 1D yields a result different from 1D.
-        /// The value is derived from 2 * 2^(-53) = 2.2204460492503131e-16, where IEEE 754 binary64 &quot;double precision&quot; floating point numbers have a significand precision that utilize 53 bits.
-        ///
-        /// This number has the following properties:
-        ///     (1 - PositiveDoublePrecision) &lt; 1 and
-        ///     (1 + PositiveDoublePrecision) &gt; 1
-        /// </summary>
-        public const double PositiveMachineEpsilon = 2D * NegativeMachineEpsilon;
-
-        /// <summary>
-        /// The smallest positive number that when SUBTRACTED from 1D yields a result different from 1D.
-        ///
-        /// This number has the following properties:
-        ///     (1 - NegativeMachineEpsilon) &lt; 1 and
-        ///     (1 + NegativeMachineEpsilon) == 1
-        /// </summary>
-        public static readonly double MeasuredNegativeMachineEpsilon = MeasureNegativeMachineEpsilon();
-
-        private static double MeasureNegativeMachineEpsilon()
-        {
-            double epsilon = 1D;
-
-            do
-            {
-                double nextEpsilon = epsilon / 2D;
-
-                if ((1D - nextEpsilon) == 1D) //if nextEpsilon is too small
-                    return epsilon;
-
-                epsilon = nextEpsilon;
-            }
-            while (true);
-        }
-
-        /// <summary>
-        /// The smallest positive number that when ADDED to 1D yields a result different from 1D.
-        ///
-        /// This number has the following properties:
-        ///     (1 - PositiveDoublePrecision) &lt; 1 and
-        ///     (1 + PositiveDoublePrecision) &gt; 1
-        /// </summary>
-        public static readonly double MeasuredPositiveMachineEpsilon = MeasurePositiveMachineEpsilon();
-
-        private static double MeasurePositiveMachineEpsilon()
-        {
-            double epsilon = 1D;
-
-            do
-            {
-                double nextEpsilon = epsilon / 2D;
-
-                if ((1D + nextEpsilon) == 1D) //if nextEpsilon is too small
-                    return epsilon;
-
-                epsilon = nextEpsilon;
-            }
-            while (true);
-        }
-
-        private const double DefaultDoubleAccuracy = NegativeMachineEpsilon * 10D;
-
-        public static bool IsClose(this double value1, double value2)
-        {
-            return IsClose(value1, value2, DefaultDoubleAccuracy);
-        }
-
-        public static bool IsClose(this double value1, double value2, double maximumAbsoluteError)
-        {
-            if (double.IsInfinity(value1) || double.IsInfinity(value2))
-                return value1 == value2;
-
-            if (double.IsNaN(value1) || double.IsNaN(value2))
-                return false;
-
-            double delta = value1 - value2;
-
-            //return Math.Abs(delta) <= maximumAbsoluteError;
-
-            if (delta > maximumAbsoluteError ||
-                delta < -maximumAbsoluteError)
-                return false;
-
-            return true;
-        }
-
-        public static bool LessThan(this double value1, double value2)
-        {
-            return (value1 < value2) && !IsClose(value1, value2);
-        }
-
-        public static bool GreaterThan(this double value1, double value2)
-        {
-            return (value1 > value2) && !IsClose(value1, value2);
-        }
-
-        public static bool LessThanOrClose(this double value1, double value2)
-        {
-            return (value1 < value2) || IsClose(value1, value2);
-        }
-
-        public static bool GreaterThanOrClose(this double value1, double value2)
-        {
-            return (value1 > value2) || IsClose(value1, value2);
-        }
-
-        public static bool IsOne(this double value)
-        {
-            double delta = value - 1D;
-
-            //return Math.Abs(delta) <= PositiveMachineEpsilon;
-
-            if (delta > PositiveMachineEpsilon ||
-                delta < -PositiveMachineEpsilon)
-                return false;
-
-            return true;
-        }
-
-        public static bool IsZero(this double value)
-        {
-            //return Math.Abs(value) <= PositiveMachineEpsilon;
-
-            if (value > PositiveMachineEpsilon ||
-                value < -PositiveMachineEpsilon)
-                return false;
-
-            return true;
-        }
-    }
-
-    public static class PointExtensions
-    {
-        public static double DistanceToPoint(this Point point, Point point2)
-        {
-            return Math.Sqrt((point2.X - point.X) * (point2.X - point.X) + (point2.Y - point.Y) * (point2.Y - point.Y));
-        }
-
-        public static double SquaredDistanceToPoint(this Point point, Point point2)
-        {
-            return (point2.X - point.X) * (point2.X - point.X) + (point2.Y - point.Y) * (point2.Y - point.Y);
-        }
-
-        public static bool IsBetweenTwoPoints(this Point targetPoint, Point point1, Point point2)
-        {
-            double minX = Math.Min(point1.X, point2.X);
-            double minY = Math.Min(point1.Y, point2.Y);
-            double maxX = Math.Max(point1.X, point2.X);
-            double maxY = Math.Max(point1.Y, point2.Y);
-
-            double targetX = targetPoint.X;
-            double targetY = targetPoint.Y;
-
-            return minX.LessThanOrClose(targetX)
-                  && targetX.LessThanOrClose(maxX)
-                  && minY.LessThanOrClose(targetY)
-                  && targetY.LessThanOrClose(maxY);
-        }
     }
 }

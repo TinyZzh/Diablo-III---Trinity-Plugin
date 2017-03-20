@@ -1,4 +1,5 @@
 ﻿using System;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -10,7 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Objects;
-using Trinity.Reference;
+using Trinity.Framework.Reference;
 using Trinity.Settings;
 using Zeta.Common;
 using Zeta.Game.Internals.Actors;
@@ -184,7 +185,7 @@ namespace Trinity.Framework.Helpers
             }
             catch (Exception ex)
             {
-                Logger.LogDebug(LogCategory.CacheManagement, "Exception on {0} accessing {1} attribute: {2}", actor.InternalName, type, ex);
+                Core.Logger.Debug(LogCategory.CacheManagement, "Exception on {0} accessing {1} attribute: {2}", actor.InternalName, type, ex);
             }
             return default(T);
         }
@@ -204,7 +205,7 @@ namespace Trinity.Framework.Helpers
             }
             catch (Exception ex)
             {
-                Logger.LogDebug(LogCategory.CacheManagement, "Exception on {0} accessing {1} attribute: {2}", actorACD.Name, type, ex);
+                Core.Logger.Debug(LogCategory.CacheManagement, "Exception on {0} accessing {1} attribute: {2}", actorACD.Name, type, ex);
             }
             return default(T);
         }
@@ -339,7 +340,7 @@ namespace Trinity.Framework.Helpers
                     break;
 
                 default:
-                    Logger.Log("Invalid Item Link color={0} internalName={1} name={2} gameBalanceId={3}", linkColor, item.InternalName, item.Name, item.GameBalanceId);
+                    Core.Logger.Log("Invalid Item Link color={0} internalName={1} name={2} gameBalanceId={3}", linkColor, item.InternalName, item.Name, item.GameBalanceId);
                     qualityResult = item.ItemQualityLevel;
                     break;
             }

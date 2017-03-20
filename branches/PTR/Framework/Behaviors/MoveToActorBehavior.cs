@@ -4,9 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Trinity.DbProvider;
 using Trinity.Framework.Actors.ActorTypes;
+using Trinity.Framework.Events;
 using Zeta.Bot.Navigation;
 using Zeta.Common;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 
 namespace Trinity.Framework.Behaviors
 {
@@ -46,20 +47,20 @@ namespace Trinity.Framework.Behaviors
 
         private async Task<bool> Move()
         {
-            Logger.LogVerbose($"Moving to Actor: {Actor} {Actor.Position}");
+            Core.Logger.Verbose($"Moving to Actor: {Actor} {Actor.Position}");
             PlayerMover.MoveTo(Actor.Position);
             return true;
         }
 
         protected override async Task<bool> OnStarted()
         {
-            Logger.Warn($"Started moving to Actor: {Actor}");
+            Core.Logger.Warn($"Started moving to Actor: {Actor}");
             return true;
         }
 
         protected override async Task<bool> OnStopped()
         {
-            Logger.Warn($"Arrived at Actor: {Actor}");
+            Core.Logger.Warn($"Arrived at Actor: {Actor}");
             VisitedActorPositions.Add(Actor.Position);
             Actor = null;
             return true;

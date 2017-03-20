@@ -1,4 +1,4 @@
-namespace Trinity.Coroutines.Resources
+namespace Trinity.Framework.Objects.Enums
 {
     public enum InventoryItemType
     {

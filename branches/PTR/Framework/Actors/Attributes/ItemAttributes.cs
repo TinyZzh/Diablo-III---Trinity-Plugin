@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Trinity.Framework.Objects.Memory.Attributes;
+using Trinity.Framework.Objects.Memory;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
+using DamageType = Zeta.Game.DamageType;
 
 namespace Trinity.Framework.Actors.Attributes
 {
-    public class ItemAttributes : Objects.Memory.Attributes.Attributes
+    public class ItemAttributes : Objects.Memory.Attributes
     {
         public ItemAttributes()
         {

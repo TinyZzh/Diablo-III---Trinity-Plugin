@@ -1,14 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Trinity.Framework.Objects.Enums;
-using Trinity.Framework.Objects.Memory.Containers;
-using Trinity.Framework.Objects.Memory.Sno.Helpers;
-using Trinity.Framework.Objects.Memory;
-using Trinity.Framework.Helpers;
 
-namespace Trinity.Framework.Objects.Memory.Sno
+namespace Trinity.Framework.Objects.Memory
 {
     public static class SnoManager
     {

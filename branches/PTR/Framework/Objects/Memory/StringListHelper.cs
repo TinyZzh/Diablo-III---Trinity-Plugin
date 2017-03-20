@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using Trinity.Framework.Objects.Enums;
-using Trinity.Framework.Objects.Memory;
 
-namespace Trinity.Framework.Objects.Memory.Sno.Helpers
+namespace Trinity.Framework.Objects.Memory
 {
     public class StringListHelper
     {

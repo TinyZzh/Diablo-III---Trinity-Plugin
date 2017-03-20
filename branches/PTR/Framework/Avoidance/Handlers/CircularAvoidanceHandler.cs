@@ -1,5 +1,6 @@
 ﻿using System;
 using Trinity.Framework.Avoidance.Structures;
+using Trinity.Framework.Grid;
 
 namespace Trinity.Framework.Avoidance.Handlers
 {
@@ -11,7 +12,7 @@ namespace Trinity.Framework.Avoidance.Handlers
             {
                 if (actor == null || !actor.IsValid)
                 {
-                    //Logger.Log(LogCategory.Avoidance, $"<CircularAvoidanceHandler> actor is null or invalid for {avoidance.Definition.Name}");
+                    //Core.Logger.Log(LogCategory.Avoidance, $"<CircularAvoidanceHandler> actor is null or invalid for {avoidance.Definition.Name}");
                     continue;
                 }
 
@@ -22,13 +23,13 @@ namespace Trinity.Framework.Avoidance.Handlers
 
                 if (avoidance.Settings.Prioritize)
                 {
-                    //Logger.Log(LogCategory.Avoidance, $"<CircularAvoidanceHandler> marking {nodes.Count} nodes critical for actor {actor}, def={avoidance.Definition.Name}");
+                    //Core.Logger.Log(LogCategory.Avoidance, $"<CircularAvoidanceHandler> marking {nodes.Count} nodes critical for actor {actor}, def={avoidance.Definition.Name}");
                     Core.DBGridProvider.AddCellWeightingObstacle(actor.ActorSnoId, finalRadius);
                     grid.FlagAvoidanceNodes(nodes, AvoidanceFlags.Avoidance | AvoidanceFlags.CriticalAvoidance, avoidance, 50);
                 }
                 else
                 {
-                    //Logger.Log(LogCategory.Avoidance, $"<CircularAvoidanceHandler> marking {nodes.Count} nodes for actor {actor}, def={avoidance.Definition.Name}");
+                    //Core.Logger.Log(LogCategory.Avoidance, $"<CircularAvoidanceHandler> marking {nodes.Count} nodes for actor {actor}, def={avoidance.Definition.Name}");
                     grid.FlagAvoidanceNodes(nodes, AvoidanceFlags.Avoidance, avoidance, 10);
                 }
             }

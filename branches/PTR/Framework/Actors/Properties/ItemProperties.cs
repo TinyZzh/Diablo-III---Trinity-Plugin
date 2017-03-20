@@ -1,17 +1,15 @@
 ﻿using System;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
-using Trinity.Coroutines.Town;
+using Trinity.Components.Coroutines.Town;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Actors.Attributes;
-using Trinity.Framework.Helpers;
+using Trinity.Framework.Events;
 using Trinity.Framework.Objects;
 using Trinity.Framework.Objects.Enums;
-using Trinity.Framework.Objects.Memory.Misc;
-using Trinity.Framework.Objects.Memory.Sno;
-using Trinity.Framework.Objects.Memory.Sno.Helpers;
-using Trinity.Reference;
+using Trinity.Framework.Objects.Memory;
+using Trinity.Framework.Reference;
 using Trinity.Settings;
-using Zeta.Bot;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
 using Zeta.Game.Internals.SNO;
@@ -29,7 +27,7 @@ namespace Trinity.Framework.Actors.Properties
         {
             if (!GameData.TownLevelAreaIds.Contains(args.OldValue) && !ZetaDia.IsInTown)
             {
-                Logger.LogDebug($"Clearing ItemProperties Seen AnnIds");
+                Core.Logger.Debug($"Clearing ItemProperties Seen AnnIds");
                 _seenActorAnnIds.Clear();
             }
         }
@@ -46,8 +44,6 @@ namespace Trinity.Framework.Actors.Properties
 
             var commonData = actor.CommonData;
             var attributes = actor.Attributes;
-
-            actor.AcdItemTemp = actor.ToAcdItem();
 
             actor.InventorySlot = ZetaDia.Memory.Read<InventorySlot>(commonData.BaseAddress + 0x114); //actor.AcdItemTemp.InventorySlot;
             actor.InventoryColumn = ZetaDia.Memory.Read<int>(commonData.BaseAddress + 0x118);  //actor.AcdItemTemp.InventoryColumn;
@@ -194,6 +190,7 @@ namespace Trinity.Framework.Actors.Properties
             cacheObject.AnnId = cacheObject.CommonData.AnnId;
             cacheObject.AcdId = cacheObject.CommonData.ACDId;
         }
+
 
         public static GlobeTypes GetGlobeType(TrinityActor cacheObject)
         {

@@ -1,13 +1,13 @@
 ﻿using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,12 +15,7 @@ using System.Windows.Forms;
 using System.Windows.Markup;
 using Trinity.Components.Adventurer.Game.Events;
 using Trinity.Components.Adventurer.Settings;
-using Trinity.Components.Combat;
-using Trinity.Framework;
-using Trinity.Framework.Helpers;
-using Trinity.Routines.Crusader;
 using Trinity.UI.UIComponents;
-using Zeta.Bot;
 using Zeta.Common.Xml;
 using Zeta.Game;
 using Application = System.Windows.Application;
@@ -30,56 +25,34 @@ namespace Trinity.UI
 {
     public class UILoader
     {
-        private static Dictionary<string, string> _paths;
-        private static Dictionary<string, byte[]> _xaml;
+        private static ConcurrentDictionary<string, string> _paths;
+        private static ConcurrentDictionary<string, byte[]> _xaml;
 
         static UILoader()
         {
-            _xaml = new Dictionary<string, byte[]>();
             var paths = Directory.GetFiles(FileManager.PluginPath, "*.xaml", SearchOption.AllDirectories);
-            _paths = paths.DistinctBy(Path.GetFileName).ToDictionary(k => Path.GetFileName(k)?.ToLower(), v => v);
+            var pairs = paths.DistinctBy(Path.GetFileName).Select(p => new KeyValuePair<string, string>(Path.GetFileName(p)?.ToLower(), p));
+            _paths = new ConcurrentDictionary<string, string>(pairs);
+            _xaml = new ConcurrentDictionary<string, byte[]>();
         }
 
         public static void Preload()
         {
             var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
-            Task task = Task.Run(() => Parallel.ForEach(_paths, item => MyTask(item.Value, assemblyName)));
+            Task.Run(() => Parallel.ForEach(_paths, item => MyTask(item.Value, assemblyName)));
         }
 
         private static void MyTask(string path, string assm)
         {
-            if (_xaml.ContainsKey(path))
-                return;
-
-            string filecontent = File.ReadAllText(path);
+            var filecontent = File.ReadAllText(path);
             filecontent = resx.Replace(filecontent, string.Empty);
             filecontent = xmlns.Replace(filecontent, "$1;assembly=" + assm + "\"");
-            _xaml[path] = Encoding.UTF8.GetBytes(filecontent);
+            _xaml.TryAdd(path, Encoding.UTF8.GetBytes(filecontent));
         }
-
-        //private static ConcurrentDictionary<string, UserControl> _controls = new ConcurrentDictionary<string, UserControl>();
-
-        //private static void CreateXamlUserControl(string path)
-        //{
-        //    var sw = Stopwatch.StartNew();
-        //    var startTime = DateTime.UtcNow;
-        //    while (!_controls.TryAdd(path, LoadAndTransformUserControlXaml(path))
-        //        && DateTime.UtcNow.Subtract(startTime).TotalSeconds < 5)
-        //        continue;
-        //    sw.Stop();
-        //    Logger.Log($"{path} preloaded in {sw.Elapsed.TotalMilliseconds}ms");
-        //}
 
         internal static void PreLoadResources()
         {
-            //try
-            //{
             Application.Current.Dispatcher.BeginInvoke((Action)(() => LoadWindowContent(Path.Combine(FileManager.PluginPath, "UI"))));
-            //}
-            //catch (Exception ex)
-            //{
-            //    Logger.LogError("Exception pre-loadingn window content! " + ex);
-            //}
         }
 
         public static Window ConfigWindow;
@@ -99,31 +72,31 @@ namespace Trinity.UI
         {
             if (!BotEvents.IsBotRunning)
             {
-                Logger.LogDebug("GetDisplayWindow: Bot is not running");
+                Core.Logger.Debug("GetDisplayWindow: Bot is not running");
                 using (new PerformanceLogger("Window Data Load", true))
                 {
-                    Logger.LogDebug("GetDisplayWindow: AcquireFrame");
+                    Core.Logger.Debug("GetDisplayWindow: AcquireFrame");
                     using (ZetaDia.Memory.AcquireFrame())
                     {
-                        Logger.LogDebug("GetDisplayWindow: ZetaDia.Actors.Update");
+                        Core.Logger.Debug("GetDisplayWindow: ZetaDia.Actors.Update");
                         ZetaDia.Actors.Update();
-                        Logger.LogDebug("GetDisplayWindow: Actors.Update");
+                        Core.Logger.Debug("GetDisplayWindow: Actors.Update");
                         Core.Actors.Update();
-                        Logger.LogDebug("GetDisplayWindow: Inventory.Update");
+                        Core.Logger.Debug("GetDisplayWindow: Inventory.Update");
                         Core.Inventory.Update();
-                        Logger.LogDebug("GetDisplayWindow: Hotbar.Update");
+                        Core.Logger.Debug("GetDisplayWindow: Hotbar.Update");
                         Core.Hotbar.Update();
-                        Logger.LogDebug("GetDisplayWindow: Routines.SelectRoutine");
+                        Core.Logger.Debug("GetDisplayWindow: Routines.SelectRoutine");
                         Core.Routines.SelectRoutine();
-                        Logger.LogDebug("GetDisplayWindow: ChangeMonitor.Update");
+                        Core.Logger.Debug("GetDisplayWindow: ChangeMonitor.Update");
                         Core.ChangeMonitor.Update();
-                        Logger.LogDebug("GetDisplayWindow: UpdateGems");
+                        Core.Logger.Debug("GetDisplayWindow: UpdateGems");
                         PluginSettings.Current.UpdateGemList();
                     }
                 }
             }
 
-            Logger.LogDebug("GetDisplayWindow: Loading Window");
+            Core.Logger.Debug("GetDisplayWindow: Loading Window");
             return GetDisplayWindow(Path.Combine(FileManager.PluginPath, "UI"));
         }
 
@@ -147,29 +120,29 @@ namespace Trinity.UI
                     // Check we can actually find the .xaml file first - if not, report an error
                     if (!File.Exists(Path.Combine(uiPath, "MainView.xaml")))
                     {
-                        Logger.Log(TrinityLogLevel.Verbose, LogCategory.UI, "MainView.xaml not found {0}", Path.Combine(uiPath, "MainView.xaml"));
+                        Core.Logger.Verbose(LogCategory.UI, "MainView.xaml not found {0}", Path.Combine(uiPath, "MainView.xaml"));
                         return null;
                     }
-                    Logger.Log(TrinityLogLevel.Verbose, LogCategory.UI, "MainView.xaml found");
+                    Core.Logger.Verbose(LogCategory.UI, "MainView.xaml found");
                     if (ConfigWindow == null)
                     {
                         ConfigWindow = new Window();
                     }
-                    Logger.Log(TrinityLogLevel.Verbose, LogCategory.UI, "Load Context");
+                    Core.Logger.Verbose(LogCategory.UI, "Load Context");
 
                     var viewmodel = new ConfigViewModel(Core.Storage, Core.Settings);
 
                     DataContext = viewmodel;
                     ConfigWindow.DataContext = viewmodel;
 
-                    Logger.Log(TrinityLogLevel.Verbose, LogCategory.UI, "Load MainView.xaml");
+                    Core.Logger.Verbose(LogCategory.UI, "Load MainView.xaml");
                     if (_windowContent == null)
                     {
                         LoadWindowContent(uiPath);
                     }
-                    Logger.Log(TrinityLogLevel.Verbose, LogCategory.UI, "Put MainControl to Window");
+                    Core.Logger.Verbose(LogCategory.UI, "Put MainControl to Window");
                     ConfigWindow.Content = _windowContent;
-                    Logger.Log(TrinityLogLevel.Verbose, LogCategory.UI, "Configure Window");
+                    Core.Logger.Verbose(LogCategory.UI, "Configure Window");
 
                     if (Screen.PrimaryScreen.Bounds.Width <= 1920 || Screen.PrimaryScreen.Bounds.Height <= 1080)
                     {
@@ -188,18 +161,18 @@ namespace Trinity.UI
 
                     // Event handling for the config window loading up/closing
                     //configWindow.Loaded += configWindow_Loaded;
-                    Logger.Log(TrinityLogLevel.Verbose, LogCategory.UI, "Set Window Events");
+                    Core.Logger.Verbose(LogCategory.UI, "Set Window Events");
                     ConfigWindow.Closed += WindowClosed;
 
                     Application.Current.Exit += WindowClosed;
 
                     ConfigWindow.ContentRendered += (sender, args) => OnSettingsWindowOpened();
 
-                    Logger.Log(TrinityLogLevel.Verbose, LogCategory.UI, "Window build finished.");
+                    Core.Logger.Verbose(LogCategory.UI, "Window build finished.");
                 }
                 catch (XamlParseException ex)
                 {
-                    Logger.Log(TrinityLogLevel.Error, LogCategory.UI, "{0}", ex);
+                    Core.Logger.Error(LogCategory.UI, "{0}", ex);
                     return ConfigWindow;
                 }
                 return ConfigWindow;
@@ -217,7 +190,7 @@ namespace Trinity.UI
             }
             catch (Exception ex)
             {
-                Logger.LogError("Exception pre-loadingn window content! " + ex);
+                Core.Logger.Error("Exception pre-loadingn window content! " + ex);
             }
         }
 
@@ -228,15 +201,15 @@ namespace Trinity.UI
                 lock (ContentLock)
                 {
                     _windowContent = LoadAndTransformXamlFile<UserControl>(Path.Combine(uiPath, "MainView.xaml"));
-                    Logger.Log(TrinityLogLevel.Verbose, LogCategory.UI, "Load Children");
+                    Core.Logger.Verbose(LogCategory.UI, "Load Children");
                     LoadChild(_windowContent, uiPath);
-                    Logger.Log(TrinityLogLevel.Verbose, LogCategory.UI, "Load Resources");
+                    Core.Logger.Verbose(LogCategory.UI, "Load Resources");
                     LoadResourceForWindow(Path.Combine(uiPath, "Template.xaml"), _windowContent);
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogError("Exception loading window content! {0}", ex);
+                Core.Logger.Error("Exception loading window content! {0}", ex);
             }
         }
 
@@ -247,16 +220,16 @@ namespace Trinity.UI
                 lock (ContentLock)
                 {
                     var content = LoadAndTransformXamlFile<UserControl>(Path.Combine(uiPath, filename));
-                    Logger.LogVerbose(LogCategory.UI, "LoadSettings Children");
+                    Core.Logger.Verbose(LogCategory.UI, "LoadSettings Children");
                     LoadChild(content, uiPath);
-                    Logger.LogVerbose(LogCategory.UI, "LoadSettings Resources");
+                    Core.Logger.Verbose(LogCategory.UI, "LoadSettings Resources");
                     LoadResourceForWindow(Path.Combine(uiPath, "Template.xaml"), content);
                     return content;
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogError("Exception loading window content! {0}", ex);
+                Core.Logger.Error("Exception loading window content! {0}", ex);
             }
 
             return null;
@@ -278,7 +251,7 @@ namespace Trinity.UI
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error loading resources {0}", ex);
+                Core.Logger.Error("Error loading resources {0}", ex);
             }
         }
 
@@ -307,7 +280,7 @@ namespace Trinity.UI
         //{
         //    try
         //    {
-        //        Logger.Log(TrinityLogLevel.Verbose, LogCategory.UI, "Load XAML file : {0}", filePath);
+        //        Core.Logger.Verbose(LogCategory.UI, "Load XAML file : {0}", filePath);
         //        string filecontent = File.ReadAllText(filePath);
 
         //        if (string.Concat(filecontent.Skip(1).Take(11)) != "UserControl")
@@ -328,7 +301,7 @@ namespace Trinity.UI
         //    }
         //    catch (Exception ex)
         //    {
-        //        Logger.LogError("Error loading/transforming XAML {0}", ex);
+        //        Core.Logger.Error("Error loading/transforming XAML {0}", ex);
         //    }
         //    return null;
         //}
@@ -345,7 +318,7 @@ namespace Trinity.UI
 
             try
             {
-                Logger.Log(TrinityLogLevel.Verbose, LogCategory.UI, "Load XAML file : {0}", filePath);
+                Core.Logger.Verbose(LogCategory.UI, "Load XAML file : {0}", filePath);
                 string filecontent = File.ReadAllText(filePath);
                 var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
                 filecontent = resx.Replace(filecontent, string.Empty);
@@ -359,7 +332,7 @@ namespace Trinity.UI
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error loading/transforming XAML {0}", ex);
+                Core.Logger.Error("Error loading/transforming XAML {0}", ex);
             }
             return default(T);
         }
@@ -374,7 +347,7 @@ namespace Trinity.UI
         /// <exception cref="System.NotImplementedException"></exception>
         private static void WindowClosed(object sender, EventArgs e)
         {
-            Logger.Log(TrinityLogLevel.Verbose, LogCategory.UI, "Window closed.");
+            Core.Logger.Verbose(LogCategory.UI, "Window closed.");
             ConfigWindow = null;
         }
 
@@ -408,7 +381,7 @@ namespace Trinity.UI
             }
             catch (Exception ex)
             {
-                Logger.LogError("Exception loading child {0}", ex);
+                Core.Logger.Error("Exception loading child {0}", ex);
             }
         }
 
@@ -437,7 +410,7 @@ namespace Trinity.UI
                     // Otherwise, log control where you try to put dynamic tag
                     else
                     {
-                        Logger.Log(TrinityLogLevel.Verbose, LogCategory.UI, "Control of type '{0}' can't be used for dynamic loading.", ctrl.GetType().FullName);
+                        Core.Logger.Verbose(LogCategory.UI, "Control of type '{0}' can't be used for dynamic loading.", ctrl.GetType().FullName);
                         return;
                     }
                     // Content added to parent control, try to search dynamic control in children
@@ -445,12 +418,12 @@ namespace Trinity.UI
                 }
                 else
                 {
-                    Logger.Log(TrinityLogLevel.Error, LogCategory.UI, "Error XAML file not found : '{0}'", filename);
+                    Core.Logger.Error(LogCategory.UI, "Error XAML file not found : '{0}'", filename);
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogError("Exception loading Dynamic Content {0}", ex);
+                Core.Logger.Error("Exception loading Dynamic Content {0}", ex);
             }
         }
 
@@ -464,7 +437,7 @@ namespace Trinity.UI
 
                 if (!File.Exists(path))
                 {
-                    Logger.LogError("File Not Found: {0}", path);
+                    Core.Logger.Error("File Not Found: {0}", path);
                     return null;
                 }
 
@@ -519,7 +492,7 @@ namespace Trinity.UI
             }
             catch (XamlParseException ex)
             {
-                Logger.LogError("XamlParseException loading {0} {1} {2}", title, xamlRelativePath, ex);
+                Core.Logger.Error("XamlParseException loading {0} {1} {2}", title, xamlRelativePath, ex);
             }
 
             return window;

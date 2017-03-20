@@ -1,11 +1,9 @@
 using System;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using Trinity.Framework.Helpers;
-using Trinity.Framework.Objects.Memory.Sno.Helpers;
-using Trinity.Framework.Objects.Memory;
 using Zeta.Game;
 
 namespace Trinity.Framework.Objects.Memory
@@ -63,7 +61,7 @@ namespace Trinity.Framework.Objects.Memory
             }
             catch (Exception ex)
             {
-                Logger.Log($"Memory ReadObject Exception. {ex.ToLogString(Environment.StackTrace)}");
+                Core.Logger.Log($"Memory ReadObject Exception. {ex.ToLogString(Environment.StackTrace)}");
             }
             return default(T);
         }
@@ -91,7 +89,7 @@ namespace Trinity.Framework.Objects.Memory
             }
             catch (Exception ex)
             {
-                Logger.Log($"Memory ReadAbsoluteObject Exception. {ex.ToLogString(Environment.StackTrace)}");
+                Core.Logger.Log($"Memory ReadAbsoluteObject Exception. {ex.ToLogString(Environment.StackTrace)}");
             }
             return default(T);
         }
@@ -108,7 +106,7 @@ namespace Trinity.Framework.Objects.Memory
             }
             catch (Exception ex)
             {
-                Logger.Log($"Memory ReadOffset Exception. {ex.ToLogString(Environment.StackTrace)}");
+                Core.Logger.Log($"Memory ReadOffset Exception. {ex.ToLogString(Environment.StackTrace)}");
             }
             return default(T);
         }
@@ -125,7 +123,7 @@ namespace Trinity.Framework.Objects.Memory
             }
             catch (Exception ex)
             {
-                Logger.Log($"Memory ReadArray Exception. {ex.ToLogString(Environment.StackTrace)}");
+                Core.Logger.Log($"Memory ReadArray Exception. {ex.ToLogString(Environment.StackTrace)}");
             }
             return new List<T>();
         }
@@ -138,7 +136,7 @@ namespace Trinity.Framework.Objects.Memory
             }
             catch (Exception ex)
             {
-                Logger.Log($"Memory ReadArray Exception. {ex.ToLogString(Environment.StackTrace)}");
+                Core.Logger.Log($"Memory ReadArray Exception. {ex.ToLogString(Environment.StackTrace)}");
             }
             return default(T[]);
         }
@@ -291,7 +289,7 @@ namespace Trinity.Framework.Objects.Memory
             }
             catch (Exception ex)
             {
-                Logger.Log($"Memory ReadString Exception. {ex.ToLogString(Environment.StackTrace)}");
+                Core.Logger.Log($"Memory ReadString Exception. {ex.ToLogString(Environment.StackTrace)}");
             }
             return string.Empty;
         }
@@ -308,7 +306,7 @@ namespace Trinity.Framework.Objects.Memory
             }
             catch (Exception ex)
             {
-                Logger.Log($"Memory ReadString Exception. {ex.ToLogString(Environment.StackTrace)}");
+                Core.Logger.Log($"Memory ReadString Exception. {ex.ToLogString(Environment.StackTrace)}");
             }
             return string.Empty;
         }
@@ -325,7 +323,7 @@ namespace Trinity.Framework.Objects.Memory
             }
             catch (Exception ex)
             {
-                Logger.Log($"Memory ReadString Exception. {ex.ToLogString(Environment.StackTrace)}");
+                Core.Logger.Log($"Memory ReadString Exception. {ex.ToLogString(Environment.StackTrace)}");
             }
             return string.Empty;
         }
@@ -348,7 +346,7 @@ namespace Trinity.Framework.Objects.Memory
             }
             catch (Exception ex)
             {
-                Logger.Log($"Memory ReadSerializedData Exception. {ex.ToLogString(Environment.StackTrace)}");
+                Core.Logger.Log($"Memory ReadSerializedData Exception. {ex.ToLogString(Environment.StackTrace)}");
             }
             return default(T[]);
         }
@@ -381,7 +379,7 @@ namespace Trinity.Framework.Objects.Memory
                     var size = TypeUtil<T>.SizeOf;
                     if (size == 0)
                     {
-                        Logger.LogError($"ReadSerializedObjects was unable to get a size for {type.Name}");
+                        Core.Logger.Error($"ReadSerializedObjects was unable to get a size for {type.Name}");
                     }
 
                     if (serializeBase == IntPtr.Zero)
@@ -413,7 +411,7 @@ namespace Trinity.Framework.Objects.Memory
             }
             catch (Exception ex)
             {
-                Logger.Log($"Memory ReadSerializedObjects Exception. {ex.ToLogString(Environment.StackTrace)}");
+                Core.Logger.Log($"Memory ReadSerializedObjects Exception. {ex.ToLogString(Environment.StackTrace)}");
             }
             return default(List<T>);
         }
@@ -430,7 +428,7 @@ namespace Trinity.Framework.Objects.Memory
             }
             catch (Exception ex)
             {
-                Logger.Log($"Memory Read Exception. {ex} {ex.ToLogString(Environment.StackTrace)}");
+                Core.Logger.Log($"Memory Read Exception. {ex} {ex.ToLogString(Environment.StackTrace)}");
             }
             return default(T);
         }

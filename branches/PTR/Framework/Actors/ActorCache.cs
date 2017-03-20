@@ -1,16 +1,18 @@
 ﻿using System;
+using System.Collections;
+using Trinity.Framework.Helpers;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Trinity.Components.Adventurer.Game.Quests;
 using Trinity.Framework.Actors.ActorTypes;
-using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
 using Zeta.Game.Internals.SNO;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 
 namespace Trinity.Framework.Actors
 {
@@ -19,36 +21,35 @@ namespace Trinity.Framework.Actors
     /// Collections are complete, except for bad data / disposed actors.
     /// Filtered lists for attacking/interacting can be found in Core.Targets
     /// </summary>
-    public class ActorCache : Module
+    public class ActorCache : Module, IEnumerable<TrinityActor>
     {
         private Stopwatch _timer = new Stopwatch();
 
         private readonly ConcurrentDictionary<int, ACD> _commonData = new ConcurrentDictionary<int, ACD>();
 
-        private readonly ConcurrentDictionary<int, TrinityActor> _rActors = new ConcurrentDictionary<int, TrinityActor>();
+        public readonly ConcurrentDictionary<int, TrinityActor> _rActors = new ConcurrentDictionary<int, TrinityActor>();
         private readonly ConcurrentDictionary<int, TrinityItem> _inventory = new ConcurrentDictionary<int, TrinityItem>();
 
         private readonly Dictionary<int, short> _annToAcdIndex = new Dictionary<int, short>();
         private readonly Dictionary<int, int> _acdToRActorIndex = new Dictionary<int, int>();
-
         public HashSet<int> CurrentAcdIds { get; set; } = new HashSet<int>();
         public HashSet<int> CurrentRActorIds { get; set; } = new HashSet<int>();
-
         public ulong LastUpdatedFrame { get; private set; }
         public int ActivePlayerRActorId { get; private set; }
-
         public TrinityPlayer Me { get; private set; }
-
+        public Vector3 ActivePlayerPosition { get; set; }
         protected override void OnPulse() => Update();
-
-        protected override void OnWorldChanged(ChangeEventArgs<int> args) => Clear();
-
-        protected override void OnGameJoined() => Clear();
 
         public void Update()
         {
             if (!ZetaDia.IsInGame)
+            {
+                if (_rActors.Any())
+                {
+                    Clear();
+                }
                 return;
+            }
 
             UpdateObjectsFromMemory();
         }
@@ -60,16 +61,24 @@ namespace Trinity.Framework.Actors
                 return;
 
             ActivePlayerRActorId = ZetaDia.ActivePlayerRActorId;
+            var player = ZetaDia.RActors[(short)ActivePlayerRActorId];
+            ActivePlayerPosition = player.Position;
+
+            // Currently need actors populated to lookup ACDs from RActor.CommonData property
+            if (!_rActors.Any())
+                ZetaDia.Actors.Update();
 
             UpdateAcds();
             UpdateRActors();
             UpdateInventory();
 
+            ByDistance = _rActors.Values.OrderBy(a => a.Distance);
             CurrentAcdIds = new HashSet<int>(_commonData.Keys);
             CurrentRActorIds = new HashSet<int>(_rActors.Keys);
-
             LastUpdatedFrame = currentFrame;
         }
+
+        public IOrderedEnumerable<TrinityActor> ByDistance { get; private set; }
 
         #region Update Methods
 
@@ -244,12 +253,10 @@ namespace Trinity.Framework.Actors
 
         #region Lookup Methods
 
-        public IEnumerable<TrinityActor> AllRActors => _rActors.Values.OfType<TrinityActor>().ToList();
+        public IEnumerable<TrinityActor> AllRActors => _rActors.Values;
 
-        public IEnumerable<T> GetActorsOfType<T>() where T : ActorBase
-        {
-            return _rActors.Values.OfType<T>();
-        }
+        public IEnumerable<T> OfType<T>() where T : TrinityActor 
+            => _rActors.Values.OfType<T>();
 
         public IEnumerable<TrinityItem> Inventory => _inventory.Values.ToList();
 
@@ -347,7 +354,7 @@ namespace Trinity.Framework.Actors
 
         public void Clear()
         {
-            Logger.LogDebug("Resetting ActorCache");
+            Core.Logger.Debug("Resetting ActorCache");
             _annToAcdIndex.Clear();
             _commonData.ForEach(o => o.Value.UpdatePointer(IntPtr.Zero));
             _rActors.ForEach(o => o.Value.RActor.UpdatePointer(IntPtr.Zero));
@@ -373,5 +380,8 @@ namespace Trinity.Framework.Actors
 
             return _rActors[rActorId] as T;
         }
+
+        IEnumerator IEnumerable.GetEnumerator() => AllRActors.GetEnumerator();
+        public IEnumerator<TrinityActor> GetEnumerator() => AllRActors.GetEnumerator();
     }
 }

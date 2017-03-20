@@ -1,17 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using Trinity.Components.Adventurer.Game.Quests;
-using Trinity.Components.Combat;
-using Trinity.Components.Combat.Resources;
-using Trinity.Framework;
 using Trinity.Framework.Objects;
-using Trinity.Framework.Objects.Enums;
-using Trinity.Framework.Objects.Memory.Sno;
+using Trinity.Framework.Objects.Memory;
 using Zeta.Game;
 using Zeta.Game.Internals;
-using Zeta.Game.Internals.Actors;
-using Zeta.Game.Internals.Service;
 using Zeta.Game.Internals.SNO;
 
 namespace Trinity.Modules

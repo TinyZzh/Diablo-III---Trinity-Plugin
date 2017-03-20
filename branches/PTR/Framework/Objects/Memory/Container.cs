@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Trinity.Framework.Objects.Memory.Containers
+namespace Trinity.Framework.Objects.Memory
 {
     public class ContainerHeader : MemoryWrapper
     {

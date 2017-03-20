@@ -1,10 +1,10 @@
 ﻿using Buddy.Coroutines;
 using System;
+using Trinity.Framework.Helpers;
 using System.Threading.Tasks;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Events;
-using Trinity.Framework.Helpers;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 
 namespace Trinity.Framework.Behaviors
 {
@@ -59,7 +59,7 @@ namespace Trinity.Framework.Behaviors
 
         private async Task<bool> WaitAction()
         {
-            Logger.LogVerbose(LogCategory.Behavior, $"Waiting after unit death: {LastDiedUnit?.Name}, because {WaitReason}, TimeSinceDeath={TimeSinceDeath:g} RemainingWaitTime={RemainingWaitTime:g}");
+            Core.Logger.Verbose(LogCategory.Behavior, $"Waiting after unit death: {LastDiedUnit?.Name}, because {WaitReason}, TimeSinceDeath={TimeSinceDeath:g} RemainingWaitTime={RemainingWaitTime:g}");
             await Coroutine.Sleep(250);
             return true;
         }
@@ -67,14 +67,14 @@ namespace Trinity.Framework.Behaviors
         protected override async Task<bool> OnStarted()
         {
             LastStartedTime = DateTime.UtcNow;
-            Logger.Warn($"Started waiting after unit death: {LastDiedUnit?.Name}, {LastDiedUnit?.AcdId}");
+            Core.Logger.Warn($"Started waiting after unit death: {LastDiedUnit?.Name}, {LastDiedUnit?.AcdId}");
             return true;
         }
 
         protected override async Task<bool> OnStopped()
         {
             LastStoppedTime = DateTime.UtcNow;
-            Logger.Warn($"Finished waiting after unit death: {LastDiedUnit?.Name}, TimeWaited={LastRunTime:g}");
+            Core.Logger.Warn($"Finished waiting after unit death: {LastDiedUnit?.Name}, TimeWaited={LastRunTime:g}");
             return true;
         }
     }

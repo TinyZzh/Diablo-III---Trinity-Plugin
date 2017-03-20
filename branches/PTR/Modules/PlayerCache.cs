@@ -1,23 +1,22 @@
 ﻿using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
-using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
-using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
-using Trinity.Framework.Objects.Enums;
-using Trinity.Framework.Objects.Memory.UX;
-using Trinity.Reference;
+using Trinity.Framework.Objects.Memory;
+using Trinity.Framework.Reference;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 
 namespace Trinity.Modules
 {
     public class PlayerCache : Module
-    {
+    {       
         public int ActorSnoId { get; set; }
 
         public SummonInfo Summons = new SummonInfo();
@@ -177,7 +176,7 @@ namespace Trinity.Modules
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log(TrinityLogLevel.Debug, LogCategory.CacheManagement, "Safely handled exception for grabbing player data.{0}{1}", Environment.NewLine, ex);
+                    Core.Logger.Debug(LogCategory.CacheManagement, "Safely handled exception for grabbing player data.{0}{1}", Environment.NewLine, ex);
                 }
             }
         }
@@ -249,7 +248,7 @@ namespace Trinity.Modules
             //         var directionRadians = Math.Atan2(direction.X, direction.Y);
             //var directionDegrees = directionRadians * 180/Math.PI;
 
-            //Logger.LogNormal("Player DirectionVector={0}{1} Radians={2} (DB: {3}) Degrees={4} (DB: {5})",
+            //Core.Logger.Log("Player DirectionVector={0}{1} Radians={2} (DB: {3}) Degrees={4} (DB: {5})",
             //             DirectionVector.X, 
             //             DirectionVector.Y,
             //             directionRadians,
@@ -271,7 +270,7 @@ namespace Trinity.Modules
             var averageHealth = HealthHistory.Average();
             IsTakingDamage = averageHealth > CurrentHealth;
             if (IsTakingDamage)
-                Logger.LogVerbose(LogCategory.Avoidance, "Taking Damage 5TickAvg={0} Current={1}", averageHealth, CurrentHealth);
+                Core.Logger.Verbose(LogCategory.Avoidance, "Taking Damage 5TickAvg={0} Current={1}", averageHealth, CurrentHealth);
 
             // For WD Angry Chicken
             IsHidden = _me.IsHidden;
@@ -375,8 +374,11 @@ namespace Trinity.Modules
             }
 
             Name = player.HeroName;
+            HeroId = player.HeroId;
             LastSlowUpdate = DateTime.UtcNow;
         }
+
+        public int HeroId { get; set; }
 
         internal void UpdateVerySlowChangingData()
         {
@@ -472,7 +474,7 @@ namespace Trinity.Modules
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogError($"Exception finding EquippedHealthPotion {ex}");
+                    Core.Logger.Error($"Exception finding EquippedHealthPotion {ex}");
                 }
                 return InventoryManager.BaseHealthPotion;
             }
@@ -518,19 +520,19 @@ namespace Trinity.Modules
 
                 if (CheckVisualEffectNoneForPower(commonData, SNOPower.UseStoneOfRecall))
                 {
-                    Logger.LogVerbose("Player is casting 'UseStoneOfRecall'");
+                    Core.Logger.Verbose("Player is casting 'UseStoneOfRecall'");
                     return true;
                 }
 
                 //if (CheckVisualEffectNoneForPower(commonData, SNOPower.TeleportToPlayer_Cast))
                 //{
-                //    Logger.LogVerbose("Player is casting 'TeleportToPlayer_Cast'");
+                //    Core.Logger.Verbose("Player is casting 'TeleportToPlayer_Cast'");
                 //    return true;
                 //}
 
                 if (CheckVisualEffectNoneForPower(commonData, SNOPower.TeleportToWaypoint_Cast))
                 {
-                    Logger.LogVerbose("Player is casting 'TeleportToWaypoint_Cast'");
+                    Core.Logger.Verbose("Player is casting 'TeleportToWaypoint_Cast'");
                     return true;
                 }
 

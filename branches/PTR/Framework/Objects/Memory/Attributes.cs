@@ -1,12 +1,11 @@
 ﻿using System;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
-using Trinity.Framework.Helpers;
-using Trinity.Framework.Objects.Memory.Containers;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
 
-namespace Trinity.Framework.Objects.Memory.Attributes
+namespace Trinity.Framework.Objects.Memory
 {
     public class Attributes
     {
@@ -48,7 +47,7 @@ namespace Trinity.Framework.Objects.Memory.Attributes
 
                 if (Group == null || !Group.IsValid)
                 {
-                    Logger.LogVerbose($"Attribute group is invalid with id: {groupId}");
+                    Core.Logger.Verbose($"Attribute group is invalid with id: {groupId}");
                     return;
                 }
 
@@ -63,7 +62,7 @@ namespace Trinity.Framework.Objects.Memory.Attributes
 
                 if (Map == null || !Map.IsValid)
                 {
-                    Logger.LogVerbose($"Attribute Map Invalid for groupId: {groupId}");
+                    Core.Logger.Verbose($"Attribute Map Invalid for groupId: {groupId}");
                     return;
                 }
 
@@ -77,7 +76,7 @@ namespace Trinity.Framework.Objects.Memory.Attributes
             }
             catch (Exception ex)
             {
-                Logger.LogDebug($"Exception creating attributes {ex} for groupId {groupId}");
+                Core.Logger.Debug($"Exception creating attributes {ex} for groupId {groupId}");
             }
         }
 

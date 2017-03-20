@@ -1,12 +1,12 @@
 ﻿using System;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
-using Org.BouncyCastle.Crypto.Tls;
 using Trinity.Framework.Objects.Enums;
 using Zeta.Game;
 using UIElement = Zeta.Game.Internals.UIElement;
 
-namespace Trinity.Framework.Objects.Memory.UX
+namespace Trinity.Framework.Objects.Memory
 {
     public static class UXHelper
     {

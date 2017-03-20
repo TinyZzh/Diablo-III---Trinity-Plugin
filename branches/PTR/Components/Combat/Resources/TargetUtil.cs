@@ -1,15 +1,15 @@
 ﻿using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using Trinity.DbProvider;
-using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Avoidance.Structures;
-using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
 using Trinity.Framework.Objects.Memory;
+using Trinity.Framework.Reference;
 using Trinity.Modules;
-using Trinity.Reference;
 using Trinity.Routines;
 using Trinity.Settings;
 using Trinity.UI.Visualizer.RadarCanvas;
@@ -17,7 +17,7 @@ using Zeta.Bot.Navigation;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 
 namespace Trinity.Components.Combat.Resources
 {
@@ -31,12 +31,12 @@ namespace Trinity.Components.Combat.Resources
                 {
                     var monk = Core.Targets.FirstOrDefault(x => x.InternalName.ToLower().Contains("monk"));
                     //if (monk == null)
-                    //    Logger.Log("Unable to find Monk.  Where did he go?");
+                    //    Core.Logger.Log("Unable to find Monk.  Where did he go?");
                     return monk;
                 }
                 catch (Exception)
                 {
-                    Logger.Log("Unable to find Monk.  Error?");
+                    Core.Logger.Log("Unable to find Monk.  Error?");
                     //return CombatBase.IsInParty ? TargetUtil.GetClosestUnit(25) : null;
                     return null;
                 }
@@ -188,7 +188,7 @@ namespace Trinity.Components.Combat.Resources
                 Combat.Targeting.CurrentTarget.Type != TrinityObjectType.Shrine &&
                 Combat.Targeting.CurrentTarget.Type != TrinityObjectType.HealthGlobe)
             {
-                //Logger.Log("Prevent Primary Attack ");
+                //Core.Logger.Log("Prevent Primary Attack ");
                 var targetPosition = TargetUtil.GetLoiterPosition(Combat.Targeting.CurrentTarget, 20f);
                 // return new TrinityPower(SNOPower.Walk, 7f, targetPosition);
                 return targetPosition;
@@ -508,7 +508,7 @@ namespace Trinity.Components.Combat.Resources
                 var clearString = "Clearing CURRENT TARGET: " + reason +
                         $"{Environment.NewLine} Name: {CurrentTarget.InternalName} Type: {CurrentTarget.Type} SNO: {CurrentTarget.ActorSnoId} Distance: {CurrentTarget.Distance} " +
                         $"{Environment.NewLine} Weight: {CurrentTarget.Weight} Info: {CurrentTarget.WeightInfo}";
-                Logger.LogVerbose(LogCategory.Weight, clearString);
+                Core.Logger.Verbose(LogCategory.Weight, clearString);
                 //Combat.Targeting.CurrentTarget = null;
             }
         }
@@ -1245,7 +1245,7 @@ namespace Trinity.Components.Combat.Resources
                 var clusterPoint = GetBestClusterPoint(ringDistance, ringDistance, false, attackInAoe);
                 if (clusterPoint.Distance(Player.Position) >= minDistance)
                 {
-                    Logger.Log(LogCategory.Movement, "Returning ZigZag: BestClusterPoint {0} r-dist={1} t-dist={2}", clusterPoint, ringDistance, clusterPoint.Distance(Player.Position));
+                    Core.Logger.Log(LogCategory.Movement, "Returning ZigZag: BestClusterPoint {0} r-dist={1} t-dist={2}", clusterPoint, ringDistance, clusterPoint.Distance(Player.Position));
                     return clusterPoint;
                 }
 
@@ -1270,7 +1270,7 @@ namespace Trinity.Components.Combat.Resources
                     zigZagPoint = zigZagTargetList.OrderByDescending(u => u.Distance).FirstOrDefault().Position;
                     if (Core.Grids.CanRayCast(zigZagPoint) && zigZagPoint.Distance(Player.Position) >= minDistance)
                     {
-                        Logger.Log(LogCategory.Movement, "Returning ZigZag: TargetBased {0} r-dist={1} t-dist={2}", zigZagPoint, ringDistance, zigZagPoint.Distance(Player.Position));
+                        Core.Logger.Log(LogCategory.Movement, "Returning ZigZag: TargetBased {0} r-dist={1} t-dist={2}", zigZagPoint, ringDistance, zigZagPoint.Distance(Player.Position));
                         return zigZagPoint;
                     }
                 }
@@ -1337,7 +1337,7 @@ namespace Trinity.Components.Combat.Resources
                     if (monsterCount > 0)
                         pointWeight *= monsterCount;
 
-                    //Logger.Log(LogCategory.Movement, "ZigZag Point: {0} distance={1:0} distaceFromTarget={2:0} intersectsPath={3} weight={4:0} monsterCount={5}",
+                    //Core.Logger.Log(LogCategory.Movement, "ZigZag Point: {0} distance={1:0} distaceFromTarget={2:0} intersectsPath={3} weight={4:0} monsterCount={5}",
                     //    zigZagPoint, distanceToPoint, distanceFromTargetToPoint, intersectsPath, pointWeight, monsterCount);
 
                     // Use this one if it's more weight, or we haven't even found one yet, or if same weight as another with a random chance
@@ -1356,7 +1356,7 @@ namespace Trinity.Components.Combat.Resources
                     }
                 }
             }
-            Logger.Log(LogCategory.Movement, "Returning ZigZag: RandomXY {0} r-dist={1} t-dist={2}", bestLocation, ringDistance, bestLocation.Distance(Player.Position));
+            Core.Logger.Log(LogCategory.Movement, "Returning ZigZag: RandomXY {0} r-dist={1} t-dist={2}", bestLocation, ringDistance, bestLocation.Distance(Player.Position));
             return bestLocation;
         }
 
@@ -1435,7 +1435,7 @@ namespace Trinity.Components.Combat.Resources
                                              !u.HasDebuff(power)
                                       select u).ToList();
 
-            //Logger.Log(LogCategory.Behavior, "{0}/{1} units without debuff {2} in {3} range", unitsWithoutDebuff.Count, unitsInRange.Count, power, range);
+            //Core.Logger.Log(LogCategory.Behavior, "{0}/{1} units without debuff {2} in {3} range", unitsWithoutDebuff.Count, unitsInRange.Count, power, range);
 
             return unitsWithoutDebuff.Count >= unitsRequiredWithoutDebuff;
         }
@@ -1483,7 +1483,7 @@ namespace Trinity.Components.Combat.Resources
 
             double percentWithinBand = ((double)totalWithinBand / (double)totalWithinMaxRange) * 100;
 
-            //Logger.LogDebug("{0} of {6} mobs between {1} and {2} yards ({3:f2}%), needed={4}% result={5}", totalWithinBand, bandMinRange, bandMaxRange, percentWithinBand, percentage, percentWithinBand >= percentage, totalWithinMaxRange);
+            //Core.Logger.Debug("{0} of {6} mobs between {1} and {2} yards ({3:f2}%), needed={4}% result={5}", totalWithinBand, bandMinRange, bandMaxRange, percentWithinBand, percentage, percentWithinBand >= percentage, totalWithinMaxRange);
 
             return percentWithinBand >= percentage;
         }
@@ -1577,7 +1577,7 @@ namespace Trinity.Components.Combat.Resources
 
             var pct = (float)(debuffed) / total;
 
-            Logger.Log(LogCategory.Behavior, "{0} out of {1} mobs have {3} ({2:0.##}%)", debuffed, total, pct * 100, power);
+            Core.Logger.Log(LogCategory.Behavior, "{0} out of {1} mobs have {3} ({2:0.##}%)", debuffed, total, pct * 100, power);
 
             return pct;
 
@@ -1601,7 +1601,7 @@ namespace Trinity.Components.Combat.Resources
 
             //var pct = (float)debuffed.Count / all.Count;
 
-            //Logger.Log(LogCategory.Behavior, "{0} out of {1} mobs have {3} ({2:0.##}%)", debuffed, all, pct * 100, power);
+            //Core.Logger.Log(LogCategory.Behavior, "{0} out of {1} mobs have {3} ({2:0.##}%)", debuffed, all, pct * 100, power);
 
             //return pct;
         }

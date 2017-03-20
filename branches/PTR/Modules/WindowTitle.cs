@@ -1,13 +1,7 @@
 using System;
-using System.Globalization;
-using System.Text;
-using System.Windows;
-using Trinity.Components.Combat;
 using Trinity.Framework;
+using System.Windows;
 using Trinity.Framework.Objects;
-using Zeta.Bot;
-using Zeta.Game;
-using Zeta.Game.Internals.Actors;
 
 namespace Trinity.Modules
 {

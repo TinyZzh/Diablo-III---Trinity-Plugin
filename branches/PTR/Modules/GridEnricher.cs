@@ -1,22 +1,23 @@
-using Buddy.Coroutines;
 using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
+using Buddy.Coroutines;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Combat;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Avoidance.Settings;
 using Trinity.Framework.Avoidance.Structures;
-using Trinity.Framework.Helpers;
+using Trinity.Framework.Grid;
 using Trinity.Framework.Objects;
-using Trinity.Framework.Objects.Enums;
 using Trinity.Settings;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals.SNO;
-using Logger = Trinity.Framework.Helpers.Logger;
 
-namespace Trinity.Framework.Avoidance
+
+namespace Trinity.Modules
 {
     public class GridEnricher : Module
     {
@@ -86,7 +87,7 @@ namespace Trinity.Framework.Avoidance
 
                 if (grid.NearestNode == null || grid.NearestNode.DynamicWorldId != ZetaDia.Globals.WorldId)
                 {
-                    Logger.LogDebug(LogCategory.Avoidance, $"No Player Nearest Node or WorldId Mismatch");
+                    Core.Logger.Debug(LogCategory.Avoidance, $"No Player Nearest Node or WorldId Mismatch");
                     return;
                 }
 
@@ -145,7 +146,7 @@ namespace Trinity.Framework.Avoidance
                             var handler = avoidance.Definition.Handler;
                             if (handler == null)
                             {
-                                Logger.LogError(LogCategory.Avoidance, $"Avoidance: {avoidance.Definition.Name} has no handler");
+                                Core.Logger.Error(LogCategory.Avoidance, $"Avoidance: {avoidance.Definition.Name} has no handler");
                                 continue;
                             }
 
@@ -157,17 +158,17 @@ namespace Trinity.Framework.Avoidance
                                 {
                                     activeAvoidanceSnoIds.Add(a.ActorSnoId);
                                     Core.DBGridProvider.AddCellWeightingObstacle(a.ActorSnoId, a.CollisionRadius);
-                                    //Logger.Warn(LogCategory.Avoidance, $"Avoidance Flagged {a} for {avoidance.Definition.Name}, handler={avoidance.Definition.Handler.GetType().Name}");
+                                    //Core.Logger.Warn(LogCategory.Avoidance, $"Avoidance Flagged {a} for {avoidance.Definition.Name}, handler={avoidance.Definition.Handler.GetType().Name}");
                                 });
                             }
                             else
                             {
-                                //Logger.Warn(LogCategory.Avoidance, $"Avoidance {avoidance.Definition.Name} is not allowed. Enabled={avoidance.Settings.IsEnabled} IsAllowed={avoidance.IsAllowed} PlayerHealth={Core.Player.CurrentHealthPct * 100} SettingsHealth={avoidance.Settings.HealthPct} ");
+                                //Core.Logger.Warn(LogCategory.Avoidance, $"Avoidance {avoidance.Definition.Name} is not allowed. Enabled={avoidance.Settings.IsEnabled} IsAllowed={avoidance.IsAllowed} PlayerHealth={Core.Player.CurrentHealthPct * 100} SettingsHealth={avoidance.Settings.HealthPct} ");
                             }
                         }
                         catch (Exception ex)
                         {
-                            Logger.LogError(LogCategory.Avoidance, $"Exception in AvoidanceHandler updating nodes. Name={avoidance.Definition?.Name} Handler={avoidance.Definition?.Handler?.GetType()} {ex} {Environment.StackTrace}");
+                            Core.Logger.Error(LogCategory.Avoidance, $"Exception in AvoidanceHandler updating nodes. Name={avoidance.Definition?.Name} Handler={avoidance.Definition?.Handler?.GetType()} {ex} {Environment.StackTrace}");
                         }
                     }
 
@@ -227,7 +228,7 @@ namespace Trinity.Framework.Avoidance
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log("Exception in UpdateGrid {0}", ex);
+                    Core.Logger.Log("Exception in UpdateGrid {0}", ex);
 
                     if (ex is CoroutineStoppedException)
                         throw;

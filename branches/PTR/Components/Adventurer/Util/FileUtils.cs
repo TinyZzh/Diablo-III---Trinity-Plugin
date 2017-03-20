@@ -1,7 +1,7 @@
 ﻿using System;
+using Trinity.Framework;
 using System.IO;
 using System.Reflection;
-using Trinity.Components.Adventurer.Cache;
 
 namespace Trinity.Components.Adventurer.Util
 {
@@ -84,7 +84,7 @@ namespace Trinity.Components.Adventurer.Util
             }
             catch (Exception ex)
             {
-                Logger.Debug("Exception in ReadFromTextFile");
+                Core.Logger.Debug("Exception in ReadFromTextFile");
                 return null;
             }
         }

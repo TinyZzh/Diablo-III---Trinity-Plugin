@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Trinity.Components.Adventurer.Game.Quests;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
+using Trinity.Framework;
+
 
 namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
 {
@@ -18,7 +19,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
 
         public async Task<bool> GetCoroutine()
         {
-            Logger.Warn(_message);
+            Core.Logger.Warn(_message);
             _isDone = true;
             return true;
         }

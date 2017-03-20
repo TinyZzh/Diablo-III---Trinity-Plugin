@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.InteropServices;
-using Trinity.UI.UIComponents;
-using Zeta.Game;
 using Zeta.Common;
 
-namespace Trinity.Framework.Objects.Memory.UX
+namespace Trinity.Framework.Objects.Memory
 {
     public class UXMinimap : UXControl
     {

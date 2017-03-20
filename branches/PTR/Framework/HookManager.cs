@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using Trinity.Components.Combat;
-using Trinity.Coroutines.Town;
+using Trinity.Components.Coroutines.Town;
 using Trinity.DbProvider;
-using Trinity.Framework.Helpers;
 using Zeta.Bot;
 using Zeta.Common;
 using Zeta.TreeSharp;
-using Logger = Trinity.Framework.Helpers.Logger;
 
-namespace Trinity
+
+namespace Trinity.Framework
 {
     public class HookManager
     {
@@ -72,7 +71,7 @@ namespace Trinity
             if (!OriginalHooks.ContainsKey(hookName))
                 OriginalHooks.Add(hookName, TreeHooks.Instance.Hooks[hookName][0]);
 
-            Logger.Log("Replacing " + hookName + " Hook");
+            Core.Logger.Log("Replacing " + hookName + " Hook");
             TreeHooks.Instance.ReplaceHook(hookName, behavior);
         }
 
@@ -80,7 +79,7 @@ namespace Trinity
         {
             if (OriginalHooks.ContainsKey(hook) && TreeHooks.Instance.Hooks.ContainsKey(hook))
             {
-                Logger.Log("Replacing " + hook + " Hook with Original");
+                Core.Logger.Log("Replacing " + hook + " Hook with Original");
                 TreeHooks.Instance.ReplaceHook(hook, OriginalHooks[hook]);
             }
         }

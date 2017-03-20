@@ -1,4 +1,6 @@
 ﻿using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -6,19 +8,14 @@ using System.Windows.Controls;
 using Trinity.Components.Combat;
 using Trinity.Components.Combat.Resources;
 using Trinity.DbProvider;
-using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Avoidance.Structures;
-using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
-using Trinity.Reference;
-using Trinity.Routines.Crusader;
-using Trinity.Settings;
+using Trinity.Framework.Reference;
 using Trinity.UI;
 using Zeta.Common;
 using Zeta.Game;
-using Zeta.Game.Internals.Actors;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 
 namespace Trinity.Routines.Wizard
 {
@@ -71,7 +68,7 @@ namespace Trinity.Routines.Wizard
 
             if (ShouldCancelArchon())
             {
-                Logger.Log(LogCategory.Routine, $"Canceling Archon: Tal's Stacks {TalRashaStacks} Has Cooldown Pylon: {HasInfiniteCasting}");
+                Core.Logger.Log(LogCategory.Routine, $"Canceling Archon: Tal's Stacks {TalRashaStacks} Has Cooldown Pylon: {HasInfiniteCasting}");
                 CancelArchon();
             }
 
@@ -238,7 +235,7 @@ namespace Trinity.Routines.Wizard
             if (Player.IsChannelling || !Player.IsChannelling)
             {
                 if (anyElitesinRange || anyMobsInRange || healthIsLow || affixOnPlayer)
-                    Logger.Log(LogCategory.Routine, $"Close Elites: {anyElitesinRange}, Mobs: {anyMobsInRange}, Health: {healthIsLow}, Affix: {affixOnPlayer}");
+                    Core.Logger.Log(LogCategory.Routine, $"Close Elites: {anyElitesinRange}, Mobs: {anyMobsInRange}, Health: {healthIsLow}, Affix: {affixOnPlayer}");
                     return true;
             }
 
@@ -270,7 +267,7 @@ namespace Trinity.Routines.Wizard
 
             if (CurrentTarget.Distance < 50 && isShrine || isProgressionGlobe || (isHealthGlobe && archonHealthIsLow))
             {
-                //Logger.Log($"Teleporting to Priority Target");
+                //Core.Logger.Log($"Teleporting to Priority Target");
                 position = CurrentTarget.Position;
                 return true;
             }
@@ -279,21 +276,21 @@ namespace Trinity.Routines.Wizard
             {
                 if (affixOnPlayer || (archonHealthIsLow && archonHealthIsLowDelay && anyMobsInRange))
                 {
-                    //Logger.Log($"Teleport for Survival! Affix: {affixOnPlayer}, Health: {archonHealthIsLow}");
+                    //Core.Logger.Log($"Teleport for Survival! Affix: {affixOnPlayer}, Health: {archonHealthIsLow}");
                     Avoider.TryGetSafeSpot(out position, Settings.TeleportKiteMinDistance, Settings.TeleportKiteMaxDistance, ZetaDia.Me.Position, node => !HostileMonsters.Any(m => m.Position.Distance(node.NavigableCenter) < 15f));
                     return true;
                 }
 
                 if(Skills.Wizard.Archon.TimeSinceUse > 19500)
                 {
-                    //Logger.Log($"Teleport! Archon is about to drop!!!");
+                    //Core.Logger.Log($"Teleport! Archon is about to drop!!!");
                     Avoider.TryGetSafeSpot(out position, Settings.TeleportKiteMinDistance, Settings.TeleportKiteMaxDistance, ZetaDia.Me.Position, node => !HostileMonsters.Any(m => m.Position.Distance(node.NavigableCenter) < 15f));
                     return true;
                 }
 
                 if (CurrentTarget.IsElite && anyElitesinRange && archonTeleportDelay)
                 {
-                    //Logger.Log($"Teleport! Elite too close: {CurrentTarget.Distance} Setting: {Settings.TeleportEliteKiteRange}");
+                    //Core.Logger.Log($"Teleport! Elite too close: {CurrentTarget.Distance} Setting: {Settings.TeleportEliteKiteRange}");
                     Avoider.TryGetSafeSpot(out position, 40, Settings.TeleportKiteMaxDistance, Combat.Targeting.CurrentTarget.Position, node => !HostileMonsters.Any(m => m.Position.Distance(node.NavigableCenter) < 15f));
                     return true;
                 }
@@ -301,7 +298,7 @@ namespace Trinity.Routines.Wizard
                 var target = TargetUtil.BestRangedAoeUnit(10, 50, ClusterSize);
                 if (target != null && target.Distance < 30f)
                 {
-                    //Logger.Log($"Teleport! Trash Target too close: {CurrentTarget.Distance}");
+                    //Core.Logger.Log($"Teleport! Trash Target too close: {CurrentTarget.Distance}");
                     Avoider.TryGetSafeSpot(out position, 40, Settings.TeleportKiteMaxDistance, target.Position, node => !HostileMonsters.Any(m => m.Position.Distance(node.NavigableCenter) < 15f));
                     return true;
                 }
@@ -459,13 +456,13 @@ namespace Trinity.Routines.Wizard
 
             if (Player.CurrentHealthPct < Settings.ShouldArchonHealthPct)
             {
-                Logger.Log(LogCategory.Routine, $"Emergency Archon: Health at {Player.CurrentHealthPct}%! (Setting: {Settings.ShouldArchonHealthPct}%)");
+                Core.Logger.Log(LogCategory.Routine, $"Emergency Archon: Health at {Player.CurrentHealthPct}%! (Setting: {Settings.ShouldArchonHealthPct}%)");
                 return true;
             }
 
             if (Player.PrimaryResource < Settings.ShouldArchonLowResource)
             {
-                Logger.Log(LogCategory.Routine, $"Emergency Archon: Arcane power at {Player.PrimaryResource}! (Setting: {Settings.ShouldArchonLowResource})");
+                Core.Logger.Log(LogCategory.Routine, $"Emergency Archon: Arcane power at {Player.PrimaryResource}! (Setting: {Settings.ShouldArchonLowResource})");
                 return true;
             }
 

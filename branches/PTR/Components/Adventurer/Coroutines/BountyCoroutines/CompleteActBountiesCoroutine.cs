@@ -1,9 +1,10 @@
 using Buddy.Coroutines;
 using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Adventurer.Game.Quests;
@@ -65,7 +66,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
                 if (_state == value) return;
                 if (value != States.NotStarted)
                 {
-                    Util.Logger.Debug("[CompleteActBounties] " + value);
+                    Core.Logger.Debug("[CompleteActBounties] " + value);
                 }
                 _logStateChange = true;
                 _state = value;
@@ -127,7 +128,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
                 return false;
             }
             State = States.ReturningToTown;
-            Util.Logger.Info("[CompleteActBounties] Time to return to the town and claim our prize, huzzah!");
+            Core.Logger.Log("[CompleteActBounties] Time to return to the town and claim our prize, huzzah!");
             return false;
         }
 
@@ -184,7 +185,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
                 var tyrael = ActorFinder.FindUnit(TYRAEL);
                 if (tyrael == null)
                 {
-                    Util.Logger.Error("[CompleteActBounties] Couldn't detect Tyrael. Failing");
+                    Core.Logger.Error("[CompleteActBounties] Couldn't detect Tyrael. Failing");
                     State = States.Failed;
                     return false;
                 }
@@ -199,7 +200,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
 
         private async Task<bool> Completed()
         {
-            Util.Logger.Log(Util.LogLevel.Overlay, "[ActBounties] Successfully completed {0} bounties", _act);
+            Core.Logger.Log("[ActBounties] Successfully completed {0} bounties", _act);
             _isDone = true;
             await Coroutine.Sleep(4000);
             return true;
@@ -207,7 +208,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
 
         private async Task<bool> Failed()
         {
-            Util.Logger.Log(Util.LogLevel.Overlay, "[ActBounties] Failed to completed {0} bounties", _act);
+            Core.Logger.Log("[ActBounties] Failed to completed {0} bounties", _act);
             _isDone = true;
             await Coroutine.Sleep(1000);
             return true;
@@ -215,7 +216,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
 
         private bool AlreadyDone()
         {
-            Util.Logger.Debug("[CompleteActBounties] No active act {0} bounty finishing quest", _act);
+            Core.Logger.Debug("[CompleteActBounties] No active act {0} bounty finishing quest", _act);
             return true;
         }
 

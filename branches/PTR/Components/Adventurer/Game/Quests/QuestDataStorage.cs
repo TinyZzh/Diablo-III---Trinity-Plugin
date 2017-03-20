@@ -1,9 +1,9 @@
 ﻿////!CompilerOption:AddRef:Newtonsoft.Json.dll
-//using System;
+//using System; using Trinity.Framework; using Trinity.Framework.Helpers;
 //using System.Collections.Generic;
 //using System.Globalization;
 //using System.IO;
-//using System.Linq;
+//using System.Linq; using Trinity.Framework;
 //using System.Reflection;
 //using System.Xml.Serialization;
 //using Adventurer.Game.Quests;
@@ -68,7 +68,7 @@
 //                    }
 //                    catch (Exception)
 //                    {
-//                        Logger.Error("Error loading quest data from {0}", file);
+//                        Core.Logger.Error("Error loading quest data from {0}", file);
 //                        throw;
 //                    }
 //                    questData.IsReadOnly = true;
@@ -91,7 +91,7 @@
 //                    }
 //                    catch (Exception)
 //                    {
-//                        Logger.Error("Error loading quest data from {0}", file);
+//                        Core.Logger.Error("Error loading quest data from {0}", file);
 //                        throw;
 //                    }
 //                    questData.IsReadOnly = true;
@@ -115,7 +115,7 @@
 //                    }
 //                    catch (Exception)
 //                    {
-//                        Logger.Error("Error loading quest data from {0}", file);
+//                        Core.Logger.Error("Error loading quest data from {0}", file);
 //                        throw;
 //                    }
 //                    questData.IsReadOnly = true;

@@ -1,12 +1,10 @@
 using System.Linq;
-using Trinity.Coroutines.Town;
 using Trinity.Framework.Actors.Attributes;
 using Trinity.Framework.Actors.Properties;
 using Trinity.Framework.Events;
-using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
 using Trinity.Framework.Objects.Enums;
-using Trinity.Reference;
+using Trinity.Framework.Reference;
 using Trinity.Settings;
 using Zeta.Bot;
 using Zeta.Bot.Settings;
@@ -96,25 +94,25 @@ namespace Trinity.Framework.Actors.ActorTypes
         public void OnMoved()
         {
             ItemEvents.FireItemMoved(this);
-            Logger.Log($"{Name} was moved from [{LastInventoryColumn},{LastInventoryRow} {LastInventorySlot}] => [{InventoryColumn},{InventoryRow} {InventorySlot}] (Ann={AnnId} AcdId={AcdId})");
+            Core.Logger.Log($"{Name} was moved from [{LastInventoryColumn},{LastInventoryRow} {LastInventorySlot}] => [{InventoryColumn},{InventoryRow} {InventorySlot}] (Ann={AnnId} AcdId={AcdId})");
         }
 
         public void OnIdentified()
         {
             ItemEvents.FireItemIdentified(this);
-            Logger.Log($"{Name} was identified. (Ann={AnnId} AcdId={AcdId} GbId={GameBalanceId}) Ancient={IsAncient} RawType={RawItemType}");
+            Core.Logger.Log($"{Name} was identified. (Ann={AnnId} AcdId={AcdId} GbId={GameBalanceId}) Ancient={IsAncient} RawType={RawItemType}");
         }
 
         public void OnPickedUp()
         {
-            Logger.Log($"{Name} was picked up. (SnoId={ActorSnoId} Ann={AnnId} AcdId={AcdId} GbId={GameBalanceId}) InternalName={InternalName} Quality={ItemQualityLevel} Ancient={IsAncient} RawType={RawItemType}");
+            Core.Logger.Log($"{Name} was picked up. (SnoId={ActorSnoId} Ann={AnnId} AcdId={AcdId} GbId={GameBalanceId}) InternalName={InternalName} Quality={ItemQualityLevel} Ancient={IsAncient} RawType={RawItemType}");
             ItemEvents.FireItemPickedUp(this);
         }
 
         public void OnDropped()
         {
             if (IsPickupNoClick) return;
-            Logger.Log($"{Name} dropped. (SnoId={ActorSnoId} Ann={AnnId} AcdId={AcdId} GbId={GameBalanceId}) InternalName={InternalName} Quality={ItemQualityLevel} Ancient={IsAncient} RawType={RawItemType}");
+            Core.Logger.Log($"{Name} dropped. (SnoId={ActorSnoId} Ann={AnnId} AcdId={AcdId} GbId={GameBalanceId}) InternalName={InternalName} Quality={ItemQualityLevel} Ancient={IsAncient} RawType={RawItemType}");
             ItemEvents.FireItemDropped(this);
         }
 

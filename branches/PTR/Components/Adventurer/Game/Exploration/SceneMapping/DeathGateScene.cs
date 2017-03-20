@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Trinity.Components.Adventurer.Cache;
 using Zeta.Common;
 
 namespace Trinity.Components.Adventurer.Game.Exploration.SceneMapping

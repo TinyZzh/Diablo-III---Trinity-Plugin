@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Linq;
 using Trinity.Framework;
 using Trinity.Framework.Helpers;
+using System.Linq;
 using Trinity.Framework.Objects;
 using Trinity.Framework.Objects.Enums;
 using Zeta.Common;

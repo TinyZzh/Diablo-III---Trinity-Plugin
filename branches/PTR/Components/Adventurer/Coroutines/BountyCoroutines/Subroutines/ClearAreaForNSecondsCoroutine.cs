@@ -1,11 +1,11 @@
 ﻿using System;
+using Trinity.Framework;
 using System.Threading.Tasks;
-using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Combat;
 using Trinity.Components.Adventurer.Game.Quests;
 using Trinity.Components.Adventurer.Util;
 using Zeta.Common;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
+
 
 namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
 {
@@ -43,7 +43,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                 if (_state == value) return;
                 if (value != States.NotStarted)
                 {
-                    Util.Logger.Info("[ClearAreaForNSeconds] " + value);
+                    Core.Logger.Log("[ClearAreaForNSeconds] " + value);
                 }
                 _state = value;
             }
@@ -192,7 +192,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             }
             if (_center != Vector3.Zero)
             {
-                Logger.Info("[ClearAreaForNSeconds] Found the objective at distance {0}", AdvDia.MyPosition.Distance(_center));
+                Core.Logger.Log("[ClearAreaForNSeconds] Found the objective at distance {0}", AdvDia.MyPosition.Distance(_center));
             }
         }
     }

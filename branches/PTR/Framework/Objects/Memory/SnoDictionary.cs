@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Trinity.Framework.Helpers;
 
-namespace Trinity.Framework.Objects.Memory.Sno
+namespace Trinity.Framework.Objects.Memory
 {
     public class SnoDictionary<T>
     {

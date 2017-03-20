@@ -1,14 +1,13 @@
 ﻿using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Trinity.Components.Adventurer.Cache;
-using Trinity.Framework.Helpers;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
-using PerformanceLogger = Trinity.Components.Adventurer.Util.PerformanceLogger;
+
 
 namespace Trinity.Components.Adventurer.Game.Exploration
 {
@@ -47,7 +46,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
         {
             using (new PerformanceLogger("[WorldScene] ctor", false))
             {
-                //                Logger.Debug("[WorldScene] Scene GridSquare Size: {0} X:{1} Y:{2}", scene.Mesh.Zone.NavZoneDef.GridSquareSize,scene.Mesh.Zone.NavZoneDef.NavGridSquareCountX, scene.Mesh.Zone.NavZoneDef.NavGridSquareCountY);
+                //                Core.Logger.Debug("[WorldScene] Scene GridSquare Size: {0} X:{1} Y:{2}", scene.Mesh.Zone.NavZoneDef.GridSquareSize,scene.Mesh.Zone.NavZoneDef.NavGridSquareCountX, scene.Mesh.Zone.NavZoneDef.NavGridSquareCountY);
                 _boxSize = boxSize;
                 _boxTolerance = boxTolerance;
                 //Scene = scene;
@@ -81,17 +80,17 @@ namespace Trinity.Components.Adventurer.Game.Exploration
                     SubScene = new WorldScene(mesh.SubScene, boxSize, boxTolerance);
                     //if (SubScene.HasChild)
                     //{
-                    //    Logger.Error("[ScenesStorage] Found sub sub scene!!!");
+                    //    Core.Logger.Error("[ScenesStorage] Found sub sub scene!!!");
                     //    SubScene.SubScene = new WorldScene(SubScene.Scene.Mesh.SubScene, boxSize, boxTolerance);
                     //}
                 }
-                Logger.Verbose("[WorldScene] Created a new world scene. Name: {0} LevelArea: {1} ({2})", Name, (SNOLevelArea)LevelAreaId, LevelAreaId);
+                Core.Logger.Verbose("[WorldScene] Created a new world scene. Name: {0} LevelArea: {1} ({2})", Name, (SNOLevelArea)LevelAreaId, LevelAreaId);
                 if (LevelAreaId != AdvDia.CurrentLevelAreaId && !ExplorationData.OpenWorldIds.Contains(AdvDia.CurrentWorldId))
                 {
-                    Logger.Verbose("[WorldScene] The scene LevelAreaID is different than the CurrentLevelAreaID");
-                    Logger.Verbose("[WorldScene] Scene Name: {0}", Name);
-                    Logger.Verbose("[WorldScene] Scene: {0} ({1})", (SNOLevelArea)LevelAreaId, LevelAreaId);
-                    Logger.Verbose("[WorldScene] Current: {0} ({1})", (SNOLevelArea)AdvDia.CurrentLevelAreaId, AdvDia.CurrentLevelAreaId);
+                    Core.Logger.Verbose("[WorldScene] The scene LevelAreaID is different than the CurrentLevelAreaID");
+                    Core.Logger.Verbose("[WorldScene] Scene Name: {0}", Name);
+                    Core.Logger.Verbose("[WorldScene] Scene: {0} ({1})", (SNOLevelArea)LevelAreaId, LevelAreaId);
+                    Core.Logger.Verbose("[WorldScene] Current: {0} ({1})", (SNOLevelArea)AdvDia.CurrentLevelAreaId, AdvDia.CurrentLevelAreaId);
                 }
 
                 CreateGrid(mesh);
@@ -251,36 +250,25 @@ namespace Trinity.Components.Adventurer.Game.Exploration
 
             foreach (var navCell in mesh.Zone.NavZoneDef.NavCells)
             {
-                //if (navCell.Flags.HasFlag(NavCellFlags.AllowWalk))
-                //{
                 Cells.Add(new WorldSceneCell(navCell, Min));
-                //}
             }
             if (SubScene != null)
             {
                 foreach (var navCell in SubScene.Cells)
                 {
-                    //if (navCell.Flags.HasFlag(NavCellFlags.AllowWalk))
-                    //{
                     Cells.Add(navCell);
-                    //}
                 }
                 if (SubScene.SubScene != null)
                 {
                     foreach (var navCell in SubScene.SubScene.Cells)
                     {
-                        //if (navCell.Flags.HasFlag(NavCellFlags.AllowWalk))
-                        //{
                         Cells.Add(navCell);
-                        //}
                     }
                 }
             }
 
             var navBoxSize = ExplorationData.ExplorationNodeBoxSize;
             var searchBeginning = navBoxSize / 2;
-            //var cellCount = _boxSize / navBoxSize;
-            //var maxCellsCount = cellCount * cellCount;
 
             for (var x = Min.X + searchBeginning; x <= Max.X; x = x + navBoxSize)
             {
@@ -290,21 +278,6 @@ namespace Trinity.Components.Adventurer.Game.Exploration
                     Nodes.Add(navNode);
                 }
             }
-
-            //var width = (int)(Max.X - Min.X);
-            //var height = (int)(Max.Y - Min.Y);
-            //var gridSizeX = width / _boxSize;
-            //var gridSizeY = height / _boxSize;
-            ////var grid = new Node[gridSizeX, gridSizeY];
-
-            //for (var x = 0; x < gridSizeX; x++)
-            //{
-            //    for (var y = 0; y < gridSizeY; y++)
-            //    {
-            //        var center = Min + new Vector2(x * _boxSize + _boxSize / 2, y * _boxSize + _boxSize / 2);
-            //        Nodes.Add(new ExplorationNode(center, _boxSize, _boxTolerance, this));
-            //    }
-            //}
 
             GridCreated = true;
             GridCreatedTime = DateTime.UtcNow;

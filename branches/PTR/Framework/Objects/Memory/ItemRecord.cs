@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using Zeta.Game.Internals.Actors;
 
-namespace Trinity.Framework.Objects.Memory.Misc
+namespace Trinity.Framework.Objects.Memory
 {
     [StructLayout(LayoutKind.Explicit, Pack = 1)]
     public struct SnoGameBalanceItem

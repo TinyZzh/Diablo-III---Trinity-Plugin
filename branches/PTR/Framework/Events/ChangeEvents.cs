@@ -7,7 +7,7 @@ using Trinity.Modules;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
 
-namespace Trinity.Framework
+namespace Trinity.Framework.Events
 {
     public static class ChangeEvents
     {

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Trinity.Components.Adventurer.Cache;
-using Trinity.Components.Adventurer.Util;
+using Trinity.Framework;
 using Zeta.Game;
 
 namespace Trinity.Components.Adventurer.Game.Actors
@@ -29,7 +28,7 @@ namespace Trinity.Components.Adventurer.Game.Actors
                 {
                     return;
                 }
-                Logger.Debug("[BountyData] Added entry portal {0}", entryPortal.NameHash);
+                Core.Logger.Debug("[BountyData] Added entry portal {0}", entryPortal.NameHash);
                 EntryPortalHashNames.Add(currentWorldId, entryPortal.NameHash);
             }
         }

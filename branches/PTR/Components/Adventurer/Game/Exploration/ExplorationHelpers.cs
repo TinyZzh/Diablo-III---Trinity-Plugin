@@ -1,12 +1,11 @@
 ﻿using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
-using Trinity.Components.Adventurer.Cache;
-using Trinity.Components.Adventurer.Util;
-using Trinity.Framework;
 using Zeta.Common;
 using Zeta.Game;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
+
 
 namespace Trinity.Components.Adventurer.Game.Exploration
 {
@@ -47,7 +46,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
 
                 if (node == null)
                 {
-                    Logger.DebugSetting("Closest Unvisited Node Selection Failed");
+                    Core.Logger.Debug("Closest Unvisited Node Selection Failed");
 
                     //var nodes = ExplorationGrid.Instance.WalkableNodes.Where(
                     //    n =>
@@ -84,13 +83,13 @@ namespace Trinity.Components.Adventurer.Game.Exploration
                         .FirstOrDefault();
                     //if (node != null)
                     //{
-                    //    Logger.Debug("[ExplorationLogic] Picked a node using unvisited weighting method (Node Distance: {0}, Node Weight: {1})", node.NavigableCenter.Distance(AdvDia.MyPosition), node.UnvisitedWeight);
+                    //    Core.Logger.Debug("[ExplorationLogic] Picked a node using unvisited weighting method (Node Distance: {0}, Node Weight: {1})", node.NavigableCenter.Distance(AdvDia.MyPosition), node.UnvisitedWeight);
                     //}
                 }
 
                 if (node == null && ExplorationGrid.Instance.NearestNode != null && !levelAreaIds.Contains(ZetaDia.CurrentLevelAreaSnoId))
                 {
-                    Logger.Debug("[ExplorationLogic] Adventurer is trying to find nodes that are not in this LevelArea. DefinedIds='{0}' CurrentId='{0}'. Marking current area's nodes as valid.", string.Join(", ", levelAreaIds), ZetaDia.CurrentLevelAreaSnoId);
+                    Core.Logger.Debug("[ExplorationLogic] Adventurer is trying to find nodes that are not in this LevelArea. DefinedIds='{0}' CurrentId='{0}'. Marking current area's nodes as valid.", string.Join(", ", levelAreaIds), ZetaDia.CurrentLevelAreaSnoId);
                     levelAreaIds.Add(ZetaDia.CurrentLevelAreaSnoId);
 
                     // Ignore level area match
@@ -110,7 +109,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration
                     var allNodes = ExplorationGrid.Instance.WalkableNodes.Count(n => levelAreaIds.Contains(n.LevelAreaId));
                     var unvisitedNodes = ExplorationGrid.Instance.WalkableNodes.Count(n => !n.IsVisited && levelAreaIds.Contains(n.LevelAreaId));
 
-                    Logger.Info("[ExplorationLogic] Couldn't find any unvisited nodes. Current AdvDia.LevelAreaSnoIdId: {0}, " +
+                    Core.Logger.Log("[ExplorationLogic] Couldn't find any unvisited nodes. Current AdvDia.LevelAreaSnoIdId: {0}, " +
                                 "ZetaDia.CurrentLevelAreaSnoId: {3}, Total Nodes: {1} Unvisited Nodes: {2} Searching In [{4}] HasNavServerData={5}",
                                 AdvDia.CurrentLevelAreaId, allNodes, unvisitedNodes,
                                 ZetaDia.CurrentLevelAreaSnoId, string.Join(", ", levelAreaIds),

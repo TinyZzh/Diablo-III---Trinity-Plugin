@@ -1,9 +1,9 @@
 ﻿using System;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
-using Trinity.Framework.Helpers;
+using Trinity.Framework.Events;
 using Trinity.Framework.Objects;
-using Trinity.Framework.Objects.Enums;
 using Zeta.Bot;
 using Zeta.Game;
 

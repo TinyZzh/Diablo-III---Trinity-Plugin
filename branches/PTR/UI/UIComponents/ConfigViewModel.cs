@@ -1,25 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Forms;
-using System.Windows.Input;
-using Trinity.Components.Adventurer;
-using Trinity.Components.Adventurer.UI;
-using Trinity.Components.Combat;
 using Trinity.Framework;
 using Trinity.Framework.Helpers;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Windows.Controls;
+using System.Windows.Input;
+using Trinity.Components.Adventurer;
 using Trinity.Framework.Objects;
-using Trinity.Items;
-using Trinity.Routines;
+using Trinity.Framework.Objects.Enums;
 using Trinity.Settings;
 using Trinity.Settings.ItemList;
 using Trinity.Settings.Paragon;
-using Zeta.Bot;
-using Zeta.Game;
 using Application = System.Windows.Application;
-using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace Trinity.UI.UIComponents
 {
@@ -102,7 +94,7 @@ namespace Trinity.UI.UIComponents
                         }
                         catch (Exception ex)
                         {
-                            Logger.Log("Exception in UI SaveCommand {0}", ex);
+                            Core.Logger.Log("Exception in UI SaveCommand {0}", ex);
                         }
                     });
                 DumpBackpackCommand = new RelayCommand(
@@ -110,7 +102,7 @@ namespace Trinity.UI.UIComponents
                     {
                         try
                         {
-                            Logger.Log(
+                            Core.Logger.Log(
                                 "\n############################################\n"
                                 + "\nDumping Backpack Items. This will hang your client. Please wait....\n"
                                 + "##########################");
@@ -119,7 +111,7 @@ namespace Trinity.UI.UIComponents
                         }
                         catch (Exception ex)
                         {
-                            Logger.Log(LogCategory.UserInformation, "Exception dumping Backpack: {0}", ex);
+                            Core.Logger.Log("Exception dumping Backpack: {0}", ex);
                         }
                     });
                 DumpQuickItemsCommand = new RelayCommand(
@@ -127,7 +119,7 @@ namespace Trinity.UI.UIComponents
                     {
                         try
                         {
-                            Logger.Log(
+                            Core.Logger.Log(
                                 "\n############################################\n"
                                 + "\nQuick Dumping Items. This will hang your client. Please wait....\n"
                                 + "##########################");
@@ -136,7 +128,7 @@ namespace Trinity.UI.UIComponents
                         }
                         catch (Exception ex)
                         {
-                            Logger.Log(LogCategory.UserInformation, "Exception Quick Dumping: {0}", ex);
+                            Core.Logger.Log("Exception Quick Dumping: {0}", ex);
                         }
                     });
                 DumpAllItemsCommand = new RelayCommand(
@@ -144,7 +136,7 @@ namespace Trinity.UI.UIComponents
                     {
                         try
                         {
-                            Logger.Log(
+                            Core.Logger.Log(
                                 "\n############################################\n"
                                 + "\nDumping ALL Items. This will hang your client. Please wait....\n"
                                 + "##########################");
@@ -153,7 +145,7 @@ namespace Trinity.UI.UIComponents
                         }
                         catch (Exception ex)
                         {
-                            Logger.Log(LogCategory.UserInformation, "Exception Dumping ALL Items: {0}", ex);
+                            Core.Logger.Log("Exception Dumping ALL Items: {0}", ex);
                         }
                     });
                 DumpSkillsAndItemsCommand = new RelayCommand(
@@ -166,7 +158,7 @@ namespace Trinity.UI.UIComponents
                         }
                         catch (Exception ex)
                         {
-                            Logger.Log(LogCategory.UserInformation, "Exception Dumping Skill/Rune/Passive Items: {0}", ex);
+                            Core.Logger.Log("Exception Dumping Skill/Rune/Passive Items: {0}", ex);
                         }
                     });
                 DumpInvalidItemsCommand = new RelayCommand(
@@ -179,7 +171,7 @@ namespace Trinity.UI.UIComponents
                         }
                         catch (Exception ex)
                         {
-                            Logger.Log(LogCategory.UserInformation, "Exception Dumping Invalid Items: {0}", ex);
+                            Core.Logger.Log("Exception Dumping Invalid Items: {0}", ex);
                         }
                     });
                 DumpItemSNOReference = new RelayCommand(
@@ -192,7 +184,7 @@ namespace Trinity.UI.UIComponents
                         }
                         catch (Exception ex)
                         {
-                            Logger.Log(LogCategory.UserInformation, "Exception in DumpItemSNOReference: {0}", ex);
+                            Core.Logger.Log("Exception in DumpItemSNOReference: {0}", ex);
                         }
                     });
                 DumpReferenceItems = new RelayCommand(
@@ -205,7 +197,7 @@ namespace Trinity.UI.UIComponents
                         }
                         catch (Exception ex)
                         {
-                            Logger.Log(LogCategory.UserInformation, "Exception in DumpReferenceItems: {0}", ex);
+                            Core.Logger.Log("Exception in DumpReferenceItems: {0}", ex);
                         }
                     });
                 GenerateGameData = new RelayCommand(
@@ -218,7 +210,7 @@ namespace Trinity.UI.UIComponents
                         }
                         catch (Exception ex)
                         {
-                            Logger.Log(LogCategory.UserInformation, "Exception in DumpReferenceItems: {0}", ex);
+                            Core.Logger.Log("Exception in DumpReferenceItems: {0}", ex);
                         }
                     });
                 DumpMerchantItemsCommand = new RelayCommand(
@@ -226,7 +218,7 @@ namespace Trinity.UI.UIComponents
                     {
                         try
                         {
-                            Logger.Log(
+                            Core.Logger.Log(
                                 "\n############################################\n"
                                 + "\nDumping Merchant Items. This will hang your client. Please wait....\n"
                                 + "##########################");
@@ -235,7 +227,7 @@ namespace Trinity.UI.UIComponents
                         }
                         catch (Exception ex)
                         {
-                            Logger.Log(LogCategory.UserInformation, "Exception dumping Merchant: {0}", ex);
+                            Core.Logger.Log("Exception dumping Merchant: {0}", ex);
                         }
                     });
                 DumpEquippedCommand = new RelayCommand(
@@ -243,7 +235,7 @@ namespace Trinity.UI.UIComponents
                     {
                         try
                         {
-                            Logger.Log(
+                            Core.Logger.Log(
                                 "\n############################################\n"
                                 + "\nDumping Equipped Items. This will hang your client. Please wait....\n"
                                 + "##########################");
@@ -252,7 +244,7 @@ namespace Trinity.UI.UIComponents
                         }
                         catch (Exception ex)
                         {
-                            Logger.Log(LogCategory.UserInformation, "Exception dumping Equipped: {0}", ex);
+                            Core.Logger.Log("Exception dumping Equipped: {0}", ex);
                         }
                     });
                 DumpGroundItemsCommand = new RelayCommand(
@@ -260,7 +252,7 @@ namespace Trinity.UI.UIComponents
                     {
                         try
                         {
-                            Logger.Log(
+                            Core.Logger.Log(
                                 "\n############################################\n"
                                 + "\nDumping Ground Items. This will hang your client. Please wait....\n"
                                 + "##########################");
@@ -269,7 +261,7 @@ namespace Trinity.UI.UIComponents
                         }
                         catch (Exception ex)
                         {
-                            Logger.Log(LogCategory.UserInformation, "Exception dumping Ground: {0}", ex);
+                            Core.Logger.Log("Exception dumping Ground: {0}", ex);
                         }
                     });
                 DumpStashCommand = new RelayCommand(
@@ -277,7 +269,7 @@ namespace Trinity.UI.UIComponents
                     {
                         try
                         {
-                            Logger.Log(
+                            Core.Logger.Log(
                                 "\n############################################\n"
                                 + "\nDumping Stash Items. This will hang your client. Please wait....\n"
                                 + "##########################");
@@ -286,7 +278,7 @@ namespace Trinity.UI.UIComponents
                         }
                         catch (Exception ex)
                         {
-                            Logger.Log(LogCategory.UserInformation, "Exception dumping Stash: {0}", ex);
+                            Core.Logger.Log("Exception dumping Stash: {0}", ex);
                         }
                     });
                 TestScoreCommand = new RelayCommand(
@@ -306,7 +298,7 @@ namespace Trinity.UI.UIComponents
             }
             catch (Exception ex)
             {
-                Logger.LogError("Error creating TrinityPlugin View Model {0}", ex);
+                Core.Logger.Error("Error creating TrinityPlugin View Model {0}", ex);
             }
         }
 
@@ -350,7 +342,7 @@ namespace Trinity.UI.UIComponents
             }
             catch (Exception ex)
             {
-                Logger.LogError("Exception initializing commands {0}", ex);
+                Core.Logger.Error("Exception initializing commands {0}", ex);
             }
         }
 

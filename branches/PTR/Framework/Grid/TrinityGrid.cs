@@ -1,21 +1,23 @@
 ﻿using System;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.DbProvider;
 using Trinity.Framework.Actors.ActorTypes;
+using Trinity.Framework.Avoidance;
 using Trinity.Framework.Avoidance.Structures;
-using Trinity.Framework.Helpers;
+using Trinity.Modules;
 using Zeta.Common;
 using Zeta.Game;
 using Direction = Trinity.Components.Adventurer.Game.Exploration.Direction;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 using NodeFlags = Trinity.Components.Adventurer.Game.Exploration.NodeFlags;
 using SceneData = Trinity.Components.Adventurer.Game.Exploration.SceneData;
 using ScenesStorage = Trinity.Components.Adventurer.Game.Exploration.ScenesStorage;
 
-namespace Trinity.Framework.Avoidance
+namespace Trinity.Framework.Grid
 {
     public sealed class TrinityGrid : Grid<AvoidanceNode>
     {
@@ -50,13 +52,6 @@ namespace Trinity.Framework.Avoidance
             {
                 return _currentGrid;
             }
-            //else if (_currentGrid.NearestNode == null)
-            //{
-            //    if (DateTime.UtcNow.Subtract(_currentGrid.Created).TotalSeconds > 2)
-            //    {
-            //        _currentGrid = new TrinityGrid();
-            //    }
-            //}
             return _currentGrid;
         }
 
@@ -79,7 +74,7 @@ namespace Trinity.Framework.Avoidance
             }
             catch (Exception ex)
             {
-                Logger.LogError($"Exception in CanRayCast from={@from} to={to} {ex}");
+                Core.Logger.Error($"Exception in CanRayCast from={@from} to={to} {ex}");
             }
             return false;
         }
@@ -270,7 +265,7 @@ namespace Trinity.Framework.Avoidance
             IsPopulated = true;
 
             sw.Stop();
-            Logger.LogVerbose($"Avoidance Grid updated NewNodes={newNodes.ExplorationNodes.Count} NearestNodeFound={NearestNode != null} Time={sw.Elapsed.TotalMilliseconds}ms");
+            Core.Logger.Verbose($"Avoidance Grid updated NewNodes={newNodes.ExplorationNodes.Count} NearestNodeFound={NearestNode != null} Time={sw.Elapsed.TotalMilliseconds}ms");
         }
 
         public void FlagNodes(IEnumerable<AvoidanceNode> nodes, AvoidanceFlags flags, int weightModification = 0)
@@ -282,7 +277,7 @@ namespace Trinity.Framework.Avoidance
             }
         }
 
-        public void FlagAvoidanceNodes(IEnumerable<AvoidanceNode> nodes, AvoidanceFlags flags, Structures.Avoidance avoidance, int weightModification = 0)
+        public void FlagAvoidanceNodes(IEnumerable<AvoidanceNode> nodes, AvoidanceFlags flags, Avoidance.Structures.Avoidance avoidance, int weightModification = 0)
         {
             var type = avoidance.Definition.Type;
             var hashCode = avoidance.GetHashCode();

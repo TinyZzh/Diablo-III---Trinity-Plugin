@@ -1,10 +1,9 @@
 ﻿using Buddy.Coroutines;
 using System.Collections.Generic;
 using System.Linq;
+using Trinity.Framework;
 using System.Threading.Tasks;
-using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Actors;
-using Zeta.Bot;
 using Zeta.Bot.Navigation;
 using Zeta.Common;
 using Zeta.Game;
@@ -17,6 +16,18 @@ namespace Trinity.Components.Adventurer.Coroutines
     {
         private static WaypointCoroutine _waypointCoroutine;
         private static int _useWaypointWaypointNumber;
+
+        public static int GetWaypointNumber(int snoLevelAreaId)
+        {
+            Waypoint wp = ZetaDia.Storage.ActManager.GetWaypointByLevelAreaSnoId(snoLevelAreaId);
+            return wp?.Number ?? 0;
+        }
+
+        public static int GetWaypointNumber(SNOLevelArea levelArea)
+        {
+            Waypoint wp = ZetaDia.Storage.ActManager.GetWaypointByLevelArea(SNOLevelArea.A1_Tristram_Adventure_Mode_Hub);
+            return wp?.Number ?? 0;
+        }
 
         public static async Task<bool> UseWaypoint(int waypointNumber)
         {
@@ -60,7 +71,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                 if (_state == value) return;
                 if (value != States.NotStarted)
                 {
-                    Util.Logger.Debug("[Waypoint] " + value);
+                    Core.Logger.Debug("[Waypoint] " + value);
                 }
                 _state = value;
             }
@@ -166,7 +177,7 @@ namespace Trinity.Components.Adventurer.Coroutines
         {
             if (!_usedWaypoint)
             {
-                Util.Logger.Debug("[Waypoint] Using waypoint {0}", _waypointNumber);
+                Core.Logger.Debug("[Waypoint] Using waypoint {0}", _waypointNumber);
                 // Checking for near by waypoint gizmos.
                 var gizmoWaypoint =
                     ZetaDia.Actors.GetActorsOfType<GizmoWaypoint>().OrderBy(g => g.Distance).FirstOrDefault();
@@ -175,7 +186,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                     // Already there
                     if (gizmoWaypoint.WaypointNumber == _waypointNumber && gizmoWaypoint.Distance <= 150)
                     {
-                        Util.Logger.Info("[Waypoint] Already near the destination waypoint");
+                        Core.Logger.Log("[Waypoint] Already near the destination waypoint");
                         State = States.Completed;
                         return false;
                     }

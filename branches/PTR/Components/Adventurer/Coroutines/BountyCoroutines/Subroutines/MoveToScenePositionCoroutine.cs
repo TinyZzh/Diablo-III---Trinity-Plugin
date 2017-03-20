@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using System.Linq; using Trinity.Framework;
 using System.Threading.Tasks;
-using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Game.Combat;
 using Trinity.Components.Adventurer.Game.Exploration;
@@ -10,7 +9,7 @@ using Trinity.Components.Adventurer.Util;
 using Trinity.UI.Visualizer;
 using Zeta.Common;
 using Zeta.Game;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
+
 
 namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
 {
@@ -47,7 +46,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                 if (_state == value) return;
                 if (value != States.NotStarted)
                 {
-                    Util.Logger.Info("[MoveToScenePosition] " + value);
+                    Core.Logger.Log("[MoveToScenePosition] " + value);
                 }
                 _state = value;
             }
@@ -57,7 +56,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
 
         public bool IsDone
         {
-            get { return _isDone || AdvDia.CurrentWorldId != _worldId; }
+            get { return _isDone || _worldId != 0 && AdvDia.CurrentWorldId != _worldId; }
         }
 
         public MoveToScenePositionCoroutine(int questId, int worldId, string sceneName, Vector3 position, bool straightLinePath = false)
@@ -124,7 +123,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
         {
             if (AdvDia.CurrentWorldScene == null)
             {
-                Logger.Debug("waiting patiently for world scene data");
+                Core.Logger.Debug("waiting patiently for world scene data");
                 return false;
             }
 
@@ -138,7 +137,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                 _tempSceneName = null;
             }
 
-            Logger.Debug($"Started MoveToScenePositionCoroutine SceneName='{_sceneName}' SceneSnoId={_sceneSnoId}");
+            Core.Logger.Debug($"Started MoveToScenePositionCoroutine SceneName='{_sceneName}' SceneSnoId={_sceneSnoId}");
             State = States.Searching;
             return false;
         }
@@ -155,7 +154,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                 return false;
             }
 
-            Logger.Debug("Unable to find scene, exploring...");
+            Core.Logger.Debug("Unable to find scene, exploring...");
 
             var bountyData = BountyData;
 
@@ -219,7 +218,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             //{
             //    _objectiveLocation = _previouslyFoundLocation;
             //    _previouslyFoundLocation = Vector3.Zero;
-            //    Logger.Debug("[MoveToScenePosition] Returning previous objective location.");
+            //    Core.Logger.Debug("[MoveToScenePosition] Returning previous objective location.");
             //    return;
             //}
             if (PluginTime.ReadyToUse(_lastScanTime, 1000))
@@ -232,7 +231,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                     {
                         _worldScene = scene;
                         _objectiveLocation = _worldScene.GetWorldPosition(_position);
-                        Logger.Debug($"Scan found target scene by SnoId {_worldScene.Name} ({_worldScene.SnoId}). Pos={_objectiveLocation} Dist={_objectiveLocation.Distance(AdvDia.MyPosition)} Relative={_position}");
+                        Core.Logger.Debug($"Scan found target scene by SnoId {_worldScene.Name} ({_worldScene.SnoId}). Pos={_objectiveLocation} Dist={_objectiveLocation.Distance(AdvDia.MyPosition)} Relative={_position}");
                     }
                 }
                 else if (!string.IsNullOrEmpty(_sceneName))
@@ -249,7 +248,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                         _worldScene = scene;
                         _objectiveLocation = _worldScene.GetWorldPosition(_position);
                         VisualizerViewModel.DebugPosition = _objectiveLocation;
-                        Logger.DebugSetting($"Scan found target scene {_worldScene.Name} ({_worldScene.SnoId}). Pos={_objectiveLocation} Dist={_objectiveLocation.Distance(AdvDia.MyPosition)} Relative={_position}");
+                        Core.Logger.Debug($"Scan found target scene {_worldScene.Name} ({_worldScene.SnoId}). Pos={_objectiveLocation} Dist={_objectiveLocation.Distance(AdvDia.MyPosition)} Relative={_position}");
                     }
                 }
                 //else if (!string.IsNullOrEmpty(_tempSceneName))
@@ -269,14 +268,14 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                 //{
                 //    using (new PerformanceLogger("[MoveToScenePosition] Path to Objective Check", true))
                 //    {
-                //        //if ((Navigator.GetNavigationProviderAs<DefaultNavigationProvider>().CanFullyClientPathTo(_objectiveLocation)))
+                //        //if ((Navigator.GetNavigationProviderAs<Navigator>().CanFullyClientPathTo(_objectiveLocation)))
                 //        //{
-                //        Logger.Info("[MoveToScenePosition] Found the objective at distance {0}",
+                //        Core.Logger.Log("[MoveToScenePosition] Found the objective at distance {0}",
                 //            AdvDia.MyPosition.Distance(_objectiveLocation));
                 //        //}
                 //        //else
                 //        //{
-                //        //    Logger.Debug("[MoveToMapMarker] Found the objective at distance {0}, but cannot get a path to it.",
+                //        //    Core.Logger.Debug("[MoveToMapMarker] Found the objective at distance {0}, but cannot get a path to it.",
                 //        //        AdvDia.MyPosition.Distance(_objectiveLocation));
                 //        //    _objectiveLocation = Vector3.Zero;
                 //        //}

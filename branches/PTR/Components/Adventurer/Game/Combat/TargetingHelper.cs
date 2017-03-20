@@ -1,4 +1,4 @@
-﻿using Trinity.Components.Adventurer.Util;
+﻿using Trinity.Framework;
 using Zeta.Bot;
 
 namespace Trinity.Components.Adventurer.Game.Combat
@@ -10,7 +10,7 @@ namespace Trinity.Components.Adventurer.Game.Combat
             if (CombatTargeting.Instance.AllowedToKillMonsters)
             {
                 CombatTargeting.Instance.AllowedToKillMonsters = false;
-                Logger.Debug("[ZergMode] On");
+                Core.Logger.Debug("[ZergMode] On");
                 //new ToggleTargetingTag
                 //{
                 //    Combat = false,
@@ -26,7 +26,7 @@ namespace Trinity.Components.Adventurer.Game.Combat
             if (!CombatTargeting.Instance.AllowedToKillMonsters)
             {
                 CombatTargeting.Instance.AllowedToKillMonsters = true;
-                Logger.Debug("[ZergMode] Off");
+                Core.Logger.Debug("[ZergMode] Off");
                 //new ToggleTargetingTag
                 //{
                 //    Combat = true,

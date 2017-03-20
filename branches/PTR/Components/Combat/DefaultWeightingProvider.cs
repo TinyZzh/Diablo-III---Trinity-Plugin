@@ -1,27 +1,22 @@
 using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Trinity.Components.Combat.Resources;
-using Trinity.Coroutines.Resources;
-using Trinity.Coroutines.Town;
+using Trinity.Components.Coroutines.Town;
 using Trinity.DbProvider;
-using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Avoidance.Structures;
-using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
-using Trinity.Items;
-using Trinity.Reference;
+using Trinity.Framework.Reference;
 using Trinity.Settings;
-using Zeta.Bot;
 using Zeta.Bot.Navigation;
-using Zeta.Bot.Profile.Common;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
 using Zeta.Game.Internals.SNO;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 
 namespace Trinity.Components.Combat
 {
@@ -182,13 +177,13 @@ namespace Trinity.Components.Combat
 
                 #endregion
 
-                //Logger.Log(TrinityLogLevel.Debug, LogCategory.Weight,
+                //Core.Logger.Debug(LogCategory.Weight,
                 //    "Starting weights: packSize={0} packRadius={1} MovementSpeed={2:0.0} Elites={3} AoEs={4} disableIgnoreTag={5} ({6}) closeRangePriority={7} townRun={8} questingArea={9} level={10} isQuestingMode={11} healthGlobeEmerg={12} hiPriHG={13} hiPriShrine={14}",
                 //    CombatBase.CombatOverrides.EffectiveTrashSize, CombatBase.CombatOverrides.EffectiveTrashRadius,
                 //    movementSpeed,
                 //    eliteCount, avoidanceCount, profileTagCheck, behaviorName,
                 //    PlayerMover.IsCompletelyBlocked, usingTownPortal,
-                //    DataDictionary.QuestLevelAreaIds.Contains(Core.Player.LevelAreaId), Core.Player.Level,
+                //    GameData.QuestLevelAreaIds.Contains(Core.Player.LevelAreaId), Core.Player.Level,
                 //    CombatBase.IsQuestingMode, isHealthEmergency, hiPriorityHealthGlobes, hiPriorityShrine);
 
   
@@ -205,15 +200,15 @@ namespace Trinity.Components.Combat
                     var isBlockedByDoor = Core.Grids.Avoidance.IsIntersectedByFlags(Core.Player.Position, target.Position, AvoidanceFlags.ClosedDoor);
                     if (isBlockedByDoor)
                     {
-                        Logger.LogDebug($"Kamakazi Blocked by Closed Door on '{target.InternalName} ({target.ActorSnoId})' Distance={target.Distance}");
+                        Core.Logger.Debug($"Kamakazi Blocked by Closed Door on '{target.InternalName} ({target.ActorSnoId})' Distance={target.Distance}");
                     }
                     else if (PlayerMover.IsCompletelyBlocked)
                     {
-                        Logger.LogDebug($"Kamakazi Blocked by Monsters/Terrain on '{target.InternalName} ({target.ActorSnoId})' Distance={target.Distance}");
+                        Core.Logger.Debug($"Kamakazi Blocked by Monsters/Terrain on '{target.InternalName} ({target.ActorSnoId})' Distance={target.Distance}");
                     }
                     else if (isStuck)
                     {
-                        Logger.LogDebug($"Kamakazi Blocked by Stuck on '{target.InternalName} ({target.ActorSnoId})' Distance={target.Distance}");
+                        Core.Logger.Debug($"Kamakazi Blocked by Stuck on '{target.InternalName} ({target.ActorSnoId})' Distance={target.Distance}");
                     }
 
                     if (!isStuck && !PlayerMover.IsCompletelyBlocked && !isBlockedByDoor)
@@ -226,7 +221,7 @@ namespace Trinity.Components.Combat
 
                         IsDoingKamakazi = true;
                         KamakaziTarget = target;
-                        Logger.Log($"Going Kamakazi on '{target.InternalName} ({target.ActorSnoId})' Distance={target.Distance}");
+                        Core.Logger.Log($"Going Kamakazi on '{target.InternalName} ({target.ActorSnoId})' Distance={target.Distance}");
                         target.WeightInfo = "Kamakazi Target";
                         target.Weight = MaxWeight;
                         return target;
@@ -244,12 +239,12 @@ namespace Trinity.Components.Combat
                 //    _riftProgressionKillAll = riftProgressionKillAll;
                 //    if (riftProgressionKillAll)
                 //    {
-                //        Logger.Log($"Rift Progression is now at {Core.Rift.CurrentProgressionPct} - Killing everything!");
+                //        Core.Logger.Log($"Rift Progression is now at {Core.Rift.CurrentProgressionPct} - Killing everything!");
                 //        CombatBase.CombatMode = CombatMode.KillAll;
                 //    }
                 //    else
                 //    {
-                //        Logger.LogVerbose($"Reverting rift progression kill all mode back to normal combat");
+                //        Core.Logger.Verbose($"Reverting rift progression kill all mode back to normal combat");
                 //        CombatBase.CombatMode = CombatMode.Normal;
                 //    }
                 //}
@@ -559,7 +554,7 @@ namespace Trinity.Components.Combat
                                     //    // Many 'bot ignored some elites' complaints are due to priority globe aquisition.
                                     //    if (cacheObject.IsElite && Core.Player.CurrentHealthPct < Math.Min(0.35, Core.Settings.Combat.Misc.HealthGlobeLevel))
                                     //    {
-                                    //        Logger.LogDebug($"Health Globe Emergency Ignoring Elite {cacheObject.InternalName} HealthPct={Core.Player.CurrentHealthPct}");
+                                    //        Core.Logger.Debug($"Health Globe Emergency Ignoring Elite {cacheObject.InternalName} HealthPct={Core.Player.CurrentHealthPct}");
                                     //    }
                                     //    else
                                     //    {
@@ -684,7 +679,7 @@ namespace Trinity.Components.Combat
                                     {
                                         cacheObject.WeightInfo += $"Adding {cacheObject.InternalName} because we seem to be stuck *OR* if not ranged and currently rooted ";
                                     }
-                                    //else if (DataDictionary.MonsterCustomWeights.ContainsKey(cacheObject.ActorSnoId))
+                                    //else if (GameData.MonsterCustomWeights.ContainsKey(cacheObject.ActorSnoId))
                                     //{
                                     //    cacheObject.WeightInfo +=
                                     //        string.Format(
@@ -840,7 +835,7 @@ namespace Trinity.Components.Combat
                                         {
                                             if (ShouldIgnoreElite(cacheObject, out reason))
                                             {
-                                                Logger.Log(LogCategory.Weight, $"{reason}");
+                                                Core.Logger.Log(LogCategory.Weight, $"{reason}");
                                                 cacheObject.WeightInfo += reason;
                                                 break;
                                             }
@@ -1712,7 +1707,7 @@ namespace Trinity.Components.Combat
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log($"Exception Inside Weighting Foreach Loop {ex}");
+                    Core.Logger.Log($"Exception Inside Weighting Foreach Loop {ex}");
                 }
 
                 return SetTarget(bestTarget);
@@ -1870,7 +1865,7 @@ namespace Trinity.Components.Combat
             {
                 //if (bestTarget.RActorId != LastTargetRActorGuid || bestTarget != null && bestTarget.IsMarker)
                 //{
-                //    Logger.Log(LogCategory.Targetting,
+                //    Core.Logger.Log(LogCategory.Targetting,
                 //        $"Target changed to {bestTarget.ActorSnoId} // {bestTarget.InternalName} RActorGuid={bestTarget.RActorId} " +
                 //        $"({bestTarget.Type}) {bestTarget.WeightInfo} TargetInfo={bestTarget.Targeting}");
                 //}
@@ -1885,7 +1880,7 @@ namespace Trinity.Components.Combat
             cacheObject.WeightInfo += cacheObject.IsNpc ? " IsNPC" : "";
             cacheObject.WeightInfo += cacheObject.NpcIsOperable ? " IsOperable" : "";
 
-            Logger.Log(TrinityLogLevel.Debug, LogCategory.Weight,
+            Core.Logger.Debug(LogCategory.Weight,
                 "Weight={0:0} name={1} sno={2} type={3} R-Dist={4:0} IsElite={5} RAGuid={6} {7}",
                 cacheObject.Weight, cacheObject.InternalName, cacheObject.ActorSnoId, cacheObject.Type,
                 cacheObject.RadiusDistance, cacheObject.IsElite,
@@ -2301,7 +2296,7 @@ namespace Trinity.Components.Combat
 
             //var gate = CacheData.NavigationObstacles.FirstOrDefault(o => o.ActorSnoId == 108466);
             //if (gate != null)
-            //    Logger.Log("NavigationObstacles contains gate {0} blockingCount: {1}={2}", gate.Name, cacheObject.InternalName, navigationCount);
+            //    Core.Logger.Log("NavigationObstacles contains gate {0} blockingCount: {1}={2}", gate.Name, cacheObject.InternalName, navigationCount);
 
             return navigationCount;
         }

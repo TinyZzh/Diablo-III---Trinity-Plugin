@@ -1,7 +1,7 @@
 using System.Linq;
+using Trinity.Framework;
 using System.Runtime.Serialization;
 using Trinity.Framework.Actors.ActorTypes;
-using Trinity.Framework.Helpers;
 using Zeta.Game;
 
 namespace Trinity.Components.Adventurer.Settings
@@ -54,7 +54,7 @@ namespace Trinity.Components.Adventurer.Settings
             Settings = PluginSettings.Current.Gems.GemSettings.FirstOrDefault(g => g.Sno == gem.ActorSnoId);
             if (Settings == null)
             {
-                Logger.LogError($"Gems Settings Entry not found for {gem.Name} ({gem.ActorSnoId}), if its a new gem, it needs to be added to Trinity's Gems.cs reference");
+                Core.Logger.Error($"Gems Settings Entry not found for {gem.Name} ({gem.ActorSnoId}), if its a new gem, it needs to be added to Trinity's Gems.cs reference");
                 return;
             }
 
@@ -83,7 +83,7 @@ namespace Trinity.Components.Adventurer.Settings
                 var chance = CalculateUpgradeChance(riftLevel, rank);
                 if (chance < requiredChance || MaxRank != 0 && rank >= MaxRank)
                 {
-                    //Logger.Debug($"{Name} RiftLevel={riftLevel} Chance={chance} RequiredChance={requiredChance} CurrentRank={Rank} TestingRank={rank} MaxRank={MaxRank} Upgrades={i} ");
+                    //Core.Logger.Debug($"{Name} RiftLevel={riftLevel} Chance={chance} RequiredChance={requiredChance} CurrentRank={Rank} TestingRank={rank} MaxRank={MaxRank} Upgrades={i} ");
                     return i;
                 }
             }

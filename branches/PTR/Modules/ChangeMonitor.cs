@@ -1,10 +1,9 @@
 ﻿using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Trinity.Components.Adventurer.Game.Events;
-using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
-using Zeta.Bot;
 
 namespace Trinity.Modules
 {
@@ -39,7 +38,7 @@ namespace Trinity.Modules
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogError($"ChangeMonitor: {detector.Name} {ex}");
+                    Core.Logger.Error($"ChangeMonitor: {detector.Name} {ex}");
                 }
             }
         }

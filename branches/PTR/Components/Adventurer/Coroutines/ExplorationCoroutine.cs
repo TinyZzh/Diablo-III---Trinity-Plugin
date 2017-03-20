@@ -1,17 +1,17 @@
 ﻿using Buddy.Coroutines;
 using System;
+using Trinity.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Trinity.Components.Adventurer.Cache;
+using Trinity.Components.Adventurer.Coroutines.CommonSubroutines;
 using Trinity.Components.Adventurer.Game.Exploration;
-using Trinity.Components.Adventurer.Util;
-using Trinity.Framework;
+using Zeta.Bot;
 using Zeta.Bot.Navigation;
 
 namespace Trinity.Components.Adventurer.Coroutines
 {
-    public sealed class ExplorationCoroutine
+    public sealed class ExplorationCoroutine : ISubroutine
     {
         private static ExplorationCoroutine _explorationCoroutine;
         private static HashSet<int> _exploreLevelAreaIds;
@@ -50,13 +50,13 @@ namespace Trinity.Components.Adventurer.Coroutines
                 if (_state == value) return;
                 if (value != States.NotStarted)
                 {
-                    Logger.Debug("[Exploration] " + value);
+                    Core.Logger.Debug("[Exploration] " + value);
                 }
                 _state = value;
             }
         }
 
-        private ExplorationCoroutine(HashSet<int> levelAreaIds, List<string> ignoreScenes = null, Func<bool> breakCondition = null, bool allowReExplore = true)
+        public ExplorationCoroutine(HashSet<int> levelAreaIds, List<string> ignoreScenes = null, Func<bool> breakCondition = null, bool allowReExplore = true)
         {
             _levelAreaIds = levelAreaIds;
             _ignoreScenes = ignoreScenes;
@@ -68,7 +68,7 @@ namespace Trinity.Components.Adventurer.Coroutines
         {
             if (_breakCondition != null && _breakCondition.Invoke())
             {
-                Logger.DebugSetting("BreakCondition Triggered");
+                Core.Logger.Debug("BreakCondition Triggered");
                 return false;
             }
 
@@ -110,7 +110,7 @@ namespace Trinity.Components.Adventurer.Coroutines
 
                 if (_explorationDataMaxWaitUntil != DateTime.MinValue && DateTime.UtcNow > _explorationDataMaxWaitUntil)
                 {
-                    Logger.Debug($"[Exploration] Timeout waiting for exploration data");
+                    Core.Logger.Debug($"[Exploration] Timeout waiting for exploration data");
                     State = States.Completed;
                     return false;
                 }
@@ -123,7 +123,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                     }
 
                     await Coroutine.Sleep(100);
-                    Logger.Debug($"[Exploration] Patiently waiting for exploration data");
+                    Core.Logger.Debug($"[Exploration] Patiently waiting for exploration data");
                     return false;
                 }
 
@@ -136,19 +136,19 @@ namespace Trinity.Components.Adventurer.Coroutines
                 var destination = ExplorationHelpers.NearestWeightedUnvisitedNode(_levelAreaIds);
                 if (destination == null)
                 {
-                    Logger.Debug($"[Exploration] No more unvisited nodes to explore, so we're done.");
+                    Core.Logger.Debug($"[Exploration] No more unvisited nodes to explore, so we're done.");
                     State = States.Completed;
                     return false;
                 }
 
                 if (_currentDestination != destination)
                 {
-                    Logger.Debug($"[Exploration] Destination Changed from {_currentDestination?.NavigableCenter} to {destination.NavigableCenter}");
+                    Core.Logger.Debug($"[Exploration] Destination Changed from {_currentDestination?.NavigableCenter} to {destination.NavigableCenter}");
                     _currentDestination = destination;
                 }
                 if (_currentDestination != null)
                 {
-                    Logger.DebugSetting($"[Exploration] Current Destination {_currentDestination?.NavigableCenter}, CanRayWalk={CanRayWalkDestination} MyPosition={AdvDia.MyPosition}");
+                    Core.Logger.Debug($"[Exploration] Current Destination {_currentDestination?.NavigableCenter}, CanRayWalk={CanRayWalkDestination} MyPosition={AdvDia.MyPosition}");
                     _currentDestination.IsCurrentDestination = true;
                 }
                 //_newNodePickTimer.Reset();
@@ -162,10 +162,10 @@ namespace Trinity.Components.Adventurer.Coroutines
                     {
                         _currentDestination.FailedNavigationAttempts++;
 
-                        var canClientPathTo = await AdvDia.DefaultNavigationProvider.CanFullyClientPathTo(_currentDestination.NavigableCenter);
+                        var canClientPathTo = await AdvDia.Navigator.CanFullyClientPathTo(_currentDestination.NavigableCenter);
                         if (_currentDestination.FailedNavigationAttempts >= 10 && !canClientPathTo)
                         {
-                            Logger.DebugSetting($"[Exploration] Unable to client path to {_currentDestination.NavigableCenter} and failed {_currentDestination.FailedNavigationAttempts} times; Ignoring Node.");
+                            Core.Logger.Debug($"[Exploration] Unable to client path to {_currentDestination.NavigableCenter} and failed {_currentDestination.FailedNavigationAttempts} times; Ignoring Node.");
                             _currentDestination.IsVisited = true;
                             _currentDestination.IsIgnored = true;
                             _currentDestination.IsCurrentDestination = false;
@@ -174,7 +174,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                         }
                         else if (!CanRayWalkDestination && _currentDestination.Distance < 25f && _currentDestination.FailedNavigationAttempts >= 3 || _currentDestination.FailedNavigationAttempts >= 15)
                         {
-                            Logger.DebugSetting($"[Exploration] Failed to Navigate to {_currentDestination.NavigableCenter} {_currentDestination.FailedNavigationAttempts} times; Ignoring Node.");
+                            Core.Logger.Debug($"[Exploration] Failed to Navigate to {_currentDestination.NavigableCenter} {_currentDestination.FailedNavigationAttempts} times; Ignoring Node.");
                             _currentDestination.IsVisited = true;
                             _currentDestination.IsIgnored = true;
                             _currentDestination.IsCurrentDestination = false;
@@ -184,7 +184,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                     }
                     else
                     {
-                        Logger.Debug($"[Exploration] Destination Reached!");
+                        Core.Logger.Debug($"[Exploration] Destination Reached!");
                         _currentDestination.FailedNavigationAttempts = 0;
                         _currentDestination.IsVisited = true;
                         _currentDestination.IsCurrentDestination = false;
@@ -195,14 +195,14 @@ namespace Trinity.Components.Adventurer.Coroutines
                     {
                         if (_allowReExplore)
                         {
-                            Logger.Debug($"[Exploration] Exploration Resetting");
+                            Core.Logger.Debug($"[Exploration] Exploration Resetting");
                             ScenesStorage.Reset();
                             Navigator.Clear();
                             _failedNavigationAttempts = 0;
                         }
                         else
                         {
-                            Logger.Debug($"[Exploration] too many failed navigation attempts, aborting.");
+                            Core.Logger.Debug($"[Exploration] too many failed navigation attempts, aborting.");
                             State = States.Completed;
                             return false;
                         }
@@ -211,7 +211,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                 return false;
             }
 
-            Logger.Debug($"[Exploration] We found no explore destination, so we're done.");
+            Core.Logger.Debug($"[Exploration] We found no explore destination, so we're done.");
             ScenesStorage.Reset();
             Navigator.Clear();
 
@@ -225,5 +225,26 @@ namespace Trinity.Components.Adventurer.Coroutines
         {
             return true;
         }
+
+        #region ISubRoutine
+
+        public bool IsDone => State == States.Completed;
+
+        Task<bool> ISubroutine.GetCoroutine()
+        {
+            return GetCoroutine();
+        }
+
+        public void Reset()
+        {
+            State = States.NotStarted;
+        }
+
+        public void DisablePulse()
+        {
+           
+        }
+
+        #endregion
     }
 }

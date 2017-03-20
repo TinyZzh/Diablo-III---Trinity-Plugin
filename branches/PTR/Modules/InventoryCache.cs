@@ -1,12 +1,12 @@
 ﻿using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Trinity.Coroutines.Resources;
-using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Objects;
-using Trinity.Reference;
+using Trinity.Settings;
 using Zeta.Bot;
 using Zeta.Common;
 using Zeta.Game;
@@ -133,6 +133,7 @@ namespace Trinity.Modules
             public Func<IEnumerable<TrinityItem>> Source { get; set; }
             public List<TrinityItem> ByItemType(ItemType type) => Source().Where(i => i.ItemType == type).ToList();
             public List<TrinityItem> ByActorSno(int actorSno) => Source().Where(i => i.ActorSnoId == actorSno).ToList();
+            public List<TrinityItem> ByQuality(TrinityItemQuality quality) => Source().Where(i => i.TrinityItemQuality == quality).ToList();
             public void Update() => Source().ForEach(i => i.OnUpdated());
             public IEnumerator<TrinityItem> GetEnumerator() => Source().GetEnumerator();
             IEnumerator IEnumerable.GetEnumerator() => Source().GetEnumerator();
@@ -161,10 +162,11 @@ namespace Trinity.Modules
                     case TransmuteRecipe.ConvertCraftingMaterialsFromRare:
                         return HasCurrency(_currencyRecipeConvertFromRare);
                 }
-                return false;
+
+                return true; // recipes that dont require currency.
             }
 
-            public bool HasCurrency(Dictionary<CurrencyType, int> recipe)
+            public bool HasCurrency(IDictionary<CurrencyType, int> recipe)
                 => recipe.All(requirement => PlayerData.GetCurrencyAmount(requirement.Key) >= requirement.Value);
 
             /// <summary>

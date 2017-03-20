@@ -1,14 +1,14 @@
 ﻿using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using Trinity.Components.Adventurer.Game.Rift;
 using Trinity.Components.Adventurer.Util;
-using Trinity.Framework.Helpers;
 using Trinity.UI.UIComponents;
-using JsonSerializer = Trinity.Components.Adventurer.Util.JsonSerializer;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
+
 
 namespace Trinity.Components.Adventurer.Settings
 {
@@ -368,9 +368,9 @@ namespace Trinity.Components.Adventurer.Settings
             BountyAct4 = true;
             BountyAct5 = true;
             BountyZerg = false;
-            BountyMode0 = true;
+            BountyMode0 = false;
             BountyMode1 = false;
-            BountyMode2 = false;
+            BountyMode2 = true;
             BountyMode3 = false;
             BountyPrioritizeBonusAct = true;
             NephalemRiftFullExplore = false;
@@ -469,7 +469,7 @@ namespace Trinity.Components.Adventurer.Settings
             }
             catch (Exception ex)
             {
-                Logger.Debug($"Error parsing Adventurer settings code {ex}");
+                Core.Logger.Debug($"Error parsing Adventurer settings code {ex}");
             }
             return false;
         }
@@ -477,6 +477,14 @@ namespace Trinity.Components.Adventurer.Settings
         private void ApplySettings(PluginSettings settings)
         {
             PropertyCopy.Copy(settings, this);
+
+            // Migration after bonus act removal. clean up later.
+            if (settings.BountyMode0 == true || settings.BountyMode1 == true)
+            {
+                settings.BountyMode0 = false;
+                settings.BountyMode1 = false;
+                settings.BountyMode2 = true;
+            }
         }
 
         public static PluginSettings LoadSettingsFromJsonString(string json)
@@ -536,8 +544,8 @@ namespace Trinity.Components.Adventurer.Settings
         {
             var result = JsonSerializer.Serialize(this);
             FileUtils.WriteToTextFile(FileUtils.SettingsPath, result);
-            Logger.Verbose("FileUtils.SettingsPath {0}", FileUtils.SettingsPath);
-            Logger.Info("Settings saved.");
+            Core.Logger.Verbose("FileUtils.SettingsPath {0}", FileUtils.SettingsPath);
+            Core.Logger.Log("Settings saved.");
             return false;
         }
 

@@ -1,10 +1,8 @@
 ﻿using System;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Trinity.Framework.Helpers;
 using Zeta.Game;
 using Zeta.Game.Internals;
 

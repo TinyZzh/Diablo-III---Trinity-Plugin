@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Trinity.Framework.Avoidance.Structures;
-using Trinity.Framework.Helpers;
+using Trinity.Framework.Grid;
 
 namespace Trinity.Framework.Avoidance.Handlers
 {
@@ -25,7 +25,7 @@ namespace Trinity.Framework.Avoidance.Handlers
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogDebug($"AnimationConeAvoidanceHandler Exception for Actor: {actor.InternalName}. {ex}");
+                    Core.Logger.Debug($"AnimationConeAvoidanceHandler Exception for Actor: {actor.InternalName}. {ex}");
                 }
             }
         }

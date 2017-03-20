@@ -1,10 +1,8 @@
 ﻿using Buddy.Coroutines;
 using System;
+using Trinity.Framework;
 using System.Threading.Tasks;
-using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Actors;
-using Trinity.Components.Adventurer.Util;
-using Zeta.Bot;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
 using Zeta.Game.Internals.SNO;
@@ -55,7 +53,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                 if (_state == value) return;
                 if (value != States.NotStarted)
                 {
-                    Logger.Debug("[UsePortal] " + value);
+                    Core.Logger.Debug("[UsePortal] " + value);
                 }
                 _state = value;
             }
@@ -111,13 +109,13 @@ namespace Trinity.Components.Adventurer.Coroutines
             //}
             if (_sourceWorldDynamicId != AdvDia.CurrentWorldDynamicId)
             {
-                Logger.Debug("[UsePortal] World has changed, assuming done.");
+                Core.Logger.Debug("[UsePortal] World has changed, assuming done.");
                 State = States.Completed;
                 return false;
             }
             if (actor == null)
             {
-                Logger.Debug("[UsePortal] Nothing to interact, failing. ");
+                Core.Logger.Debug("[UsePortal] Nothing to interact, failing. ");
                 State = States.Failed;
                 return false;
             }
@@ -142,7 +140,7 @@ namespace Trinity.Components.Adventurer.Coroutines
             _interactAttempts++;
             if (ZetaDia.Globals.IsLoadingWorld)
             {
-                Logger.Debug("[UsePortal] Waiting for the world to load");
+                Core.Logger.Debug("[UsePortal] Waiting for the world to load");
                 await Coroutine.Sleep(250);
                 return false;
             }
@@ -150,7 +148,7 @@ namespace Trinity.Components.Adventurer.Coroutines
             var actor = ActorFinder.FindObject(_actorId);
             if (actor == null)
             {
-                Logger.Debug("[UsePortal] Nothing to interact, failing. ");
+                Core.Logger.Debug("[UsePortal] Nothing to interact, failing. ");
                 State = States.Failed;
                 return false;
             }
@@ -174,7 +172,7 @@ namespace Trinity.Components.Adventurer.Coroutines
 
         private async Task<bool> Interact(DiaObject actor)
         {
-            Logger.Debug("[UsePortal] Attempting to use portal {0} at distance {1}", ((SNOActor)actor.ActorSnoId).ToString(), actor.Distance);
+            Core.Logger.Debug("[UsePortal] Attempting to use portal {0} at distance {1}", ((SNOActor)actor.ActorSnoId).ToString(), actor.Distance);
             bool retVal = false;
             switch (actor.ActorType)
             {

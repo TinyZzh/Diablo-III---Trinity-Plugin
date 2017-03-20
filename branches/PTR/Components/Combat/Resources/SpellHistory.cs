@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Trinity.Framework;
 using Trinity.Framework.Helpers;
+using System.Collections.Generic;
+using System.Linq;
 using Zeta.Bot;
 using Zeta.Common;
 using Zeta.Game.Internals.Actors;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 
 namespace Trinity.Components.Combat.Resources
 {
@@ -150,7 +150,7 @@ namespace Trinity.Components.Combat.Resources
             if (_history.Any(i => i.Power.SNOPower == power))
             {
                 var spellCount = _history.Count(i => i.Power.SNOPower == power && i.TimeSinceUse <= time);
-                Logger.LogVerbose(LogCategory.Targetting, "Found {0}/{1} spells in {2} time for {3} power", spellCount, _history.Count(i => i.Power.SNOPower == power), time, power);
+                Core.Logger.Verbose(LogCategory.Targetting, "Found {0}/{1} spells in {2} time for {3} power", spellCount, _history.Count(i => i.Power.SNOPower == power), time, power);
                 return spellCount;
             }
             return 0;

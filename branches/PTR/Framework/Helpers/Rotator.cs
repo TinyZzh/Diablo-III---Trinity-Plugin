@@ -126,7 +126,7 @@ namespace Trinity.Framework.Helpers
                 Angle = GetAngle(_timer.Elapsed.TotalMilliseconds);
 
                 if (DebugLogging)
-                    Logger.LogVerbose("Id={0} Angle={1} ElapsedMs={2} StartDegrees={3}",
+                    Core.Logger.Verbose("Id={0} Angle={1} ElapsedMs={2} StartDegrees={3}",
                         Id, Angle, _timer.Elapsed.TotalMilliseconds, StartAngleDegrees);
 
                 if (_degreesRotatedSinceStart > RotateAmount)
@@ -153,7 +153,7 @@ namespace Trinity.Framework.Helpers
             var boundAngle = (float)Math.Round(MathUtil.FixAngleTo360(totalAngle), Precision, MidpointRounding.AwayFromZero);
 
             if (DebugLogging)
-                Logger.LogVerbose("TotalAngle={0} BoundAngle={1} DegreesRotated={2}", totalAngle, boundAngle, _degreesRotatedSinceStart);
+                Core.Logger.Verbose("TotalAngle={0} BoundAngle={1} DegreesRotated={2}", totalAngle, boundAngle, _degreesRotatedSinceStart);
 
             return boundAngle;
         }
@@ -180,7 +180,7 @@ namespace Trinity.Framework.Helpers
             if (IsRunning)
             {
                 if (DebugLogging)
-                    Logger.LogVerbose("Stopped Rotation {0}", Id);
+                    Core.Logger.Verbose("Stopped Rotation {0}", Id);
 
                 IsRunning = false;
             }
@@ -209,13 +209,13 @@ namespace Trinity.Framework.Helpers
                 _speedMillisecondsPerDegree = 0f;
 
             if (DebugLogging)
-                Logger.LogVerbose("Starting Rotation {0} StartAngle={1} Speed={2} Clockwise={3} DurationMs={4} StartDelay={5} RotateAmount={6} Flipped={7}",
+                Core.Logger.Verbose("Starting Rotation {0} StartAngle={1} Speed={2} Clockwise={3} DurationMs={4} StartDelay={5} RotateAmount={6} Flipped={7}",
                     Id, StartAngleDegrees, _speedMillisecondsPerDegree, !RotateAntiClockwise, RotateDuration.TotalMilliseconds, StartDelay.TotalMilliseconds, RotateAmount, FlipRotation);
 
             if (StartDelay.TotalMilliseconds > 0)
             {
                 if (DebugLogging)
-                    Logger.LogVerbose("Waiting {0}ms", StartDelay.TotalMilliseconds);
+                    Core.Logger.Verbose("Waiting {0}ms", StartDelay.TotalMilliseconds);
 
                 await Task.Delay(StartDelay);
             }

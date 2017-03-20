@@ -7,13 +7,13 @@ using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Avoidance.Structures;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
-using Trinity.Reference;
+using Trinity.Framework.Reference;
 using Zeta.Bot;
 using Zeta.Bot.Navigation;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals.Actors;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 
 namespace Trinity.Components.Combat
 {
@@ -34,7 +34,7 @@ namespace Trinity.Components.Combat
         {
             if (power == null || power.SNOPower == SNOPower.None)
             {
-                Logger.Log(LogCategory.Spells, $"Power was null or SNOPower.None");
+                Core.Logger.Log(LogCategory.Spells, $"Power was null or SNOPower.None");
                 return false;
             }
 
@@ -42,14 +42,14 @@ namespace Trinity.Components.Combat
             {
                 if (!Core.Player.IsPowerUseDisabled)
                 {
-                    Logger.Log(LogCategory.Spells, $"CanCast failed for {power.SNOPower}");
+                    Core.Logger.Log(LogCategory.Spells, $"CanCast failed for {power.SNOPower}");
                 }
                 return false;
             }
 
             if (power.AssignedInDifferentWorld)
             {
-                Logger.Log(LogCategory.Spells, $"World has changed since power was created");
+                Core.Logger.Log(LogCategory.Spells, $"World has changed since power was created");
                 return false;
             }
 
@@ -66,7 +66,7 @@ namespace Trinity.Components.Combat
 
                 if (!Combat.Targeting.IsInRange(target, power))
                 {
-                    Logger.Log(LogCategory.Movement, $"Moving to {castInfo}");
+                    Core.Logger.Log(LogCategory.Movement, $"Moving to {castInfo}");
                     PlayerMover.MoveTo(target.Position);
                     return true;
                 }
@@ -75,14 +75,14 @@ namespace Trinity.Components.Combat
             {
                 if (distance > Combat.Targeting.MaxTargetDistance)
                 {
-                    Logger.Log(LogCategory.Spells, $"Target is way too far away ({distance})");
+                    Core.Logger.Log(LogCategory.Spells, $"Target is way too far away ({distance})");
                     return false;
                 }
 
                 castInfo += $" Dist:{Core.Player.Position.Distance(power.TargetPosition)}";
                 if (!Combat.Targeting.IsInRange(power.TargetPosition, power))
                 {
-                    Logger.Log(LogCategory.Movement, $"Moving to position for {castInfo}");
+                    Core.Logger.Log(LogCategory.Movement, $"Moving to position for {castInfo}");
                     PlayerMover.MoveTo(power.TargetPosition);
                     return true;
                 }
@@ -90,40 +90,40 @@ namespace Trinity.Components.Combat
 
             if (power.ShouldWaitBeforeUse)
             {
-                Logger.LogVerbose($"Waiting before power for {power.WaitTimeBeforeRemaining}");
+                Core.Logger.Verbose($"Waiting before power for {power.WaitTimeBeforeRemaining}");
                 await Coroutine.Sleep((int)power.WaitTimeBeforeRemaining);
             }
 
             if (power.SNOPower == SNOPower.Walk)
             {
-                Logger.LogVerbose(LogCategory.Movement, $"Walk - arrived at Destination doing nothing {castInfo}");
+                Core.Logger.Verbose(LogCategory.Movement, $"Walk - arrived at Destination doing nothing {castInfo}");
                 return true;
             }
 
             if (!CastPower(power.SNOPower, power.TargetPosition, power.TargetAcdId))
             {
-                Logger.LogVerbose(LogCategory.Spells, $"Failed to cast {castInfo}");
+                Core.Logger.Verbose(LogCategory.Spells, $"Failed to cast {castInfo}");
                 return false;
             }
 
-            Logger.Warn(LogCategory.Spells, $"Cast {castInfo}");
+            Core.Logger.Warn(LogCategory.Spells, $"Cast {castInfo}");
 
             if (power.SNOPower == SNOPower.Axe_Operate_Gizmo && Core.StuckHandler.IsStuck)
             {
-                Logger.LogVerbose(LogCategory.Movement, $"Interaction Stuck Detected. {castInfo}");
+                Core.Logger.Verbose(LogCategory.Movement, $"Interaction Stuck Detected. {castInfo}");
                 await Core.StuckHandler.DoUnstick();
                 return false;
             }
 
             if (power.ShouldWaitAfterUse)
             {
-                Logger.LogVerbose(LogCategory.Spells, $"Waiting after power for {power.WaitTimeAfterRemaining}");
+                Core.Logger.Verbose(LogCategory.Spells, $"Waiting after power for {power.WaitTimeAfterRemaining}");
                 await Coroutine.Sleep((int)power.WaitTimeAfterRemaining);
             }
 
             if (power.ShouldWaitForAttackToFinish)
             {
-                Logger.Log(LogCategory.Spells, $"Waiting for Attack to Finish");
+                Core.Logger.Log(LogCategory.Spells, $"Waiting for Attack to Finish");
                 await Coroutine.Wait(1000, () => Core.Player.IsCasting);
             }
             return true;

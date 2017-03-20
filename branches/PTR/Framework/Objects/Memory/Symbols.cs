@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Trinity.Framework.Objects.Memory
+﻿namespace Trinity.Framework.Objects.Memory
 {
     public enum ShaderAType // 2.5.0.44030 @27712528 index:0
     {

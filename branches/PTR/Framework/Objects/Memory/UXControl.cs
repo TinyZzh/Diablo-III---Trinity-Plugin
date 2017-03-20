@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Security.Policy;
 using Trinity.Framework.Objects.Enums;
 using Zeta.Game.Internals;
 
-namespace Trinity.Framework.Objects.Memory.UX
+namespace Trinity.Framework.Objects.Memory
 {
     public class UXHeader : MemoryWrapper
     {

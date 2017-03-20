@@ -1,10 +1,10 @@
 using Buddy.Coroutines;
 using System;
+using Trinity.Framework;
 using System.Linq;
 using System.Threading.Tasks;
 using Trinity.Components.Adventurer.Coroutines.CommonSubroutines;
 using Trinity.Components.Adventurer.Game.Quests;
-using Trinity.Components.Adventurer.Util;
 
 namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
 {
@@ -28,7 +28,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
                 if (_state == value) return;
                 if (value != States.NotStarted)
                 {
-                    Logger.Debug("[GenericBounty] " + value);
+                    Core.Logger.Debug("[GenericBounty] " + value);
                 }
                 _logStateChange = true;
                 _state = value;
@@ -68,7 +68,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
                         return Failed();
 
                     default:
-                        Logger.Error("[GenericBounty] If you see this, it's not good!");
+                        Core.Logger.Error("[GenericBounty] If you see this, it's not good!");
                         await Coroutine.Sleep(TimeSpan.MaxValue);
                         return true;
                 }

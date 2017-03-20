@@ -1,6 +1,5 @@
 ﻿using System;
-
-namespace Trinity.Framework.Objects.Memory.Attributes
+namespace Trinity.Framework.Objects.Memory
 {
     public class AttributeDescripter : MemoryWrapper
     {

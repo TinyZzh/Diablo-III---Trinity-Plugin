@@ -1,17 +1,17 @@
 ﻿using Buddy.Coroutines;
 using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using Trinity.Components.Combat;
 using Trinity.Components.Combat.Resources;
-using Trinity.Framework;
 using Trinity.Framework.Avoidance.Structures;
-using Trinity.Framework.Helpers;
-using Trinity.Reference;
+using Trinity.Framework.Reference;
 using Zeta.Bot.Navigation;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 
 namespace Trinity.DbProvider
 {
@@ -47,12 +47,12 @@ namespace Trinity.DbProvider
 
                 if (isVeryClose && canRayWalk)
                 {
-                    //Logger.Log(LogCategory.Movement, $"Trinity MoveTowards called to {destination}");
+                    //Core.Logger.Log(LogCategory.Movement, $"Trinity MoveTowards called to {destination}");
                     _instance.MoveTowards(destination);
                     return;
                 }
             }
-            //Logger.Log(LogCategory.Movement, $"Trinity MoveTo called to {destination}");
+            //Core.Logger.Log(LogCategory.Movement, $"Trinity MoveTo called to {destination}");
             NavigateTo(destination);
         }
 
@@ -95,7 +95,7 @@ namespace Trinity.DbProvider
                 }
                 if (GameData.ResetNavigationPowers.Contains(power.SNOPower))
                 {
-                    Logger.Log(LogCategory.Movement, $"Cast {power.SNOPower} at {power.TargetPosition} from={startPosition}");
+                    Core.Logger.Log(LogCategory.Movement, $"Cast {power.SNOPower} at {power.TargetPosition} from={startPosition}");
                     SleepUntilTime = DateTime.UtcNow + TimeSpan.FromMilliseconds(300);
                     Core.Grids.Avoidance.AdvanceNavigatorPath(power.MinimumRange, RayType.Walk);
                     MoveStop();
@@ -114,7 +114,7 @@ namespace Trinity.DbProvider
             {
                 if (!ZetaDia.Me.Movement.IsMoving && LastDestination != destination && ZetaDia.IsInGame)
                 {
-                    Logger.LogVerbose(LogCategory.Movement, "NavigateTo: Starting Movement Towards {0} ({1})", destination, destinationName);
+                    Core.Logger.Verbose(LogCategory.Movement, "NavigateTo: Starting Movement Towards {0} ({1})", destination, destinationName);
                     Instance.MoveTowards(destination);
                 }
                 _navigateToCoroutine = new Coroutine(async () =>
@@ -125,7 +125,7 @@ namespace Trinity.DbProvider
             }
 
             LastDestination = destination;
-            Logger.LogVerbose(LogCategory.Movement, $"Resume: NavigateTo: {destination} {destinationName}");
+            Core.Logger.Verbose(LogCategory.Movement, $"Resume: NavigateTo: {destination} {destinationName}");
             _navigateToCoroutine?.Resume();
 
             if (_navigateToCoroutine?.Status == CoroutineStatus.RanToCompletion)
@@ -144,7 +144,7 @@ namespace Trinity.DbProvider
             if (ZetaDia.Globals.IsLoadingWorld)
                 return;
 
-            Logger.LogVerbose(LogCategory.Movement, "MoveStop");
+            Core.Logger.Verbose(LogCategory.Movement, "MoveStop");
             ZetaDia.Me.UsePower(SNOPower.Walk, MathEx.GetPointAt(ZetaDia.Me.Position, 2f, ZetaDia.Me.Movement.Rotation), ZetaDia.Globals.WorldId);
         }
 

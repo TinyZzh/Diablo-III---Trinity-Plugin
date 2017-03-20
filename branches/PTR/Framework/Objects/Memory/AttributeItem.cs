@@ -1,11 +1,10 @@
 ﻿using System;
 using Trinity.Framework.Helpers;
-using Trinity.Framework.Objects.Memory.Containers;
 using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
 
-namespace Trinity.Framework.Objects.Memory.Attributes
+namespace Trinity.Framework.Objects.Memory
 {
     public class AttributeItem : MemoryWrapper, ITableItem
     {
@@ -91,7 +90,7 @@ namespace Trinity.Framework.Objects.Memory.Attributes
             }
             catch (Exception ex)
             {
-                Logger.Log($"GetValue<{typeof(T)}>() type conversion failed {ex}");
+                Core.Logger.Log($"GetValue<{typeof(T)}>() type conversion failed {ex}");
             }
             return default(T);
         }

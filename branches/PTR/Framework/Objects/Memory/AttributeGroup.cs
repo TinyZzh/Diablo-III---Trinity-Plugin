@@ -1,6 +1,4 @@
-﻿using Trinity.Framework.Objects.Memory.Containers;
-
-namespace Trinity.Framework.Objects.Memory.Attributes
+﻿namespace Trinity.Framework.Objects.Memory
 {
     public class AttributeGroup : MemoryWrapper
     {

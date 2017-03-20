@@ -1,6 +1,5 @@
 ﻿using System;
-
-namespace Trinity.Framework.Objects.Memory.Containers
+namespace Trinity.Framework.Objects.Memory
 {
     public class BasicMap<T> : MemoryWrapper where T : MemoryWrapper, ITableItem, new()
     {

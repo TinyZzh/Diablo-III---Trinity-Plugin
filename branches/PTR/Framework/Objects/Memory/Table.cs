@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Zeta.Game;
 
-namespace Trinity.Framework.Objects.Memory.Containers
+namespace Trinity.Framework.Objects.Memory
 {
     public class TableItem : MemoryWrapper, ITableItem
     {

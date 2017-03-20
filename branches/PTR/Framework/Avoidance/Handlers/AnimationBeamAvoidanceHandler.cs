@@ -1,9 +1,10 @@
 ﻿using System;
+using Trinity.Framework.Helpers;
 using System.Linq;
 using Trinity.Framework.Avoidance.Structures;
-using Trinity.Framework.Helpers;
+using Trinity.Framework.Grid;
 using Zeta.Common;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 
 namespace Trinity.Framework.Avoidance.Handlers
 {
@@ -27,7 +28,7 @@ namespace Trinity.Framework.Avoidance.Handlers
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogDebug($"AnimationBeamAvoidanceHandler Exception reading Animation/Rotation for actor: {actor.InternalName}");
+                    Core.Logger.Debug($"AnimationBeamAvoidanceHandler Exception reading Animation/Rotation for actor: {actor.InternalName}");
                 }
             }
         }

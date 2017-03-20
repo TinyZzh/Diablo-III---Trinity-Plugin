@@ -1,12 +1,11 @@
 ﻿using System;
+using Trinity.Framework;
 using System.Linq;
 using System.Threading.Tasks;
 using Trinity.Components.Combat.Resources;
-using Trinity.Coroutines;
-using Trinity.Framework;
+using Trinity.Components.Coroutines;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Behaviors;
-using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
 using Trinity.Framework.Objects.Enums;
 using Zeta.Bot;

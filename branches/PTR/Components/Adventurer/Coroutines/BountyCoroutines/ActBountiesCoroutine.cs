@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Adventurer.Game.Quests;
-using Trinity.Components.Adventurer.Util;
+using Trinity.Framework;
 using Zeta.Game;
 
 namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
@@ -48,7 +48,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
                 if (_state == value) return;
                 if (value != States.NotStarted)
                 {
-                    Logger.Debug("[ActBounties] " + value);
+                    Core.Logger.Debug("[ActBounties] " + value);
                 }
                 _logStateChange = true;
                 _state = value;
@@ -135,7 +135,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
                     //            {
                     //                BountyCoroutine.currentRandomizedBounty =
                     //                    Randomizer.GetRandomNumber(_bountyCoroutines.Count);
-                    //                Logger.Info("[ActBounties] Randomized Bounty Complete.", Act);
+                    //                Core.Logger.Log("[ActBounties] Randomized Bounty Complete.", Act);
                     //            }
                     //        }
                     //        else
@@ -149,7 +149,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
                     //    }
                     //    catch (Exception ex)
                     //    {
-                    //        Logger.Info(BountyCoroutine.currentRandomizedBounty + " | " + _bountyCoroutines.Count, Act);
+                    //        Core.Logger.Log(BountyCoroutine.currentRandomizedBounty + " | " + _bountyCoroutines.Count, Act);
                     //        BountyCoroutine.currentRandomizedBounty = 0;
                     //        _currentBountyCoroutine = _bountyCoroutines[0];
                     //    }
@@ -175,7 +175,7 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             ScenesStorage.Reset();
             if (_currentBountyCoroutine.State == BountyCoroutine.States.Failed)
             {
-                //Logger.Info("[ActBounties] Looks like the bounty has failed, skipping the rest of the act.");
+                //Core.Logger.Log("[ActBounties] Looks like the bounty has failed, skipping the rest of the act.");
                 State = States.Failed;
                 return false;
             }
@@ -200,26 +200,26 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
 
         private async Task<bool> Completed()
         {
-            Logger.Info("[ActBounties] Successfully completed {0} bounties.", Act);
+            Core.Logger.Log("[ActBounties] Successfully completed {0} bounties.", Act);
             return true;
         }
 
         private async Task<bool> UnsupportedBountyFound()
         {
-            Logger.Info("[ActBounties] It seems like we have an unsupported bounty in {0}, skipping the act.", Act);
+            Core.Logger.Log("[ActBounties] It seems like we have an unsupported bounty in {0}, skipping the act.", Act);
             BountyStatistics.RestartsFromUnsupported++;
             return true;
         }
 
         private async Task<bool> ActIsDisabled()
         {
-            Logger.Info("[ActBounties] {0} is disabled on settings, skipping the act.", Act);
+            Core.Logger.Log("[ActBounties] {0} is disabled on settings, skipping the act.", Act);
             return true;
         }
 
         private async Task<bool> Failed()
         {
-            Logger.Error("[ActBounties] Act bounties failed for {0}, skipping the act.", Act);
+            Core.Logger.Error("[ActBounties] Act bounties failed for {0}, skipping the act.", Act);
             return true;
         }
     }

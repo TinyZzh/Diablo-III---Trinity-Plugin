@@ -1,11 +1,12 @@
 ﻿using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Objects;
-using Trinity.Framework.Objects.Memory.UX;
+using Trinity.Framework.Objects.Memory;
 using Zeta.Common;
 using Zeta.Game;
 using Vector2 = Zeta.Common.Vector2;

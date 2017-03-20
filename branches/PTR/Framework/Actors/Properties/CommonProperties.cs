@@ -3,19 +3,15 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Trinity.Components.Combat;
 using Trinity.Framework.Actors.ActorTypes;
-using Trinity.Framework.Avoidance;
-using Trinity.Framework.Helpers;
+using Trinity.Framework.Grid;
 using Trinity.Framework.Objects;
-using Trinity.Reference;
+using Trinity.Framework.Reference;
 using Trinity.Settings;
 using Zeta.Bot;
-using Zeta.Bot.Profile;
-using Zeta.Bot.Settings;
 using Zeta.Common;
 using Zeta.Game;
-using Zeta.Game.Internals.Actors;
 using Zeta.Game.Internals.SNO;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 
 namespace Trinity.Framework.Actors.Properties
 {
@@ -123,7 +119,7 @@ namespace Trinity.Framework.Actors.Properties
 
         private static void UpdateDistance(TrinityActor actor)
         {
-            actor.Distance = actor.Position.Distance(Core.Player.Position);
+            actor.Distance = actor.Position.Distance(Core.Actors.ActivePlayerPosition);
             actor.RadiusDistance = Math.Max(actor.Distance - actor.CollisionRadius, 0f);
         }
 

@@ -4,7 +4,7 @@ using Trinity.Framework.Actors.ActorTypes;
 using Trinity.Framework.Actors.Attributes;
 using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects.Enums;
-using Trinity.Reference;
+using Trinity.Framework.Reference;
 using Trinity.Settings;
 using Zeta.Common;
 using Zeta.Game.Internals.Actors;
@@ -379,7 +379,7 @@ namespace Trinity.Framework.Actors.Properties
                         flags |= MonsterAffixes.Juggernaut;
                         continue;
                     default:
-                        //Logger.LogVerbose($"Unknown AffixId={affix}");
+                        //Core.Logger.Verbose($"Unknown AffixId={affix}");
                         break;
                 }
             }

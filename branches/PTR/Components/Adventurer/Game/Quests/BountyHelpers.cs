@@ -1,16 +1,19 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using Trinity.Components.Adventurer.Cache;
+using System.Linq; using Trinity.Framework;
 using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Game.Events;
 using Trinity.Components.Adventurer.Settings;
 using Trinity.Components.Adventurer.Util;
+using Trinity.Framework.Actors;
+using Trinity.Framework.Helpers;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
 using Zeta.Game.Internals.Actors.Gizmos;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
+using Trinity.Framework.Actors.ActorTypes;
+using Trinity.Framework.Objects.Enums;
+using Trinity.Modules;
 
 namespace Trinity.Components.Adventurer.Game.Quests
 {
@@ -74,13 +77,35 @@ namespace Trinity.Components.Adventurer.Game.Quests
 
         public static Vector3 ScanForMarkerLocation(int markerNameHash, int searchRadius)
         {
-            var miniMapMarker = AdvDia.CurrentWorldMarkers
-                .FirstOrDefault(m => m.NameHash == markerNameHash && m.Position.Distance(AdvDia.MyPosition) <= searchRadius && !EntryPortals.IsEntryPortal(AdvDia.CurrentWorldDynamicId, m.NameHash));
-            if (miniMapMarker != null)
-            {
-                return miniMapMarker.Position;
-            }
-            return Vector3.Zero;
+            var marker = Core.Markers.FirstOrDefault(m => m.NameHash == markerNameHash && m.Position.Distance(AdvDia.MyPosition) <= searchRadius && !EntryPortals.IsEntryPortal(AdvDia.CurrentWorldDynamicId, m.NameHash));
+            return marker?.Position ?? Vector3.Zero;
+        }
+
+        public static Vector3 ScanForMarkerLocation(WorldMarkerType type, int searchRadius)
+        {
+            var marker = Core.Markers.FirstOrDefault(m => m.MarkerType == type && m.Position.Distance(AdvDia.MyPosition) <= searchRadius && !EntryPortals.IsEntryPortal(AdvDia.CurrentWorldDynamicId, m.NameHash));
+            return marker?.Position ?? Vector3.Zero;
+        }
+
+        public static Vector3 ScanForMarkerLocation(string name, int searchRadius)
+        {
+            var marker = Core.Markers.FirstOrDefault(m => m.Name.ToLowerInvariant().Contains(name.ToLowerInvariant()) && m.Position.Distance(AdvDia.MyPosition) <= searchRadius && !EntryPortals.IsEntryPortal(AdvDia.CurrentWorldDynamicId, m.NameHash));
+            return marker?.Position ?? Vector3.Zero;
+        }
+
+        public static TrinityMarker ScanForMarker(int markerNameHash, int searchRadius)
+        {
+            return Core.Markers.FirstOrDefault(m => m.NameHash == markerNameHash && m.Position.Distance(AdvDia.MyPosition) <= searchRadius && !EntryPortals.IsEntryPortal(AdvDia.CurrentWorldDynamicId, m.NameHash));
+        }
+
+        public static TrinityMarker ScanForMarker(WorldMarkerType type, int searchRadius)
+        {
+            return Core.Markers.FirstOrDefault(m => m.MarkerType == type && m.Position.Distance(AdvDia.MyPosition) <= searchRadius && !EntryPortals.IsEntryPortal(AdvDia.CurrentWorldDynamicId, m.NameHash));            
+        }
+
+        public static TrinityMarker ScanForMarker(string name, int searchRadius)
+        {
+            return Core.Markers.FirstOrDefault(m => m.Name.ToLowerInvariant().Contains(name.ToLowerInvariant()) && m.Position.Distance(AdvDia.MyPosition) <= searchRadius && !EntryPortals.IsEntryPortal(AdvDia.CurrentWorldDynamicId, m.NameHash));
         }
 
         public static Vector3 TryFindObjectivePosition(IList<ObjectiveActor> objectives, int searchRadius, out ObjectiveActor foundObjective)
@@ -100,14 +125,8 @@ namespace Trinity.Components.Adventurer.Game.Quests
 
         public static Vector3 ScanForActorLocation(int actorId, int searchRadius)
         {
-            var actor =
-                ZetaDia.Actors.GetActorsOfType<DiaObject>(true).OrderBy(a => a.Distance)
-                    .FirstOrDefault(a => a.IsFullyValid() && a.ActorSnoId == actorId && a.Position.Distance(AdvDia.MyPosition) <= searchRadius);
-            if (actor != null)
-            {
-                return actor.Position;
-            }
-            return Vector3.Zero;
+            var actor = Core.Actors.AllRActors.FirstOrDefault(a => a.ActorSnoId == actorId && a.Distance <= searchRadius);
+            return actor?.Position ?? Vector3.Zero;
         }
 
         public static bool AreAllActBountiesCompleted(Act act)
@@ -121,7 +140,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
             {
                 return null;
             }
-            using (new PerformanceLogger())
+            using (new PerformanceLogger("GetPortalNearMarkerPosition"))
             {
                 var gizmo = ZetaDia.Actors.GetActorsOfType<DiaGizmo>(true)
                     .Where(o => o != null && o.IsFullyValid() && o is GizmoPortal && o.Position.Distance(position) <= 10f)
@@ -150,7 +169,7 @@ namespace Trinity.Components.Adventurer.Game.Quests
                     b => b.Act == act && BountyDataFactory.GetBountyData((int)b.Quest) != null) == 5;
             if (!result)
             {
-                Logger.Debug("[Bounties] Unsupported bounties are detected in {0}", act);
+                Core.Logger.Debug("[Bounties] Unsupported bounties are detected in {0}", act);
             }
             return result;
         }

@@ -1,10 +1,9 @@
 ﻿using Trinity.Framework.Objects.Enums;
-using Trinity.Framework.Objects.Memory.Sno;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals;
 
-namespace Trinity.Framework.Objects.Memory.Misc
+namespace Trinity.Framework.Objects.Memory
 {
     public class Marker : MemoryWrapper
     {

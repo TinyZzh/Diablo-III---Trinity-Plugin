@@ -1,7 +1,6 @@
 #region
 
 using System;
-using Trinity.Framework.Objects.Memory.Misc;
 using Zeta.Common;
 using Zeta.Game.Internals.Actors;
 using Zeta.Game.Internals.SNO;

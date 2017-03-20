@@ -1,13 +1,13 @@
 ﻿using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
-using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Game.Rift;
-using Trinity.Framework.Helpers;
 using Zeta.Bot;
 using Zeta.Common;
 using Zeta.Game;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
+
 
 namespace Trinity.Components.Adventurer.Game.Exploration.SceneMapping
 {
@@ -341,8 +341,8 @@ namespace Trinity.Components.Adventurer.Game.Exploration.SceneMapping
                 sequence.Next();
             }
 
-            Logger.DebugSetting($"Current Scene {AdvDia.CurrentWorldScene.Name} ({AdvDia.CurrentWorldScene.SnoId})");
-            Logger.DebugSetting($"Closest gate Scene {gateScene.WorldScene.Name} ({gateScene.WorldScene.SnoId}), Sequence={sequence.Index + 1}/{sequence.Count}");
+            Core.Logger.Debug($"Current Scene {AdvDia.CurrentWorldScene.Name} ({AdvDia.CurrentWorldScene.SnoId})");
+            Core.Logger.Debug($"Closest gate Scene {gateScene.WorldScene.Name} ({gateScene.WorldScene.SnoId}), Sequence={sequence.Index + 1}/{sequence.Count}");
             return sequence;
         }
 
@@ -415,11 +415,11 @@ namespace Trinity.Components.Adventurer.Game.Exploration.SceneMapping
 
             var destinationInExitRegion = exitRegion.Contains(destination);
             if (destinationInExitRegion)
-                Logger.DebugSetting("Destination inside exit region");
+                Core.Logger.Debug("Destination inside exit region");
 
             var destinationInEnterRegion = enterRegion.Contains(destination);
             if (destinationInEnterRegion)
-                Logger.DebugSetting("Destination inside enter region");
+                Core.Logger.Debug("Destination inside enter region");
 
             var currentScene = CurrentGateScene;
             var targetScene = NearestGateSceneToPosition(destination);
@@ -439,7 +439,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration.SceneMapping
                         return myCurrentSide == GateSide.DeepSide ? sceneClickedInside.DeepPortalPosition : sceneClickedInside.ShallowPortalPosition;
                     }
 
-                    Logger.DebugSetting("Selecting closest death gate to player. (In Rift)");
+                    Core.Logger.Debug("Selecting closest death gate to player. (In Rift)");
                     return sceneClickedInside.ClosestGateToPosition(AdvDia.MyPosition);
                 }
 
@@ -501,7 +501,7 @@ namespace Trinity.Components.Adventurer.Game.Exploration.SceneMapping
         /// <returns></returns>
         public static bool TrySelectGate(GateSide mySide, SceneDepth targetDepth, out Vector3 bestGatePosition)
         {
-            Logger.DebugSetting($"TrySelectGate MyCurrentSide={mySide} TargetDepth={targetDepth}");
+            Core.Logger.Debug($"TrySelectGate MyCurrentSide={mySide} TargetDepth={targetDepth}");
 
             if (mySide == GateSide.DeepSide)
             {

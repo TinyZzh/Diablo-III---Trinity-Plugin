@@ -1,7 +1,7 @@
 ﻿using Buddy.Coroutines;
 using System;
 using System.Threading.Tasks;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
+
 
 namespace Trinity.Framework.Behaviors
 {
@@ -51,7 +51,7 @@ namespace Trinity.Framework.Behaviors
             }
             catch (CoroutineUnhandledException ex)
             {
-                Logger.Error($"{Name} Exception {ex} {Environment.StackTrace}");
+                Core.Logger.Error($"{Name} Exception {ex} {Environment.StackTrace}");
                 throw;
             }
         }

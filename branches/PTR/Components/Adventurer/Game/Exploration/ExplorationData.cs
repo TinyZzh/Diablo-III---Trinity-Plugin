@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Trinity.Components.Adventurer.Cache;
 using Zeta.Game;
 
 namespace Trinity.Components.Adventurer.Game.Exploration

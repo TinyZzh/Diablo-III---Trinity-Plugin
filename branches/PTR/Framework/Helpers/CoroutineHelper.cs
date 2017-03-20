@@ -1,18 +1,17 @@
-﻿using Buddy.Coroutines;
-using log4net;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Trinity.Framework;
+using Buddy.Coroutines;
+using log4net;
 using Zeta.Bot;
 using Zeta.Bot.Navigation;
 using Zeta.Game;
 using Zeta.TreeSharp;
 using Action = System.Action;
 
-namespace Trinity.Coroutines.Resources
+namespace Trinity.Framework.Helpers
 {
     public static class CoroutineHelper
     {
@@ -41,14 +40,14 @@ namespace Trinity.Coroutines.Resources
         /// <summary>
         /// Runs a task as a coroutine in a new thread (if not running) or ticks current task as a coroutine.
         /// </summary>
-        public static void RunCoroutine<T>(Func<Task<T>> taskProducer, Func<T, bool> stopCondition = null, int tickMilliseconds = 50, Action onFinished = null)
+        public static void RunCoroutine<T>(Func<Task<T>> taskProducer, Func<T, bool> stopCondition = null, int tickMilliseconds = 50)
         {
             if (BotMain.IsPaused)
                 return;
 
             if (!BotMain.IsRunning || BotMain.IsPausedForStateExecution)
             {
-                StartNew(taskProducer, stopCondition, onFinished, tickMilliseconds);
+                StartNew(taskProducer, stopCondition, null, tickMilliseconds);
             }
             else
             {
@@ -67,7 +66,7 @@ namespace Trinity.Coroutines.Resources
             BotMain.IsPausedForStateExecution = true;
             StartNew(task, stopCondition, () =>
             {
-                Logger.Info("ForceRunCoroutine Finished");
+                Core.Logger.Log("ForceRunCoroutine Finished");
                 BotMain.IsPausedForStateExecution = false;
 
             }, tickMilliseconds);
@@ -80,7 +79,7 @@ namespace Trinity.Coroutines.Resources
         {
             CancelRunningTasks();
 
-            var task = Task.Factory.StartNew(() =>
+            var task = Task.Run(async () =>
             {
                 try
                 {
@@ -110,9 +109,10 @@ namespace Trinity.Coroutines.Resources
                             if (ZetaDia.Me == null || !ZetaDia.Me.IsValid)
                                 return;
 
-                            result = ToCoroutine(taskProducer, stopCondition).Result;
-                            Thread.Sleep(tickDelay);
+                            result = await ToCoroutine(taskProducer, stopCondition);
                         }
+
+                        await Task.Delay(tickDelay);
 
                         if (_token.IsCancellationRequested)
                             break;
@@ -146,10 +146,12 @@ namespace Trinity.Coroutines.Resources
         {
             if (!Tasks.Any()) return;
 
-            Logger.InfoFormat("Sending Cancel Request to {0} Running Tasks...", Tasks.Count(t => t.Status == TaskStatus.Running));
+            Core.Logger.Log($"Sending Cancel Request to {Tasks.Count(t => t.Status == TaskStatus.Running)} Running and {Tasks.Count(t => t.Status != TaskStatus.Running)} Finished Tasks...");
 
             if (_tokenSource.Token.CanBeCanceled)
                 _tokenSource.Cancel();
+
+            Tasks.Clear();
 
             _tokenSource = new CancellationTokenSource();
             _token = _tokenSource.Token;

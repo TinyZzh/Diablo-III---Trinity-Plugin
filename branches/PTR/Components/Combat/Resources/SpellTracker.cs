@@ -1,10 +1,10 @@
 ﻿using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Trinity.Framework;
 using Trinity.Framework.Actors.ActorTypes;
-using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
 using Zeta.Game.Internals.Actors;
 
@@ -58,7 +58,7 @@ namespace Trinity.Components.Combat.Resources
 
                 if (duration > 0)
                 {
-                    Logger.Log(TrinityLogLevel.Verbose, LogCategory.Behavior, "Tracking unit {0} with power {1} for duration {2:0.00}", AcdId, power, duration);
+                    Core.Logger.Verbose(LogCategory.Behavior, "Tracking unit {0} with power {1} for duration {2:0.00}", AcdId, power, duration);
                     TrackSpellOnUnit(new SpellTracker()
                     {
                         AcdId = AcdId,
@@ -69,7 +69,7 @@ namespace Trinity.Components.Combat.Resources
             }
             catch (Exception ex)
             {
-                Logger.LogNormal("Exception in TrackSpellOnUnit: {0}", ex.ToString());
+                Core.Logger.Log("Exception in TrackSpellOnUnit: {0}", ex.ToString());
             }
         }
 
@@ -99,9 +99,9 @@ namespace Trinity.Components.Combat.Resources
                 return false;
             bool result = TrackedUnits.Any(t => t.AcdId == unit.AcdId && t.Power == power);
             //if (result)
-            //    Technicals.Logger.LogNormal("Unit {0} is tracked with power {1}", unit.AcdId, power);
+            //    Technicals.Core.Logger.Log("Unit {0} is tracked with power {1}", unit.AcdId, power);
             //else
-            //    Technicals.Logger.LogNormal("Unit {0} is NOT tracked with power {1}", unit.AcdId, power);
+            //    Technicals.Core.Logger.Log("Unit {0} is NOT tracked with power {1}", unit.AcdId, power);
             return result;
         }
 
@@ -140,7 +140,7 @@ namespace Trinity.Components.Combat.Resources
                             var units = TrackedUnits.Where(t => t.Expiration < DateTime.UtcNow);
                             foreach (var unit in units.ToList())
                             {
-                                //Technicals.Logger.LogNormal("Removing unit {0} from TrackedUnits ({1}, {2})", unit.AcdId, unit.Expiration.Ticks, DateTime.UtcNow.Ticks);
+                                //Technicals.Core.Logger.Log("Removing unit {0} from TrackedUnits ({1}, {2})", unit.AcdId, unit.Expiration.Ticks, DateTime.UtcNow.Ticks);
                                 TrackedUnits.Remove(unit);
                             }
                         }
@@ -148,7 +148,7 @@ namespace Trinity.Components.Combat.Resources
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogNormal("Exception in SpellTracker Maintenance: {0}", ex.ToString());
+                    Core.Logger.Log("Exception in SpellTracker Maintenance: {0}", ex.ToString());
                 }
             }
         }

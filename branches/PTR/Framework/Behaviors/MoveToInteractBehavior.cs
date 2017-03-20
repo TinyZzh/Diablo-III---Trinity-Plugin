@@ -7,7 +7,7 @@ using Trinity.Framework.Actors.ActorTypes;
 using Zeta.Bot.Coroutines;
 using Zeta.Bot.Navigation;
 using Zeta.Common;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 
 namespace Trinity.Framework.Behaviors
 {
@@ -17,9 +17,9 @@ namespace Trinity.Framework.Behaviors
 
         public HashSet<Vector3> VisitedActorPositions { get; set; } = new HashSet<Vector3>();
 
-        public async Task<bool> While(Predicate<TrinityActor> markerSelector, int timeoutMs = 30000)
+        public async Task<bool> While(Predicate<TrinityActor> actorSelector, int timeoutMs = 30000)
         {
-            return await Run(async () => await FindActor(markerSelector), Move, timeoutMs);
+            return await Run(async () => await FindActor(actorSelector), Move, timeoutMs);
         }
 
         private async Task<bool> FindActor(Predicate<TrinityActor> actorSelector)
@@ -45,20 +45,20 @@ namespace Trinity.Framework.Behaviors
 
         private async Task<bool> Move()
         {
-            Logger.LogVerbose($"Moving to Interact: {Actor}");
+            Core.Logger.Verbose($"Moving to Interact: {Actor}");
             await CommonCoroutines.MoveTo(Actor.Position, Actor.Name);
             return true;
         }
 
         protected override async Task<bool> OnStarted()
         {
-            Logger.Warn($"Started moving to Interact: {Actor}");
+            Core.Logger.Warn($"Started moving to Interact: {Actor}");
             return true;
         }
 
         protected override async Task<bool> OnStopped()
         {
-            Logger.Warn($"Arrived at Interact: {Actor}");
+            Core.Logger.Warn($"Arrived at Interact: {Actor}");
             Actor.Interact();
             VisitedActorPositions.Add(Actor.Position);
             Actor = null;

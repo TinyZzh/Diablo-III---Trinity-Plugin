@@ -1,6 +1,5 @@
 ﻿using System;
 using Trinity.Framework.Helpers;
-using Trinity.Framework.Objects.Enums;
 using Zeta.Game;
 
 namespace Trinity.Framework.Objects

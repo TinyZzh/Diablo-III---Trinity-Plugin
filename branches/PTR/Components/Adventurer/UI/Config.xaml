@@ -20,8 +20,8 @@
 
             <mock:MockData x:Key="DesignViewModel" />
 
-            <converters:BoolToVisibilityConverter x:Key="VisibleWhenTrueConverter" TrueValue="Visible" FalseValue="Collapsed" />
-            <converters:IntToStringConverter x:Key="IntToStringConverter" />
+            <converters2:BoolToVisibilityConverter x:Key="VisibleWhenTrueConverter" TrueValue="Visible" FalseValue="Collapsed" />
+            <converters2:IntToStringConverter x:Key="IntToStringConverter" />
             <converters2:PercentConverter x:Key="PercentConverter" />
             <converters2:EnumBooleanConverter x:Key="EnumBooleanConverter" />
             <converters2:EnumVisibilityConverter x:Key="HiddenWhenEnumTrueConverter" Reverse="True" />
@@ -169,21 +169,22 @@
                         <ColumnDefinition Width="60"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0">
-                        <CheckBox Name="BountyZerg" IsChecked="{Binding BountyZerg}" Content="Safe Zerg Mode" ToolTip="Tries to avoid killing unnecessary monsters to speed up the cache farm." Margin="2 4 2 2"></CheckBox>
                         <!--<CheckBox Name="BountyPrioritizeBonusAct" IsChecked="{Binding BountyPrioritizeBonusAct}" Content="Prioritize Bonus Act" Margin="2" ToolTip="Runs the act with bonus reward first if the act is enabled to maximize the profit."></CheckBox>-->
-                        <TextBlock  Margin="2 4 2 2" Text="Bonus Act Mode (Mouseover for details)"></TextBlock>
-                        <RadioButton Name="BountyMode0" GroupName="BountyMode" IsChecked="{Binding BountyMode0}" Margin="2" ToolTip="Restarts the game if the bonus act contains any unsupported bounties">Force Bonus Act Mode</RadioButton>
-                        <RadioButton Name="BountyMode1" GroupName="BountyMode" IsChecked="{Binding BountyMode1}" Margin="2" ToolTip="Skips the Bonus Act if it contains any unsupported bounties">Skip Mode</RadioButton>
+                        <TextBlock  Margin="2 4 2 2" Text="Act Selection Mode"></TextBlock>
+                        <!--<RadioButton Name="BountyMode0" GroupName="BountyMode" IsChecked="{Binding BountyMode0}" Margin="2" ToolTip="Restarts the game if the bonus act contains any unsupported bounties">Force Bonus Act Mode</RadioButton>
+                        <RadioButton Name="BountyMode1" GroupName="BountyMode" IsChecked="{Binding BountyMode1}" Margin="2" ToolTip="Skips the Bonus Act if it contains any unsupported bounties">Skip Mode</RadioButton>-->
                         <RadioButton Name="BountyMode2" GroupName="BountyMode" IsChecked="{Binding BountyMode2}" Margin="2" ToolTip="Attempts to balance mats (Ignores the bonus act if necessary)">Balance Mats Mode</RadioButton>
                         <RadioButton Name="BountyMode3" GroupName="BountyMode" IsChecked="{Binding BountyMode3}" Margin="2" ToolTip="Runs only selected acts and ignores the bonus act if it's not selected">Act Selection Mode</RadioButton>
+                        <CheckBox Name="BountyZerg" IsChecked="{Binding BountyZerg}" Content="Enable Zerg Mode" ToolTip="Tries to avoid killing unnecessary monsters to speed up the cache farm." Margin="2 10 2 2"></CheckBox>
                     </StackPanel>
-                    <StackPanel Grid.Column="1">
+                    <StackPanel Grid.Column="1" Visibility="{Binding BountyMode3, Converter={StaticResource VisibleWhenTrueConverter}}">
                         <CheckBox Name="BountyAct1" IsChecked="{Binding BountyAct1}" IsEnabled="{Binding BountyMode3}" Content="Act 1" Margin="2 4 2 2"></CheckBox>
                         <CheckBox Name="BountyAct2" IsChecked="{Binding BountyAct2}" IsEnabled="{Binding BountyMode3}" Content="Act 2" Margin="2"></CheckBox>
                         <CheckBox Name="BountyAct3" IsChecked="{Binding BountyAct3}" IsEnabled="{Binding BountyMode3}" Content="Act 3" Margin="2"></CheckBox>
                         <CheckBox Name="BountyAct4" IsChecked="{Binding BountyAct4}" IsEnabled="{Binding BountyMode3}" Content="Act 4" Margin="2"></CheckBox>
                         <CheckBox Name="BountyAct5" IsChecked="{Binding BountyAct5}" IsEnabled="{Binding BountyMode3}" Content="Act 5" Margin="2"></CheckBox>
                     </StackPanel>
+
                 </Grid>
             </GroupBox>
 

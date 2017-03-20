@@ -1,8 +1,9 @@
 ﻿using System;
+using Trinity.Framework;
+using Trinity.Framework.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Trinity.Components.Adventurer.Cache;
 using Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines;
 using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Game.Combat;
@@ -15,7 +16,7 @@ using Zeta.Common.Helpers;
 using Zeta.Game;
 using Zeta.Game.Internals;
 using Zeta.Game.Internals.Actors;
-using Logger = Trinity.Components.Adventurer.Util.Logger;
+
 
 namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
 {
@@ -53,7 +54,7 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
                         break;
 
                     default:
-                        Util.Logger.Debug("[Keywarden] " + value);
+                        Core.Logger.Debug("[Keywarden] " + value);
                         break;
                 }
                 _state = value;
@@ -105,7 +106,7 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
                 return false;
             }
             TargetingHelper.TurnCombatOn();
-            Util.Logger.Info("[Keywarden] Lets go find da guy with da machina, shall we?");
+            Core.Logger.Log("[Keywarden] Lets go find da guy with da machina, shall we?");
             State = AdvDia.CurrentLevelAreaId == _keywardenData.LevelAreaId ? States.Searching : States.TakingWaypoint;
             return false;
         }
@@ -130,7 +131,7 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
             if (_keywardenLocation != Vector3.Zero && DateTime.UtcNow > MoveCooldownUntil)
             {
                 State = States.Moving;
-                Util.Logger.Info("[Keywarden] It's clobberin time!");
+                Core.Logger.Log("[Keywarden] It's clobberin time!");
                 return false;
             }
 
@@ -140,7 +141,7 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
             if (!await ExplorationCoroutine.Explore(_levelAreaIds, null, CanMoveToMarker))
                 return false;
 
-            Util.Logger.Error("[Keywarden] Oh shit, that guy is nowhere to be found.");
+            Core.Logger.Error("[Keywarden] Oh shit, that guy is nowhere to be found.");
             ScenesStorage.ResetVisited();
             State = States.Searching;
             return false;
@@ -153,14 +154,14 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
 
             if (_minimapMarker.Position.Distance(AdvDia.MyPosition) < 20f)
             {
-                Util.Logger.Info("[Keywarden] Finished Following marker");
+                Core.Logger.Log("[Keywarden] Finished Following marker");
                 return true;
             }
 
             if (_markerCoroutine == null)
             {
-                Util.Logger.Info("[Keywarden] Following a keywarden marker, lets see where it goes");
-                _markerCoroutine = new MoveToMapMarkerCoroutine(-1, AdvDia.CurrentWorldId, _minimapMarker.NameHash, 0, true);
+                Core.Logger.Log("[Keywarden] Following a keywarden marker, lets see where it goes");
+                _markerCoroutine = new MoveToMapMarkerCoroutine(-1, AdvDia.CurrentWorldId, _minimapMarker.NameHash, true);
             }
 
             if (!_markerCoroutine.IsDone)
@@ -175,11 +176,11 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
                 _markerMoveFailures++;
                 _markerCooldownUntil = DateTime.UtcNow.Add(TimeSpan.FromSeconds(cooldownDurationSeconds));
                 _markerCoroutine = null;
-                Util.Logger.Info($"[Keywarden] Looks like we can't find a path to the keywarden marker :( on cooldown for {cooldownDurationSeconds} seconds");
+                Core.Logger.Log($"[Keywarden] Looks like we can't find a path to the keywarden marker :( on cooldown for {cooldownDurationSeconds} seconds");
                 return true;
             }
 
-            Util.Logger.Info("[Keywarden] Finished Following marker");
+            Core.Logger.Log("[Keywarden] Finished Following marker");
             _markerCoroutine = null;
             return true;
         }
@@ -188,14 +189,14 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
         {
             if (_markerCooldownUntil > DateTime.UtcNow)
             {
-                Logger.DebugSetting($"Keywarden Marker on Cooldown. {(_markerCooldownUntil.Subtract(DateTime.UtcNow).TotalSeconds)}s remaining");
+                Core.Logger.Debug($"Keywarden Marker on Cooldown. {(_markerCooldownUntil.Subtract(DateTime.UtcNow).TotalSeconds)}s remaining");
                 return false;
             }
 
             _minimapMarker = GetKeywardenMarker();
             if (_minimapMarker == null)
             {
-                Logger.DebugSetting("Failed to find Keywarden Marker");
+                Core.Logger.Debug("Failed to find Keywarden Marker");
             }
             return _minimapMarker != null;
         }
@@ -214,12 +215,12 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
 
             if (NavigationCoroutine.LastResult == CoroutineResult.Failure && (NavigationCoroutine.LastMoveResult == MoveResult.Failed || NavigationCoroutine.LastMoveResult == MoveResult.PathGenerationFailed))
             {
-                var canClientPathTo = await AdvDia.DefaultNavigationProvider.CanFullyClientPathTo(_keywardenLocation);
+                var canClientPathTo = await AdvDia.Navigator.CanFullyClientPathTo(_keywardenLocation);
                 if (!canClientPathTo)
                 {
                     State = States.Searching;
                     MoveCooldownUntil = DateTime.UtcNow.AddSeconds(10);
-                    Util.Logger.Debug("[Keywarden] Can't seem to get to the keywarden!");
+                    Core.Logger.Debug("[Keywarden] Can't seem to get to the keywarden!");
                 }
                 return false;
             }
@@ -234,7 +235,7 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
             }
             else
             {
-                Util.Logger.Info("[Keywarden] Keywarden shish kebab!");
+                Core.Logger.Log("[Keywarden] Keywarden shish kebab!");
                 State = States.Waiting;
             }
             return false;
@@ -301,7 +302,7 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
             var marker = ZetaDia.Minimap.Markers.CurrentWorldMarkers.FirstOrDefault(m => m.MinimapTextureSnoId == 81058 && m.IsPointOfInterest && _keyardenMarkerHashes.Contains(m.NameHash));
             if (marker != null)
             {
-                //Logger.Info("Found Keywarden Marker Distance={0} NameHash={1}",
+                //Core.Logger.Log("Found Keywarden Marker Distance={0} NameHash={1}",
                 //    marker.Position.Distance(AdvDia.MyPosition), marker.NameHash);
 
                 return marker;
@@ -391,7 +392,7 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
         {
             if (!_isPulsing)
             {
-                //Util.Logger.Debug("[Rift] Registered to pulsator.");
+                //Core.Logger.Debug("[Rift] Registered to pulsator.");
                 Pulsator.OnPulse += OnPulse;
                 _isPulsing = true;
             }
@@ -401,7 +402,7 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
         {
             if (_isPulsing)
             {
-                //Util.Logger.Debug("[Rift] Unregistered from pulsator.");
+                //Core.Logger.Debug("[Rift] Unregistered from pulsator.");
                 Pulsator.OnPulse -= OnPulse;
                 _isPulsing = false;
             }

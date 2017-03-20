@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Trinity.Framework;
 using System.Windows.Forms;
-using Trinity.Framework;
-using Trinity.Framework.Helpers;
 using Trinity.Framework.Objects;
 using Zeta.Bot;
-using Logger = Trinity.Framework.Helpers.Logger;
+
 
 namespace Trinity.Modules
 {
@@ -31,7 +25,7 @@ namespace Trinity.Modules
             var result = (Control.MouseButtons & MouseButtons.Left) == MouseButtons.Left;
             if (result)
             {
-                Logger.Log("Mouse Left Down LazyRaider Pause");
+                Core.Logger.Log("Mouse Left Down LazyRaider Pause");
             }
             return result;
         }

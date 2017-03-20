@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Trinity.Components.Adventurer.Cache;
+using Trinity.Framework;
 using Trinity.Components.Adventurer.Game.Actors;
 using Trinity.Components.Adventurer.Settings;
-using Trinity.Components.Adventurer.Util;
 using Zeta.Common;
 using Zeta.Game;
 using Zeta.Game.Internals;
@@ -117,18 +116,18 @@ namespace Trinity.Components.Adventurer.Game.Rift
                     .OrderBy(g => g.Position.Distance2DSqr(AdvDia.MyPosition))
                     .FirstOrDefault();
             if (portal == null || EntryPortals.ContainsKey(AdvDia.CurrentWorldDynamicId)) return;
-            Util.Logger.Debug("[Rift] Added entry portal {0} ({1})", (SNOActor)portal.ActorSnoId, portal.ActorSnoId);
+            Core.Logger.Debug("[Rift] Added entry portal {0} ({1})", (SNOActor)portal.ActorSnoId, portal.ActorSnoId);
             EntryPortals.Add(AdvDia.CurrentWorldDynamicId,
                 new RiftEntryPortal(portal.ActorSnoId, portal.Position.X, portal.Position.Y));
 
-            var portalMarker =
-                AdvDia.CurrentWorldMarkers.FirstOrDefault(m => m.Position.Distance(portal.Position) < 10);
-            if (portalMarker != null)
-            {
-                FileUtils.AppendToLogFile("EntryPortals",
-                    string.Format("{0}\t{1}\t{2}\t{3}", portalMarker.Id, portalMarker.NameHash,
-                        portalMarker.IsPortalEntrance, portalMarker.IsPortalExit));
-            }
+            //var portalMarker =
+            //    AdvDia.CurrentWorldMarkers.FirstOrDefault(m => m.Position.Distance(portal.Position) < 10);
+            //if (portalMarker != null)
+            //{
+            //    FileUtils.AppendToLogFile("EntryPortals",
+            //        string.Format("{0}\t{1}\t{2}\t{3}", portalMarker.Id, portalMarker.NameHash,
+            //            portalMarker.IsPortalEntrance, portalMarker.IsPortalExit));
+            //}
         }
 
         public static bool IsEntryPortal(DiaGizmo portal)
@@ -188,11 +187,7 @@ namespace Trinity.Components.Adventurer.Game.Rift
             var greaterRiftLevel = PluginSettings.Current.GreaterRiftLevel;
             if (greaterRiftLevel <= 0)
             {
-                //var maxLevel = PluginSettings.Current.HighestUnlockedRiftLevel;
-                var maxLevel = ZetaDia.Me != null ?
-                    PropertyReader<int>.SafeReadValue(() => ZetaDia.Me.HighestUnlockedRiftLevel)
-                    : 110;
-
+                var maxLevel = ZetaDia.Me != null ? ZetaDia.Me.HighestUnlockedRiftLevel : 110;
                 greaterRiftLevel = maxLevel + greaterRiftLevel;
             }
             return greaterRiftLevel;

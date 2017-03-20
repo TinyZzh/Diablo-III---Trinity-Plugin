@@ -1,9 +1,9 @@
 ﻿using System;
+using Trinity.Framework.Helpers;
 using System.Collections;
 using System.Collections.Generic;
-using Trinity.Framework.Helpers;
 
-namespace Trinity.Framework.Objects.Memory.UX
+namespace Trinity.Framework.Objects.Memory
 {
     public class UXLabel : UXControl
     {
