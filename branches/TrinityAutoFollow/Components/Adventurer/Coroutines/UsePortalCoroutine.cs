@@ -54,7 +54,6 @@ namespace Trinity.Components.Adventurer.Coroutines
                 if (value != States.NotStarted)
                 {
                     Core.Logger.Debug("[UsePortal] " + value);
-                    StatusText = "[UsePortal] " + value;
                 }
                 _state = value;
             }
@@ -80,8 +79,6 @@ namespace Trinity.Components.Adventurer.Coroutines
             _actorId = 0;
             _sourceWorldDynamicId = 0;
         }
-
-        public string StatusText { get; set; }
 
         public async Task<bool> GetCoroutine()
         {
@@ -189,8 +186,7 @@ namespace Trinity.Components.Adventurer.Coroutines
         {
             Core.PlayerMover.MoveTowards(actor.Position);
 
-            Core.Logger.Debug($"[UsePortal] Attempting to use portal {((SNOActor)actor.ActorSnoId)} at distance {actor.Distance}");
-            StatusText = $"[UsePortal] Attempting to use portal {((SNOActor)actor.ActorSnoId)} at distance {actor.Distance}";
+            Core.Logger.Debug("[UsePortal] Attempting to use portal {0} at distance {1}", ((SNOActor)actor.ActorSnoId).ToString(), actor.Distance);
             bool retVal = false;
             switch (actor.ActorType)
             {

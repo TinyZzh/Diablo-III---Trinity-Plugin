@@ -73,7 +73,6 @@ namespace Trinity.Components.Adventurer.Coroutines
                 if (value != States.NotStarted)
                 {
                     Core.Logger.Debug("[Waypoint] " + value);
-                   StatusText = "[Waypoint] " + value;
                 }
                 _state = value;
             }
@@ -96,8 +95,6 @@ namespace Trinity.Components.Adventurer.Coroutines
         {
             _waypointNumber = 0;
         }
-
-        public string StatusText { get; set; }
 
         private async Task<bool> GetCoroutine()
         {
@@ -144,7 +141,6 @@ namespace Trinity.Components.Adventurer.Coroutines
 
         private async Task<bool> ClearingArea()
         {
-            StatusText = "[Waypoint] Clearing area";
             if (await ClearAreaCoroutine.Clear(_startingPosition, 45))
             {
                 State = States.TogglingWaypointMap;
@@ -197,7 +193,7 @@ namespace Trinity.Components.Adventurer.Coroutines
         {
             if (!_usedWaypoint)
             {
-                Core.Logger.Debug($"[Waypoint] Using waypoint {_waypointNumber}");
+                Core.Logger.Debug("[Waypoint] Using waypoint {0}", _waypointNumber);
                 // Checking for near by waypoint gizmos.
                 var gizmoWaypoint =
                     ZetaDia.Actors.GetActorsOfType<GizmoWaypoint>().OrderBy(g => g.Distance).FirstOrDefault();
@@ -282,7 +278,7 @@ namespace Trinity.Components.Adventurer.Coroutines
                 {
                     if (gizmoWaypoint.WaypointNumber == _waypointNumber)
                         return true;
-                    if (_waypointNumber == 44 && gizmoWaypoint.WaypointNumber == 30) // A4/A3 Bastians Keep
+                    if (_waypointNumber == 42 && gizmoWaypoint.WaypointNumber == 28) // A4/A3 Bastians Keep
                         return true;
                 }
                 return false;

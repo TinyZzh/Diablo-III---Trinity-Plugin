@@ -41,7 +41,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                 if (value != States.NotStarted)
                 {
                     Core.Logger.Log("[ClearLevelArea] " + value);
-                    StatusText = "[ClearLevelArea] " + value;
                 }
                 _state = value;
             }
@@ -160,8 +159,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             _isDone = false;
             _state = States.NotStarted;
         }
-
-        public string StatusText { get; set; }
 
         public void DisablePulse()
         {

@@ -2078,7 +2078,6 @@ namespace Trinity.Framework.Reference
 
         private static readonly Dictionary<int, float> destructableObjectRadius = new Dictionary<int, float>
         {
-            {(int)SNOActor.x1_Westm_Barricade_Round, 25},
             {2972, 10}, {80357, 16}, {116508, 10}, {113932, 8}, {197514, 18}, {108587, 8}, {108618, 8}, {108612, 8}, {116409, 18}, {121586, 22},
             {195101, 10}, {195108, 25}, {170657, 5}, {181228, 10}, {211959, 25}, {210418, 25}, {174496, 4}, {193963, 5}, {159066, 12}, {160570, 12},
             {55325, 5}, {5718, 14}, {5909, 10}, {5792, 8}, {108194, 8}, {129031, 30}, {192867, 3.5f}, {155255, 8}, {54530, 6}, {157541, 6},
@@ -2744,9 +2743,6 @@ namespace Trinity.Framework.Reference
 
         private static HashSet<int> blacklistIds = new HashSet<int>
         {
-            // Obstacle you can't destroy.
-            467026, // LS_a3dun_Keep_Exploding_Arch_A-6641 
-
             464983, // P6_Church_IronMaiden-8410 (464983)
 
             // these bounty chests are not clickable they have a protection globe on them during event then sno changes.
@@ -3129,7 +3125,6 @@ namespace Trinity.Framework.Reference
         // De-weight to zero but they still need to be processed for ClsoedDoor checks. todo proper fix.
         public static HashSet<int> DoorsToAlwaysIgnore { get; } = new HashSet<int>
         {
-            115373, //caOut_Oasis_Door_Aqueduct_A_Top-5549
             454194, //p43_AD_trDun_Cath_WoodDoor_Lazarus-56453 (454194)
             454187, //p43_AD_a1dun_Leor_Jail_Door_SuperLocked_A-61290 (454187)
             454173, //43_AD_a1dun_Leor_Gate_A-61285 (454173)
@@ -3272,8 +3267,7 @@ namespace Trinity.Framework.Reference
         // De-weight to zero but they still need to be processed for ClsoedDoor checks. todo proper fix.
         public static Dictionary<int, int> SceneSpecificDoorsIgnore { get; } = new Dictionary<int, int>
         {
-            { 454485, (int)SNOActor.p43_AD_Catacombs_Door_A },              // p43_AD_Catacombs_Door_A-13146 (454346)  // D1 Valor Scene Event
-            { 158161, (int)SNOActor.a2dun_Aqd_GodHead_Door_LargePuzzle },   // a2dun_Aqd_GodHead_Door_LargePuzzle  // Bounty: Lost Treasure of Khan Dakab
+            { 454485, 454346 } //p43_AD_Catacombs_Door_A-13146 (454346)  // D1 Valor Scene Event
         };
 
         /// <summary>

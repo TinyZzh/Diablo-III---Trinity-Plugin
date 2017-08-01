@@ -10,7 +10,5 @@ namespace Trinity.Components.Adventurer.Coroutines
         Guid Id { get; }
 
         void Reset();
-
-        string StatusText { get; }
     }
 }

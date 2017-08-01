@@ -39,9 +39,8 @@ namespace Trinity.Components.Adventurer.Coroutines
 
         public void Reset()
         {
+            
         }
-
-        public string StatusText { get; set; }
 
         private Vector3 _startingPosition;
 
@@ -66,7 +65,6 @@ namespace Trinity.Components.Adventurer.Coroutines
                 if (value != States.NotStarted)
                 {
                     Core.Logger.Debug("[TownPortal] " + value);
-                    StatusText = "[TownPortal] " + value;
                 }
                 _state = value;
             }

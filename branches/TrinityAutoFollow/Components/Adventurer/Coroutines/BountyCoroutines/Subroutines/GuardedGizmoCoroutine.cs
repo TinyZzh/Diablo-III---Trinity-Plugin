@@ -48,7 +48,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
                 if (value != States.NotStarted)
                 {
                     Core.Logger.Log("[GuardedGizmo] " + value);
-                    StatusText = "[GuardedGizmo] " + value;
                 }
 
                 _state = value;
@@ -122,8 +121,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
             _guardedGizmos = new Dictionary<Vector3, GuardedGizmo>();
             _currentGizmo = null;
         }
-
-        public string StatusText { get; set; }
 
         public BountyData BountyData
         {

@@ -43,7 +43,6 @@ namespace Trinity.Components.Adventurer.Coroutines
                 if (value != States.NotStarted)
                 {
                     Core.Logger.Debug("[Interaction] " + value);
-                    StatusText = "[Interaction] " + value;
                 }
                 _state = value;
             }
@@ -477,8 +476,6 @@ namespace Trinity.Components.Adventurer.Coroutines
             _currentInteractAttempt = 0;
             State = States.NotStarted;
         }
-
-        public string StatusText { get; set; }
 
         public void DisablePulse()
         {

@@ -34,8 +34,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines.Subroutines
         {
         }
 
-        public string StatusText { get; set; }
-
         public void DisablePulse()
         {
         }

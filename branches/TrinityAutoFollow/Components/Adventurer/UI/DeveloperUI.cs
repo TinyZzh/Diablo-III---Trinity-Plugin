@@ -742,23 +742,6 @@ namespace Trinity.Components.Adventurer.UI
                     {
                         DumpBountyInfo(bountyInfo, wpNr);
                     }
-
-
-                    var bountiesNoCoroutines = ZetaDia.Storage.Quests.Bounties.Where(
-                        b =>
-                        {
-                            BountyData bd = BountyDataFactory.GetBountyData((int) b.Quest);
-                            if (bd != null && bd.Coroutines.Count == 0)
-                                return true;
-
-                            return false;
-                        });
-                    Core.Logger.Raw("Bounties with no coroutines:");
-
-                    foreach (var bountyInfo in bountiesNoCoroutines)
-                    {
-                        DumpBountyInfo(bountyInfo, 0);
-                    }
                 }
             }
             catch (Exception ex)
@@ -923,7 +906,8 @@ namespace Trinity.Components.Adventurer.UI
             Core.Logger.Raw("    Act = Act.{0},", bountyInfo.Act);
             Core.Logger.Raw("    WorldId = 0, // Enter the final worldId here");
             Core.Logger.Raw("    QuestType = BountyQuestType.SpecialEvent,");
-            Core.Logger.Raw("    WaypointLevelAreaId = {0},", (int)bountyInfo.StartingLevelArea);
+            Core.Logger.Raw("    WaypointLevelAreaId = {0},", AdvDia.CurrentLevelAreaId);
+            //Core.Logger.Raw("    WaypointNumber = {0},", waypointNumber);
             Core.Logger.Raw("    Coroutines = new List<ISubroutine>");
             Core.Logger.Raw("    {");
             Core.Logger.Raw("        // Coroutines goes here");

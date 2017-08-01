@@ -27,7 +27,7 @@ using System.Collections;
 
 namespace Trinity.Modules
 {
-    public class SceneStorage : Module, IEnumerable<WorldScene>
+    public class SceneStorage : Module,  IEnumerable<WorldScene>
     {
         public delegate void GridProviderEventHandler(List<WorldScene> provider);
 
@@ -126,12 +126,10 @@ namespace Trinity.Modules
 
                     var sceneHashName = scene.GetSceneNameString();
                     worldId = scene.Mesh.WorldId;
-
-                    if (scene.IsAlmostValid() && scene.Mesh.ParentSceneId <= 0 && worldId == currentWorldId)
+                    if (scene.IsAlmostValid() && scene.Mesh.ParentSceneId <= 0 &&
+                        worldId == currentWorldId &&
+                        !scene.Name.ToLowerInvariant().Contains("fill"))
                     {
-                        if (scene.Mesh.Zone.GridSquares.Length <= 1)
-                            continue;
-
                         var adventurerScene = new WorldScene(scene, ExplorationData.ExplorationNodeBoxSize,
                             ExplorationData.ExplorationNodeBoxTolerance);
                         if (adventurerScene.Cells.Count > 0)
@@ -220,7 +218,7 @@ namespace Trinity.Modules
             return ((IEnumerable<WorldScene>)CurrentWorldScenes).GetEnumerator();
         }
 
-        public WorldScene GetScene(Vector3 position)
+        public WorldScene GetScene(Vector3 position) 
             => CurrentWorldScenes.FirstOrDefault(s => s.IsInScene(position));
     }
 

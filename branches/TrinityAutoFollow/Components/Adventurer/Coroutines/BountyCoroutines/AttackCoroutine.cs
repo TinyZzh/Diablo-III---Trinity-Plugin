@@ -40,8 +40,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             _attackRange = 10;
         }
 
-        public string StatusText { get; set; }
-
         public void DisablePulse()
         {
         }
@@ -69,7 +67,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
                 if (value != States.NotStarted)
                 {
                     Core.Logger.Debug("[Attack] " + value);
-                    StatusText = "[Attack] " + value;
                 }
                 _state = value;
             }

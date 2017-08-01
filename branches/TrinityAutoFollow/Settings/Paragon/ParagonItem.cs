@@ -136,8 +136,8 @@ namespace Trinity.Settings.Paragon
                             return ParagonBonusType.IntelligenceWitchdoctor;
                         case ActorClass.Monk:
                             return ParagonBonusType.DexterityMonk;
-                        case ActorClass.Necromancer:
-                            return ParagonBonusType.IntelligenceNecromancer;
+                        //case ActorClass.Necromancer:
+                        //    return ParagonBonusType.IntelligenceWizard;
                     }
 
                     break;
@@ -158,8 +158,8 @@ namespace Trinity.Settings.Paragon
                             return ParagonBonusType.ResourceMaxBonusMana;
                         case ActorClass.Monk:
                             return ParagonBonusType.ResourceMaxBonusSpirit;
-                        case ActorClass.Necromancer:
-                            return ParagonBonusType.ResourceMaxBonusShadows;
+                        //case ActorClass.Necromancer:
+                        //    return ParagonBonusType.ResourceMaxBonusSpirit;
                     }
 
                     break;

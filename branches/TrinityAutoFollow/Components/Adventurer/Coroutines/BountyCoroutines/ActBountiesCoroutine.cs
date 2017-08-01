@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Trinity.Components.Adventurer.Game.Exploration;
 using Trinity.Components.Adventurer.Game.Quests;
 using Trinity.Framework;
-using Zeta.Bot;
 using Zeta.Game;
 
 namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
@@ -201,7 +200,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
 
         private async Task<bool> Completed()
         {
-            BountyStatistics.CompletedBountyActs++;
             Core.Logger.Log("[ActBounties] Successfully completed {0} bounties.", Act);
             return true;
         }

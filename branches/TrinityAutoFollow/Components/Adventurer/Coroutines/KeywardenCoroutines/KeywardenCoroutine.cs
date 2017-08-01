@@ -55,7 +55,6 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
 
                     default:
                         Core.Logger.Debug("[Keywarden] " + value);
-                        StatusText = "[Keywarden] " + value;
                         break;
                 }
                 _state = value;
@@ -101,11 +100,11 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
             return false;
         }
 
+
         public void Reset()
         {
+          
         }
-
-        public string StatusText { get; set; }
 
         private bool NotStarted()
         {
@@ -271,7 +270,6 @@ namespace Trinity.Components.Adventurer.Coroutines.KeywardenCoroutines
 
         private async Task<bool> Completed()
         {
-            StatusText = "[Keywarden] Completed";
             DisablePulse();
             return true;
         }

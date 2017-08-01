@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Trinity.Components.Adventurer.Coroutines.CommonSubroutines;
 using Trinity.Components.Adventurer.Game.Quests;
-using Zeta.Bot;
 
 namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
 {
@@ -110,13 +109,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
             //}
 
             _lastGenericBountySubroutine = _currentStep;
-            BotMain.SetCurrentStatusTextProvider(() =>
-            {
-                if (_lastGenericBountySubroutine != null)
-                    return _lastGenericBountySubroutine.StatusText;
-                return string.Empty;
-            });
-
             await _currentStep.GetCoroutine();
             return false;
         }
@@ -128,7 +120,6 @@ namespace Trinity.Components.Adventurer.Coroutines.BountyCoroutines
         {
             _lastGenericBountySubroutine = null;
             _currentStep = null;
-            BotMain.SetCurrentStatusTextProvider(null);
             base.Reset();
         }
 

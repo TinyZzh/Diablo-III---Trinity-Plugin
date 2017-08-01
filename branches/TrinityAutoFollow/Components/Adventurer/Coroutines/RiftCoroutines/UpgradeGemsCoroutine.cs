@@ -61,7 +61,6 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
                 if (value != States.NotStarted)
                 {
                     Core.Logger.Debug("[UpgradeGems] " + value);
-                    StatusText = "[UpgradeGems] " + value;
                 }
                 _state = value;
             }
@@ -327,8 +326,6 @@ namespace Trinity.Components.Adventurer.Coroutines.RiftCoroutines
             DisablePulse();
             State = States.NotStarted;
         }
-
-        public string StatusText { get; set; }
 
         private bool Completed()
         {

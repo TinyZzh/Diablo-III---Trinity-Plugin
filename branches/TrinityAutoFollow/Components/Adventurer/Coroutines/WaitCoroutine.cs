@@ -47,16 +47,12 @@ namespace Trinity.Components.Adventurer.Coroutines
             {
                 _waitTimer = new WaitTimer(_waitTime);
                 _waitTimer.Reset();
-
-                string status = $"[Wait] Waiting for {_waitTime.TotalSeconds} seconds";
-                StatusText = status;
-                Core.Logger.Debug(status);
+                Core.Logger.Debug("[Wait] Waiting for {0} seconds", _waitTime.TotalSeconds);
             }
 
             if (ZetaDia.Globals.WorldSnoId != _worldId)
             {
-                StatusText = "[Wait] Stopped waiting because world id is not correct";
-                Core.Logger.Debug(StatusText);
+                Core.Logger.Debug("[Wait] Stopped waiting because world id is not correct for {0} seconds");
                 _isDone = true;
                 return true;
             }
@@ -73,8 +69,6 @@ namespace Trinity.Components.Adventurer.Coroutines
             _isDone = false;
             _waitTimer = null;
         }
-
-        public string StatusText { get; set; }
 
         public void DisablePulse()
         {
