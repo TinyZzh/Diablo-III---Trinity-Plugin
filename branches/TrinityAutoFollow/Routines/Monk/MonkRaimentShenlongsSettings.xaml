@@ -1,0 +1,69 @@
+﻿<UserControl 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:converters="clr-namespace:Trinity.UI.UIComponents.Converters"
+
+    mc:Ignorable="d" Background="#434343" d:DesignHeight="820" d:DesignWidth="390">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../../UI/Template.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <converters:PercentConverter x:Key="PercentConverter" />
+            <converters:EnumBooleanConverter x:Key="EnumBooleanConverter" />
+            <converters:EnumVisibilityConverter x:Key="HiddenWhenEnumTrueConverter" Reverse="True" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Border Padding="10">
+        <Grid>
+            <StackPanel>
+                <GroupBox>
+                    <GroupBox.Header>General</GroupBox.Header>
+                    <StackPanel>
+                        <Slider Template="{DynamicResource LabelledSliderEditable}" 
+                            Tag="Cluster Size"
+                            ToolTip="Number of monsters that must be grouped up before fighting starts"
+                            Interval="100" IsSnapToTickEnabled="True"
+                            Maximum="40" Minimum="1" SmallChange="100" TickFrequency="1" TickPlacement="BottomRight" 
+                            Value="{Binding Path=DataContext.ClusterSize}" 
+                            HorizontalAlignment="Stretch" Margin="0,0,0,0"
+                            MinWidth="175"/>
+                        <Slider  Template="{DynamicResource LabelledSliderEditable}" 
+                        Tag="Health Emergency %"
+                        ToolTip="How low your health must drop before the potion is used"
+                                Interval="500" Maximum="99" Minimum="0" 
+                                SmallChange="1" LargeChange="5"
+                                TickPlacement="None" 
+                                Value="{Binding Path=DataContext.EmergencyHealthPct, Converter={StaticResource PercentConverter}}" 
+                                HorizontalAlignment="Stretch" Margin="0"/>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox>
+                    <GroupBox.Header>Spirit Conservation</GroupBox.Header>
+                    <StackPanel>
+                        <TextBlock TextWrapping="Wrap">When enabled, and spirit is below 35% spirit (with the buff) or above 80% (without the buff) the bot will avoid spending resource. This reduces the chance of losing the shenlongs damage buff (running out of resource) and increase the speed to obtain the buff (by letting it hit 100% faster)</TextBlock>
+                        <CheckBox Margin="0,10,0,0" IsChecked="{Binding DataContext.ConserveSpirit}">Enable Spirit Conservation</CheckBox>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox>
+                    <GroupBox.Header>Beast Mode</GroupBox.Header>
+                    <StackPanel>
+                        <TextBlock TextWrapping="Wrap">When enabled, and the shenlong damage buff is active, beast mode maximizes the time spent attacking (to maintain spirit generation and therefore keep the damage buff). It does this by disabling all avoidance, kiting and ignoring trash pack (cluster) size and non-units.</TextBlock>
+                        <CheckBox Margin="0,10,0,0" IsChecked="{Binding DataContext.BeastMode}">Enable Beast Mode</CheckBox>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox>
+                    <GroupBox.Header>Misc Options</GroupBox.Header>
+                    <StackPanel>
+                        <CheckBox IsChecked="{Binding DataContext.SpamBreathHeaven}">Spam Breath of Heaven</CheckBox>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>
+
+    
