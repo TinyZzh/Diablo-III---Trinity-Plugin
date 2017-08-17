@@ -30,7 +30,7 @@
       <LogMessage Output="Getting a puzzle Ring" />
       <TakeFromStash>
         <Items>
-          <Item id="197837" name="Puzzle Ring" quantity="1" />
+          <Item id="197837" name="Puzzle Ring"/>
         </Items>
       </TakeFromStash>
       <LogMessage questId="1" output="Moving to Cube" />
